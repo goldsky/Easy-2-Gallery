@@ -1,0 +1,47 @@
+/* Floatbox v3.52.2 */
+
+/* overlay color */
+div.fbOverlay_red { background-color: #280000; }
+
+/* outerBorder and main floatbox color */
+div.fbBox_red {
+	border-color: #945848;
+	background-color: #580808;
+}
+
+/* animated 'loading' graphic */
+#fbBox .fbBoxLoader_red { background-image: url(/assets/libs/floatbox/graphics/loader_black_small.gif); }
+
+/* innerBorder color */
+#fbBox .fbMainDiv_red { border-color: #b64; }
+
+/* resize button graphic in the top left corner */
+#fbBox .fbResizer_red { background-image: url(/assets/libs/floatbox/graphics/resizer_red.gif); }
+
+/* resize dragger in the lower right corner */
+#fbBox .fbDragger_red { background-image: url(/assets/libs/floatbox/graphics/dragger_red.gif); }
+
+/* on-mouse-over upper nav graphics */
+#fbBox .fbOverlayPrev_red { background-image: url(/assets/libs/floatbox/graphics/overlayPrev_red.gif); }
+#fbBox .fbOverlayNext_red { background-image: url(/assets/libs/floatbox/graphics/overlayNext_red.gif); }
+
+/* 'image x of y' and indexLinks color */
+#fbBox .fbItemNumber_red, #fbBox #fbIndexLinks.fbIndexLinks_red, #fbBox #fbIndexLinks.fbIndexLinks_red a:link, #fbBox #fbIndexLinks.fbIndexLinks_red a:visited { color: #ca8; }
+
+/* caption, infoLink, printLink, & indexLinks:hover color */
+#fbBox .fbCaptionDiv_red, #fbBox .fbInfoPanel_red a:link, #fbBox .fbInfoPanel_red a:visited, #fbBox #fbIndexLinks.fbIndexLinks_red a:hover { color: #ec9; }
+
+/* lower nav graphics */
+#fbBox .fbPrev_red { background-image: url(/assets/libs/floatbox/graphics/prev_red.gif); }
+#fbBox .fbNext_red { background-image: url(/assets/libs/floatbox/graphics/next_red.gif); }
+
+/* lower nav greyed-out graphics */
+#fbBox .fbPrev_red_off { background-image: url(/assets/libs/floatbox/graphics/prev_red_off.gif); }
+#fbBox .fbNext_red_off { background-image: url(/assets/libs/floatbox/graphics/next_red_off.gif); }
+
+/* 'play' and 'pause' graphics */
+#fbBox .fbPlay_red { background-image: url(/assets/libs/floatbox/graphics/play_red.gif); }
+#fbBox .fbPause_red { background-image: url(/assets/libs/floatbox/graphics/pause_red.gif); }
+
+/* 'close' graphic */
+#fbBox .fbClose_red { background-image: url(/assets/libs/floatbox/graphics/close_red.gif); }

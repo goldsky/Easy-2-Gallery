@@ -1,0 +1,18 @@
+Installation
+
+1. Unpack archive in root folder of you modx installation
+2. Create new module, name it easy2, paste content of module.easy2gallery.php in the module code field 
+(assets/modules/easy2/install/module.easy2gallery.php), click save.
+
+3. Refresh modx manager, then open easy2 tab.
+4. Install following instructions.
+5. If install is successful, remove install folder, manually or by clicking delete button. module won't work if this folder exists.
+
+
+
+Upgrade
+
+1. Unpack archive in root folder of you modx installation
+2. Open easy2 tab, upgrade following instructions
+3. If upgrade is successful, remove install folder, manually or by clicking delete button. module won't work if this folder exists.
+4. CLEAR MODX CACHE
