@@ -12,8 +12,8 @@ $e2g = array (
 'cat_name_len' => 18,
 'colls' => 3,
 'limit' => 9,
-'orderby' => 'date_added',
-'order' => 'DESC',
+'orderby' => 'filename',
+'order' => 'ASC',
 'cat_orderby' => 'cat_id',
 'cat_order' => 'DESC',
 'css' => 'assets/modules/easy2/templates/style.css',
@@ -30,5 +30,6 @@ $e2g = array (
 'wmpos2' => 3,
 'ecm' => 1,
 'ecl' => 7,
+'captcha' => 1,
 );
 ?>

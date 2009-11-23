@@ -2,7 +2,7 @@
 /******************************************************************************
 *
 *  EASY 2 GALLERY BY Cx2 <inteldesign@mail.ru>
-*  VERSION 1.33
+*  VERSION 1.34
 *
 ******************************************************************************/
 
@@ -334,6 +334,11 @@ if ($glib == 'lightwindow') {
    $modx->regClientStartupScript('http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.2/scriptaculous.js?load=effects');
    $modx->regClientStartupScript($modx->config['base_url'].'assets/libs/lightwindow/js/lightwindow.js');
 }
+if ($glib == 'colorbox') {
+   $modx->regClientCSS($modx->config['base_url'].'assets/libs/colorbox/colorbox.css','screen');
+   $modx->regClientStartupScript('http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js');
+   $modx->regClientStartupScript($modx->config['base_url'].'assets/libs/colorbox/jquery.colorbox-min.js');
+}
 
 if (!$fid) {
 
@@ -456,7 +461,7 @@ while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
 
 // gallery activation
 if ($glib == 'highslide') {$l['glibact']='class="highslide" onclick="return hs.expand(this, {slideshowGroup: \'mygroup\'})"';}
-if ($glib == 'slimbox' || $glib == 'slimbox2' || $glib == 'fancybox') {$l['glibact']='rel="lightbox['.$show_group.']"';}
+if ($glib == 'slimbox' || $glib == 'slimbox2' || $glib == 'fancybox' || $glib == 'colorbox') {$l['glibact']='rel="lightbox['.$show_group.']"';}
 if ($glib == 'shadowbox') {$l['glibact']='rel="shadowbox['.$show_group.'];player=img"';}
 if ($glib == 'floatbox') {$l['glibact']='class="floatbox" rev="doSlideshow:true group:'.$show_group.'"';}
 if ($glib == 'lightwindow') {$l['glibact']='class="lightwindow" rel="Gallery['.$show_group.']" params="lightwindow_type=image"';}
@@ -471,7 +476,7 @@ if ($glib == 'slimbox' || $glib == 'slimbox2') {
    $modx->regClientStartupScript($modx->config['base_url'].'assets/libs/highslide/highslide-iframe.js');
    $l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" onclick="return hs.htmlExpand(this, { objectType: \'iframe\'} )">'.$l['comments'].'</a>';
 }
-if ($glib == 'fancybox') {$l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" class="iframe">'.$l['comments'].'</a>';}
+if ($glib == 'fancybox' || $glib == 'colorbox') {$l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" class="iframe">'.$l['comments'].'</a>';}
 if ($glib == 'shadowbox') {$l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" rel="shadowbox;width=400;height=250;player=iframe">'.$l['comments'].'</a>';}
 if ($glib == 'floatbox') {$l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" rel="floatbox" rev="type:iframe width:400 height:250 enableDragResize:true controlPos:tr innerBorder:0">'.$l['comments'].'</a>';}
 if ($glib == 'lightwindow') {$l['comments'] = '<a href="assets/modules/easy2/comments.easy2gallery.php?id='.$l['id'].'" class="lightwindow" params="lightwindow_type=external,lightwindow_width=400,lightwindow_height=250">'.$l['comments'].'</a>';}

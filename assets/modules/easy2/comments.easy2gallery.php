@@ -50,7 +50,11 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     $c = htmlspecialchars(trim($_POST['comment']), ENT_QUOTES);
     $e = htmlspecialchars(trim($_POST['email']), ENT_QUOTES);
 
-    if (!empty($n) && !empty($c)) {
+    if(!empty($e2g['captcha']) && ((trim($_POST['vericode'])=='') || (isset($_SESSION['veriword']) && $_SESSION['veriword'] != $_POST['vericode']))) {
+        $_P['body'] .= '<h2>'.$lng['captcha_err'].'</h2>';
+    }
+
+    elseif (!empty($n) && !empty($c)) {
         if (mysql_query('INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,comment,date_added) '
                       . "VALUES($id,'$n','$e','$c', NOW())")) {
 
@@ -110,6 +114,16 @@ if (file_exists($e2g['comments_tpl'])) {
     $tpl = file_get_contents($e2g['comments_tpl']);
 } elseif ( !($tpl = get_chunk($e2g['comments_tpl'])) ) {
     die ('Comments template not found!');
+}
+
+if(!empty($e2g['captcha'])){
+    $seed=rand();
+    $_SESSION['veriword'] = md5($seed);
+    $siteurl = str_replace("assets/modules/easy2/", "", $site_url);
+    $_P['captcha'] = '<tr><td>'.$_P['code'].'</td><td><input type="text" name="vericode" /></td><td colspan="2" class="captcha_cell"><img src="'.$siteurl.'manager/includes/veriword.php?rand='.$seed.'" alt="" /><td></tr>';
+}
+else {
+    $_P['captcha'] ='';
 }
 
 echo filler ($tpl, $_P);

@@ -1,7 +1,7 @@
 /******************************************************************************
 *
 *  EASY 2 GALLERY BY Cx2 <inteldesign@mail.ru>
-*  VERSION 1.33
+*  VERSION 1.34
 *
 ******************************************************************************/
 
@@ -112,7 +112,7 @@ case 'upload':
             continue;
         }
 
-        if (!mysql_query('INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files(dir_id,filename,size,name,description,date_added) VALUES('.$parent_id.', \''.mysql_real_escape_string($_FILES['img']['name'][$i]).'\', '.(int)$_FILES['img']['size'][$i].', \''.mysql_real_escape_string($_POST['name'][$i]).'\', \''.mysql_real_escape_string($_POST['description'][$i]).'\', NOW())')) {
+        if (!mysql_query('INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files(dir_id,filename,size,name,description,date_added) VALUES('.$parent_id.', \''.mysql_real_escape_string($_FILES['img']['name'][$i]).'\', '.(int)$_FILES['img']['size'][$i].', \''.mysql_real_escape_string(htmlspecialchars($_POST['name'][$i])).'\', \''.mysql_real_escape_string(htmlspecialchars($_POST['description'][$i])).'\', NOW())')) {
             $_SESSION['easy2err'][] = $lng['db_err'].': ' . mysql_error();
             continue;
         }
@@ -571,8 +571,8 @@ case 'edit_file':
     $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
     $row = mysql_fetch_array($res, MYSQL_ASSOC);
 
-    $row['description'] = htmlspecialchars($row['description']);
-    $row['name'] = htmlspecialchars($row['name']);
+    //$row['description'] = htmlspecialchars($row['description']);
+    //$row['name'] = htmlspecialchars($row['name']);
 
     $name = $row['id'].substr($row['filename'], strrpos($row['filename'], '.'));
 
@@ -764,7 +764,7 @@ foreach ($dirs as $f) {
   <td>'.$n.' ('.$cnt.')</td>
   <td>'.@date($e2g['mdate_format'], $time).'</td>
   <td>---</td>
-  <td align="right">
+  <td align="right" nowrap>
    '.$buttons.'
    <a href="'.$index.'&act=delete_dir&dir_path='.$gdir.$name.(empty($id)?'':'&dir_id='.$id).'" onclick="return confirmDeleteFolder();"><img src="../assets/modules/easy2/icons/delete.png" border="0" alt="'.$lng['delete'].'" title="'.$lng['delete'].'" /></a></td>
  </tr>';
@@ -825,7 +825,7 @@ foreach ($files as $f) {
   <td>'.$n.'</td>
   <td>'.@date($e2g['mdate_format'], $time).'</td>
   <td>'.$size.'Kb</td>
-  <td align="right">'.$buttons.'
+  <td align="right" nowrap>'.$buttons.'
   <a href="'.$index.'&act=delete_file&file_path='.$gdir.$name.(empty($id)?'':'&file_id='.$id).'" onclick="return confirmDelete();"><img src="../assets/modules/easy2/icons/delete.png" border="0" alt="'.$lng['delete'].'" title="'.$lng['delete'].'" /></a></td>
  </tr>';
     $i++;
@@ -842,7 +842,7 @@ if (isset($mfiles) && count($mfiles) > 0) {
   <td><b style="color:red;"><u>'.$v.'</u></b> ['.$k.']</td>
   <td>---</td>
   <td>---</td>
-  <td align="right">
+  <td align="right" nowrap>
   <a href="'.$index.'&page=comments&file_id='.$k.'&pid='.$parent_id.'"><img src="../assets/modules/easy2/icons/comments.png" width="16" height="16" alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0></a>
   <a href="'.$index.'&act=delete_file&file_id='.$k.'" onclick="return confirmDeleteFolder();"><img src="../assets/modules/easy2/icons/delete.png" border="0" alt="'.$lng['delete'].'" title="'.$lng['delete'].'" /></a></td>
  </tr>';
@@ -1086,6 +1086,7 @@ function imPreview (imPath) {
    <tr class="gridAltItem">
     <td><b>'.$lng['glib'].':</b></td>
     <td><select size="1" name="glib">
+	  <option value="colorbox"'.(($e2g['glib']=='colorbox')?' selected':'').'>colorbox (jq)</option>
 	  <option value="fancybox"'.(($e2g['glib']=='fancybox')?' selected':'').'>fancybox (jq)</option>
 	  <option value="floatbox"'.(($e2g['glib']=='floatbox')?' selected':'').'>floatbox</option>
       <option value="highslide"'.(($e2g['glib']=='highslide')?' selected':'').'>highslide</option>
@@ -1292,6 +1293,10 @@ function imPreview (imPath) {
    </tr>
    <tr>
     <td colspan="2">'.$lng['cfg_com11'].'</td>
+   </tr>
+   <tr class="gridAltItem">
+    <td><b>'.$lng['captcha'].':</b></td>
+    <td><input name="captcha" type="checkbox"'.((isset($e2g['captcha']) && $e2g['captcha']==1)?' checked':'').' value="1" style="border:0"></td>
    </tr>
   </table>
   <br>

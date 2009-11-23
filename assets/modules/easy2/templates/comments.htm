@@ -16,7 +16,8 @@ textarea {width:100%}
 .pnums a {background:#F4F4F4;border:1px solid #E8E8E8;color:gray; text-decoration:none;color:#7D7D7D;}
 .pnums a:hover {background:#B3EC6C;border:1px solid #83D71C;color:white;text-decoration:none}
 .pnums a, .pnums b {padding:2px 4px;}
-
+.captcha_cell {vertical-align:top;}
+.captcha_cell img {position:absolute;}
 -->
 </style>
 </head>
@@ -38,6 +39,7 @@ textarea {width:100%}
  <tr>
   <td colspan="4"><b>[+easy2:usercomment+]:</b><br><textarea name="comment" rows=3></textarea></td>
  </tr>
+ [+easy2:captcha+]
  <tr>
   <td colspan="4"><input type="submit" value="[+easy2:send_btn+]"></td>
  </tr>

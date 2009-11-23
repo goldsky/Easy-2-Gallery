@@ -101,6 +101,7 @@ $lng = array (
 'last_modified' => 'editing date',
 'comments_cnt' => 'comments count',
 'random' => 'random',
+'captcha' => 'Captcha',
 
 'asc' => 'asc',
 'desc' => 'desc',

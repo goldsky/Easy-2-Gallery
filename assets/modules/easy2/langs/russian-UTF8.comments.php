@@ -8,11 +8,13 @@ $_P = array (
 'send_btn' => 'Отправить',
 'body' => '',
 'pages' => '',
+'code' => 'Код',
 );
 $lng = array (
 'empty_name_comment' => 'Не указано имя или комментарий',
 'comment_added' => 'Комментарий добавлен',
 'comment_add_err' => 'Комментарий не добавлен',
 'pages' => 'Страницы',
+'captcha_err' => 'Неверный защитный код',
 );
 ?>
