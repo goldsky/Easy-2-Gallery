@@ -2,7 +2,7 @@
 /******************************************************************************
 *
 *  EASY 2 GALLERY BY Cx2 <inteldesign@mail.ru>
-*  VERSION 1.34
+*  VERSION 1.35
 *
 ******************************************************************************/
 
@@ -12,6 +12,7 @@ require './assets/modules/easy2/config.easy2gallery.php';
 // GALLERY ID
 $gid = (!empty($gid) && is_numeric($gid)) ? $gid : 1;
 $gid = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? (int) $_GET['gid'] : $gid;
+$rgid = (!empty($rgid) && is_numeric($rgid)) ? $rgid : 0;
 
 // FILE ID
 $fid = (!empty($fid) && is_numeric($fid)) ? $fid : 0;
@@ -49,7 +50,8 @@ $glib = (!empty($glib)) ? $glib : $e2g['glib'];
 $ecm = (isset($ecm) && is_numeric($ecm)) ? $ecm : $e2g['ecm'];
 
 // PAGE NUMBER
-$gpn = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : 0;
+$gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;
+$gpn = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : $gpn;
 
 // ORDER BY
 $orderby = (!empty($orderby)) ? $orderby : $e2g['orderby'];
@@ -212,9 +214,11 @@ function filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
 if (!function_exists('get_folder_img')) {
 function get_folder_img ($gid) {
     global $modx;
-    $res = mysql_query('SELECT F.* FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '. $modx->db->config['table_prefix'].'easy2_dirs B, '. $modx->db->config['table_prefix'].'easy2_files F '
-. 'WHERE (B.cat_id='.$gid.' AND A.cat_left >= B.cat_left AND A.cat_right <= B.cat_right AND A.cat_level > B.cat_level AND A.cat_visible = 1 AND F.dir_id = A.cat_id) OR F.dir_id = '.$gid.' ORDER BY A.cat_level ASC, F.id DESC LIMIT 1');
+    $res = mysql_query('SELECT DISTINCT F.* FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '. $modx->db->config['table_prefix'].'easy2_dirs B, '. $modx->db->config['table_prefix'].'easy2_files F '
+. 'WHERE (B.cat_id='.$gid.' AND A.cat_left >= B.cat_left AND A.cat_right <= B.cat_right AND A.cat_level > B.cat_level AND A.cat_visible = 1 AND F.dir_id = A.cat_id) OR F.dir_id = '.$gid.' ORDER BY A.cat_level ASC, F.id DESC');
     $result = mysql_fetch_array($res, MYSQL_ASSOC);
+    if ($result) $result['count'] = mysql_num_rows($res);
+	mysql_free_result($res);
     return $result;
 }
 }
@@ -234,7 +238,12 @@ if ($orderby == 'random' && $limit == 1) {
     }
 
     $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-    . 'WHERE status = 1 ORDER BY RAND() LIMIT 1');
+    . 'WHERE status = 1 '
+    . ($rgid? 'AND dir_id='.$rgid.' ' : '')
+    . 'ORDER BY RAND() LIMIT 1');
+
+    $num_rows = mysql_num_rows($res);
+    if (!$num_rows) return;
 
     $l = mysql_fetch_array($res, MYSQL_ASSOC);
     $pos = strrpos($l['filename'], '.');
@@ -374,6 +383,7 @@ while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
     // search image for subdir
     $l1=get_folder_img($l['cat_id']);
     if (!$l1) continue;
+    $l['count'] = $l1['count'];
 
     //path to thumb 
     $path1=get_path($l1['dir_id']);

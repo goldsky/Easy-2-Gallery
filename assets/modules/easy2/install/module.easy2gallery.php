@@ -1,7 +1,7 @@
 /******************************************************************************
 *
 *  EASY 2 GALLERY BY Cx2 <inteldesign@mail.ru>
-*  VERSION 1.34
+*  VERSION 1.35
 *
 ******************************************************************************/
 
@@ -95,8 +95,56 @@ $path .= '</b>';
 $act = empty($_GET['act']) ? '' : $_GET['act'];
 switch ($act) {
 
+case 'synchro':
+    if(synchro('../'.$e2g['dir'],1,$e2g)) {
+        $_SESSION['easy2suc'][] = $lng['synchro_suc'];
+    } else {
+        $_SESSION['easy2err'][] = $lng['synchro_err'];
+    }
+    $res = delete_all ('../'.$e2g['dir'].'_thumbnails/');
+    if (empty($res['e'])) {
+        $_SESSION['easy2suc'][] = $lng['cache_clean'];
+    } else {
+        $_SESSION['easy2err'][] = $lng['cache_clean_err'];
+        $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
+    }
+    header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+    exit();
 
 // UPLOADING IMAGES
+
+case 'uploadzip':
+    if($_FILES['zip']['error']==0 && $_FILES['zip']['size']>0)  {
+        include_once '../assets/modules/easy2/pclzip.lib.php';
+        $zip = new PclZip($_FILES['zip']['tmp_name']);
+        if (($list = $zip->listContent()) == 0) {
+            $_SESSION['easy2err'][] = "Error : ".$zip->errorInfo(true);
+        } else {
+            $j=sizeof($list);
+        }
+        if ($zip->extract(PCLZIP_OPT_PATH, '../'.$gdir) == 0) {
+            $_SESSION['easy2err'][] = "Error : ".$zip->errorInfo(true);
+        } else {
+            $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
+        }
+        @unlink($_FILES['zip']['tmp_name']);
+        if(synchro('../'.$e2g['dir'],1,$e2g)) {
+            $_SESSION['easy2suc'][] = $lng['synchro_suc'];
+        } else {
+            $_SESSION['easy2err'][] = $lng['synchro_err'];
+        }
+        $res = delete_all ('../'.$e2g['dir'].'_thumbnails/');
+        if (empty($res['e'])) {
+            $_SESSION['easy2suc'][] = $lng['cache_clean'];
+        } else {
+            $_SESSION['easy2err'][] = $lng['cache_clean_err'];
+            $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
+        }
+    } else {
+        $_SESSION['easy2err'][] = $lng['upload_err'].' ' . $_FILES['img']['name'];
+    }
+    header ("Location: ".$index.'&pid='.$_GET['pid']);
+    exit();
 
 case 'upload':
 
@@ -990,7 +1038,9 @@ function imPreview (imPath) {
 <script type="text/javascript">
  tpResources.addTabPage(document.getElementById("imManager"));
 </script>
-   '.$content.'</div>
+   '.$content.'
+   <form action="'.$index.'&act=synchro" method="post"><input type="submit" value="'.$lng['synchro'].'"></form>
+   </div>
 
   <div class="tab-page" id="addForm">
    <h2 class="tab">'.$lng['upload'].'</h2>
@@ -1003,9 +1053,9 @@ function imPreview (imPath) {
    <div id="firstElt">
     <table cellspacing="0" cellpadding="2" class="aForm" height="165">
      <tr>
-      <th width="165" rowspan="3" class="imPreview" id="imBox">&nbsp;</th>
+      <!--th width="165" rowspan="3" class="imPreview" id="imBox">&nbsp;</th-->
       <td width="70"><b>'.$lng['file'].':</b></td>
-      <td><input name="img[]" type="file" onchange="uimPreview(this.value)"></td>
+      <td><input name="img[]" type="file" onchange="//uimPreview(this.value)"></td>
      </tr>
      <tr>
       <td><b>'.$lng['name'].':</b></td>
@@ -1019,7 +1069,14 @@ function imPreview (imPath) {
   </div>
   <input type="submit" value="'.$lng['upload_btn'].'" name="upload_btn">
   <input type="button" value="'.$lng['add_field_btn'].'" onclick="javascript:addField(); void(0);">
-  </form></div>
+  </form>
+  <br>
+  <form name="zipfile" action="'.$index.'&act=uploadzip&pid='.$parent_id.'" method="post" enctype="multipart/form-data">
+  <table cellspacing="0" cellpadding="2">
+  <tr><td><b>'.$lng['archive'].': </b></td><td><input name="zip" type="file"></td><td><input type="submit" value="'.$lng['upload_btn'].'"></td></tr>
+  </table>
+  </form>
+  </div>
 
   <div class="tab-page" id="Config">
    <h2 class="tab">'.$lng['config'].'</h2>
@@ -1086,9 +1143,9 @@ function imPreview (imPath) {
    <tr class="gridAltItem">
     <td><b>'.$lng['glib'].':</b></td>
     <td><select size="1" name="glib">
-	  <option value="colorbox"'.(($e2g['glib']=='colorbox')?' selected':'').'>colorbox (jq)</option>
-	  <option value="fancybox"'.(($e2g['glib']=='fancybox')?' selected':'').'>fancybox (jq)</option>
-	  <option value="floatbox"'.(($e2g['glib']=='floatbox')?' selected':'').'>floatbox</option>
+      <option value="colorbox"'.(($e2g['glib']=='colorbox')?' selected':'').'>colorbox (jq)</option>
+      <option value="fancybox"'.(($e2g['glib']=='fancybox')?' selected':'').'>fancybox (jq)</option>
+      <option value="floatbox"'.(($e2g['glib']=='floatbox')?' selected':'').'>floatbox</option>
       <option value="highslide"'.(($e2g['glib']=='highslide')?' selected':'').'>highslide</option>
       <option value="lightwindow"'.(($e2g['glib']=='lightwindow')?' selected':'').'>lightwindow (pt)</option>
       <option value="shadowbox"'.(($e2g['glib']=='shadowbox')?' selected':'').'>shadowbox</option>
@@ -1370,7 +1427,7 @@ function add_all ($path, $pid, $cfg) {
     }
 
     $fs = glob($npath.'/*');
-	if ($fs!=false) 
+    if ($fs!=false) 
     foreach ($fs as $f) {
         if (is_dir($f)) {
             if (!add_all ($f, $id, $cfg)) return false;
@@ -1460,7 +1517,7 @@ function count_files ($path) {
     if (glob($path.'/*.*')!=false) $cnt = count(glob($path.'/*.*'));
 
     $sd = glob($path.'/*');
-	if ($sd!=false) 
+    if ($sd!=false) 
     foreach(glob($path.'/*') as $d) {
         $cnt += count_files($d);
     }
@@ -1470,4 +1527,123 @@ function count_files ($path) {
 
 function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
    echo '<p>Error '.$errno.': '.$errmsg.'<br>File: '.$filename.' <b>Line:'.$linenum.'</b></p>';
+}
+
+function add_file ($f, $pid, $cfg) {
+    global $modx;
+
+    $inf = getimagesize($f);
+    if ($inf[2] <= 3 && is_numeric($pid)) {
+
+        // RESIZE
+        if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+            resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
+        }
+
+        $n = htmlspecialchars(basename($f), ENT_QUOTES);
+        $s = filesize($f);
+
+        $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
+           . '(dir_id,filename,size,name,description,date_added) '
+           . "VALUES(".$pid.",'$n',$s,'','',NOW())";
+        if (mysql_query($q)) {
+            $new_name = preg_replace('/\/[^\/]+(\.[^\.]{1,4})$/i', "/".mysql_insert_id()."\\1", $f);
+            rename($f, $new_name);
+            @chmod($new_name, 0644);
+        } else {
+            $_SESSION['easy2err'][] = $lng['add_file_err'];
+            $_SESSION['easy2err'][] = mysql_error();
+            return false;
+        }
+
+    } else {
+        $_SESSION['easy2err'][] = $lng['add_file_err'];
+        return false;
+    }
+    return true;
+}
+function synchro ($path, $pid, $cfg) {
+    global $modx;
+
+    // MySQL Dir list
+    $res = mysql_query('SELECT cat_id,cat_name FROM '.$modx->db->config['table_prefix'].'easy2_dirs WHERE parent_id='.$pid.' AND cat_visible = 1');
+    $mdirs = array();
+    if ($res) {
+        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            $mdirs[$l['cat_id']] = $l['cat_name'];
+        }
+    } else {
+        $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
+        return false;
+    }
+    // MySQL File list
+    $res = mysql_query('SELECT id,filename FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id='.$pid);
+    $mfiles = array();
+    if ($res) {
+        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            $mfiles[$l['id']] = $l['filename'];
+        }
+    } else {
+        $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
+        return false;
+    }
+    $fs = glob($path.'/*');
+    if ($fs!=false) 
+    foreach ($fs as $f) {
+        if (is_dir($f)) {
+            $name = basename($f);
+            if ($name == '_thumbnails') continue;
+            if (isset($mdirs[$name])) {
+                if (!synchro($f, $name, $cfg)) return false;
+                unset($mdirs[$name]);
+            } else {
+                if (!add_all($f, $pid, $cfg)) return false;
+            }
+        } else {
+            $name = basename($f);
+            $pos = strrpos($name, '.');
+            $id = substr($name, 0, $pos);
+            if (isset($mfiles[$id])) {
+                unset($mfiles[$id]);
+            } else {
+                if (!add_file($f, $pid, $cfg)) return false;
+            }
+        }
+    }
+    // Deleted dirs
+    if (isset($mdirs) && count($mdirs) > 0) {
+        require_once '../assets/modules/easy2/TTree.class.php';
+        $tree = new TTree();
+        $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
+        foreach($mdirs as $key => $value) {
+            $ids = $tree->delete($key);
+            $files_id = array();
+            $res = mysql_query('SELECT id FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id IN('.implode(',', $ids).')');
+            if (!$res) {
+                $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
+                return false;
+            }
+            while ($l = mysql_fetch_row($res)) {
+                $files_id[] = $l[0];
+            }
+            if (count($files_id) > 0) {
+                mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments WHERE file_id IN('.implode(',', $files_id).')');
+            }
+            @mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id IN('.implode(',', $ids).')');
+        }
+    }
+    // Deleted files
+    if (isset($mfiles) && count($mfiles) > 0) {
+        $mfiles_array = array();
+        foreach($mfiles as $key => $value) {
+            $mfiles_array[] = $key;
+        }
+        $db_res = mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id IN('.implode(',', $mfiles_array).')');
+        @mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments WHERE file_id IN('.implode(',', $mfiles_array).')');
+        if (!$db_res) {
+            $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
+            return false;
+        }
+    }
+    return true;
 }

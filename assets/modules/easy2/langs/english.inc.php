@@ -40,6 +40,12 @@ $lng = array (
 'dir_edded' => 'Folder created',
 'dir_edd_err' => 'There was an error while trying to create a folder',
 
+'synchro' => 'Synchronize',
+'synchro_suc' => 'Gallery synchronized',
+'synchro_err' => 'There was an error while trying to synchronize',
+
+'archive' => 'Archive zip',
+
 'comments' => 'Comments',
 'author' => 'Author',
 'date' => 'Date',
@@ -179,7 +185,7 @@ default 1 - root.</p>
 <p><b>colls</b> - images per column</p>
 
 <p><b>limit</b> - images per page.</p>
-<p><b>gpn</b> - start id.</p>
+<p><b>gpn</b> - start page number.</p>
 <p><b>ecm</b> - comments on/off, 1 è 0 correspondingly.</p>
 <p><b>ecl</b> - Comments per page.</p>
 <p><b>orderby</b> - Sort by: date_added, last_modified, comments, filename, name, random.</p>

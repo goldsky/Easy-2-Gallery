@@ -125,7 +125,7 @@ if(!empty($e2g['captcha'])){
 else {
     $_P['captcha'] ='';
 }
-
+header('Content-Type: text/html; charset='.$_P['charset']);
 echo filler ($tpl, $_P);
 
 function filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {

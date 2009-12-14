@@ -7,6 +7,7 @@ $_P = array (
 'usercomment' => 'Your Comment',
 'send_btn' => 'Post comment',
 'body' => '',
+'pages' => '',
 'code' => 'Code',
 );
 $lng = array (
