@@ -20,20 +20,24 @@ if(!defined('E2G_SNIPPET_URL')) {
 
 require E2G_SNIPPET_PATH.'config.easy2gallery.php';
 
-if (isset($fid)) {
+if ( !empty($fid) ) {
     // FILE ID
-    $fid = (!empty($fid) && is_numeric($fid)) ? $fid : 0;
-//    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? (int) $_GET['fid'] : $fid;
-    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? (int) $_GET['fid'] : ($fid = (!empty($fid) && is_numeric($fid)) ? $fid : 0);
-} elseif (isset($rgid)) {
+    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? (int) $_GET['fid'] : ((!empty($fid) && is_numeric($fid)) ? $fid : '');
+}
+elseif ( !empty($rgid) ) {
     // RANDOMIZED GALLERY ID
     $cl_cfg['rgid'] = (!empty($rgid) && is_numeric($rgid)) ? $rgid : 0;
-} else {
+}
+else {
     // GALLERY ID
-//    $gid = (!empty($gid) && is_numeric($gid)) ? $gid : 1;
-//    $cl_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? (int) $_GET['gid'] : $gid;
     $cl_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? (int) $_GET['gid'] : ((!empty($gid) && is_numeric($gid)) ? $gid : 1);
 }
+//die('35<br />-$fid='.$fid
+//        .'<br />-$cl_cfg[\'fid\']='.$cl_cfg['fid']
+//        .'<br />-$rgid='.$rgid
+//        .'<br />-$cl_cfg[\'rgid\']='.$cl_cfg['rgid']
+//        .'<br />-$gid='.$gid
+//        .'<br />-$cl_cfg[\'gid\']='.$cl_cfg['gid']);
 
 // WIDTH
 $cl_cfg['w'] = (!empty($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
@@ -70,6 +74,9 @@ $gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;
 $cl_cfg['gpn'] = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : $gpn;
 
 // ORDER BY
+/*
+ * Options: order by SQL fields.
+ */
 $orderby = (!empty($orderby)) ? $orderby : $e2g['orderby'];
 $cl_cfg['orderby'] = preg_replace('/[^_a-z]/i', '', $orderby);
 $cat_orderby = (!empty($cat_orderby)) ? $cat_orderby : $e2g['cat_orderby'];
@@ -112,12 +119,14 @@ $cl_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_substr
 /*
  * EXECUTE SNIPPET
 */
-require_once E2G_SNIPPET_PATH . "classes/e2g.snippet.class.php";
+if(!class_exists('e2g_snip')) {
+    include_once E2G_SNIPPET_PATH . "classes/e2g.snippet.class.php";
+}
 if (class_exists('e2g_snip')) {
     $e2g = new e2g_snip($cl_cfg);
-    $output = $e2g->gallery();
+    $output = $e2g->display();
 } else {
-    $output = "<h3>error: e2g class not found</h3>";
+    $output = "<h3>error: e2g_snip class not found</h3>";
 }
-echo $output;
+return $output;
 ?>

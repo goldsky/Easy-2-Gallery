@@ -18,7 +18,7 @@ class e2g_snip {
         $this->_e2g = $_e2g;
     }
 
-    public function gallery() {
+    public function display() {
         /*
          * $type:
          * 1. 'gallery' : full gallery directory (directory - &gid - default)
@@ -26,22 +26,24 @@ class e2g_snip {
          * 3. 'random' : random file in a directory (random - $rgid)
          * 4. 'imggal' : images inside a directory, excluding the sub-directories
          * 5. 'dirgal' : sub-directories inside a directory, excluding the images
+         * 6. 'slideshow' : slideshow by fid-s or rgid-s or gid-s
         */
 
-        $fid = (int) $this->cl_cfg['fid'];
-        $rgid = (int) $this->cl_cfg['rgid'];
-        $gid = (int) $this->cl_cfg['gid']; // default
+        $fid = $this->cl_cfg['fid'];
+        $rgid = $this->cl_cfg['rgid'];
+        $gid = $this->cl_cfg['gid']; // default
         $notables = $this->cl_cfg['notables'];
 
-        if ($fid) {
-            return $this->_imagefile();
+        if ( !empty($fid) ) {
+            echo $this->_imagefile();
         }
-        elseif ($rgid) {
-            return $this->_randomimage();
+        elseif ( !empty($rgid) ) {
+            echo $this->_randomimage();
         }
-        elseif (!$fid) {
-            return $this->_gallery(); // default
+        else {
+            echo $this->_gallery(); // default
         }
+        
     }
 
     /*
@@ -670,6 +672,7 @@ class e2g_snip {
 
 //        $this->_libs();
 
+        // SLIDESHOW
         $show_group = $this->cl_cfg['show_group'];
 
         // gallery activation
@@ -725,7 +728,7 @@ class e2g_snip {
         }
         return $row;
     }
-
+    
     // DIRECTORY TEMPLATE
     private function _dir_tpl() {
         global $modx;
