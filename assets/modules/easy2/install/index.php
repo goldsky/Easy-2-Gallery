@@ -160,7 +160,7 @@ PRIMARY KEY  (id)
     // SNIPPET
 
     // $snippet = file_get_contents('../assets/modules/easy2/install/snippet.easy2gallery.php'); // goldsky -- use file instead
-    $snippet = 'include_once MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
+    $snippet = 'include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
 
     $res = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
     if (mysql_num_rows($res) > 0) {
