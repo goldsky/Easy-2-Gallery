@@ -938,6 +938,7 @@ class e2g_mod {
                 $path.'index.php'
         );
         $fs = array_diff(glob($path.'*'), $excludefiles);
+        natsort($fs);
         if ($fs!=FALSE)
         // goldsky -- alter the maximum execution time
             set_time_limit(0);
@@ -1163,6 +1164,7 @@ class e2g_mod {
                 $path.'index.php'
         );
         $fs = array_diff(glob($path.'*'), $excludefiles); // goldsky -- DO NOT USE a slash here!
+        natsort($fs);
         /*
          * READ the real physical objects, store into database
         */
