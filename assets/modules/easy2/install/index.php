@@ -80,7 +80,7 @@ KEY cat_left (cat_left)
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
 
-        if (mysql_query('INSERT INTO '.$GLOBALS['table_prefix']."easy2_dirs VALUES (0,1,1,2,0,'Easy 2',1)")) {
+        if (mysql_query('INSERT INTO '.$GLOBALS['table_prefix']."easy2_dirs VALUES (0,1,1,2,0,'Easy 2',1,'')")) {
             $_SESSION['easy2suc'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['added'];
         } else {
             $_SESSION['easy2err'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['add_err'].'<br />'.mysql_error();
