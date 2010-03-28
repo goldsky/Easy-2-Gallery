@@ -67,6 +67,7 @@ cat_right int(10) unsigned NOT NULL default \'0\',
 cat_level int(10) unsigned NOT NULL default \'0\',
 cat_name varchar(255) NOT NULL default \'\',
 cat_visible tinyint(4) NOT NULL default \'1\',
+cat_description varchar(255) default NULL,
 PRIMARY KEY  (cat_id),
 KEY cat_left (cat_left)
 ) TYPE=MyISAM')) {
@@ -115,7 +116,7 @@ KEY file_id (file_id)
         chref($index);
     }
 
-    // easy2_comments CHECK
+    // easy2_files CHECK
     if (isset($tab['easy2_files'])) {
         if (!mysql_query('RENAME TABLE easy2_files TO '.$GLOBALS['table_prefix'].'easy2_files')) {
             $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['rename_err'].'<br />'.mysql_error();
@@ -123,7 +124,7 @@ KEY file_id (file_id)
         }
     }
 
-    // easy2_comments CREATE
+    // easy2_files CREATE
     if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_files (
 id int(10) unsigned NOT NULL auto_increment,
 dir_id int(10) unsigned NOT NULL default \'0\',
