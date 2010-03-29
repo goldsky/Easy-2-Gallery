@@ -109,6 +109,11 @@ $cl_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_tpl) :
 // THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit)
 $cl_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
 
+// THUMB BACKGROUND COLOR
+$cl_cfg['thbg_red'] = isset($thbg_red) ? $thbg_red : $e2g['thbg_red'];
+$cl_cfg['thbg_green'] = isset($thbg_green) ? $thbg_green : $e2g['thbg_green'];
+$cl_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
+
 //SLIDESHOW GROUP
 $cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
 
