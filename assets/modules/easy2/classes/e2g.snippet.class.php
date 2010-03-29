@@ -169,7 +169,11 @@ class e2g_snip {
 
                     // search image for subdir
                     $l1=$this->_get_folder_img($l['cat_id']);
-                    if (!$l1) continue;
+                    // if there is an empty folder, or invalid content
+                    if (!$l1) {
+                        $dir_num_rows--; // to fix the merging thumb and pagination with image
+                        continue;
+                    }
                     $l['count'] = $l1['count'];
 
                     // path to subdir's thumbnail
