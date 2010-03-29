@@ -50,6 +50,7 @@ $lng = array (
         'dir' => 'folder',
         'thumb' => 'thumbnail',
         'empty' => 'empty',
+        'valid_extensions' => 'Valid extensions are',
         'files_uploaded' => 'files uploaded',
         'directory_created' => 'folder created',
         'files_deleted' => 'files deleted',
@@ -79,9 +80,13 @@ $lng = array (
 
         'archive' => 'Archive zip',
 
+        'commentsmgr' => 'Comments Manager',
+        'allcomments' => 'All Comments',
         'comments' => 'Comments',
         'author' => 'Author',
         'date' => 'Date',
+        'ipaddress' => 'IP Address',
+        'ignoredipaddr' => 'Ignored IP Address',
         'modified' => 'Modified',
         'delete' => 'Delete',
         'refresh' => 'Update',
@@ -107,10 +112,12 @@ $lng = array (
         'thumbcnt' => 'Display settings',
         'w' => 'Width',
         'h' => 'Height',
+        'thq' => 'Compression level',
         'resize_type' => 'Thumbnail Resize',
         'inner' => 'inner',
+        'shrink' => 'shrink',
         'resize' => 'resize',
-        'thq' => 'Compression level',
+        'thbg_rgb' => 'Thumbnail background color',
 
         'name_len' => 'max thumbnail name length',
         'cat_name_len' => 'max folder name length',
@@ -158,7 +165,8 @@ $lng = array (
         'cfg_com4' => 'Level of jpeg comression from 0 to 100%.<br><b class="warning">Only for images larger than limits</b>.',
         'cfg_com5' => 'Thumbnail width, px.',
         'cfg_com6' => 'Thumbnail height, px',
-        'cfg_com6a' => 'Inner: cropped | Resize: autofit',
+        'cfg_com6a' => 'Inner: cropped | Shrink: shrink | Resize: proportional autofit',
+        'cfg_com6b' => 'White is 255 255 255, black is 0 0 0. It\'s only resized thumbnail that contains margin gap with default thumb size.',
         'cfg_com7' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
         'cfg_com8' => 'Columns',
         'cfg_com9' => 'Thumbnails per page',
@@ -203,6 +211,9 @@ $lng = array (
         'file_delete_err' => 'Can\'t delete file',
         'id_err' => 'wrong id',
         'update_err' => 'changes not saved',
+        'renamefile' => 'Change the filename',
+
+        'uim_preview' => 'Preview',
         'uim_preview_err' => 'Preview<br />not available',
 
 
