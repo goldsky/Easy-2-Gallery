@@ -1,7 +1,7 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cl['_t']
-?>
+        ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -24,18 +24,6 @@ $_t = $this->e2gmod_cl['_t']
                 di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove_field_btn']; ?></b></a>'+fi.innerHTML;
                 im.appendChild(di);
                 return TRUE;
-            }
-            function newDir (a) {
-                var f;
-                f=window.prompt("<?php echo $lng['enter_dirname']; ?>:","");
-                if (f) a.href+=f;
-                else return false;
-            }
-            function editDir (a) {
-                var f;
-                f=window.prompt("<?php echo $lng['enter_new_dirname']; ?>:","");
-                if (f) a.href+=f;
-                else return false;
             }
             function uimPreview (imSrc) {
                 if (!document.images) return FALSE;
@@ -67,10 +55,63 @@ $_t = $this->e2gmod_cl['_t']
                     if (e.type == "checkbox") e.checked = check_var;
                 }
             }
+            function selectAllComments (check_var) {
+                for (var i=0; i<document.forms["listComments"].elements.length; i++) {
+                    var e=document.forms["listComments"].elements[i];
+                    if (e.type == "checkbox") e.checked = check_var;
+                }
+            }
             function imPreview (imPath) {
                 var pElt = this.document.getElementById("pElt");
                 pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
             }
+            function imPreview2 (imPath) {
+                var pElt = this.document.getElementById("pElt2");
+                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
+            }
+
+            var tpResources;
+            function showTab( sName ) {
+                if (typeof tpResources != "undefined" ) {
+                    switch ( sName ) {
+                        case "file":
+                            tpResources.setSelectedIndex( 0 );
+                            break;
+                        case "commentsmgr":
+                            tpResources.setSelectedIndex( 1 );
+                            break;
+                        case "imageupload":
+                            tpResources.setSelectedIndex( 2 );
+                            break;
+                        case "config":
+                            tpResources.setSelectedIndex( 3 );
+                            break;
+                        case "help":
+                            tpResources.setSelectedIndex( 4 );
+                            break;
+                    }
+                }
+            }
+
+        </script>
+        <script type="text/javascript" src="../assets/plugins/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript">
+            tinyMCE.init({
+                mode : "textareas",
+                theme : "advanced",
+                plugins : "spellchecker,pagebreak,style,layer,table,save,advhr,advimage,advlink,emotions,iespell,inlinepopups,insertdatetime,preview,media,searchreplace,print,contextmenu,paste,directionality,fullscreen,noneditable,visualchars,nonbreaking,xhtmlxtras,template",
+                width : "60%",
+
+                // Theme options
+                theme_advanced_buttons1 : "bold,italic,underline,strikethrough,|,justifyleft,justifycenter,justifyright,justifyfull,|,styleselect,formatselect,fontselect,fontsizeselect,|,forecolor,backcolor",
+                theme_advanced_buttons2 : "cut,copy,paste,pastetext,pasteword,|,search,replace,|,bullist,numlist,|,outdent,indent,blockquote,|,undo,redo,|,link,unlink,anchor,image,cleanup,help,code,|,insertdate,inserttime,preview",
+                theme_advanced_buttons3 : "",
+                theme_advanced_buttons4 : "",
+                theme_advanced_toolbar_location : "top",
+                theme_advanced_toolbar_align : "left",
+                theme_advanced_statusbar_location : "bottom",
+                theme_advanced_resizing : true
+            });
         </script>
     </head>
     <body>
@@ -82,6 +123,7 @@ $_t = $this->e2gmod_cl['_t']
                     tpResources = new WebFXTabPane(document.getElementById('easy2Pane'));
                 </script>
                 <?php include_once 'pane.files.inc.php';?>
+                <?php include_once 'pane.comments.inc.php';?>
                 <?php include_once 'pane.imageupload.inc.php';?>
                 <?php include_once 'pane.config.inc.php';?>
                 <?php include_once 'pane.help.inc.php';?>
