@@ -76,6 +76,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         cat_name varchar(255) NOT NULL default \'\',
                         cat_visible tinyint(4) NOT NULL default \'1\',
                         cat_description varchar(255) default NULL,
+                        last_modified datetime default NULL,
                         PRIMARY KEY  (cat_id),
                         KEY cat_left (cat_left)
                         ) TYPE=MyISAM')) {
@@ -94,6 +95,13 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_description '.$lngi['created'];
     }
 
+    // additional field for 1.3.6 Beta4
+    // last_modified
+    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_dirs'),8)!='last_modified') {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD last_modified datetime default NULL');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.last_modified '.$lngi['created'];
+    }
+    
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
 
