@@ -17,6 +17,12 @@ $_t = $this->e2gmod_cl['_t']
             function confirmDeleteFolder() {
                 return (confirm("<?php echo $lng['delete_folder_confirm']; ?>"));
             }
+            function ignoreIPAddress() {
+                return (confirm("<?php echo $lng['ignore_ip_address_confirm']; ?>"));
+            }
+            function unignoreIPAddress() {
+                return (confirm("<?php echo $lng['unignore_ip_address_confirm']; ?>"));
+            }
             function addField () {
                 var im = document.getElementById("imFields");
                 var di = document.createElement("DIV");
@@ -61,12 +67,28 @@ $_t = $this->e2gmod_cl['_t']
                     if (e.type == "checkbox") e.checked = check_var;
                 }
             }
+            function selectAllIgnoreIPs (check_var) {
+                for (var i=0; i<document.forms["listIgnoreIPs"].elements.length; i++) {
+                    var e=document.forms["listIgnoreIPs"].elements[i];
+                    if (e.type == "checkbox") e.checked = check_var;
+                }
+            }
+            function selectAllHiddenComments (check_var) {
+                for (var i=0; i<document.forms["listHiddenComments"].elements.length; i++) {
+                    var e=document.forms["listHiddenComments"].elements[i];
+                    if (e.type == "checkbox") e.checked = check_var;
+                }
+            }
             function imPreview (imPath) {
                 var pElt = this.document.getElementById("pElt");
                 pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
             }
             function imPreview2 (imPath) {
                 var pElt = this.document.getElementById("pElt2");
+                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
+            }
+            function imPreview3 (imPath) {
+                var pElt = this.document.getElementById("pElt3");
                 pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
             }
 

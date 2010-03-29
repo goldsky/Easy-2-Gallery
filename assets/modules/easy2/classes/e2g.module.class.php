@@ -368,7 +368,6 @@ class e2g_mod {
                 exit();
             // Delete comments from comments manager
             case 'delete_allcomments':
-                $allcids = array();
                 foreach ($_POST['allcomment'] as $eachcid) {
                     if (!is_numeric($eachcid)) continue;
                     mysql_query(
@@ -462,6 +461,50 @@ class e2g_mod {
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+            // IGNORE IP ADDRESS IN IMAGE COMMENTS
+            case 'ignore_ip':
+                $insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_ignoredip '
+                        . '(ign_date, ign_ip_address, ign_username, ign_email) '
+                        . 'VALUES(NOW(),\''.$_GET['ip'].'\',\''.$_GET['u'].'\',\''.$_GET['e'].'\')';
+                if (mysql_query($insert)) {
+                    $update = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_comments '
+                            .'SET STATUS=\'0\' '
+                            .'WHERE ip_address=\''.$_GET['ip'].'\'';
+                    mysql_query($update);
+                    $_SESSION['easy2suc'][] = $lng['ip_ignored_suc'];
+                } else {
+                    $_SESSION['easy2err'][] = $lng['ip_ignored_err'].'<br />'.mysql_error();
+                }
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+            // UNIGNORE IP ADDRESS IN IMAGE COMMENTS
+            case 'unignore_ip':
+                $delete = 'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip '
+                        . 'WHERE ign_ip_address =\''.$_GET['ip'].'\'';
+                if (mysql_query($delete)) {
+                    $update = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_comments '
+                            .'SET STATUS=\'1\' '
+                            .'WHERE ip_address=\''.$_GET['ip'].'\'';
+                    mysql_query($update);
+                    $_SESSION['easy2suc'][] = $lng['ip_unignored_suc'];
+                } else {
+                    $_SESSION['easy2err'][] = $lng['ip_unignored_err'].'<br />'.mysql_error();
+                }
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+            // Delete comments from comments manager
+            case 'unignored_all_ip':
+                foreach ($_POST['unignored_ip'] as $uignIPs) {
+                    mysql_query(
+                            'UPDATE '.$modx->db->config['table_prefix'].'easy2_comments '
+                            .'SET STATUS=\'1\' '
+                            .'WHERE ip_address=\''.$uignIPs.'\'') or die('501 '.mysql_error());
+                    mysql_query(
+                            'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip '
+                            .'WHERE ign_ip_address =\''.$uignIPs.'\'') or die('504 '.mysql_error());
+                }
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
         } // switch ($act)
 
         // for table row class looping
@@ -551,21 +594,21 @@ class e2g_mod {
                             .'SET cat_description = \''.stripslashes($_POST['description']).'\''
                             .', last_modified=NOW() '
                             .'WHERE cat_id='.(int)$_GET['dir_id'];
-                    $qResult = mysql_query($q);
+                    $qResult = mysql_query($q) or die('574'.mysql_error());
                     if($qResult) {
                         // rename dir
                         if( $_POST['newdirname'] != $row['cat_name'] ) {
                             rename('../'.$gdir.$row['cat_name'], '../'.$gdir.$_POST['newdirname']);
                             @chmod('../'.$gdir.$_POST['newdirname'], 0755);
                             $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                    .'SET cat_name = \''.htmlspecialchars($_POST['newdirname'], ENT_QUOTES).'\''
+                                    .'SET cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '
                                     .'WHERE cat_id='.(int)$_GET['dir_id'];
                             mysql_query($renamedir);
                         }
                         $_SESSION['easy2suc'][] .= $lng['updated'];
                     } else {
-                        $_SESSION['easy2err'][] .= $lng['update_err'];
+                        $_SESSION['easy2err'][] .= $lng['update_err'].mysql_error();
                     }
                     header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
@@ -606,7 +649,7 @@ class e2g_mod {
 
                 $ext = substr($row['filename'], strrpos($row['filename'], '.'));
                 $filename = substr($row['filename'], 0, -(strlen($ext)));
-//                die('658 '.$gdir);
+
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
                             .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES).'\''
@@ -717,7 +760,13 @@ class e2g_mod {
                         <td nowrap="nowrap">'.$l['date_added'].'</td>
                         <td nowrap="nowrap">'.$l['author'].'</td>
                         <td nowrap="nowrap"><a href="mailto:'.$l['email'].'">'.$l['email'].'</a></td>
-                        <td nowrap="nowrap"><b>'.$lng['ipaddress'].'</b></td>
+                        <td nowrap="nowrap">'.$l['ip_address']
+                            .' <a href="'.$index.'&act=ignore_ip&file_id='.$l['file_id'].'&comment_id='.$l['id'].'"
+                               onclick="return ignoreIPAddress();">
+                                <img src="' . E2G_MODULE_URL . 'icons/delete.png" border="0"
+                                     alt="'.$lng['ignore'].'" title="'.$lng['ignore'].'" />
+                            </a>
+                        </td>
                         <td valign="top" style="width:100%;">'.htmlspecialchars($l['comment']).'</td>
                     </tr>
                  ';
@@ -738,15 +787,15 @@ class e2g_mod {
 ';
                 break;
             case 'openexplorer':
-                    header ('Location: '.$index.'&pid='.$parent_id);
-                    exit();
+                header ('Location: '.$index.'&pid='.$parent_id);
+                exit();
                 break;
             default:
                 if (empty($cpath)) {
                     // MySQL Dir list
                     $q = 'SELECT cat_id,cat_name '
-                        .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
-                        .'WHERE parent_id = '.$parent_id.' AND cat_visible = 1'.' ';
+                            .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
+                            .'WHERE parent_id = '.$parent_id.' AND cat_visible = 1'.' ';
                     $res = mysql_query($q);
                     $mdirs = array();
                     if ($res) {
@@ -793,8 +842,8 @@ class e2g_mod {
 </p>';
                 // Description of the current directory
                 $qdesc = 'SELECT cat_description '
-                    .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                    .'WHERE cat_id = '.$parent_id;
+                        .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                        .'WHERE cat_id = '.$parent_id;
                 $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                 $content .= '
 <table cellspacing="0" cellpadding="0">
@@ -1171,11 +1220,11 @@ class e2g_mod {
         global $modx;
         $result = array();
         $q = 'SELECT A.cat_id, A.cat_name '
-            .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-            .$modx->db->config['table_prefix'].'easy2_dirs B '
-            .'WHERE B.cat_id='.$id.' '
-            .'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
-            .'ORDER BY A.cat_left';
+                .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
+                .$modx->db->config['table_prefix'].'easy2_dirs B '
+                .'WHERE B.cat_id='.$id.' '
+                .'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
+                .'ORDER BY A.cat_left';
         $res = mysql_query($q);
         while ($l = mysql_fetch_row($res)) {
             $result[$l[0]] = $l[1];

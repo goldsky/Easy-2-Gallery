@@ -43,6 +43,8 @@ $lng = array (
         'remove_field_btn' => 'Remove',
         'delete_confirm' => 'Are you sure you want to delete this file?\n\nClick ok to confirm.',
         'delete_folder_confirm' => 'Are you sure you want to delete this folder?\nAll child files and folders will be removed as well.\n\nClick ok to confirm.',
+        'ignore_ip_address_confirm' => 'Are you sure want to ignore this IP Address?\nAll comments from this IP address will be hidden as well.\n\nClick ok to confirm.',
+        'unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
         'enter_dirname' => 'Enter new folder name',
         'enter_new_dirname' => 'Rename folder',
 
@@ -87,7 +89,10 @@ $lng = array (
         'author' => 'Author',
         'date' => 'Date',
         'ipaddress' => 'IP Address',
-        'ignoredipaddr' => 'Ignored IP Address',
+        'ignored_ip' => 'Ignored IP Address',
+        'hiddencomments' => 'Hidden Comments',
+        'ignore' => 'Ignore',
+        'unignore' => 'Unignore',
         'modified' => 'Modified',
         'delete' => 'Delete',
         'refresh' => 'Update',
@@ -196,7 +201,10 @@ $lng = array (
         'comment_add_err' => 'There was an error while trying to add comment',
 
         'file_added' => 'File added',
-
+        'ip_ignored_suc' => 'This IP is now ignored.',
+        'ip_ignored_err' => 'Could not add IP to ignore list.',
+        'ip_unignored_suc' => 'This IP is now unignored.',
+        'ip_unignored_err' => 'Could not release IP from ignore list.',
 
         '_thumb_err' => 'Can\'t create folder &quot;_thumbnails&quot;',
         'upload_err' => 'Can\'t upload file',
