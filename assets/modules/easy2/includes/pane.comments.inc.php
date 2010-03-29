@@ -70,7 +70,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                             <?php echo $l['author']; ?><br />
                                         <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a>
                                     </td>
-                                    <td valign="top" nowrap="nowrap">127.0.0.1</td>
+                                    <td valign="top" nowrap="nowrap"><?php echo $l['ip_address']; ?></td>
                                     <td valign="top" style="width:100%;"><?php echo htmlspecialchars($l['comment']); ?></td>
                                 </tr>
                                     <?php
