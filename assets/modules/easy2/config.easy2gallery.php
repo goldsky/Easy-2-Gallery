@@ -2,6 +2,7 @@
 $e2g = array (
 'debug' => 0,
 'dir' => 'assets/gallery/',
+'tinymcefolder' => 'tinymce3241',
 'maxw' => 1000,
 'maxh' => 750,
 'maxthq' => 86,
