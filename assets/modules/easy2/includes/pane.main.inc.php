@@ -1,7 +1,7 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cl['_t']
-        ?>
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -94,7 +94,7 @@ $_t = $this->e2gmod_cl['_t']
             }
 
         </script>
-        <script type="text/javascript" src="../assets/plugins/tinymce/jscripts/tiny_mce/tiny_mce.js"></script>
+        <script type="text/javascript" src="../assets/plugins/<?php echo $e2g['tinymcefolder']; ?>/jscripts/tiny_mce/tiny_mce.js"></script>
         <script type="text/javascript">
             tinyMCE.init({
                 mode : "textareas",
