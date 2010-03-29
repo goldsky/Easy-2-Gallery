@@ -90,14 +90,14 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // easy2_dirs fields UPGRADE for additional fields from previous version
     // additional field for 1.3.6 Beta4
     // cat_description
-    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_dirs'),7)!='cat_description') {
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_description')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_description varchar(255) default NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_description '.$lngi['created'];
     }
 
     // additional field for 1.3.6 Beta4
     // last_modified
-    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_dirs'),8)!='last_modified') {
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'last_modified')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD last_modified datetime default NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.last_modified '.$lngi['created'];
     }
@@ -105,7 +105,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
 
-        if (mysql_query('INSERT INTO '.$GLOBALS['table_prefix']."easy2_dirs VALUES (0,1,1,2,0,'Easy 2',1,'')")) {
+        if (mysql_query('INSERT INTO '.$GLOBALS['table_prefix']."easy2_dirs VALUES (0,1,1,2,0,'Easy 2',1,'','')")) {
             $_SESSION['easy2suc'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['added'];
         } else {
             $_SESSION['easy2err'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['add_err'].'<br />'.mysql_error();
@@ -147,7 +147,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // easy2_comments fields UPGRADE for additional fields from previous version
     // additional field for 1.4.0 Beta1
     // ip_address
-    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_comments'),4)!='ip_address') {
+    if (check_field($GLOBALS['table_prefix'].'easy2_comments', 'ip_address')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_comments ADD ip_address char(16) NOT NULL AFTER email');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_comments.ip_address '.$lngi['created'];
     }
@@ -181,7 +181,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
             chref($index);
         }
     }
-    
+
     // adding ignore IP table
     if (!isset($tab[$GLOBALS['table_prefix'].'easy2_ignoredip'])) {
         if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_ignoredip (
@@ -689,4 +689,13 @@ function restore_all ($path, $pid) {
     return TRUE;
 }
 
+// goldsky -- a snippet function to do the database upgrading.
+function check_field($table,$checkingfield) {
+    $res = mysql_query('DESCRIBE '.$table);
+    while($row = mysql_fetch_array($res)) {
+        $field[$row[0]] = $row[0];
+    }
+    if ($field[$checkingfield]) return TRUE;
+    else return FALSE;
+}
 ?>
