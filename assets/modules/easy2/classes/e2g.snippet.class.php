@@ -90,6 +90,8 @@ class e2g_snip {
         */
         $multiple_gids = explode(',',$gid);
         $multiple_gids_count = count($multiple_gids);
+        // reset the directory number
+        $dir_num_rows = 0;
         foreach ($multiple_gids as $single_gid) {
             // get path from the $gid
 //        $path = $this->_get_path($gid);
@@ -160,10 +162,7 @@ class e2g_snip {
 
                 $dirquery = mysql_query($query);
                 if (!$dirquery) die('161 '.mysql_error());
-                $dir_num_rows = mysql_num_rows($dirquery);
-
-//            // START the grid
-//            $_e2g['content'] = $dir_num_rows ? ( $notables ? '<div class="e2g">':'<table class="e2g"><tr>') : '';
+                $dir_num_rows += mysql_num_rows($dirquery);
 
                 $i = 0;
                 while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
@@ -246,14 +245,14 @@ class e2g_snip {
             ;
 
             if ( $file_thumb_offset > 0 && $file_thumb_offset < $limit ) {
-                $filequery .= 'LIMIT
-                ' . ( $dir_num_rows > 0 ?
+                $filequery .= 'LIMIT '
+                        . ( $dir_num_rows > 0 ?
                         ( ' 0, ' . ( $file_thumb_offset ) ) :
                         ( ( ( $gpn - $file_page_offset) * $limit) + $file_thumb_offset ) . ', ' . $limit );
             }
             elseif ( $file_thumb_offset != 0 || $file_thumb_offset == $limit ) {
-                $filequery .= 'LIMIT
-                ' . ( $modulus_dir_count > 0 ?
+                $filequery .= 'LIMIT '
+                        . ( $modulus_dir_count > 0 ?
                         ( ' 0, ' . ( $file_thumb_offset ) ) :
                         ( ( ( $gpn - $file_page_offset) * $limit) ) . ', ' . $limit );
             }
@@ -266,17 +265,6 @@ class e2g_snip {
             $file_num_rows = mysql_num_rows($file_query_result);
 
             /*
-             * goldsky -- to merge the file's thumb starter positions between dirs and files
-            */
-            if ( $file_thumb_offset%$colls==0 ) {
-                $_e2g['content'] .= $file_num_rows ? ($notables ? '':'<tr>') : '';
-            }
-            // goldsky -- if JOINING the same row with the last result of the dir list
-            else {
-                $_e2g['content'] .= $file_num_rows ? ($notables ? '':'') : '';
-            }
-
-            /*
              * retrieve the content
             */
             $i = 0;
@@ -286,7 +274,7 @@ class e2g_snip {
                 * goldsky -- this is where the file's thumb 'float' to the dirs' in TABLE grid
                 */
                 if ( ( $i > 0 )
-                        && ( abs( $i - ( $dir_num_rows == 0 ? 0 : $file_thumb_offset ) ) % $colls == 0 )
+                        && ( ( $i + $dir_num_rows ) % $colls == 0 )
                         && !$notables ) {
                     $_e2g['content'] .= '</tr><tr>';
                 }
@@ -348,20 +336,12 @@ class e2g_snip {
         $colls = $this->cl_cfg['colls'];
 
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-//                . 'WHERE id='.$fid.' '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
         $res = mysql_query($filequery) or die('353 '.mysql_error());
 
         // START the grid
         $_e2g['content'] .= $notables ? '<div class="e2g">':'<table class="e2g"><tr>';
-
-//        $l = mysql_fetch_array($res, MYSQL_ASSOC);
-//
-//        $this->_libs();
-//        $this->_activate_libs($l);
-//
-//        $_e2g['content'] .= $notables ? $this->_filler($this->_thumb_tpl(), $this->_activate_libs($l)) : '<td>'.$this->_filler($this->_thumb_tpl(), $this->_activate_libs($l)).'</td>';
 
         $this->_libs();
         $i = 0;
@@ -392,11 +372,6 @@ class e2g_snip {
         $limit = $this->cl_cfg['limit'];
         $rgid = $this->cl_cfg['rgid'];
 
-//        $q = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-//                . 'WHERE status = 1 '
-//                . 'AND dir_id='. $rgid .' '
-//                . 'ORDER BY RAND() LIMIT 1'
-//        ;
         $q = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE status = 1 '
                 . 'AND dir_id IN ('. $rgid .') '
@@ -434,13 +409,16 @@ class e2g_snip {
      *          'resize' = autofit the thumbnail
      *
     */
-    private function _get_thumb ($gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner') {
+    private function _get_thumb ($gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner', $red = 255, $green = 255, $blue = 255) {
         global $modx;
 
-        $resize_type = $this->cl_cfg['resize_type'];
         $w = $this->cl_cfg['w'];
         $h = $this->cl_cfg['h'];
         $thq = $this->cl_cfg['thq'];
+        $resize_type = $this->cl_cfg['resize_type'];
+        $red = isset($this->cl_cfg['thbg_red']) ? $this->cl_cfg['thbg_red'] : $red ;
+        $green = isset($this->cl_cfg['thbg_green']) ? $this->cl_cfg['thbg_green'] : $green ;
+        $blue = isset($this->cl_cfg['thbg_blue']) ? $this->cl_cfg['thbg_blue'] : $blue ;
 
         if (empty($path)) return false;
 
@@ -497,24 +475,52 @@ class e2g_snip {
                 }
 
                 $pic = imagecreatetruecolor($w, $h);
-                $bgc = imagecolorallocate($pic, 255, 255, 255);
+                $bgc = imagecolorallocate($pic, $red, $green, $blue);
                 imagefill($pic, 0, 0, $bgc);
                 imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $i[0], $i[1]);
 
-            } elseif ($resize_type == 'resize') {
+            } 
+            elseif ($resize_type == 'shrink') {
                 /*
-                 * $resize_type == 'resize'
-                 * proportionally reduce to default dimensions
+                 * $resize_type == 'shrink'
+                 * shrink to default dimensions
                 */
 
                 if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0]);
                 else $w = round($i[0] * $h / $i[1]);
 
                 $pic = imagecreatetruecolor($w, $h);
-                $bgc = imagecolorallocate($pic, 255, 255, 255);
+                $bgc = imagecolorallocate($pic, $red, $green, $blue);
                 imagefill($pic, 0, 0, $bgc);
                 imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $i[0], $i[1]);
             }
+            elseif ($resize_type == 'resize') {
+                /*
+                 * $resize_type == 'resize'
+                 * proportionally reduce to default dimensions
+                */
+                // Shifts
+                $x = $y = 0;
+
+                // Dimensions
+                $w2 = $w;
+                $h2 = $h;
+
+                if ($i[0] > $i[1]) {
+                    $h2 = round($i[1] * $w / $i[0]);
+                    $y = abs($h-$h2)/2;
+                }
+                else {
+                    $w2 = round($i[0] * $h / $i[1]);
+                    $x = abs($w-$w2)/2;
+                }
+
+                $pic = imagecreatetruecolor($w, $h);
+                $bgc = imagecolorallocate($pic, $red, $green, $blue);
+                imagefill($pic, 0, 0, $bgc);
+                imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $i[0], $i[1]);
+            }
+            else return;
 
             /*
              * make directory of thumbnails
