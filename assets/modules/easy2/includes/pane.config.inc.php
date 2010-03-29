@@ -37,6 +37,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com1']; ?></td>
                     </tr>
+                    <tr class="gridAltItem">
+                        <td width="12%"><b><?php echo $lng['tinymcefolder']; ?>:</b></td>
+                        <td width="88%"><input name="tinymcefolder" type="text" value="<?php echo $e2g['tinymcefolder']; ?>"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com1a']; ?></td>
+                    </tr>
                 </table>
             </div>
             <div class="tab-page" id="tabImagesSettings">
