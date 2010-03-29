@@ -51,6 +51,7 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     $n = htmlspecialchars(trim($_POST['name']), ENT_QUOTES);
     $c = htmlspecialchars(trim($_POST['comment']), ENT_QUOTES);
     $e = htmlspecialchars(trim($_POST['email']), ENT_QUOTES);
+    $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
     if(check_email_address($e) == FALSE) {
         $_P['body'] .= '<h2>'.$lng['email_err'].'</h2>';
@@ -60,8 +61,8 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     }
 
     elseif (!empty($n) && !empty($c)) {
-        if (mysql_query('INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,comment,date_added) '
-        . "VALUES($id,'$n','$e','$c', NOW())")) {
+        if (mysql_query('INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+        . "VALUES($id,'$n','$e','$ip','$c', NOW())")) {
 
             mysql_query('UPDATE '.$table_prefix.'easy2_files SET comments=comments+1 WHERE id='.$id);
             $_P['body'] .= '<h3>'.$lng['comment_added'].'</h3>';
