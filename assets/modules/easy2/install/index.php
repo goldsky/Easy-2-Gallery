@@ -1,4 +1,10 @@
 <?php
+// SYSTEM VARS
+$debug = 0;
+$_t = $modx->config['manager_theme'];
+$_a = (int) $_GET['a'];
+$_i = (int) $_GET['id'];
+$index = 'index.php?a='.$_a.'&id='.$_i;
 
 if (file_exists('../assets/modules/easy2/install/langs/'.$modx->config['manager_language'].'.inc.php')) {
     include '../assets/modules/easy2/install/langs/'.$modx->config['manager_language'].'.inc.php';
