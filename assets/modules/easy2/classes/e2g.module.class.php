@@ -31,14 +31,13 @@ class e2g_mod {
 //            error_reporting(E_ALL);
 //            $this->e2gmod_cl['old_error_handler'] = set_error_handler("error_handler");
 //        }
-        
+
         // ALERTS / ERRORS
-        if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
-        if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
+//        if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
+//        if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
         require E2G_MODULE_PATH . 'config.easy2gallery.php';
 
-        $e2g['mdate_format'] = 'd-m-y H:i';
         if (!is_dir( MODX_BASE_PATH . $e2g['dir'])) {
             echo '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
             exit;
@@ -60,6 +59,8 @@ class e2g_mod {
         global $modx;
         $e2gmod_cl = $this->e2gmod_cl;
         $e2g = $this->e2g;
+        $e2g['mdate_format'] = 'd-m-y H:i';
+
         $lng = $this->lng;
         $parent_id = $this->e2gmod_cl['parent_id'];
         $index = $this->e2gmod_cl['index'];
@@ -108,7 +109,7 @@ class e2g_mod {
             // UPLOADING IMAGES
             case 'uploadzip':
                 if($_FILES['zip']['error']==0 && $_FILES['zip']['size']>0) {
-                    include_once E2G_MODULE_PATH . 'pclzip.lib.php';
+                    include_once E2G_MODULE_PATH . 'classes/pclzip.lib.php';
                     $zip = new PclZip($_FILES['zip']['tmp_name']);
                     if (($list = $zip->listContent()) == 0) {
                         $_SESSION['easy2err'][] = "Error : ".$zip->errorInfo(TRUE);
@@ -173,55 +174,7 @@ class e2g_mod {
                 $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
                 header ("Location: ".$index.'&pid='.$_GET['pid']);
                 exit();
-            // Create Directory
-            case 'create_dir':
-                require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
-                $tree = new TTree();
-                $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
-                $dirname = htmlspecialchars($_GET['name'], ENT_QUOTES);
-                if ( ($id = $tree->insert($dirname, $parent_id)) ) {
-                    if (mkdir('../'.$gdir.$dirname)) {
-                        $_SESSION['easy2suc'][] = $lng['directory_created'];
-                        @chmod('../'.$gdir.$dirname, 0755);
-
-                        // goldsky -- adds a cover file
-                        $indexFile = '../'.$gdir.$dirname."/index.html";
-                        $fh = fopen($indexFile, 'w') or die("can't open file");
-                        $stringData = $lng['indexfile'];
-                        fwrite($fh, $stringData);
-                        fclose($fh);
-                        @chmod($indexFile, 0644);
-                    } else {
-                        $_SESSION['easy2err'][] = $lng['directory_create_err'];
-                        $tree->delete($id);
-                    }
-                } else {
-                    $_SESSION['easy2err'][] = $tree->error;
-                }
-                header ("Location: ".$index."&pid=".$parent_id);
-                exit();
-            // Edit Directory
-            case 'edit_dir':
-                require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
-                $tree = new TTree();
-                $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
-
-                // goldsky -- prepare the old folder's name to be renamed
-                $odirname = $modx->db->getValue($modx->db->select(' cat_name ', $tree->table, ' cat_id = ' . $_GET['dir_id'],'','1'));
-
-                // goldsky -- get the new folder's name
-                $ndirname = htmlspecialchars($_GET['name'], ENT_QUOTES);
-                if ($tree->update($_GET['dir_id'], $ndirname)) {
-                    //goldsky -- rename folder's name NOW!
-                    rename('../'.$gdir.$odirname,'../'.$gdir.$ndirname);
-                    @chmod('../'.$gdir.$ndirname, 0755);
-                    $_SESSION['easy2suc'][] = $lng['updated'];
-                } else {
-                    $_SESSION['easy2err'][] = $lng['update_err'];
-                    $_SESSION['easy2err'][] = $tree->error;
-                }
-                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                exit();
+            // Multiple deletion
             case 'delete_checked':
                 $out = '';
                 $res = array(
@@ -413,6 +366,23 @@ class e2g_mod {
                         .'SET comments=comments-'.count($cids).' WHERE id ='.(int)$_GET['file_id']);
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+            // Delete comments from comments manager
+            case 'delete_allcomments':
+                $allcids = array();
+                foreach ($_POST['allcomment'] as $eachcid) {
+                    if (!is_numeric($eachcid)) continue;
+                    mysql_query(
+                            'UPDATE '.$modx->db->config['table_prefix'].'easy2_files AS f '
+                            .'LEFT JOIN '.$modx->db->config['table_prefix'].'easy2_comments AS c '
+                            .'ON f.id=c.file_id '
+                            .'SET f.comments=f.comments-1 '
+                            .'WHERE c.id='.(int)$eachcid);
+                    mysql_query(
+                            'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments '
+                            .'WHERE id ='.(int)$eachcid);
+                }
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
             // CACHE
             case 'clean_cache':
                 $res = $this->_delete_all ('../'.$gdir.'_thumbnails/');
@@ -494,6 +464,7 @@ class e2g_mod {
                 exit();
         } // switch ($act)
 
+        // for table row class looping
         $cl = array(' class="gridAltItem"', ' class="gridItem"');
         $i = 0;
         $page = empty($_GET['page']) ? '' : $_GET['page'];
@@ -507,34 +478,163 @@ class e2g_mod {
          * PAGE ACTION
         */
         switch ($page) {
-            // EDIT FILE
+            // Create Directory
+            case 'create_dir':
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
+                    $tree = new TTree();
+                    $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
+                    $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                    if ( ($id = $tree->insert($dirname, $parent_id)) ) {
+                        $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                                .', last_modified=NOW() '
+                                .'WHERE cat_id='.$id;
+                        mysql_query($q);
+                        if (mkdir('../'.$gdir.$dirname)) {
+                            $_SESSION['easy2suc'][] = $lng['directory_created'];
+                            @chmod('../'.$gdir.$dirname, 0755);
+
+                            // goldsky -- adds a cover file
+                            $indexFile = '../'.$gdir.$dirname."/index.html";
+                            $fh = fopen($indexFile, 'w') or die("can't open file");
+                            $stringData = $lng['indexfile'];
+                            fwrite($fh, $stringData);
+                            fclose($fh);
+                            @chmod($indexFile, 0644);
+                        } else {
+                            $_SESSION['easy2err'][] = $lng['directory_create_err'];
+                            $tree->delete($id);
+                        }
+                    } else {
+                        $_SESSION['easy2err'][] = $tree->error;
+                    }
+                    header ("Location: ".$index."&pid=".$parent_id);
+                    exit();
+                }
+
+                $content .= '
+<p>'.$lng['create_dir'].'&nbsp; &nbsp; &nbsp;
+    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+</p>
+<form name="list" action="" method="post">
+    <table cellspacing="0" cellpadding="2" class="aForm" >
+        <tr>
+            <td><b>'.$lng['create_dir'].' :</b></td>
+            <td><input name="name" type="text" size="30"></td>
+        </tr>
+        <tr>
+            <td valign="top"><b>'.$lng['description'].' :</b></td>
+            <td><textarea name="description" style="width:100%"></textarea></td>
+        </tr>
+        <tr><td></td>
+            <td><input type="submit" value="'.$lng['save'].'">
+                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+            </td>
+        </tr>
+    </table>
+</form>
+';
+                break;
+            // EDIT DIRECTORY
+            case 'edit_dir' :
+                if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
+                    $_SESSION['easy2err'][] = $id['id_err'];
+                    header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                    exit();
+                }
+                $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs WHERE cat_id='.(int)$_GET['dir_id']);
+                $row = mysql_fetch_array($res, MYSQL_ASSOC);
+
+                if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+                    $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                            .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                            .', last_modified=NOW() '
+                            .'WHERE cat_id='.(int)$_GET['dir_id'];
+                    $qResult = mysql_query($q);
+                    if($qResult) {
+                        // rename dir
+                        if( $_POST['newdirname'] != $row['cat_name'] ) {
+                            rename('../'.$gdir.$row['cat_name'], '../'.$gdir.$_POST['newdirname']);
+                            @chmod('../'.$gdir.$_POST['newdirname'], 0755);
+                            $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                    .'SET cat_name = \''.htmlspecialchars($_POST['newdirname'], ENT_QUOTES).'\''
+                                    .', last_modified=NOW() '
+                                    .'WHERE cat_id='.(int)$_GET['dir_id'];
+                            mysql_query($renamedir);
+                        }
+                        $_SESSION['easy2suc'][] .= $lng['updated'];
+                    } else {
+                        $_SESSION['easy2err'][] .= $lng['update_err'];
+                    }
+                    header ('Location: '.$index.'&pid='.$parent_id);
+                    exit();
+                }
+
+                $content .= '
+<p>'.$lng['editing'].' '.$lng['dir'].' <b>'.$row['cat_name'].'</b>
+    &nbsp; &nbsp; &nbsp;
+    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+</p>
+<form name="list" action="" method="post">
+    <table cellspacing="0" cellpadding="2" class="aForm" >
+        <tr>
+            <td><b>'.$lng['enter_new_dirname'].' :</b></td>
+            <td><input name="newdirname" type="text" value="'.$row['cat_name'].'" size="30"></td>
+        </tr>
+        <tr>
+            <td valign="top"><b>'.$lng['description'].' :</b></td>
+            <td><textarea name="description" style="width:100%">'.$row['cat_description'].'</textarea></td>
+        </tr>
+        <tr><td></td>
+            <td><input type="submit" value="'.$lng['save'].'">
+                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+            </td>
+        </tr>
+    </table>
+</form>
+';
+                break;
             case 'edit_file':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
                     $_SESSION['easy2err'][] = $id['id_err'];
                     header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     exit();
                 }
+                $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
+                $row = mysql_fetch_array($res, MYSQL_ASSOC);
+
+                $ext = substr($row['filename'], strrpos($row['filename'], '.'));
+                $filename = substr($row['filename'], 0, -(strlen($ext)));
+//                die('658 '.$gdir);
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    if(mysql_query(
-                    'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                    .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES)
-                    .'\', description = \''.htmlspecialchars($_POST['description'], ENT_QUOTES)
-                    .'\', last_modified=NOW() '
-                    .'WHERE id='.(int)$_GET['file_id'])) {
-                        $_SESSION['easy2suc'][] = $lng['updated'];
+                    $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                            .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES).'\''
+                            .', description = \''.stripslashes($_POST['description']).'\''
+                            .', last_modified=NOW() '
+                            .'WHERE id='.(int)$_GET['file_id'];
+                    $qResult = mysql_query($q);
+                    if($qResult) {
+                        // rename file
+                        if( $_POST['newfilename'] != $filename.$ext ) {
+                            rename('../'.$gdir.$row['filename'], '../'.$gdir.$_POST['newfilename'].$ext);
+                            @chmod('../'.$gdir.$_POST['filename'], 0644);
+                            $renamefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                    .'SET filename = \''.htmlspecialchars($_POST['newfilename'].$ext, ENT_QUOTES).'\''
+                                    .', last_modified=NOW() '
+                                    .'WHERE id='.(int)$_GET['file_id'];
+                            mysql_query($renamefile);
+                        }
+                        $_SESSION['easy2suc'][] .= $lng['updated'];
                     } else {
-                        $_SESSION['easy2err'][] = $lng['update_err'];
+                        $_SESSION['easy2err'][] .= $lng['update_err'];
                     }
                     header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
                 }
-                $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                //$row['description'] = htmlspecialchars($row['description']);
-                //$row['name'] = htmlspecialchars($row['name']);
-                $name = $row['id'].substr($row['filename'], strrpos($row['filename'], '.'));
+
                 $content .= '
-<p>'.$lng['editing'].' '.$lng['file2'].' <b><a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
+<p>'.$lng['editing'].' '.$lng['file2'].' <b>'.$row['filename'].' <a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$lng['uim_preview'].'</a></b> ('.$row['comments'].' comments)
     &nbsp; &nbsp; &nbsp;
     <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
 </p>
@@ -543,21 +643,31 @@ class e2g_mod {
     <tr>
         <td valign="top">
             <form name="list" action="" method="post">
-                <table cellspacing="0" cellpadding="0" class="aForm">
+                <table cellspacing="0" cellpadding="2" class="aForm">
                     <tr>
-                        <td><b>'.$lng['name'].':</b></td>
-                        <td><input name="name" type="text" value="'.$row['name'].'"></td>
+                        <td nowrap="nowrap"><b>'.ucfirst($lng['renamefile']).' :</b></td>
+                        <td><input name="newfilename" type="text" value="'.$filename.'" size="30" style="text-align:right;"> '.$ext.'</td>
                     </tr>
                     <tr>
-                        <td colspan="2"><b>'.$lng['description'].':</b><br /><textarea name="description" rows=3>'.$row['description'].'</textarea></td>
+                        <td><b>'.$lng['name'].' :</b></td>
+                        <td><input name="name" type="text" value="'.$row['name'].'" size="30"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top"><b>'.$lng['description'].' :</b></td>
+                        <td>
+                            <textarea name="description" style="width:100%">'.$row['description'].'</textarea>
+                        </td>
+                    </tr>
+                    <tr><td></td>
+                        <td><input type="submit" value="'.$lng['save'].'">
+                            <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+                        </td>
                     </tr>
                 </table>
-                <input type="submit" value="'.$lng['save'].'">
-                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
             </form>
         </td>
         <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" width="200" height="200" style="margin-left:5px">
+            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
                 <tr><th class="imPreview" id="pElt"></th></tr>
             </table>
         </th>
@@ -574,9 +684,8 @@ class e2g_mod {
                 }
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                $name = $row['id'].substr($row['filename'], strrpos($row['filename'], '.'));
                 $content .= '
-<p>'.$lng['comments'].' '.$lng['file2'].' <b><a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
+<p>'.$lng['comments'].' '.$lng['file2'].' <b><a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
     &nbsp; &nbsp; &nbsp;
     <img src="' . E2G_MODULE_URL . 'icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
     <a href="'.$index.'&page=comments&file_id='.$_GET['file_id'].'&pid='.$parent_id.'">'.$lng['refresh'].'</a>
@@ -587,11 +696,14 @@ class e2g_mod {
     <tr>
         <td valign="top">
             <form name="list" action="'.$index.'&act=delete_comments&file_id='.$_GET['file_id'].'" method="post">
-                <table width="100%" cellpadding="2" cellspacing="0" class="grid" style="margin-bottom:10px">
+                <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
                     <tr>
                         <td width="20"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td width="150"><b>'.$lng['info'].'</b></td>
-                        <td><b>'.$lng['comments'].'</b></td>
+                        <td align="center"><b>'.$lng['date'].'</b></td>
+                        <td align="center"><b>'.$lng['author'].'</b></td>
+                        <td align="center"><b>'.$lng['useremail'].'</b></td>
+                        <td align="center"><b>'.$lng['ipaddress'].'</b></td>
+                        <td align="center"><b>'.$lng['comments'].'</b></td>
                     </tr>
                     ';
                 $res = mysql_query(
@@ -601,13 +713,12 @@ class e2g_mod {
                 while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
                     $content .= '
                     <tr'.$cl[$i%2].'>
-                        <td><input name="comment[]" value="'.$l['id'].'" type="checkbox" style="border:0;padding:0"></td>
-                        <td valign="top">
-                            '.$lng['author'].': <b>'.$l['author'].'</b><br>
-                            '.$lng['date'].': '.$l['date_added']
-                            .(!empty($l['last_modified'])?'<br>'.$lng['modified'].': '.$l['last_modified']:'')
-                            .'</td>
-                        <td valign="top">'.htmlspecialchars($l['comment']).'</td>
+                        <td nowrap="nowrap"><input name="comment[]" value="'.$l['id'].'" type="checkbox" style="border:0;padding:0"></td>
+                        <td nowrap="nowrap">'.$l['date_added'].'</td>
+                        <td nowrap="nowrap">'.$l['author'].'</td>
+                        <td nowrap="nowrap"><a href="mailto:'.$l['email'].'">'.$l['email'].'</a></td>
+                        <td nowrap="nowrap"><b>'.$lng['ipaddress'].'</b></td>
+                        <td valign="top" style="width:100%;">'.htmlspecialchars($l['comment']).'</td>
                     </tr>
                  ';
                     $i++;
@@ -618,7 +729,7 @@ class e2g_mod {
             </form>
         </td>
         <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" width="200" height="200" style="margin-left:5px">
+            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
                 <tr><th class="imPreview" id="pElt"></th></tr>
             </table>
         </th>
@@ -626,12 +737,16 @@ class e2g_mod {
 </table>
 ';
                 break;
+            case 'openexplorer':
+                    header ('Location: '.$index.'&pid='.$parent_id);
+                    exit();
+                break;
             default:
                 if (empty($cpath)) {
                     // MySQL Dir list
-                    $q = 'SELECT cat_id,cat_name'.' '
-                            .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
-                            .'WHERE parent_id = '.$parent_id.' AND cat_visible = 1'.' ';
+                    $q = 'SELECT cat_id,cat_name '
+                        .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
+                        .'WHERE parent_id = '.$parent_id.' AND cat_visible = 1'.' ';
                     $res = mysql_query($q);
                     $mdirs = array();
                     if ($res) {
@@ -640,7 +755,7 @@ class e2g_mod {
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
                         }
                     } else {
-                        $_SESSION['easy2err'][] = '631 MySQL ERROR: '.mysql_error();
+                        $_SESSION['easy2err'][] = '726 MySQL ERROR: '.mysql_error();
                     }
                     // MySQL File list
                     $q = 'SELECT id,filename FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
@@ -652,7 +767,7 @@ class e2g_mod {
                             $mfiles[$l['filename']]['name'] = $l['filename'];
                         }
                     } else {
-                        $_SESSION['easy2err'][] = '643 MySQL ERROR: '.mysql_error();
+                        $_SESSION['easy2err'][] = '738 MySQL ERROR: '.mysql_error();
                     }
                 }
 
@@ -660,16 +775,34 @@ class e2g_mod {
                 $dirs = glob('../'.$gdir.'*', GLOB_ONLYDIR);
                 natsort($dirs);
                 $content = '
-<p>'.$lng['path'].': <a href="'.$index.'&act=edit_dir&dir_id=1&name=" onclick="return editDir(this);">
+<div>
+    <form action="'.$index.'&act=synchro" method="post">
+        <input type="submit" value="'.$lng['synchro'].'" />
+    </form>
+</div>
+<p>'.$lng['path'].': <a href="'.$index.'&page=edit_dir&dir_id='.$parent_id.'&pid='.$parent_id.'">
         <img src="' . E2G_MODULE_URL . 'icons/folder_edit.png" width="16" height="16"
              alt="'.$lng['edit'].'" title="'.$lng['edit'].'" align="absmiddle" border=0>
     </a> <b>'.$path.'</b> &nbsp; &nbsp;
     <img src="' . E2G_MODULE_URL . 'icons/folder_add.png" width="16" height="16" border="0" align="absmiddle">
-    <a href="'.$index.'&act=create_dir&pid='.$parent_id.'&name=" onclick="return newDir(this);"><b>'.$lng['create_dir'].'</b></a>
+    <a href="'.$index.'&page=create_dir&pid='.$parent_id.'"><b>'.$lng['create_dir'].'</b></a>
     &nbsp; &nbsp;
     <img src="' . E2G_MODULE_URL . 'icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
     <a href="'.$index.'&act=clean_cache"><b>'.$lng['clean_cache'].'</b></a>
-</p>
+    &nbsp; &nbsp;
+</p>';
+                // Description of the current directory
+                $qdesc = 'SELECT cat_description '
+                    .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                    .'WHERE cat_id = '.$parent_id;
+                $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
+                $content .= '
+<table cellspacing="0" cellpadding="0">
+    <tr>
+        <td width="60" valign="top">'.$lng['description'].': </td>
+        <td>'.$resultdesc.'</td>
+    </tr>
+</table>
 <table cellspacing="0" cellpadding="0" width="100%">
     <tr>
         <td valign="top">
@@ -696,7 +829,7 @@ class e2g_mod {
                             unset($mdirs[$name]);
                             $ext = '';
                             // edit name
-                            $buttons = '<a href="'.$index.'&act=edit_dir&dir_id='.$id.'&name=" onclick="return editDir(this);">
+                            $buttons = '<a href="'.$index.'&page=edit_dir&dir_id='.$id.'&name='.$name.'&pid='.$parent_id.'">
                                 <img src="' . E2G_MODULE_URL . 'icons/folder_edit.png" width="16" height="16"
                                     alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
                                         </a>';
@@ -782,7 +915,7 @@ class e2g_mod {
                             $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
                             unset($mfiles[$name]);
                             $buttons = '
- <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
+ <a href="'.$index.'&page=comments&file_id='.$id.'">
      <img src="' . E2G_MODULE_URL . 'icons/comments.png" width="16" height="16" alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
  </a>
  <a href="'.$index.'&page=edit_file&file_id='.$id.'&pid='.$parent_id.'">
@@ -857,12 +990,17 @@ class e2g_mod {
             </form>
         </td>
         <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" width="200" height="200" style="margin-left:5px">
+            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
                 <tr><th class="imPreview" id="pElt"></th></tr>
             </table>
         </th>
     </tr>
 </table>
+<div>
+    <form action="'.$index.'&act=synchro" method="post">
+        <input type="submit" value="'.$lng['synchro'].'" />
+    </form>
+</div>
 ';
         } // switch ($page)
         $suc = $err = '';
@@ -1032,13 +1170,13 @@ class e2g_mod {
     private function _path_to ($id, $string = FALSE) {
         global $modx;
         $result = array();
-        $res = mysql_query(
-                'SELECT A.cat_id, A.cat_name '
-                .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-                .$modx->db->config['table_prefix'].'easy2_dirs B '
-                .'WHERE B.cat_id='.$id.' AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
-                .'ORDER BY A.cat_left'
-        );
+        $q = 'SELECT A.cat_id, A.cat_name '
+            .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
+            .$modx->db->config['table_prefix'].'easy2_dirs B '
+            .'WHERE B.cat_id='.$id.' '
+            .'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
+            .'ORDER BY A.cat_left';
+        $res = mysql_query($q);
         while ($l = mysql_fetch_row($res)) {
             $result[$l[0]] = $l[1];
         }
@@ -1259,9 +1397,9 @@ class e2g_mod {
         }
 
         $time_end = microtime(TRUE);
-        $time = $time_end - $time_start;
+        $timetotal = $time_end - $time_start;
         if ( $e2g['debug']== 1 ) {
-            $_SESSION['easy2suc'][] = "Syncronized $path in $time seconds\n";
+            $_SESSION['easy2suc'][] = "Syncronized $path in $timetotal seconds\n";
         }
         return TRUE;
     }
