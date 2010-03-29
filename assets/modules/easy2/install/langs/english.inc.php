@@ -16,8 +16,10 @@ $lngi = array (
                 .'<br />You have been warned!',
 
         'table' => 'Table',
+        'field' => 'Field',
         'created' => 'created successfully.',
         'create_err' => 'not created.',
+        'upgraded' => 'upgraded successfully.',
         'data' => 'Data',
         'added' => 'added.',
         'add_err' => 'not added.',

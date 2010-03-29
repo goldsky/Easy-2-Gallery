@@ -50,6 +50,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // mysql_list_fields()
     // GET All Tables
 
+    $dbase = str_replace('`', '', $GLOBALS['dbase']);
     $res = mysql_list_tables(str_replace('`', '', $GLOBALS['dbase']));
     $tab = array();
     while ($row = mysql_fetch_row($res)) {
@@ -65,22 +66,32 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
 
     // easy2_dirs CREATE
-    if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_dirs (
-parent_id int(10) unsigned NOT NULL default \'0\',
-cat_id int(10) unsigned NOT NULL auto_increment,
-cat_left int(10) unsigned NOT NULL default \'0\',
-cat_right int(10) unsigned NOT NULL default \'0\',
-cat_level int(10) unsigned NOT NULL default \'0\',
-cat_name varchar(255) NOT NULL default \'\',
-cat_visible tinyint(4) NOT NULL default \'1\',
-cat_description varchar(255) default NULL,
-PRIMARY KEY  (cat_id),
-KEY cat_left (cat_left)
-) TYPE=MyISAM')) {
-        $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['created'];
-    } else {
-        $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['create_err'].'<br />'.mysql_error();
-        chref($index);
+    if (!isset($tab[$GLOBALS['table_prefix'].'easy2_dirs'])) {
+        if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_dirs (
+                        parent_id int(10) unsigned NOT NULL default \'0\',
+                        cat_id int(10) unsigned NOT NULL auto_increment,
+                        cat_left int(10) unsigned NOT NULL default \'0\',
+                        cat_right int(10) unsigned NOT NULL default \'0\',
+                        cat_level int(10) unsigned NOT NULL default \'0\',
+                        cat_name varchar(255) NOT NULL default \'\',
+                        cat_visible tinyint(4) NOT NULL default \'1\',
+                        cat_description varchar(255) default NULL,
+                        PRIMARY KEY  (cat_id),
+                        KEY cat_left (cat_left)
+                        ) TYPE=MyISAM')) {
+            $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['created'];
+        } else {
+            $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['create_err'].'<br />'.mysql_error();
+            chref($index);
+        }
+    }
+
+    // easy2_dirs fields UPGRADE for additional fields from previous version
+    // additional field for 1.3.6 Beta4
+    // cat_description
+    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_dirs'),7)!='cat_description') {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_description varchar(255) default NULL');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_description '.$lngi['created'];
     }
 
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
@@ -103,24 +114,34 @@ KEY cat_left (cat_left)
         }
     }
 
-    // easy2_comments CREATE
-    if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_comments (
-id int(10) unsigned NOT NULL auto_increment,
-file_id int(10) unsigned NOT NULL default \'0\',
-author varchar(64) NOT NULL default \'\',
-email varchar(64) NOT NULL default \'\',
-ip_address tinytext NOT NULL,
-comment text NOT NULL,
-date_added datetime NOT NULL default \'0000-00-00 00:00:00\',
-last_modified datetime default NULL,
-status tinyint(3) unsigned NOT NULL default \'1\',
-PRIMARY KEY  (id),
-KEY file_id (file_id)
-) TYPE=MyISAM')) {
-        $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_comments '.$lngi['created'];
-    } else {
-        $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_comments '.$lngi['create_err'].'<br />'.mysql_error();
-        chref($index);
+    if (!isset($tab[$GLOBALS['table_prefix'].'easy2_comments'])) {
+        // easy2_comments CREATE
+        if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_comments (
+                        id int(10) unsigned NOT NULL auto_increment,
+                        file_id int(10) unsigned NOT NULL default \'0\',
+                        author varchar(64) NOT NULL default \'\',
+                        email varchar(64) NOT NULL default \'\',
+                        ip_address char(16) NOT NULL,
+                        comment text NOT NULL,
+                        date_added datetime NOT NULL default \'0000-00-00 00:00:00\',
+                        last_modified datetime default NULL,
+                        status tinyint(3) unsigned NOT NULL default \'1\',
+                        PRIMARY KEY  (id),
+                        KEY file_id (file_id)
+                        ) TYPE=MyISAM')) {
+            $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_comments '.$lngi['created'];
+        } else {
+            $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_comments '.$lngi['create_err'].'<br />'.mysql_error();
+            chref($index);
+        }
+    }
+
+    // easy2_comments fields UPGRADE for additional fields from previous version
+    // additional field for 1.4.0 Beta1
+    // ip_address
+    if (mysql_field_name(mysql_query('SELECT * FROM '.$GLOBALS['table_prefix'].'easy2_comments'),4)!='ip_address') {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_comments ADD ip_address char(16) NOT NULL AFTER email');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_comments.ip_address '.$lngi['created'];
     }
 
     // easy2_files CHECK
@@ -131,31 +152,31 @@ KEY file_id (file_id)
         }
     }
 
-    // easy2_files CREATE
-    if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_files (
-id int(10) unsigned NOT NULL auto_increment,
-dir_id int(10) unsigned NOT NULL default \'0\',
-filename varchar(255) NOT NULL default \'\',
-size varchar(32) NOT NULL default \'\',
-name varchar(255) NOT NULL default \'\',
-description text NOT NULL,
-date_added datetime NOT NULL default \'0000-00-00 00:00:00\',
-last_modified datetime default NULL,
-comments int(10) unsigned NOT NULL default \'0\',
-status tinyint(3) unsigned NOT NULL default \'1\',
-PRIMARY KEY  (id)
-) TYPE=MyISAM')) {
-        $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['created'];
-    } else {
-        $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['create_err'].'<br />'.mysql_error();
-        chref($index);
+    if (!isset($tab[$GLOBALS['table_prefix'].'easy2_files'])) {
+        // easy2_files CREATE
+        if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_files (
+                        id int(10) unsigned NOT NULL auto_increment,
+                        dir_id int(10) unsigned NOT NULL default \'0\',
+                        filename varchar(255) NOT NULL default \'\',
+                        size varchar(32) NOT NULL default \'\',
+                        name varchar(255) NOT NULL default \'\',
+                        description text NOT NULL,
+                        date_added datetime NOT NULL default \'0000-00-00 00:00:00\',
+                        last_modified datetime default NULL,
+                        comments int(10) unsigned NOT NULL default \'0\',
+                        status tinyint(3) unsigned NOT NULL default \'1\',
+                        PRIMARY KEY  (id)
+                        ) TYPE=MyISAM')) {
+            $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['created'];
+        } else {
+            $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['create_err'].'<br />'.mysql_error();
+            chref($index);
+        }
     }
 
     // MODULE
 
-    // $mod = file_get_contents('../assets/modules/easy2/install/module.easy2gallery.php'); // goldsky -- use file instead
     $mod = 'include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';';
-    // $res = mysql_query('UPDATE '.$GLOBALS['table_prefix'].'site_modules SET modulecode = \''.mysql_escape_string($mod).'\' WHERE name =\'easy2\''); // goldsky -- unleashed the name dependence
     $res = mysql_query('UPDATE '.$GLOBALS['table_prefix'].'site_modules SET modulecode = \''.mysql_escape_string($mod).'\' WHERE id =\''.$_GET['id'].'\'');
     if ($res) {
         $_SESSION['easy2suc'][] = $lngi['mod_updated'];
@@ -167,7 +188,6 @@ PRIMARY KEY  (id)
     // SNIPPET
 
     $snippet = 'include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
-
     $res = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
     if (mysql_num_rows($res) > 0) {
         $sql = 'UPDATE '.$GLOBALS['table_prefix'].'site_snippets SET snippet=\''.mysql_escape_string($snippet).'\' WHERE name =\'easy2\' LIMIT 1';
@@ -292,7 +312,7 @@ function chref ($href) {
 
 function restore ($path, $pid) {
     global $modx;
-    if (!include MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php') die('289');
+    if (!include MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php') die('336 config.easy2gallery.php IS missing.');
     $time_start = microtime(TRUE);
     /*
      * STORE variable arrays for synchronizing comparison
@@ -368,10 +388,6 @@ function restore ($path, $pid) {
             $nbasename = $ndirs[$name]['name'];
             if ($name == '_thumbnails' && $name != $basee2gdir && $name != '' ) continue;
 
-//            if ( $name == $odirs[$name]['id']
-//                    && $name != $odirs[$name]['name']
-//                    && is_validfolder($f)
-//            ) {
             if ( is_validfolder($f) ) {
                 if (isset($odirs[$name])) {
                     $nf = MODX_BASE_PATH.$e2g['dir'].$obasename;
@@ -390,7 +406,6 @@ function restore ($path, $pid) {
                     unset($ndirs[$name]);
                 }
             }
-//            }
             if (is_validfile($f)) {
                 $fbasename = basename($f);
 
@@ -441,20 +456,20 @@ function delete_all ($path) {
 
     $fs = glob($path.'*');
     if ($fs!=false)
-    foreach ($fs as $f) {
-        if (is_file($f)) {
+        foreach ($fs as $f) {
+            if (is_file($f)) {
 
-            if(@unlink($f)) $res['f']++;
-            else $res['e'][] = 'Can not delete file: '.$f;
+                if(@unlink($f)) $res['f']++;
+                else $res['e'][] = 'Can not delete file: '.$f;
 
-        } elseif (is_dir($f)) {
-            $sres = delete_all($f.'/');
+            } elseif (is_dir($f)) {
+                $sres = delete_all($f.'/');
 
-            $res['f'] += $sres['f'];
-            $res['d'] += $sres['d'];
-            $res['e'] = array_merge($res['e'], $sres['e']);
+                $res['f'] += $sres['f'];
+                $res['d'] += $sres['d'];
+                $res['e'] = array_merge($res['e'], $sres['e']);
+            }
         }
-    }
     if (count($res['e']) == 0 && @rmdir($path)) $res['d']++;
     else $res['e'][] = 'Can not delete directory: '.$f;
     return $res;
