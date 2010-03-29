@@ -142,18 +142,6 @@ class e2g_snip {
 
             if ( $showonly != 'images' ) {
                 // SUBDIRS & THUMBS FOR SUBDIRS
-//            $query = 'SELECT A.* '
-//                    . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-//                    . $modx->db->config['table_prefix'].'easy2_dirs B '
-//                    . 'WHERE B.cat_id=' . $gid . ' '
-//                    . 'AND A.cat_left >= B.cat_left '
-//                    . 'AND A.cat_right <= B.cat_right '
-//                    . 'AND A.cat_level = B.cat_level + 1 '
-//                    . 'AND A.cat_visible = 1 '
-//                    . 'GROUP BY A.cat_id '
-//                    . 'ORDER BY A.' . $cat_orderby . ' ' . $cat_order . ' '
-//                    . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit; // goldsky -- limit the subdirs per page
-
                 $query = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
                         . 'WHERE parent_id = ' . $single_gid . ' '
                         . 'AND cat_visible = 1 '
@@ -171,7 +159,7 @@ class e2g_snip {
                     $l1=$this->_get_folder_img($l['cat_id']);
                     // if there is an empty folder, or invalid content
                     if (!$l1) {
-                        $dir_num_rows--; // to fix the merging thumb and pagination with image
+                        $dir_num_rows--; // to fix the calculation of merging thumb and pagination with image
                         continue;
                     }
                     $l['count'] = $l1['count'];
@@ -189,7 +177,7 @@ class e2g_snip {
                         $path1 = '';
                     }
 
-                    // Populate the grid with Directories' thumb
+                    // Populate the grid with folder's thumbnails
                     if ( ( $i > 0 ) && ( $i % $colls == 0 ) && !$notables ) $_e2g['content'] .= '</tr><tr>';
 
                     $l['title'] = $l['cat_name'];
@@ -224,10 +212,6 @@ class e2g_snip {
             if ($showonly=='images') {
                 $dir_count = 0;
             } else {
-//                $dir_count = mysql_result(mysql_query(
-//                        'SELECT COUNT(cat_id) FROM ' . $modx->db->config['table_prefix'].'easy2_dirs '
-//                        .'WHERE parent_id='.$gid
-//                        ), 0 ,0);
                 $dir_count = mysql_result(mysql_query(
                         'SELECT COUNT(cat_id) FROM ' . $modx->db->config['table_prefix'].'easy2_dirs '
                         .'WHERE parent_id IN ('.$gid.')'
@@ -237,11 +221,6 @@ class e2g_snip {
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
 
-//            $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-//                    . 'WHERE dir_id='.$gid.' '
-//                    . 'AND status = 1 '
-//                    . 'ORDER BY ' . $orderby . ' ' . $order . ' '
-//            ;
             $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN ('.$gid.') '
                     . 'AND status = 1 '
@@ -309,7 +288,6 @@ class e2g_snip {
         /*
         *  PAGES LINKS - joining between dirs and files pagination
         */
-//        $file_count = mysql_result(mysql_query('SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id='.$gid), 0, 0);
         $file_count = mysql_result(mysql_query(
                 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 .'WHERE dir_id IN ('.$gid.')'
