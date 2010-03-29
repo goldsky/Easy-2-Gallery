@@ -101,7 +101,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD last_modified datetime default NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.last_modified '.$lngi['created'];
     }
-    
+
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
 
@@ -178,6 +178,23 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
             $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['created'];
         } else {
             $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_files '.$lngi['create_err'].'<br />'.mysql_error();
+            chref($index);
+        }
+    }
+    
+    // adding ignore IP table
+    if (!isset($tab[$GLOBALS['table_prefix'].'easy2_ignoredip'])) {
+        if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_ignoredip (
+                        id int(10) unsigned NOT NULL auto_increment,
+                        ign_date datetime NOT NULL,
+                        ign_ip_address char(16) NOT NULL,
+                        ign_username varchar(64) NOT NULL,
+                        ign_email varchar(64) default NULL,
+                        PRIMARY KEY  (id)
+                        ) TYPE=MyISAM')) {
+            $_SESSION['easy2suc'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_ignoredip '.$lngi['created'];
+        } else {
+            $_SESSION['easy2err'][] = $lngi['table'].' '.$GLOBALS['table_prefix'].'easy2_ignoredip '.$lngi['create_err'].'<br />'.mysql_error();
             chref($index);
         }
     }
