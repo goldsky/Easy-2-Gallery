@@ -93,6 +93,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td>
                             <select name="resize_type">
                                 <option value="inner"<?php echo ($e2g['resize_type']=='inner'?' selected':''); ?>><?php echo $lng['inner']; ?></option>
+                                <option value="shrink"<?php echo ($e2g['resize_type']=='shrink'?' selected':''); ?>><?php echo $lng['shrink']; ?></option>
                                 <option value="resize"<?php echo ($e2g['resize_type']=='resize'?' selected':''); ?>><?php echo $lng['resize']; ?></option>
                             </select>
                         </td>
@@ -100,6 +101,21 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com6a']; ?></td>
                     </tr>
+
+
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
+                        <td>
+                            R: <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3">
+                            G: <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3">
+                            B: <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com6b']; ?></td>
+                    </tr>
+
+
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thq']; ?>:</b></td>
                         <td><input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
