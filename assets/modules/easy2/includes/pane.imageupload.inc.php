@@ -7,6 +7,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         tpResources.addTabPage(document.getElementById("addForm"));
     </script>
     <p><?php echo $lng['upload_dir'].': <b>'.$gdir.'</b>'; ?></p>
+    <p><?php echo $lng['valid_extensions']; ?> .jpeg, .jpg, .gif, .png</p>
     <div class="tab-pane" id="tabImageUploadPane">
         <script type="text/javascript">
             tpResources2 = new WebFXTabPane(document.getElementById('tabImageUploadPane'));
@@ -30,7 +31,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 <td><input name="name[]" type="text" size="75"></td>
                             </tr>
                             <tr>
-                                <td colspan="2"><b><?php echo $lng['description'];?>:</b><br />
+                                <td valign="top"><b><?php echo $lng['description'];?>:</b></td>
+                                <td>
                                     <textarea name="description[]" style="width: 475px" cols="475" rows="3"></textarea>
                                 </td>
                             </tr>
