@@ -48,6 +48,7 @@ $lng = array (
 
         'debug' => 'Debug option',
         'dir' => 'folder',
+        'tinymcefolder' => 'TinyMCE folder',
         'thumb' => 'thumbnail',
         'empty' => 'empty',
         'valid_extensions' => 'Valid extensions are',
@@ -159,7 +160,8 @@ $lng = array (
         'off' => 'Off',
 
         'cfg_com0' => 'Debug mode.',
-        'cfg_com1' => 'Path to folder with <b class="warning">trailing slash</b>, e.g assets/easy2gallery/.',
+        'cfg_com1' => 'Path to folder with <b class="warning">trailing slash</b>, e.g.: assets/easy2gallery/.',
+        'cfg_com1a' => 'TinyMCE folder, e.g.: tinymce3241',
         'cfg_com2' => 'Max width in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com3' => 'Max height in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com4' => 'Level of jpeg comression from 0 to 100%.<br><b class="warning">Only for images larger than limits</b>.',
