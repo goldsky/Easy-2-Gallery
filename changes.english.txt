@@ -5,7 +5,7 @@
 
 ********** 1.4.0-Beta 1 **********
 + Many bug fixing
-+ Additional tab inside module: Comment Managers
++ Additional tab inside module: Comments Manager
 + Introducing additional parameters:
 --+ &resize_type : inner | shrink | resize
 --+ &thbg_red (Red in RGB background color)
