@@ -699,11 +699,20 @@ class e2g_snip {
             $row['glibact'] = $glibs[$glib]['glibact'];
         }
 
+        // HIDE COMMENTS from Ignored IP Addresses
+        $comstatusq = 'SELECT ign_ip_address FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip ';
+        $comstatusres = mysql_query($comstatusq) or die(mysql_error());
+        while ($comrow = mysql_fetch_array($comstatusres)){
+            $ignored_ip[$comrow['ign_ip_address']] = $comrow['ign_ip_address'];
+        }
+
+        $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+
         $ecm = $this->cl_cfg['ecm'];
         /*
          * COMMENTS
         */
-        if ($ecm == 1) {
+        if ($ecm == 1 && !isset($ignored_ip[$ip]) ) {
             $row['com'] = 'e2gcom'.($row['comments']==0?0:1);
 
             // iframe activation
