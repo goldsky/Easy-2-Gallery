@@ -84,7 +84,7 @@ if (file_exists($e2g['comments_row_tpl'])) {
     die ('Comments row template not found!');
 }
 
-$res = mysql_query('SELECT * FROM '.$table_prefix.'easy2_comments WHERE file_id = '.$id.' ORDER BY id DESC LIMIT '.($cpn*$e2g['ecl']).', '.$e2g['ecl']);
+$res = mysql_query('SELECT * FROM '.$table_prefix.'easy2_comments WHERE file_id = '.$id.' AND STATUS=1 ORDER BY id DESC LIMIT '.($cpn*$e2g['ecl']).', '.$e2g['ecl']);
 $i = 0;
 while($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
 
