@@ -295,7 +295,7 @@ class e2g_snip {
         /*
         *  PAGES LINKS - joining between dirs and files pagination
         */
-        // count the directories again, this time WITHOUT limit!
+        // count the files again, this time WITHOUT limit!
         if ($showonly=='folders') {
             $file_count = 0;
         } else {
