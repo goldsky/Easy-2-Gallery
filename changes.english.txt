@@ -3,6 +3,9 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/  
 
+********** 1.4.0-Beta 2 **********
++ Fixed small bug in pagination calculation
+
 ********** 1.4.0-Beta 1 **********
 + Many bug fixing
 + Additional tab inside module: Comments Manager
