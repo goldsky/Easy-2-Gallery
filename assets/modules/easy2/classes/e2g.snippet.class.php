@@ -199,6 +199,17 @@ class e2g_snip {
                 } // while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC))
             }
         }
+
+        // count the directories again, this time WITHOUT limit!
+        if ($showonly=='images') {
+            $dir_count = 0;
+        } else {
+            $dir_count = mysql_result(mysql_query(
+                    'SELECT COUNT(cat_id) FROM ' . $modx->db->config['table_prefix'].'easy2_dirs '
+                    .'WHERE parent_id IN ('.$gid.')'
+                    ), 0 ,0);
+        }
+
         /*
          * FILE thumbs for the dir
         */
@@ -208,15 +219,7 @@ class e2g_snip {
              * goldsky -- manage the pagination limit between dirs and files
              * (join the pagination AND the table grid).
             */
-            // count the directories again, this time WITHOUT limit!
-            if ($showonly=='images') {
-                $dir_count = 0;
-            } else {
-                $dir_count = mysql_result(mysql_query(
-                        'SELECT COUNT(cat_id) FROM ' . $modx->db->config['table_prefix'].'easy2_dirs '
-                        .'WHERE parent_id IN ('.$gid.')'
-                        ), 0 ,0);
-            }
+
             $modulus_dir_count = $dir_count%$limit;
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
@@ -251,6 +254,10 @@ class e2g_snip {
              * retrieve the content
             */
             $i = 0;
+
+            // checking the $dir_num_rows firsty
+            if ($dir_num_rows == $colls) $_e2g['content'] .= '</tr><tr>';
+            
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
                 // whether configuration setting is set with or without table, the template will adjust it
                 /*
@@ -288,10 +295,15 @@ class e2g_snip {
         /*
         *  PAGES LINKS - joining between dirs and files pagination
         */
-        $file_count = mysql_result(mysql_query(
-                'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                .'WHERE dir_id IN ('.$gid.')'
-                ), 0, 0);
+        // count the directories again, this time WITHOUT limit!
+        if ($showonly=='folders') {
+            $file_count = 0;
+        } else {
+            $file_count = mysql_result(mysql_query(
+                    'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                    .'WHERE dir_id IN ('.$gid.')'
+                    ), 0, 0);
+        }
 
         $total_count = $dir_count+$file_count;
 
