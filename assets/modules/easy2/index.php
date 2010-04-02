@@ -10,7 +10,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
  */
 
 // Easy 2 Gallery version
-define('E2G_VERSION', '1.4.0 - Beta 1');
+define('E2G_VERSION', '1.4.0 - Beta 3');
 
 // Easy 2 Gallery module path
 if(!defined('E2G_MODULE_PATH')) {
