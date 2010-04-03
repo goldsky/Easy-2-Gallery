@@ -811,7 +811,7 @@ class e2g_snip {
 
         // http://jonraasch.com/blog/a-simple-jquery-slideshow
         if ($slideshow=='simple') {
-            $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshow/simple/simple.css','screen');
+            $modx->regClientCSS(E2G_SNIPPET_PATH.'includes/slideshow/simple/simple.css','screen');
             // amend dimension variables into CSS
             $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
@@ -822,7 +822,7 @@ class e2g_snip {
         </style>
             ');
             $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
-            $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshow/simple/simple.js');
+            $modx->regClientStartupScript(E2G_SNIPPET_PATH.'includes/slideshow/simple/simple.js');
 
             $ss_ratio = $ss_w/$ss_h;
 
