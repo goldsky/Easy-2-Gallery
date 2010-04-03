@@ -116,6 +116,9 @@ $cl_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
 
 //SLIDESHOW GROUP
 $cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
+$cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
+$cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : NULL; // width
+$cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : NULL; // height
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';

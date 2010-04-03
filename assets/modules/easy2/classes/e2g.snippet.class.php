@@ -29,20 +29,21 @@ class e2g_snip {
         $fid = $this->cl_cfg['fid'];
         $rgid = $this->cl_cfg['rgid'];
         $gid = $this->cl_cfg['gid']; // default
+        $slideshow = $this->cl_cfg['slideshow'];
         $notables = $this->cl_cfg['notables'];
 
-        if ( !empty($fid) ) {
+        if ( !empty($fid) && !isset($slideshow) ) {
             echo $this->_imagefile();
         }
-        if ( !empty($rgid) ) {
+        if ( !empty($rgid) && !isset($slideshow) ) {
             echo $this->_randomimage();
         }
-        if ( !$fid && !$rgid ) {
+        if ( !$fid && !$rgid && !isset($slideshow) ) {
             echo $this->_gallery(); // default
         }
 
-        if ( $slideshow==1 ) {
-            return $this->_slideshow();
+        if ( isset($slideshow) ) {
+            return $this->_slideshow($slideshow);
         }
 
     }
@@ -257,7 +258,7 @@ class e2g_snip {
 
             // checking the $dir_num_rows firsty
             if ($dir_num_rows == $colls) $_e2g['content'] .= '</tr><tr>';
-            
+
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
                 // whether configuration setting is set with or without table, the template will adjust it
                 /*
@@ -332,7 +333,7 @@ class e2g_snip {
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
-        $res = mysql_query($filequery) or die('353 '.mysql_error());
+        $res = mysql_query($filequery) or die('336 '.mysql_error());
 
         // START the grid
         $_e2g['content'] .= $notables ? '<div class="e2g">':'<table class="e2g"><tr>';
@@ -473,7 +474,7 @@ class e2g_snip {
                 imagefill($pic, 0, 0, $bgc);
                 imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $i[0], $i[1]);
 
-            } 
+            }
             elseif ($resize_type == 'shrink') {
                 /*
                  * $resize_type == 'shrink'
@@ -714,7 +715,7 @@ class e2g_snip {
         // HIDE COMMENTS from Ignored IP Addresses
         $comstatusq = 'SELECT ign_ip_address FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip ';
         $comstatusres = mysql_query($comstatusq) or die(mysql_error());
-        while ($comrow = mysql_fetch_array($comstatusres)){
+        while ($comrow = mysql_fetch_array($comstatusres)) {
             $ignored_ip[$comrow['ign_ip_address']] = $comrow['ign_ip_address'];
         }
 
@@ -738,8 +739,122 @@ class e2g_snip {
         return $row;
     }
 
-    private function _slideshow() {
+    private function _slideshow($slideshow) {
+        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+        global $modx;
+        $gdir = $this->cl_cfg['gdir'];
+        $gid = $this->cl_cfg['gid'];
+        $fid = $this->cl_cfg['fid'];
+        $rgid = $this->cl_cfg['rgid'];
+        $orderby = $this->cl_cfg['orderby'];
+        $order = $this->cl_cfg['order'];
+        $ss_w = $this->cl_cfg['ss_w'];
+        $ss_h = $this->cl_cfg['ss_h'];
 
+        $images = $names = array();
+        if (!empty($gid)) {
+            $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                    . 'WHERE dir_id IN (' . $gid . ') '
+                    . 'AND status = 1 '
+                    . 'ORDER BY ' . $orderby . ' ' . $order . ' ';
+            $query = mysql_query($select) or die('760 '.mysql_error());
+            while ($fetch = mysql_fetch_array($query)) {
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $images[] .= $e2g['dir'].$path.$fetch['filename'];
+                $names[] .= $fetch['name'];
+            }
+        }
+
+        if (!empty($fid)) {
+            $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                    . 'WHERE id IN ('.$fid.') '
+                    . 'AND status = 1 ';
+            $query = mysql_query($select) or die('778 '.mysql_error());
+            while ($fetch = mysql_fetch_array($query)) {
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $images[] .= $e2g['dir'].$path.$fetch['filename'];
+                $names[] .= $fetch['name'];
+            }
+        }
+
+        if (!empty($rgid)) {
+            $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                    . 'WHERE status = 1 '
+                    . 'AND dir_id IN ('. $rgid .') '
+                    . 'ORDER BY RAND()'
+            ;
+            $query = mysql_query($select) or die('798 '.mysql_error());
+            while ($fetch = mysql_fetch_array($query)) {
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $images[] .= $e2g['dir'].$path.$fetch['filename'];
+                $names[] .= $fetch['name'];
+            }
+        }
+
+        // http://jonraasch.com/blog/a-simple-jquery-slideshow
+        if ($slideshow=='simple') {
+            $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshow/simple/simple.css','screen');
+            // amend dimension variables into CSS
+            $modx->regClientStartupHTMLBlock('
+        <style type="text/css" media="screen">
+        #slideshow {
+            '.(isset ($ss_w) ? 'width: '.$ss_w.'px; ' : '' )
+             .(isset ($ss_h) ? 'height: '.$ss_h.'px; ' : 'height: 300px; ' ).'
+         }
+        </style>
+            ');
+            $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
+            $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshow/simple/simple.js');
+
+            $ss_ratio = $ss_w/$ss_h;
+
+            // start create the slideshow box
+            echo '<div id="slideshow"><div>';
+            
+            // for the first image ONLY
+            $dim = getimagesize($images[0]);
+            $width[0] = $dim[0];
+            $height[0] = $dim[1];
+            $image_ratio[0] = $dim[0]/$dim[1];
+            echo '<img src="'.$images[0].'" alt="'.$names[0].'" class="active" '
+                    .( ($ss_ratio > $image_ratio[0]) ? 'width="'.$ss_w.'px" ' : 'height="'.$ss_h.'px" ')
+                    .'/>';
+
+            // for the next images
+            $count = count($images);
+            $i=0;
+            for ($i=1;$i<$count;$i++) {
+                $dim = getimagesize($images[$i]);
+                $width[$i] = $dim[0];
+                $height[$i] = $dim[1];
+                $image_ratio[$i] = $dim[0]/$dim[1];
+                echo '<img src="'.$images[$i].'" alt="'.$names[$i].'" '
+                        .( ($ss_ratio > $image_ratio[$i]) ? 'width="'.$ss_w.'px" ' : 'height="'.$ss_h.'px" ')
+                        .'/>';
+                $i++;
+            }
+
+            // end the slideshow box
+            echo '</div></div>';
+        }
     }
 
     // DIRECTORY TEMPLATE
