@@ -3,6 +3,22 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/  
 
+********** 1.4.0-Beta 3 **********
++ Fixed small bug in pagination calculation, again...
++ Introducing additional parameters:
+--+ &slideshow : simple (more type of slideshow will be added soon)
+----+ &ss_w - slideshow width box, default = 400 (in px)
+----+ &ss_h - slideshow height box, default = 300 (in px)
+----+ &ss_bg - box background color, default = white
+----+ &ss_allowedratio - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&ss_w/&ss_h) - 1.25*(&ss_w/&ss_h).
+Options:
+
+    * 'minimumfloatnumber-maximumfloatnumber', eg: `1.0-2.0`
+    * 'none' - disable this ratio, all landscape/portrait images will be shown
+
+----+ &ss_limit - limit number of images for the slideshow, default NULL.
+More images mean slower page loading.
+
 ********** 1.4.0-Beta 2 **********
 + Fixed small bug in pagination calculation
 
