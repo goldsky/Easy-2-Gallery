@@ -41,7 +41,22 @@ default 1 - root.</p>
 <p><strong>crumbs_showHome</strong> - This toggles the root crumb to be added to the beginning of the trail. default is 0</p>
 <p><strong>crumbs_showAsLinks</strong> - If you want breadcrumbs to be text and not links, set to 0. default is 1</p>
 <p><strong>crumbs_showCurrent</strong> - Include the current page at the end of the trail. default is 1</p>
-<p>
+<h2>Slideshow parameters</h2>
+<p><strong>&amp;slideshow</strong> - simple (others will be added soon)</p>
+<p><strong>&amp;ss_w</strong> - slideshow width box, default = 400 (in px)</p>
+<p><strong>&amp;ss_w</strong> - slideshow height box, default = 300 (in px)</p>
+<p><strong>&amp;ss_bg</strong> - box background color, default = white</p>
+<p><strong>&amp;ss_allowedratio</strong> - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;ss_w/&amp;ss_h) - 1.25*(&amp;ss_w/&amp;ss_h).<br />
+    Options:</p>
+<ul>
+<li>'minimumfloatnumber-maximumfloatnumber', eg: `1.0-2.0`</li>
+<li>'none' - disable this ratio, all landscape/portrait images will be shown</li>
+</ul>
+<p><strong>&amp;ss_limit</strong> - limit number of images for the slideshow, default NULL.<br />More images mean slower page loading.</p>
+<p>Example call: [!easy2? &amp;slideshow=`simple`!]<br />Will show slideshow with all images under root folder.</p>
+<p>Example call: [!easy2? &amp;slideshow=`simple` &amp;gid=`2,4` &amp;ss_w=`600` &amp;ss_h=`200` &amp;ss_allowedratio=`1.0-2.0`!]<br />
+Will show slideshow with all images under folder ID 2 and 4, with box dimension 600x200px, with image ratio allowance (width/height) is between 1.0 to 2.0 (get the limited landscape images).</p>
+<p>Images height will be adjusted automatically.</p>
 <hr />
 <h2>Nested easy2 with MODx API</h2>
 <p><strong>customgetparams </strong>- to add custom &amp;_GET parameter into <strong>pagination </strong>to be nested with other snippets.</p>

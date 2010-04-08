@@ -6,7 +6,7 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.3.6
+ * @version 1.4.0
  */
 
 // Easy 2 Gallery snippet path
@@ -114,11 +114,27 @@ $cl_cfg['thbg_red'] = isset($thbg_red) ? $thbg_red : $e2g['thbg_red'];
 $cl_cfg['thbg_green'] = isset($thbg_green) ? $thbg_green : $e2g['thbg_green'];
 $cl_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
 
-//SLIDESHOW GROUP
+// JAVASCRIPT LIBRARY'S SLIDESHOW GROUP
 $cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
+
+// STAND ALONE SLIDESHOW PARAMETERS
 $cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
-$cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : NULL; // width
-$cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : NULL; // height
+$cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
+$cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
+$cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color
+/*
+ * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
+ * too tall/wide images while the &ss_w and &ss_h are limited.
+ * the format is 'minfloatnumber-maxfloatnumber', eg: '1.0-2.0'
+ * to disable this restriction, set &ss_allowedratio=`none`
+ */
+$cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
+(0.75*$cl_cfg['ss_w']/$cl_cfg['ss_h']).'-'.(1.25*$cl_cfg['ss_w']/$cl_cfg['ss_h']);
+/*
+ * to set how many images the slide show should retrieve from the [random] gallery ID.
+ * more images mean longer page loading!
+ */
+$cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : NULL ;
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';

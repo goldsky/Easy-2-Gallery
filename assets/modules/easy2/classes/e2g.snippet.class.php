@@ -6,7 +6,7 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.3.6
+ * @version 1.4.0
  */
 
 class e2g_snip {
@@ -43,7 +43,7 @@ class e2g_snip {
         }
 
         if ( isset($slideshow) ) {
-            return $this->_slideshow($slideshow);
+            echo $this->_slideshow($slideshow);
         }
 
     }
@@ -85,6 +85,24 @@ class e2g_snip {
         // START the grid
         $_e2g['content'] = $notables ? '<div class="e2g">':'<table class="e2g"><tr>' ;
 
+        // count the directories WITHOUT limit!
+        if ($showonly=='images') {
+            $dir_count = 0;
+        } else {
+            $dir_count = mysql_result(mysql_query(
+                    'SELECT COUNT(DISTINCT d.cat_id) '
+                    . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
+                    . 'LEFT JOIN '.$modx->db->config['table_prefix'].'easy2_files AS f '
+                    . 'ON d.cat_id = f.dir_id '
+                    . 'WHERE d.parent_id IN ('.$gid.') '
+                    . 'AND d.cat_visible = 1 '
+                    . 'AND (SELECT COUNT(*) '
+                            .'FROM '.$modx->db->config['table_prefix'].'easy2_files AS f '
+                            .'WHERE f.dir_id = d.cat_id '
+                            .')<>0 '
+                    ), 0 ,0);
+        }
+
         ########################################################################
         /*
          * Add the multiple IDs capability into the &gid
@@ -93,9 +111,9 @@ class e2g_snip {
         $multiple_gids_count = count($multiple_gids);
         // reset the directory number
         $dir_num_rows = 0;
+
         foreach ($multiple_gids as $single_gid) {
             // get path from the $gid
-//        $path = $this->_get_path($gid);
             $path = $this->_get_path($single_gid);
             // get "category name" from $path
             $_e2g['cat_name'] = is_array($path) ? end($path) : '';
@@ -143,14 +161,22 @@ class e2g_snip {
 
             if ( $showonly != 'images' ) {
                 // SUBDIRS & THUMBS FOR SUBDIRS
-                $query = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                        . 'WHERE parent_id = ' . $single_gid . ' '
-                        . 'AND cat_visible = 1 '
+                $query = 'SELECT DISTINCT d.* '
+                        . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
+                        . 'LEFT JOIN '.$modx->db->config['table_prefix'].'easy2_files AS f '
+                        . 'ON d.cat_id = f.dir_id '
+                        . 'WHERE d.parent_id = ' . $single_gid . ' '
+                        . 'AND d.cat_visible = 1 '
+                        . 'AND (SELECT COUNT(*) '
+                                .'FROM '.$modx->db->config['table_prefix'].'easy2_files AS f '
+                                .'WHERE f.dir_id = d.cat_id '
+                                .')<>0 '
                         . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' '
-                        . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit; // goldsky -- limit the subdirs per page
+                        . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit // goldsky -- limit the subdirs per page
+                        ;
 
                 $dirquery = mysql_query($query);
-                if (!$dirquery) die('161 '.mysql_error());
+                if (!$dirquery) die('179 '.mysql_error());
                 $dir_num_rows += mysql_num_rows($dirquery);
 
                 $i = 0;
@@ -159,10 +185,8 @@ class e2g_snip {
                     // search image for subdir
                     $l1=$this->_get_folder_img($l['cat_id']);
                     // if there is an empty folder, or invalid content
-                    if (!$l1) {
-                        $dir_num_rows--; // to fix the calculation of merging thumb and pagination with image
-                        continue;
-                    }
+                    if (!$l1) continue;
+                    
                     $l['count'] = $l1['count'];
 
                     // path to subdir's thumbnail
@@ -199,16 +223,6 @@ class e2g_snip {
                     $i++;
                 } // while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC))
             }
-        }
-
-        // count the directories again, this time WITHOUT limit!
-        if ($showonly=='images') {
-            $dir_count = 0;
-        } else {
-            $dir_count = mysql_result(mysql_query(
-                    'SELECT COUNT(cat_id) FROM ' . $modx->db->config['table_prefix'].'easy2_dirs '
-                    .'WHERE parent_id IN ('.$gid.')'
-                    ), 0 ,0);
         }
 
         /*
@@ -256,8 +270,8 @@ class e2g_snip {
             */
             $i = 0;
 
-            // checking the $dir_num_rows firsty
-            if ($dir_num_rows == $colls) $_e2g['content'] .= '</tr><tr>';
+            // checking the $dir_num_rows first
+            if ( $dir_num_rows % $colls == 0 ) $_e2g['content'] .= '</tr><tr>';
 
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
                 // whether configuration setting is set with or without table, the template will adjust it
@@ -333,7 +347,7 @@ class e2g_snip {
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
-        $res = mysql_query($filequery) or die('336 '.mysql_error());
+        $res = mysql_query($filequery) or die('350 '.mysql_error());
 
         // START the grid
         $_e2g['content'] .= $notables ? '<div class="e2g">':'<table class="e2g"><tr>';
@@ -714,7 +728,7 @@ class e2g_snip {
 
         // HIDE COMMENTS from Ignored IP Addresses
         $comstatusq = 'SELECT ign_ip_address FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip ';
-        $comstatusres = mysql_query($comstatusq) or die(mysql_error());
+        $comstatusres = mysql_query($comstatusq) or die('731 '.mysql_error());
         while ($comrow = mysql_fetch_array($comstatusres)) {
             $ignored_ip[$comrow['ign_ip_address']] = $comrow['ign_ip_address'];
         }
@@ -750,14 +764,20 @@ class e2g_snip {
         $order = $this->cl_cfg['order'];
         $ss_w = $this->cl_cfg['ss_w'];
         $ss_h = ( $this->cl_cfg['ss_h'] == 0 ? '300' : $this->cl_cfg['ss_h']);
+        $ss_bg = $this->cl_cfg['ss_bg'];
+        $ss_allowedratio = $this->cl_cfg['ss_allowedratio'];
+        $ss_limit = $this->cl_cfg['ss_limit'];
 
         $images = $names = array();
         if (!empty($gid)) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
-                    . 'ORDER BY ' . $orderby . ' ' . $order . ' ';
-            $query = mysql_query($select) or die('760 '.mysql_error());
+                    . 'ORDER BY ' . $orderby . ' ' . $order . ' '
+                    ;
+            $query = mysql_query($select) or die('777 '.mysql_error());
+            $images_limit = isset($ss_limit) ? $ss_limit : mysql_num_rows($query);
+
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
@@ -767,15 +787,17 @@ class e2g_snip {
                     $path = '';
                 }
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $names[] .= $fetch['name'];
+                $filename[] .= $fetch['filename'];
             }
         }
 
         if (!empty($fid)) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE id IN ('.$fid.') '
-                    . 'AND status = 1 ';
-            $query = mysql_query($select) or die('778 '.mysql_error());
+                    . 'AND status = 1 '
+                    ;
+            $query = mysql_query($select) or die('795 '.mysql_error());
+            
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
@@ -785,7 +807,7 @@ class e2g_snip {
                     $path = '';
                 }
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $names[] .= $fetch['name'];
+                $filename[] .= $fetch['filename'];
             }
         }
 
@@ -793,9 +815,11 @@ class e2g_snip {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE status = 1 '
                     . 'AND dir_id IN ('. $rgid .') '
-                    . 'ORDER BY RAND()'
-            ;
-            $query = mysql_query($select) or die('798 '.mysql_error());
+                    . 'ORDER BY RAND() '
+                    ;
+            $query = mysql_query($select) or die('817 '.mysql_error());
+            $images_limit = isset($ss_limit) ? $ss_limit : mysql_num_rows($query);
+            
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
@@ -805,7 +829,7 @@ class e2g_snip {
                     $path = '';
                 }
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $names[] .= $fetch['name'];
+                $filename[] .= $fetch['filename'];
             }
         }
 
@@ -816,45 +840,53 @@ class e2g_snip {
             $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
         #slideshow {
-            '.(isset ($ss_w) ? 'width: '.$ss_w.'px; ' : '' )
-             .(isset ($ss_h) ? 'height: '.$ss_h.'px; ' : 'height: 300px; ' ).'
+            '. 'width: '.$ss_w.'px; '
+             . 'height: '.$ss_h.'px; '
+             . 'background-color: '.$ss_bg.';
          }
         </style>
             ');
             $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
             $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.js');
 
-            $ss_ratio = $ss_w/$ss_h;
+            if ($ss_allowedratio != 'none') {
+                // create min-max slideshow width/height ratio
+                $ss_exratio = explode('-', $ss_allowedratio);
+                $ss_minratio = $ss_exratio[0];
+                $ss_maxratio = $ss_exratio[1];
+            }
+
+            $count = count($images);
 
             // start create the slideshow box
-            echo '<div id="slideshow"><div>';
-            
-            // for the first image ONLY
-            $dim = getimagesize($images[0]);
-            $width[0] = $dim[0];
-            $height[0] = $dim[1];
-            $image_ratio[0] = $dim[0]/$dim[1];
-            echo '<img src="'.$images[0].'" alt="'.$names[0].'" class="active" '
-                    .( ($ss_ratio > $image_ratio[0]) ? 'width="'.$ss_w.'px" ' : 'height="'.$ss_h.'px" ')
-                    .'/>';
-
-            // for the next images
-            $count = count($images);
-            $i=0;
-            for ($i=1;$i<$count;$i++) {
+            $display = '<div id="slideshow"><div>';
+            $j=0;
+            for ($i=0;$i<$count;$i++) {
                 $dim = getimagesize($images[$i]);
                 $width[$i] = $dim[0];
                 $height[$i] = $dim[1];
-                $image_ratio[$i] = $dim[0]/$dim[1];
-                echo '<img src="'.$images[$i].'" alt="'.$names[$i].'" '
-                        .( ($ss_ratio > $image_ratio[$i]) ? 'width="'.$ss_w.'px" ' : 'height="'.$ss_h.'px" ')
-                        .'/>';
-                $i++;
-            }
+                $image_ratio[$i] = $width[$i]/$height[$i];
 
+                if ($ss_allowedratio != 'none') {
+                    // skipping ratio exclusion
+                    if ( $ss_minratio > $image_ratio[$i] || $ss_maxratio < $image_ratio[$i] ) continue;
+                }
+//                echo $ss_w/$ss_h .'=>'. $image_ratio[$i].'<br />';
+                $display .= '<img src="'.$images[$i].'" alt="'.$filename[$i].'" '
+                    . ( $i == 0 ? 'class="active" ' : '' )
+                    . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ?
+                        'height="'.$ss_h.'px" style="left:'.(($ss_w - ($width[$i]*$ss_h/$height[$i]))/2).'px;" ' :
+                        'width="'.$ss_w.'px" style="top:'.(($ss_h - ($height[$i]*$ss_w/$width[$i]))/2).'px;" ' )
+                    . '/>';
+
+                // if there is a image number limitation
+                $j++;
+                if ($j==$images_limit) break;
+            }
             // end the slideshow box
-            echo '</div></div>';
+            $display .= '</div></div>';
         }
+        return $display;
     }
 
     // DIRECTORY TEMPLATE
