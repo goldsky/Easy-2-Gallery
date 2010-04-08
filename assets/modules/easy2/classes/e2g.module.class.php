@@ -1127,7 +1127,7 @@ class e2g_mod {
         $fs = array_diff(glob($path.'*'), $excludefiles);
         natsort($fs);
         if ($fs!=FALSE)
-        // goldsky -- alter the maximum execution time
+            // goldsky -- alter the maximum execution time
             set_time_limit(0);
 
         foreach ($fs as $f) {
@@ -1356,7 +1356,13 @@ class e2g_mod {
          * READ the real physical objects, store into database
         */
         if ($fs!=FALSE)
+            // goldsky -- alter the maximum execution time
+            set_time_limit(0);
+        
             foreach ($fs as $f) {
+                // goldsky -- adds output buffer to avoid PHP's memory limit
+                ob_start();
+                
                 $name = basename($f);
                 if ($this->is_validfolder($f)) { // as a folder/directory
                     if ($name == '_thumbnails') continue;
@@ -1403,6 +1409,9 @@ class e2g_mod {
                  * probably has an unallowed extension or strange characters.
                 */
                 else continue;
+
+                // goldsky -- adds output buffer to avoid PHP's memory limit
+                ob_end_clean();
             }
 
         /*
