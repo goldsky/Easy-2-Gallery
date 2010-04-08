@@ -44,7 +44,7 @@ default 1 - root.</p>
 <h2>Slideshow parameters</h2>
 <p><strong>&amp;slideshow</strong> - simple (others will be added soon)</p>
 <p><strong>&amp;ss_w</strong> - slideshow width box, default = 400 (in px)</p>
-<p><strong>&amp;ss_w</strong> - slideshow height box, default = 300 (in px)</p>
+<p><strong>&amp;ss_h</strong> - slideshow height box, default = 300 (in px)</p>
 <p><strong>&amp;ss_bg</strong> - box background color, default = white</p>
 <p><strong>&amp;ss_allowedratio</strong> - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;ss_w/&amp;ss_h) - 1.25*(&amp;ss_w/&amp;ss_h).<br />
     Options:</p>
