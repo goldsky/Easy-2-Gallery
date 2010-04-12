@@ -6,9 +6,9 @@ $_t = $this->e2gmod_cl['_t']
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Easy 2 Gallery <?php echo E2G_VERSION; ?></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-        <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lng['charset']; ?>" />
+        <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>templates/mod_style.css" />
         <script type="text/javascript" src="media/script/tabpane.js"></script>
         <script type="text/javascript">
             function confirmDelete() {
@@ -114,7 +114,6 @@ $_t = $this->e2gmod_cl['_t']
                     }
                 }
             }
-
         </script>
         <script type="text/javascript" src="../assets/plugins/<?php echo $e2g['tinymcefolder']; ?>/jscripts/tiny_mce/tiny_mce.js"></script>
         <script type="text/javascript">

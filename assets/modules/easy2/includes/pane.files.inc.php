@@ -6,6 +6,5 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
     <script type="text/javascript">
         tpResources.addTabPage(document.getElementById('imManager'));
     </script>
-    <br />
     <?php echo $content; ?>
 </div>

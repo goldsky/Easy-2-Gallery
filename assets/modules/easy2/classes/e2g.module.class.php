@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 /**
@@ -7,8 +8,12 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.3.6
+ * @version 1.4.0
  */
+
+iconv_set_encoding("internal_encoding", "UTF-8");
+iconv_set_encoding("input_encoding", "UTF-8");
+iconv_set_encoding("output_encoding", "UTF-8");
 
 class e2g_mod {
     private $e2gmod_cl;
@@ -21,22 +26,7 @@ class e2g_mod {
         $this->lng = $lng;
         global $modx;
 
-//        // SYSTEM VARS
-//        $this->e2gmod_cl['debug'] = 0;
-//        $this->e2gmod_cl['_t'] = $modx->config['manager_theme'];
-//        $this->e2gmod_cl['_a'] = (int) $_GET['a'];
-//        $this->e2gmod_cl['_i'] = (int) $_GET['id'];
-//        $this->e2gmod_cl['index'] = 'index.php?a='.$this->e2gmod_cl['_a'].'&id='.$this->e2gmod_cl['_i'];
-//        if ($this->e2gmod_cl['debug'] == 1) {
-//            error_reporting(E_ALL);
-//            $this->e2gmod_cl['old_error_handler'] = set_error_handler("error_handler");
-//        }
-
-        // ALERTS / ERRORS
-//        if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
-//        if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
-
-        require E2G_MODULE_PATH . 'config.easy2gallery.php';
+        require_once E2G_MODULE_PATH . 'config.easy2gallery.php';
 
         if (!is_dir( MODX_BASE_PATH . $e2g['dir'])) {
             echo '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
@@ -86,6 +76,9 @@ class e2g_mod {
         $path .= '</b>';
         $this->e2gmod_cl['path'] = $path;
 
+        // decoding UTF-8 the path, as the default URL address
+        $gdir = utf8_decode($gdir);
+
         /*
          * GALLERY ACTIONS
         */
@@ -116,7 +109,9 @@ class e2g_mod {
                     } else {
                         $j=sizeof($list);
                     }
-                    if ($zip->extract(PCLZIP_OPT_PATH, '../'.$gdir) == 0) {
+                    $extract = $zip->extract(PCLZIP_OPT_PATH, '../'.$gdir,
+                                             PCLZIP_CB_PRE_EXTRACT, 'zipPreExtractCallBack');
+                    if ( $extract == 0 ) {
                         $_SESSION['easy2err'][] = "Error : ".$zip->errorInfo(TRUE);
                     } else {
                         $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
@@ -150,11 +145,29 @@ class e2g_mod {
                         $_SESSION['easy2err'][] = $lng['type_err'].' ' . $_FILES['img']['type'][$i];
                         continue;
                     }
+
+                    /*
+                     * CHECK the existing filenames inside the system.
+                     * If exists, amend the filename with number
+                    */
+                    $selectcheck = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                            . 'WHERE filename=\''.$_FILES['img']['name'][$i].'\'';
+                    $querycheck = mysql_query($selectcheck);
+                    if ($querycheck) {
+                        while ($rowcheck = mysql_fetch_array($querycheck)) {
+                            $existingname[$rowcheck['filename']] = $rowcheck['filename'];
+                        }
+                    }
+                    if (isset($existingname[$_FILES['img']['name'][$i]])) {
+                        $filteredname = $this->_single_name($_FILES['img']['name'][$i]);
+                    } else {
+                        $filteredname = $_FILES['img']['name'][$i];
+                    }
                     $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files'
                             .'( dir_id, filename, size, name, description, date_added ) '
                             .'VALUES('
                             .'\''.$parent_id.'\''
-                            .', \''.mysql_real_escape_string($_FILES['img']['name'][$i])
+                            .', \''.mysql_real_escape_string($filteredname)
                             .'\', '.(int)$_FILES['img']['size'][$i]
                             .', \''.mysql_real_escape_string(htmlspecialchars($_POST['name'][$i]))
                             .'\', \''.mysql_real_escape_string(htmlspecialchars($_POST['description'][$i]))
@@ -167,8 +180,10 @@ class e2g_mod {
                     if (($e2g['maxw'] > 0 || $e2g['maxh'] > 0) && ($inf[0] > $e2g['maxw'] || $inf[1] > $e2g['maxh'])) {
                         $this->_resize_img ($_FILES['img']['tmp_name'][$i], $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     }
-                    move_uploaded_file($_FILES['img']['tmp_name'][$i], '../'.$gdir.$_FILES['img']['name'][$i]);
-                    @chmod('../'.$gdir.$_FILES['img']['name'][$i], 0644);
+                    if (! move_uploaded_file($_FILES['img']['tmp_name'][$i], '../'.$gdir.utf8_decode($filteredname))) {
+                        $_SESSION['easy2err'][] = '177 '.$lng['upload_err'].': '.'../'.$gdir.utf8_decode($filteredname);
+                    }
+                    @chmod('../'.$gdir.utf8_decode($filteredname), 0644);
                     $j++;
                 }
                 $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
@@ -213,7 +228,7 @@ class e2g_mod {
                             }
                         }
                         if (!empty($v)) {
-                            $v = str_replace('../', '', $v);
+                            $v = str_replace('../', '', utf8_decode($v));
                             $d = $this->_delete_all('../'.$v.'/');
 
                             if (empty($d['e'])) {
@@ -253,7 +268,7 @@ class e2g_mod {
                             }
                         }
                         if (!empty($v)) {
-                            $v = str_replace('../', '', $v);
+                            $v = str_replace('../', '', utf8_decode($v));
                             if (@unlink('../'.$v)) {
                                 $res['ffp'][0]++;
                             } else {
@@ -274,8 +289,7 @@ class e2g_mod {
                         $_SESSION['easy2suc'][] = $res['ffp'][0] . ' '.$lng['files_deleted_fhdd'].'.';
                     }
                 }
-                //print_r($res);
-                //$_SESSION['easy2suc'][] = $out;
+//                $_SESSION['easy2suc'][] = $out;
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // Delete Directory
@@ -306,7 +320,7 @@ class e2g_mod {
                             .'WHERE dir_id IN('.implode(',', $ids).')');
                 }
                 if (!empty($_GET['dir_path'])) {
-                    $dir_path = str_replace('../', '', $_GET['dir_path']);
+                    $dir_path = str_replace('../', '', utf8_decode($_GET['dir_path']));
                     $res = $this->_delete_all('../'.$dir_path.'/');
                 }
                 if (count($ids) > 0 && count($res['e']) == 0) {
@@ -337,7 +351,7 @@ class e2g_mod {
                     mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments WHERE file_id='.$id);
                 }
                 if (!empty($_GET['file_path'])) {
-                    $file_path = str_replace('../', '', $_GET['file_path']);
+                    $file_path = str_replace('../', '', utf8_decode($_GET['file_path']));
                     $f_res = @unlink('../'.$file_path);
                 }
                 if ($db_res && $f_res) {
@@ -347,7 +361,7 @@ class e2g_mod {
                 } elseif ($f_res) {
                     $_SESSION['easy2suc'][] = $lng['file_delete_fhdd'];
                 } else {
-                    $_SESSION['easy2err'][] = $lng['file_delete_err'];
+                    $_SESSION['easy2err'][] = $lng['file_delete_err'].': '.$file_path;
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
@@ -428,7 +442,7 @@ class e2g_mod {
                 exit();
             // ADD DIRECTORY
             case 'add_dir':
-                if( $this->_add_all('../'.str_replace('../', '', $_GET['dir_path']), $parent_id, $e2g ) ) {
+                if( $this->_add_all('../'.str_replace('../', '', utf8_decode($_GET['dir_path']) ), $parent_id, $e2g ) ) {
                     $_SESSION['easy2suc'][] = $lng['dir_edded'];
                 } else {
                     $_SESSION['easy2err'][] = $lng['dir_edd_err'];
@@ -445,16 +459,15 @@ class e2g_mod {
                         $this->_resize_img($f, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     }
                     $n = htmlspecialchars(basename($f), ENT_QUOTES);
-                    $s = filesize($f);
+                    $s = filesize(utf8_decode($f));
                     $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                             . '(dir_id,filename,size,name,description,date_added) '
                             . "VALUES(".(int)$_GET['pid'].",'$n',$s,'','',NOW())";
                     if (mysql_query($q)) {
-                        @chmod($f, 0644);
+                        @chmod(utf8_decode($f), 0644);
                         $_SESSION['easy2suc'][] = $lng['file_added'];
                     } else {
-                        $_SESSION['easy2err'][] = $lng['add_file_err'];
-                        $_SESSION['easy2err'][] = mysql_error();
+                        $_SESSION['easy2err'][] = $lng['add_file_err'].'<br />'.mysql_error().'<br />'.$q;
                     }
                 } else {
                     $_SESSION['easy2err'][] = $lng['add_file_err'];
@@ -524,38 +537,42 @@ class e2g_mod {
             // Create Directory
             case 'create_dir':
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
-                    $tree = new TTree();
-                    $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
-                    $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
-                    if ( ($id = $tree->insert($dirname, $parent_id)) ) {
-                        $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                .'SET cat_description = \''.stripslashes($_POST['description']).'\''
-                                .', last_modified=NOW() '
-                                .'WHERE cat_id='.$id;
-                        mysql_query($q);
-                        if (mkdir('../'.$gdir.$dirname)) {
-                            $_SESSION['easy2suc'][] = $lng['directory_created'];
-                            @chmod('../'.$gdir.$dirname, 0755);
-
-                            // goldsky -- adds a cover file
-                            $indexFile = '../'.$gdir.$dirname."/index.html";
-                            $fh = fopen($indexFile, 'w') or die("can't open file");
-                            $stringData = $lng['indexfile'];
-                            fwrite($fh, $stringData);
-                            fclose($fh);
-                            @chmod($indexFile, 0644);
-                        } else {
-                            $_SESSION['easy2err'][] = $lng['directory_create_err'];
-                            $tree->delete($id);
-                        }
+                    // check names against bad characters
+                    if ($this->_has_bad_char($_POST['name'])) {
+                        $_SESSION['easy2err'][] = $lng['badchars'];
                     } else {
-                        $_SESSION['easy2err'][] = $tree->error;
-                    }
-                    header ("Location: ".$index."&pid=".$parent_id);
-                    exit();
-                }
+                        require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
+                        $tree = new TTree();
+                        $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
+                        $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
+                        if ( ($id = $tree->insert($dirname, $parent_id)) ) {
+                            $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                    .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                                    .', last_modified=NOW() '
+                                    .'WHERE cat_id='.$id;
+                            mysql_query($q);
+                            if (mkdir('../'.$gdir.utf8_decode($dirname))) {
+                                $_SESSION['easy2suc'][] = $lng['directory_created'];
+                                @chmod('../'.$gdir.utf8_decode($dirname), 0755);
 
+                                // goldsky -- adds a cover file
+                                $indexFile = '../'.$gdir.utf8_decode($dirname)."/index.html";
+                                $fh = fopen($indexFile, 'w') or die("can't open file");
+                                $stringData = $lng['indexfile'];
+                                fwrite($fh, $stringData);
+                                fclose($fh);
+                                @chmod($indexFile, 0644);
+                            } else {
+                                $_SESSION['easy2err'][] = $lng['directory_create_err'];
+                                $tree->delete($id);
+                            }
+                        } else {
+                            $_SESSION['easy2err'][] = $tree->error;
+                        }
+                        header ("Location: ".$index."&pid=".$parent_id);
+                        exit();
+                    }
+                }
                 $content .= '
 <p>'.$lng['create_dir'].'&nbsp; &nbsp; &nbsp;
     <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
@@ -590,25 +607,30 @@ class e2g_mod {
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
 
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                            .'SET cat_description = \''.stripslashes($_POST['description']).'\''
-                            .', last_modified=NOW() '
-                            .'WHERE cat_id='.(int)$_GET['dir_id'];
-                    $qResult = mysql_query($q) or die('574'.mysql_error());
-                    if($qResult) {
-                        // rename dir
-                        if( $_POST['newdirname'] != $row['cat_name'] ) {
-                            rename('../'.$gdir.$row['cat_name'], '../'.$gdir.$_POST['newdirname']);
-                            @chmod('../'.$gdir.$_POST['newdirname'], 0755);
-                            $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                    .'SET cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\''
-                                    .', last_modified=NOW() '
-                                    .'WHERE cat_id='.(int)$_GET['dir_id'];
-                            mysql_query($renamedir);
-                        }
-                        $_SESSION['easy2suc'][] .= $lng['updated'];
+                    // check names against bad characters
+                    if ($this->_has_bad_char($_POST['newdirname'])) {
+                        $_SESSION['easy2err'][] = $lng['badchars'];
                     } else {
-                        $_SESSION['easy2err'][] .= $lng['update_err'].mysql_error();
+                        $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                                .', last_modified=NOW() '
+                                .'WHERE cat_id='.(int)$_GET['dir_id'];
+                        $qResult = mysql_query($q) or die('574'.mysql_error());
+                        if($qResult) {
+                            // rename dir
+                            if( $_POST['newdirname'] != $row['cat_name'] ) {
+                                rename('../'.$gdir.utf8_decode($row['cat_name']), '../'.$gdir.utf8_decode($_POST['newdirname']));
+                                @chmod('../'.$gdir.utf8_decode($_POST['newdirname']), 0755);
+                                $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                        .'SET cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\''
+                                        .', last_modified=NOW() '
+                                        .'WHERE cat_id='.(int)$_GET['dir_id'];
+                                mysql_query($renamedir);
+                            }
+                            $_SESSION['easy2suc'][] = $lng['updated'];
+                        } else {
+                            $_SESSION['easy2err'][] = $lng['update_err'].'<br />'.mysql_error();
+                        }
                     }
                     header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
@@ -621,10 +643,17 @@ class e2g_mod {
 </p>
 <form name="list" action="" method="post">
     <table cellspacing="0" cellpadding="2" class="aForm" >
+        ';
+                // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
+                if($row['cat_id']!='1') {
+                    $content .= '
         <tr>
             <td><b>'.$lng['enter_new_dirname'].' :</b></td>
             <td><input name="newdirname" type="text" value="'.$row['cat_name'].'" size="30"></td>
         </tr>
+        ';
+                }
+                $content .= '
         <tr>
             <td valign="top"><b>'.$lng['description'].' :</b></td>
             <td><textarea name="description" style="width:100%">'.$row['cat_description'].'</textarea></td>
@@ -651,33 +680,40 @@ class e2g_mod {
                 $filename = substr($row['filename'], 0, -(strlen($ext)));
 
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-                    $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                            .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES).'\''
-                            .', description = \''.stripslashes($_POST['description']).'\''
-                            .', last_modified=NOW() '
-                            .'WHERE id='.(int)$_GET['file_id'];
-                    $qResult = mysql_query($q);
-                    if($qResult) {
-                        // rename file
-                        if( $_POST['newfilename'] != $filename.$ext ) {
-                            rename('../'.$gdir.$row['filename'], '../'.$gdir.$_POST['newfilename'].$ext);
-                            @chmod('../'.$gdir.$_POST['filename'], 0644);
-                            $renamefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                                    .'SET filename = \''.htmlspecialchars($_POST['newfilename'].$ext, ENT_QUOTES).'\''
-                                    .', last_modified=NOW() '
-                                    .'WHERE id='.(int)$_GET['file_id'];
-                            mysql_query($renamefile);
-                        }
-                        $_SESSION['easy2suc'][] .= $lng['updated'];
+                    // check names against bad characters
+                    if ($this->_has_bad_char($_POST['newfilename'])) {
+                        $_SESSION['easy2err'][] = $lng['badchars'].': '.$_POST['newfilename'];
+                        header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     } else {
-                        $_SESSION['easy2err'][] .= $lng['update_err'];
+                        $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES).'\''
+                                .', description = \''.stripslashes($_POST['description']).'\''
+                                .', last_modified=NOW() '
+                                .'WHERE id='.(int)$_GET['file_id'];
+                        $qResult = mysql_query($q);
+                        if($qResult) {
+                            // rename file
+                            if( $_POST['newfilename'] != $filename ) {
+                                rename('../'.$gdir.utf8_decode($row['filename']) , '../'.$gdir.utf8_decode($_POST['newfilename'].$ext))
+                                        or die('692');
+                                @chmod('../'.$gdir.utf8_decode($_POST['filename']), 0644) or die('683');
+                                $renamefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                        .'SET filename = \''.htmlspecialchars($_POST['newfilename'].$ext, ENT_QUOTES).'\''
+                                        .', last_modified=NOW() '
+                                        .'WHERE id='.(int)$_GET['file_id'];
+                                mysql_query($renamefile);
+                            }
+                            $_SESSION['easy2suc'][] = $lng['updated'];
+                        } else {
+                            $_SESSION['easy2err'][] = $lng['update_err'];
+                        }
+                        header ('Location: '.$index.'&pid='.$parent_id);
                     }
-                    header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
                 }
 
                 $content .= '
-<p>'.$lng['editing'].' '.$lng['file2'].' <b>'.$row['filename'].' <a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$lng['uim_preview'].'</a></b> ('.$row['comments'].' comments)
+<p>'.$lng['editing'].' '.$lng['file2'].' <b>'.$row['filename'].' <a href="javascript:imPreview(\''.utf8_encode($gdir).$row['filename'].'\');void(0);">'.$lng['uim_preview'].'</a></b> ('.$row['comments'].' comments)
     &nbsp; &nbsp; &nbsp;
     <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
 </p>
@@ -728,7 +764,7 @@ class e2g_mod {
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
                 $content .= '
-<p>'.$lng['comments'].' '.$lng['file2'].' <b><a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
+<p>'.$lng['comments'].' '.$lng['file2'].': '.utf8_encode($gdir).' <b><a href="javascript:imPreview(\''.utf8_encode($gdir).$row['filename'].'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
     &nbsp; &nbsp; &nbsp;
     <img src="' . E2G_MODULE_URL . 'icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
     <a href="'.$index.'&page=comments&file_id='.$_GET['file_id'].'&pid='.$parent_id.'">'.$lng['refresh'].'</a>
@@ -804,7 +840,7 @@ class e2g_mod {
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
                         }
                     } else {
-                        $_SESSION['easy2err'][] = '726 MySQL ERROR: '.mysql_error();
+                        $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
                     }
                     // MySQL File list
                     $q = 'SELECT id,filename FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
@@ -816,7 +852,7 @@ class e2g_mod {
                             $mfiles[$l['filename']]['name'] = $l['filename'];
                         }
                     } else {
-                        $_SESSION['easy2err'][] = '738 MySQL ERROR: '.mysql_error();
+                        $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
                     }
                 }
 
@@ -824,21 +860,29 @@ class e2g_mod {
                 $dirs = glob('../'.$gdir.'*', GLOB_ONLYDIR);
                 natsort($dirs);
                 $content = '
-<div>
-    <form action="'.$index.'&act=synchro" method="post">
-        <input type="submit" value="'.$lng['synchro'].'" />
-    </form>
+<div id="e2g_topmenu">
+    <ul class="actionButtons">
+        <li id="Button1">
+            <a href="'.$index.'&act=synchro">
+                <img src="media/style/MODxCarbon/images/icons/refresh.png" /> '.$lng['synchro'].'
+            </a>
+        </li>
+        <li id="Button2">
+            <a href="'.$index.'&act=clean_cache">
+                <img src="media/style/MODxCarbon/images/icons/trash.png" /> '.$lng['clean_cache'].'
+            </a>
+        </li>
+        <li id="Button3">
+            <a href="'.$index.'&page=create_dir&pid='.$parent_id.'">
+                <img src="media/style/MODxCarbon/images/icons/folder_add.png" /> '.$lng['create_dir'].'
+            </a>
+        </li>
+    </ul>
 </div>
 <p>'.$lng['path'].': <a href="'.$index.'&page=edit_dir&dir_id='.$parent_id.'&pid='.$parent_id.'">
         <img src="' . E2G_MODULE_URL . 'icons/folder_edit.png" width="16" height="16"
              alt="'.$lng['edit'].'" title="'.$lng['edit'].'" align="absmiddle" border=0>
-    </a> <b>'.$path.'</b> &nbsp; &nbsp;
-    <img src="' . E2G_MODULE_URL . 'icons/folder_add.png" width="16" height="16" border="0" align="absmiddle">
-    <a href="'.$index.'&page=create_dir&pid='.$parent_id.'"><b>'.$lng['create_dir'].'</b></a>
-    &nbsp; &nbsp;
-    <img src="' . E2G_MODULE_URL . 'icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
-    <a href="'.$index.'&act=clean_cache"><b>'.$lng['clean_cache'].'</b></a>
-    &nbsp; &nbsp;
+    </a> <b>'.$path.'</b>
 </p>';
                 // Description of the current directory
                 $qdesc = 'SELECT cat_description '
@@ -866,9 +910,9 @@ class e2g_mod {
                         <td width="60" align="right"><b>'.$lng['options'].'</b></td>
                     </tr>
                     ';
-                if ($dirs!=FALSE)
+                if ($dirs!=FALSE) {
                     foreach ($dirs as $f) {
-                        $name = basename($f);
+                        $name = basename(UTF8_encode($f));
                         $time = filemtime($f);
                         $cnt = $this->_count_files($f);
                         if ($name == '_thumbnails') continue;
@@ -887,7 +931,7 @@ class e2g_mod {
                             $id = null;
                             $ext = '_error';
                             if (empty($cpath)) {
-                                $buttons = '<a href="'.$index.'&act=add_dir&dir_path='.$gdir.$name.'&pid='.$parent_id.'">
+                                $buttons = '<a href="'.$index.'&act=add_dir&dir_path='.utf8_encode($gdir).$name.'&pid='.$parent_id.'">
                                     <img src="' . E2G_MODULE_URL . 'icons/folder_add.png" width="16" height="16"
                                         alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
                                             </a>';
@@ -899,7 +943,7 @@ class e2g_mod {
                         $content .= '
                     <tr'.$cl[$i%2].'>
                         <td>
-                            <input name="dir['.(empty($id)?'d'.$i:$id).']" value="'.$gdir.$name.'"
+                            <input name="dir['.(empty($id)?'d'.$i:$id).']" value="'.utf8_encode($gdir).$name.'"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
                         <td><img src="' . E2G_MODULE_URL . 'icons/folder'.$ext.'.png" width="16" height="16" border="0"></td>
@@ -908,7 +952,7 @@ class e2g_mod {
                         <td>---</td>
                         <td align="right" nowrap>
                             '.$buttons.'
-                            <a href="'.$index.'&act=delete_dir&dir_path='.$gdir.$name.(empty($id)?'':'&dir_id='.$id).'"
+                            <a href="'.$index.'&act=delete_dir&dir_path='.utf8_encode($gdir).$name.(empty($id)?'':'&dir_id='.$id).'"
                                onclick="return confirmDeleteFolder();">
                                 <img src="' . E2G_MODULE_URL . 'icons/delete.png" border="0"
                                      alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
@@ -918,10 +962,10 @@ class e2g_mod {
                     ';
                         $i++;
                     }
-                // Deleted dirs
-                if (isset($mdirs) && count($mdirs) > 0) {
-                    foreach ($mdirs as $k => $v) {
-                        $content .= '
+                    // Deleted dirs
+                    if (isset($mdirs) && count($mdirs) > 0) {
+                        foreach ($mdirs as $k => $v) {
+                            $content .= '
                     <tr'.$cl[$i%2].'>
                         <td><input name="dir['.$v['id'].']" value="" type="checkbox" style="border:0;padding:0"></td>
                         <td><img src="' . E2G_MODULE_URL . 'icons/folder_delete.png" width="16" height="16" border="0"></td>
@@ -937,11 +981,12 @@ class e2g_mod {
                         </td>
                     </tr>
                     ';
-                        $i++;
+                            $i++;
+                        }
                     }
                 }
-                // File list
 
+                // File list
                 $mfiles = isset($mfiles) ? $mfiles : array();
                 $excludefiles = array(
                         '../'.$gdir.'index.htm',
@@ -953,29 +998,28 @@ class e2g_mod {
                 natsort($files);
                 if ($files!=FALSE)
                     foreach ($files as $f) {
-//                die($this->is_validfile($f,1));
                         if ($this->is_validfolder($f)) continue;
                         $size = round(filesize($f)/1024);
                         $time = filemtime($f);
-                        $name = basename($f);
+                        $name = basename(UTF8_encode($f));
                         $ext = 'picture';
                         $id = $mfiles[$name]['id'];
                         if (isset($mfiles[$name])) {
-                            $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
+                            $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
                             unset($mfiles[$name]);
                             $buttons = '
- <a href="'.$index.'&page=comments&file_id='.$id.'">
+ <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
      <img src="' . E2G_MODULE_URL . 'icons/comments.png" width="16" height="16" alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
  </a>
  <a href="'.$index.'&page=edit_file&file_id='.$id.'&pid='.$parent_id.'">
      <img src="' . E2G_MODULE_URL . 'icons/picture_edit.png" width="16" height="16" alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
  </a>';
                         } else {
-                            $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);" style="color:gray"><b>'.$name.'</b></a>';
+                            $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);" style="color:gray"><b>'.$name.'</b></a>';
                             $id = null;
                             $ext .= '_error';
                             if (empty($cpath)) {
-                                $buttons = '<a href="'.$index.'&act=add_file&file_path='.$gdir.$name.'&pid='.$parent_id.'">
+                                $buttons = '<a href="'.$index.'&act=add_file&file_path='.utf8_encode($gdir).$name.'&pid='.$parent_id.'">
                                     <img src="' . E2G_MODULE_URL . 'icons/picture_add.png" width="16" height="16"
                                         alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
                                             </a>';
@@ -985,7 +1029,7 @@ class e2g_mod {
                         $content .= '
                     <tr'.$cl[$i%2].'>
                         <td>
-                            <input name="im['.(empty($id)?'f'.$i:$id).']" value="'.$gdir.$name.'"
+                            <input name="im['.(empty($id)?'f'.$i:$id).']" value="'.utf8_encode($gdir).$name.'"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
                         <td><img src="' . E2G_MODULE_URL . 'icons/'.$ext.'.png" width="16" height="16"></td>
@@ -993,7 +1037,7 @@ class e2g_mod {
                         <td>'.@date($e2g['mdate_format'], $time).'</td>
                         <td>'.$size.'Kb</td>
                         <td align="right" nowrap>'.$buttons.'
-                            <a href="'.$index.'&act=delete_file&file_path='.$gdir.$name.(empty($id)?'':'&file_id='.$id).'"
+                            <a href="'.$index.'&act=delete_file&file_path='.utf8_encode($gdir).$name.(empty($id)?'':'&file_id='.$id).'"
                                onclick="return confirmDelete();">
                                 <img src="' . E2G_MODULE_URL . 'icons/delete.png" border="0"
                                      alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
@@ -1033,9 +1077,24 @@ class e2g_mod {
                         $i++;
                     }
                 }
+
                 $content .= '
                 </table>
-                <input type="submit" value="'.$lng['delete'].'" name="delete" style="font-weight:bold;color:red" />
+                <div id="e2g_bottommenu">
+                    <ul class="actionButtons">
+                        '.$lng['withselected'].':
+                        <li id="Button4">
+                            <a name="delete" href="javascript:document.list.submit()" style="font-weight:bold;color:red">
+                                <img src="media/style/MODxCarbon/images/icons/delete.png" /> '.$lng['delete'].'
+                            </a>
+                        </li>
+                        <li id="Button5">
+                            <a href="'.$index.'&act=synchro">
+                                <img src="media/style/MODxCarbon/images/icons/sort.png" /> '.$lng['movetofolder'].'
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </form>
         </td>
         <th width="205" valign="top">
@@ -1045,11 +1104,6 @@ class e2g_mod {
         </th>
     </tr>
 </table>
-<div>
-    <form action="'.$index.'&act=synchro" method="post">
-        <input type="submit" value="'.$lng['synchro'].'" />
-    </form>
-</div>
 ';
         } // switch ($page)
         $suc = $err = '';
@@ -1076,7 +1130,7 @@ class e2g_mod {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
         if (!$this->is_validfolder($path)) return $res;
         $fs = glob($path.'*');
-        if ($fs!=FALSE)
+        if ($fs!=FALSE) {
             foreach ($fs as $f) {
 //                if ($this->is_validfile($f)) {
                 // using original file check, because it will delete not only images.
@@ -1091,6 +1145,7 @@ class e2g_mod {
                     $res['e'] = array_merge($res['e'], $sres['e']);
                 }
             }
+        }
         if (count($res['e']) == 0 && @rmdir($path)) $res['d']++;
         else $res['e'][] = 'Can not delete directory: '.$f;
         return $res;
@@ -1108,13 +1163,12 @@ class e2g_mod {
         require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
         $tree = new TTree();
         $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
-        $name = htmlspecialchars(basename($path), ENT_QUOTES);
+        $name = htmlspecialchars(basename(UTF8_encode($path)), ENT_QUOTES);
         if ( !($id = $tree->insert($name, $pid)) ) {
             $_SESSION['easy2err'][] = $tree->error;
             return FALSE;
         }
         if (!$this->is_validfolder($path)) {
-            //die ($npath . ' dir not found!');
             return FALSE;
         }
         // goldsky -- add some files exclusion
@@ -1126,53 +1180,54 @@ class e2g_mod {
         );
         $fs = array_diff(glob($path.'*'), $excludefiles);
         natsort($fs);
-        if ($fs!=FALSE)
+        if ($fs!=FALSE) {
             // goldsky -- alter the maximum execution time
             set_time_limit(0);
 
-        foreach ($fs as $f) {
-            // goldsky -- adds output buffer to avoid PHP's memory limit
-            ob_start();
+            foreach ($fs as $f) {
+                // goldsky -- adds output buffer to avoid PHP's memory limit
+                ob_start();
 
-            if ($this->is_validfolder($f)) {
-                // goldsky -- if the path is a dir, go deeper as $path==$f
-                if (!$this->_add_all ($f.'/', $id, $cfg)) return FALSE;
-            } else {
-                $inf = getimagesize($f);
-                if ($inf[2] > 3) continue;
-                // RESIZE
-                if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
-                    $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
-                }
-                $n = htmlspecialchars(basename($f), ENT_QUOTES);
-                $s = filesize($f);
-                $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
-                        . '(dir_id,filename,size,name,description,date_added) '
-                        . "VALUES($id,'$n',$s,'','',NOW())";
-                if (!mysql_query($q)) {
-                    $_SESSION['easy2err'][] = $lng['add_file_err'].' "'.$n.'"';
-                    continue;
-                }
+                if ($this->is_validfolder($f)) {
+                    // goldsky -- if the path is a dir, go deeper as $path==$f
+                    if (!$this->_add_all ($f.'/', $id, $cfg)) return FALSE;
+                } else {
+                    $inf = getimagesize($f);
+                    if ($inf[2] > 3) continue;
+                    // RESIZE
+                    if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+                        $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
+                    }
+                    $n = htmlspecialchars(basename(UTF8_encode($f)), ENT_QUOTES);
+                    $s = filesize($f);
+                    $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
+                            . '(dir_id,filename,size,name,description,date_added) '
+                            . "VALUES($id,'$n',$s,'','',NOW())";
+                    if (!mysql_query($q)) {
+                        $_SESSION['easy2err'][] = $lng['add_file_err'].' "'.$n.'"';
+                        continue;
+                    }
 
-                /*
-                 * goldsky -- if there is no index.html inside folders, this will create it.
-                */
-                if (!file_exists($path.'/index.html')) {
-                    // goldsky -- adds a cover file
-                    $indexFile = $path."/index.html";
-                    $fh = fopen($indexFile, 'w') or die("can't open file");
+                    /*
+                     * goldsky -- if there is no index.html inside folders, this will create it.
+                    */
+                    if (!file_exists($path.'/index.html')) {
+                        // goldsky -- adds a cover file
+                        $indexFile = $path."/index.html";
+                        $fh = fopen($indexFile, 'w') or die("can't open file");
 //                    $stringData = $lng['synchro_indexfile'];
-                    $stringData = '<h2>Unauthorized access</h2>You\'re not allowed to access file folder';
-                    fwrite($fh, $stringData);
-                    fclose($fh);
-                    @chmod($indexFile, 0644);
+                        $stringData = '<h2>Unauthorized access</h2>You\'re not allowed to access file folder';
+                        fwrite($fh, $stringData);
+                        fclose($fh);
+                        @chmod($indexFile, 0644);
+                    }
                 }
-            }
 
-            // goldsky -- adds output buffer to avoid PHP's memory limit
-            ob_end_clean();
+                // goldsky -- adds output buffer to avoid PHP's memory limit
+                ob_end_clean();
+            }
+            return TRUE;
         }
-        return TRUE;
     }
 
     /*
@@ -1286,18 +1341,18 @@ class e2g_mod {
             if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
                 $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
             }
-            $n = htmlspecialchars(basename($f), ENT_QUOTES);
+            $n = htmlspecialchars(basename(UTF8_encode($f)), ENT_QUOTES);
             $s = filesize($f);
             $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                     . '(dir_id,filename,size,name,description,date_added) '
                     . "VALUES(".$pid.",'$n',$s,'','',NOW())";
             if (!mysql_query($q)) {
-                $_SESSION['easy2err'][] .= $lng['add_file_err'];
-                $_SESSION['easy2err'][] .= mysql_error();
+                $_SESSION['easy2err'][] = $lng['add_file_err'].'<br/>'.mysql_error();
+//                $_SESSION['easy2err'][] = mysql_error();
                 return FALSE;
             }
         } else {
-            $_SESSION['easy2err'][] .= $lng['add_file_err'];
+            $_SESSION['easy2err'][] = $lng['add_file_err'];
             return FALSE;
         }
         return TRUE;
@@ -1355,15 +1410,15 @@ class e2g_mod {
         /*
          * READ the real physical objects, store into database
         */
-        if ($fs!=FALSE)
+        if ($fs!=FALSE) {
             // goldsky -- alter the maximum execution time
             set_time_limit(0);
-        
+
             foreach ($fs as $f) {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
-                
-                $name = basename($f);
+
+                $name = basename(UTF8_encode($f));
                 if ($this->is_validfolder($f)) { // as a folder/directory
                     if ($name == '_thumbnails') continue;
 
@@ -1371,7 +1426,6 @@ class e2g_mod {
                         if (!$this->_synchro($f.'/', $mdirs[$name]['id'], $cfg)) return FALSE;
                         unset($mdirs[$name]);
                     } else { // as ALL folder and file children of the current directory
-
                         /*
                          * INSERT folder's and file's names into database
                         */
@@ -1413,7 +1467,7 @@ class e2g_mod {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_end_clean();
             }
-
+        }
         /*
          * UNMATCHED comparisons action
         */
@@ -1463,11 +1517,80 @@ class e2g_mod {
     }
 
     /*
+     * to check the existance of filename/folder in the file system.
+     * if exists, this will add numbering into the uploaded files.
+    */
+    private function _single_name($name) {
+        global $modx;
+        $selectcheck = 'SELECT filename FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                . 'WHERE filename = \''.$name.'\'';
+        $querycheck = @mysql_query($selectcheck);
+        while ($rowcheck = @mysql_fetch_array($querycheck)) {
+            $fetchrow[$rowcheck['filename']] = $rowcheck['filename'];
+        }
+        if ( isset( $fetchrow[$name]) ) {
+            $ext = substr($name, strrpos($name, '.'));
+            $filename = substr($name, 0, -(strlen($ext)));
+            $oldsuffix = end(@explode('_',$filename));
+            $prefixfilename = substr($filename, 0, -(strlen($oldsuffix))-1);
+            if (is_numeric($oldsuffix)) {
+                $notnumbersuffix = '';
+                $newnumbersuffix = (int)$oldsuffix+1;
+            } else {
+                $notnumbersuffix = '_'.$oldsuffix;
+                $newnumbersuffix = 1;
+            }
+            $newfilename = ( $prefixfilename!='' ? $prefixfilename.$notnumbersuffix : $filename ).'_'.$newnumbersuffix.$ext;
+            $_SESSION['easy2suc'][] = $name .' exists, file was renamed to be '.$newfilename;
+        }
+
+        // recursive check
+        $selectcheck2 = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                . 'WHERE filename=\''.$newfilename.'\'';
+        $querycheck2 = @mysql_query($selectcheck2);
+        while ($rowcheck2 = @mysql_fetch_array($querycheck2)) {
+            $fetchrow2[$rowcheck2['filename']] = $rowcheck2['filename'];
+        }
+        if ( isset( $fetchrow2[$newfilename]) ) {
+            $newfilename2 = $this->_single_name($newfilename);
+            if (!$newfilename2) {
+                $_SESSION['easy2err'][] = $name .' exists, but file could not be renamed to be '.$newfilename;
+            } else $newfilename = $newfilename2;
+        }
+
+        return $newfilename;
+    }
+
+    /*
+     * to check the valid characters in names
+     * TRUE means BAD!
+    */
+    private function _has_bad_char($characters) {
+        $bad_chars = array (
+                "U+0000", "/", "\\", ":", "*", "?", "'", "\"", "<", ">", "|", ";"
+                , "@", "=", "#", "&", "!", "*", "'", "(", ")", ",", "{", "}", ","
+                , "^" , "~" , "[" , "]" , "`"
+        );
+        foreach ($bad_chars as $bad_char) {
+            if (strstr($characters, $bad_char)) return TRUE;
+        }
+    }
+
+    /*
+     * PclZip PCLZIP_CB_PRE_EXTRACT to convert filenames while extracting the content.
+    */
+    function zipPreExtractCallBack($p_event, &$p_header) {
+        $info = pathinfo($p_header['filename']);
+        $p_header['filename'] = iconv("ISO-8859-1", "UTF-8", $p_header['filename']);
+        return 1;
+    }
+
+    /*
      * goldsky -- use this for debuging with: die(is_validfile($filename, 1));
      *
     */
     public function is_validfile ( $filename, $debug=0 ) {
-        $f = basename($filename);
+        $f = basename(UTF8_encode($filename));
         if ($this->is_validfolder($filename)) {
             if ($debug==1) {
                 return '<b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';

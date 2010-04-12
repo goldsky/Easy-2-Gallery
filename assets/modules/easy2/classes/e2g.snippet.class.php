@@ -420,7 +420,10 @@ class e2g_snip {
     */
     private function _get_thumb ($gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner', $red = 255, $green = 255, $blue = 255) {
         global $modx;
-
+        // decoding UTF-8
+        $gdir = utf8_decode($gdir);
+        $path = utf8_decode($path);
+        
         $w = $this->cl_cfg['w'];
         $h = $this->cl_cfg['h'];
         $thq = $this->cl_cfg['thq'];
@@ -561,8 +564,10 @@ class e2g_snip {
         }
 
         /*
-         * returned as thumbnail's path
+         * returned as thumbnail's path, with UTF-8 encoding
         */
+        $gdir = utf8_encode($gdir);
+        $thumb_path = utf8_encode($thumb_path);
         return $gdir.$thumb_path;
     }
 

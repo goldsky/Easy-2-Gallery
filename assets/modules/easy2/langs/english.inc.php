@@ -26,8 +26,8 @@ for ($i = 3; $i < $numLines; $i++) {
 }
 
 $lng = array (
-        'charset' => 'ISO-8859-1',
-//        'charset' => 'UTF-8',
+//        'charset' => 'ISO-8859-1',
+        'charset' => 'UTF-8',
         'create_dir' => 'Create folder',
         'manager' => 'Files',
         'upload' => 'Image Upload',
@@ -47,6 +47,7 @@ $lng = array (
         'unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
         'enter_dirname' => 'Enter new folder name',
         'enter_new_dirname' => 'Rename folder',
+        'badchars' => 'Invalid characters for file system',
 
         'debug' => 'Debug option',
         'dir' => 'folder',
@@ -94,7 +95,10 @@ $lng = array (
         'ignore' => 'Ignore',
         'unignore' => 'Unignore',
         'modified' => 'Modified',
+        'withselected' => 'With selected',
         'delete' => 'Delete',
+        'movetofolder' => 'Move to folder',
+        'move' => 'Move',
         'refresh' => 'Update',
         'info' => 'Info',
         'size' => 'Size',
@@ -166,7 +170,7 @@ $lng = array (
 
         'cfg_com0' => 'Debug mode.',
         'cfg_com1' => 'Path to folder with <b class="warning">trailing slash</b>, e.g.: assets/easy2gallery/.',
-        'cfg_com1a' => 'TinyMCE folder, e.g.: tinymce3241',
+        'cfg_com1a' => 'TinyMCE folder, e.g.: tinymce3241 (MODx Evolution 1.0.2)',
         'cfg_com2' => 'Max width in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com3' => 'Max height in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com4' => 'Level of jpeg comression from 0 to 100%.<br><b class="warning">Only for images larger than limits</b>.',

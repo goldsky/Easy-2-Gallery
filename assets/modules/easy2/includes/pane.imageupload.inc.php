@@ -6,7 +6,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
     <script type="text/javascript">
         tpResources.addTabPage(document.getElementById("addForm"));
     </script>
-    <p><?php echo $lng['upload_dir'].': <b>'.$gdir.'</b>'; ?></p>
+    <p><?php echo $lng['upload_dir'].': <b>'.utf8_encode($gdir).'</b>'; ?></p>
     <p><?php echo $lng['valid_extensions']; ?> .jpeg, .jpg, .gif, .png</p>
     <div class="tab-pane" id="tabImageUploadPane">
         <script type="text/javascript">
@@ -48,7 +48,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabZip') );
             </script>
-            <form name="zipfile" action="<?php echo $index.'&act=uploadzip&pid='.$parent_id; ?>" method="post" enctype="multipart/form-data">
+            <form name="zipfile" action="<?php echo $index.'&act=uploadzip&pid='.$parent_id; ?>" 
+                  method="post" enctype="multipart/form-data" accept-charset="UTF-8">
                 <table cellspacing="0" cellpadding="2">
                     <tr>
                         <td><b><?php echo $lng['archive'];?>:</b></td>

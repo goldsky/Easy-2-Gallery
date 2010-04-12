@@ -4,6 +4,7 @@
  $time_start = getmicrotime();
 
  $path = '../../../'.str_replace('../', '', $_GET['path']);
+ $path = utf8_decode($path);
  $w = 190;
  $h = 250;
 

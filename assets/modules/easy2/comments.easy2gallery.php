@@ -6,7 +6,7 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.3.6
+ * @version 1.4.0
  */
 
 error_reporting(0);

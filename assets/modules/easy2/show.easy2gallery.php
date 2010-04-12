@@ -6,7 +6,7 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.3.6
+ * @version 1.4.0
  *
  */
 
@@ -53,6 +53,7 @@ while ($l = mysql_fetch_row($res)) {
 
 //$fp = '../../../'.$e2g['dir'].$path.$row['id'].$ext; // goldsky
 $fp = '../../../'.$e2g['dir'].$path.$filename2send;
+$fp = utf8_decode($fp);
 
 // preparing filesize
 $filesize2sent=filesize($fp);
