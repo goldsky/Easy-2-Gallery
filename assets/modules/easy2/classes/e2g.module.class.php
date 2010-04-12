@@ -1088,11 +1088,11 @@ class e2g_mod {
                                 <img src="media/style/MODxCarbon/images/icons/delete.png" /> '.$lng['delete'].'
                             </a>
                         </li>
-                        <li id="Button5">
+                        <!--li id="Button5">
                             <a href="'.$index.'&act=synchro">
                                 <img src="media/style/MODxCarbon/images/icons/sort.png" /> '.$lng['movetofolder'].'
                             </a>
-                        </li>
+                        </li-->
                     </ul>
                 </div>
             </form>
