@@ -18,6 +18,9 @@ Options:
 
 ----+ &ss_limit - limit number of images for the slideshow, default NULL.
 More images mean slower page loading.
++ UTF-8
++ Invalid characters checking
++ Numbering on duplication
 
 ********** 1.4.0-Beta 2 **********
 + Fixed small bug in pagination calculation
