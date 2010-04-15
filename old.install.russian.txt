@@ -1,7 +1,9 @@
 Установка
 
 1. Разархивируйте архив в дирректорию с установленным MODx.
-2. Создайте в MODx новый модуль и обязательно назовите его easy2, в поле "код модуля" вставьте содержимое файла module.easy2gallery.php (assets/modules/easy2/install/module.easy2gallery.php).
+2. Create new module, name it anything (Eg: Easy 2 Gallery), paste 
+      include(MODX_BASE_PATH.'assets/modules/easy2/index.php');
+  , click save.
 3. В конфигурации модуля поставьте галочку "Включить общие параметры"
 4. Обновите окно с MODx, чтобы в модулях появилась новая закладка easy2, откройте её.
 4. Произведите установку согласно инструкциям.
