@@ -27,6 +27,7 @@ $e2gmod_cl['_t'] = $_t = $modx->config['manager_theme'];
 $e2gmod_cl['_a'] = $_a = (int) $_GET['a'];
 $e2gmod_cl['_i'] = $_i = (int) $_GET['id'];
 $e2gmod_cl['index'] = $index = 'index.php?a='.$_a.'&id='.$_i;
+
 if ($debug == 1) {
     error_reporting(E_ALL);
     $old_error_handler = set_error_handler("error_handler");
@@ -46,15 +47,28 @@ if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
 if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
 require E2G_MODULE_PATH . 'config.easy2gallery.php';
+
+$gdir = $e2g['dir'];
+$path = '';
+$parent_id = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
+
+/*
+ * To handle error
+ * @param int      $errno error number
+ * @param string   $errmsg error message
+ * @param string   $filename filename
+ * @param int      $linenum line number
+ * @param string   $vars ???
+*/
+function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
+    echo '<p>Error '.$errno.': '.$errmsg.'<br>File: '.$filename.' <b>Line:'.$linenum.'</b></p>';
+}
+
 // Install
 if (is_dir( E2G_MODULE_PATH . 'install')) {
     require_once E2G_MODULE_PATH . 'install/index.php';
     exit();
 }
-
-$gdir = $e2g['dir'];
-$path = '';
-$parent_id = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
 
 /*
  * EXECUTE MODULE

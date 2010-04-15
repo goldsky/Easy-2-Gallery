@@ -1329,19 +1329,6 @@ class e2g_mod {
     }
 
     /*
-     * private function _error_handler()
-     * To handle error
-     * @param int $errno error number
-     * @param string $errmsg error message
-     * @param string $filename filename
-     * @param int $linenum line number
-     * @param string $vars ???
-    */
-    private function _error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
-        echo '<p>Error '.$errno.': '.$errmsg.'<br>File: '.$filename.' <b>Line:'.$linenum.'</b></p>';
-    }
-
-    /*
      * private function _add_file()
      * To add all file from the upload form
      * @param string $f filename
@@ -1363,7 +1350,6 @@ class e2g_mod {
                     . "VALUES(".$pid.",'$n',$s,'','',NOW())";
             if (!mysql_query($q)) {
                 $_SESSION['easy2err'][] = $lng['add_file_err'].'<br/>'.mysql_error();
-//                $_SESSION['easy2err'][] = mysql_error();
                 return FALSE;
             }
         } else {
