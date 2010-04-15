@@ -67,7 +67,7 @@ if (class_exists('e2g_mod')) {
     $e2g_mod = new e2g_mod($e2gmod_cl, $e2g, $lng);
     $output = $e2g_mod;
 } else {
-    $output = "<h3>error: e2g_snip class not found</h3>";
+    $output = "<h3>error: e2g_mod class not found</h3>";
 }
 
 return $output;
