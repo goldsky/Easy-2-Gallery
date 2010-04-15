@@ -8,7 +8,7 @@ $_t = $this->e2gmod_cl['_t']
         <title>Easy 2 Gallery <?php echo E2G_VERSION; ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lng['charset']; ?>" />
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>templates/mod_style.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/e2g_mod.css" />
         <script type="text/javascript" src="media/script/tabpane.js"></script>
         <script type="text/javascript">
             function confirmDelete() {

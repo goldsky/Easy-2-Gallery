@@ -1,0 +1,13 @@
+.e2g_grayedHeader a, .e2g_grayedHeader a:link {
+	margin: 0 10px;
+	padding: 5px 10px;
+	color: #bbb;
+	border: 1px solid #e3e3e3;
+	border-bottom:none;
+	background: #EFEFEF url(images/misc/fade.gif) repeat-x top;
+    text-decoration: none;
+}
+.e2g_grayedHeader a:hover {
+    color: #000;
+    text-decoration: none;
+}
