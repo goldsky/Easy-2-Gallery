@@ -1,6 +1,6 @@
 <?php
 $e2g = array (
-'debug' => 0,
+'debug' => 1,
 'dir' => 'assets/gallery/',
 'tinymcefolder' => 'tinymce3241',
 'maxw' => 1000,

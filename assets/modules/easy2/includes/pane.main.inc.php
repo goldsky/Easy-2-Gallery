@@ -144,8 +144,8 @@ $_t = $this->e2gmod_cl['_t']
                     tpResources = new WebFXTabPane(document.getElementById('easy2Pane'));
                 </script>
                 <?php include_once 'pane.files.inc.php';?>
-                <?php include_once 'pane.comments.inc.php';?>
                 <?php include_once 'pane.imageupload.inc.php';?>
+                <?php include_once 'pane.comments.inc.php';?>
                 <?php include_once 'pane.config.inc.php';?>
                 <?php include_once 'pane.help.inc.php';?>
             </div>

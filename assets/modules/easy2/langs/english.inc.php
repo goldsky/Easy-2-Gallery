@@ -26,8 +26,8 @@ for ($i = 3; $i < $numLines; $i++) {
 }
 
 $lng = array (
-//        'charset' => 'ISO-8859-1',
-        'charset' => 'UTF-8',
+        'charset' => 'ISO-8859-1',
+//        'charset' => 'UTF-8',
         'create_dir' => 'Create folder',
         'manager' => 'Files',
         'upload' => 'Image Upload',
@@ -48,6 +48,7 @@ $lng = array (
         'enter_dirname' => 'Enter new folder name',
         'enter_new_dirname' => 'Rename folder',
         'badchars' => 'Invalid characters for file system',
+        'char_limitation' => 'Please use common latin letters for the filenames inside the ZIP contents, or the file system will find errors while uploading',
 
         'debug' => 'Debug option',
         'dir' => 'folder',

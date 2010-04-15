@@ -11,10 +11,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
  * @version 1.4.0
  */
 
-iconv_set_encoding("internal_encoding", "UTF-8");
-iconv_set_encoding("input_encoding", "UTF-8");
-iconv_set_encoding("output_encoding", "UTF-8");
-
 class e2g_mod {
     private $e2gmod_cl;
     public $e2g;
@@ -43,6 +39,7 @@ class e2g_mod {
         $this->e2gmod_cl['path'] = '';
         $this->e2gmod_cl['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
         $this->_explore();
+        $this->_echo_memory_usage();
     }
 
     private function _explore() {
@@ -109,8 +106,26 @@ class e2g_mod {
                     } else {
                         $j=sizeof($list);
                     }
-                    $extract = $zip->extract(PCLZIP_OPT_PATH, '../'.$gdir,
-                                             PCLZIP_CB_PRE_EXTRACT, 'zipPreExtractCallBack');
+                    /*
+                     * PclZip PCLZIP_CB_PRE_EXTRACT to convert filenames while extracting the content.
+                    */
+                    if (!function_exists('zipPreExtractCallBack')) {
+                        function zipPreExtractCallBack($p_event, &$p_header) {
+                            $info = pathinfo($p_header['filename']);
+                            // limit the unzipped images
+                            if ($info['extension'] == 'jpeg' || $info['extension'] == 'jpg' || $info['extension'] == 'gif' || $info['extension'] == 'png') {
+                                $get_host_iconv_encode = iconv_get_encoding("internal_encoding");
+                                $get_file_mb_encode = mb_detect_encoding( $info['basename'] );
+                                $p_header['filename'] = iconv( $get_host_iconv_encode , $get_file_mb_encode.'//TRANSLIT//IGNORE' , $p_header['filename'] );
+                                return 1;
+                            }
+                            // other file extension will not be unzipped
+                            else return 0;
+                        }
+                    }
+                    $extract = $zip->extract(PCLZIP_OPT_PATH, '../'.$gdir
+                            , PCLZIP_CB_PRE_EXTRACT, 'zipPreExtractCallBack'
+                    );
                     if ( $extract == 0 ) {
                         $_SESSION['easy2err'][] = "Error : ".$zip->errorInfo(TRUE);
                     } else {
@@ -1577,12 +1592,18 @@ class e2g_mod {
     }
 
     /*
-     * PclZip PCLZIP_CB_PRE_EXTRACT to convert filenames while extracting the content.
+     * Too much memory swallowed. Need a meter in here.
+     * http://www.php.net/manual/en/function.memory-get-usage.php#93012
     */
-    function zipPreExtractCallBack($p_event, &$p_header) {
-        $info = pathinfo($p_header['filename']);
-        $p_header['filename'] = iconv("ISO-8859-1", "UTF-8", $p_header['filename']);
-        return 1;
+    private function _echo_memory_usage() {
+        $mem_usage = memory_get_usage(true);
+        if ($mem_usage < 1024)
+            echo $mem_usage." bytes";
+        elseif ($mem_usage < 1048576)
+            echo round($mem_usage/1024,2)." kilobytes";
+        else
+            echo round($mem_usage/1048576,2)." megabytes";
+        echo "<br/>";
     }
 
     /*
@@ -1655,5 +1676,5 @@ class e2g_mod {
         if ($debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
         else return TRUE;
     }
-
+    
 }

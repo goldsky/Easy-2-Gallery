@@ -48,8 +48,9 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabZip') );
             </script>
+            <p style="color:red;"><b><?php echo $lng['char_limitation'];?></b></p>
             <form name="zipfile" action="<?php echo $index.'&act=uploadzip&pid='.$parent_id; ?>" 
-                  method="post" enctype="multipart/form-data" accept-charset="UTF-8">
+                  method="post" enctype="multipart/form-data">
                 <table cellspacing="0" cellpadding="2">
                     <tr>
                         <td><b><?php echo $lng['archive'];?>:</b></td>
