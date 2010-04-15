@@ -48,8 +48,10 @@ $lng = array (
         'enter_dirname' => 'Enter new folder name',
         'enter_new_dirname' => 'Rename folder',
         'badchars' => 'Invalid characters for file system',
-        'char_limitation' => 'Please use common latin letters for the filenames inside the ZIP contents, or the file system will find errors while uploading',
-
+        'char_limitation' => 'Please use <b>common latin letters</b> for the filenames inside the ZIP contents, or the file system will find errors while uploading.<br />UTF-8 letter will be ignored or translated to the closest character.',
+        'zip_foldername' => 'Zip\'s name will be used as the new folder name.<br />
+            Make sure there is no other same folder\'s name inside current directory, or the uploading will overwrite the existing folder.<br />
+            This name will also be used as the URL (web address).',
         'debug' => 'Debug option',
         'dir' => 'folder',
         'tinymcefolder' => 'TinyMCE folder',
