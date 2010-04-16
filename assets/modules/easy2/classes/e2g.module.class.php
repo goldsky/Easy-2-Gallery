@@ -711,7 +711,7 @@ class e2g_mod {
                             if( $_POST['newfilename'] != $filename ) {
                                 rename('../'.$gdir.utf8_decode($row['filename']) , '../'.$gdir.utf8_decode($_POST['newfilename'].$ext))
                                         or die('692');
-                                @chmod('../'.$gdir.utf8_decode($_POST['filename']), 0644) or die('683');
+                                chmod('../'.$gdir.utf8_decode($_POST['newfilename'].$ext), 0644) or die('714');
                                 $renamefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
                                         .'SET filename = \''.htmlspecialchars($_POST['newfilename'].$ext, ENT_QUOTES).'\''
                                         .', last_modified=NOW() '
