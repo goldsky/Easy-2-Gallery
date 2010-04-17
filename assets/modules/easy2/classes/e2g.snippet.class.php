@@ -674,24 +674,30 @@ class e2g_snip {
     }
 
     private function _libs() {
-        require E2G_SNIPPET_PATH.'includes/config.libs.easy2gallery.php';
         global $modx;
         $css = $this->cl_cfg['css'];
         $glib = $this->cl_cfg['glib'];
 
-        // CSS STYLES
+        // GLOBAL e2g CSS styles
         if (file_exists($css)) {
-            $libsout = $modx->regClientCSS($modx->config['base_url'].$css,'screen');
+            $modx->regClientCSS($modx->config['base_url'].$css,'screen');
         }
 
-        // REGISTER all the libraries inside the config.libs file.
-        if ( $glibs[$glib] ) {
+        if (!isset($glibs)) {
+            require E2G_SNIPPET_PATH.'includes/config.libs.easy2gallery.php';
+        }
+        // REGISTER the library from the config.libs.easy2gallery.php file.
+        if ( isset($glibs[$glib] ) ) {
+            echo '$glib='.$glib;
+            // CSS STYLES
             foreach ( $glibs[$glib]['regClient']['CSS']['screen'] as $vRegClientCSS ) {
                 $modx->regClientCSS($vRegClientCSS,'screen');
             }
+            // JS Libraries
             foreach ( $glibs[$glib]['regClient']['JS'] as $vRegClientJS ) {
                 $modx->regClientStartupScript($vRegClientJS);
             }
+            unset($glib);
         }
     }
 
@@ -733,7 +739,7 @@ class e2g_snip {
 
         // HIDE COMMENTS from Ignored IP Addresses
         $comstatusq = 'SELECT ign_ip_address FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip ';
-        $comstatusres = mysql_query($comstatusq) or die('731 '.mysql_error());
+        $comstatusres = mysql_query($comstatusq) or die('742 '.mysql_error());
         while ($comrow = mysql_fetch_array($comstatusres)) {
             $ignored_ip[$comrow['ign_ip_address']] = $comrow['ign_ip_address'];
         }
@@ -755,6 +761,7 @@ class e2g_snip {
             $row['comments'] = '';
             $row['com'] = 'not_display';
         }
+        if (isset($glib)) unset($glib);
         return $row;
     }
 
@@ -801,7 +808,7 @@ class e2g_snip {
                     . 'WHERE id IN ('.$fid.') '
                     . 'AND status = 1 '
                     ;
-            $query = mysql_query($select) or die('795 '.mysql_error());
+            $query = mysql_query($select) or die('811 '.mysql_error());
             
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);

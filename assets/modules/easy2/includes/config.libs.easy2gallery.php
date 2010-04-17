@@ -6,24 +6,28 @@ $show_group = isset($show_group) ? $show_group : 'Gallery'.$gid;
 $glibs = array(
         // first array will be the VALUE for &glib parameter of snippet call
         'colorbox' => array (
-                // 'alias' will be the VALUE for the library parameter inside module
+        // 'alias' will be the VALUE for the library parameter inside module
                 'alias' => 'colorbox (jq)',
                 // 'regclient will be use for run library files inside <head></head> tag of MODx document
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/colorbox/colorbox.css' )),
                         'JS' => array (
+                                MODX_BASE_URL . 'assets/libs/jquery/jquery.noconflict.js',
+                                MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js',
 //                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
                                 MODX_BASE_URL . 'assets/libs/colorbox/jquery.colorbox-min.js',
                                 MODX_BASE_URL . 'assets/libs/colorbox/e2g.colorbox.js'
                         )
                 ),
+
                 // 'glibact' is used as slide show parameter of image pop-up
                 // eg: if ($glib == 'shadowbox') {$l['glibact']='rel="shadowbox['.$show_group.'];player=img"';}
                 'glibact' => 'rel="lightbox['.$show_group.']"',
+
                 // 'comments' part will be use for library's comment pop-up iframe
-//             if ( $glibs[$glib] ) {
-//                $row['comments'] = '<a href="' . E2G_SNIPPET_URL . 'comments.easy2gallery.php?id='.$row['id'].'" '.$glibs[$glib]['comments'].'>'.$row['comments'].'</a>';
-//            }
+                // if ( $glibs[$glib] ) {
+                //    $row['comments'] = '<a href="' . E2G_SNIPPET_URL . 'comments.easy2gallery.php?id='.$row['id'].'" '.$glibs[$glib]['comments'].'>'.$row['comments'].'</a>';
+                // }
                 'comments' => 'class="iframe"'
         ),
         'fancybox' => array (
@@ -33,10 +37,10 @@ $glibs = array(
                         'JS' => array (
 //                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
                                 MODX_BASE_URL . 'assets/libs/fancybox/jquery.js',
-                                MODX_BASE_URL . 'assets/libs/fancybox/fancybox.js'
+                                MODX_BASE_URL . 'assets/libs/fancybox/fancybox.js',
                         )
                 ),
-                'glibact' => 'rel="lightbox['.$show_group.']"',
+                'glibact' => 'class="'.$show_group.'" rel="lightbox['.$show_group.']"',
                 'comments' => 'class="iframe"'
         ),
         'floatbox' => array (
@@ -47,7 +51,7 @@ $glibs = array(
                                 MODX_BASE_URL . 'assets/libs/floatbox/floatbox.js'
                         )
                 ),
-                'glibact' => 'class="floatbox" rev="group:'.$show_group.'"',
+                'glibact' => 'class="floatbox" rev="doSlideshow:false group:'.$show_group.'"',
                 'comments' => 'rel="floatbox" rev="type:iframe width:400 height:250 enableDragResize:true controlPos:tr innerBorder:0"'
         ),
         'highslide' => array (
@@ -117,11 +121,12 @@ $glibs = array(
                         ),
                         'JS' => array (
 //                            'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
-                                MODX_BASE_URL . 'assets/libs/slimbox/js/mootools.js',
+                                MODX_BASE_URL . 'assets/libs/slimbox/js/jquery.js',
                                 MODX_BASE_URL . 'assets/libs/slimbox/js/slimbox2.js',
                                 MODX_BASE_URL . 'assets/libs/highslide/highslide-iframe.js' // for comments
                         )
                 ),
-                'glibact' => 'rel="lightbox['.$show_group.']"'
+                'glibact' => 'rel="lightbox['.$show_group.']"',
+                'comments' => 'onclick="return hs.htmlExpand(this, { objectType: \'iframe\'} )"'
         )
 );
