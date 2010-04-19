@@ -75,7 +75,7 @@ if (is_dir( E2G_MODULE_PATH . 'install')) {
 */
 
 if(!class_exists('e2g_mod')) {
-    include_once E2G_MODULE_PATH . "classes/e2g.module.class.php";
+    include_once(E2G_MODULE_PATH . "classes/e2g.module.class.php");
 }
 if (class_exists('e2g_mod')) {
     $e2g_mod = new e2g_mod($e2gmod_cl, $e2g, $lng);
