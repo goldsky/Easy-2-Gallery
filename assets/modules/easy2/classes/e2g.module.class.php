@@ -1367,6 +1367,8 @@ class e2g_mod {
     */
     private function _synchro ($path, $pid, $cfg) {
         global $modx;
+        // goldsky -- alter the maximum execution time
+        set_time_limit(0);
         $time_start = microtime(TRUE);
         /*
          * STORE variable arrays for synchronizing comparison
@@ -1411,9 +1413,6 @@ class e2g_mod {
          * READ the real physical objects, store into database
         */
         if ($fs!=FALSE) {
-            // goldsky -- alter the maximum execution time
-            set_time_limit(0);
-
             foreach ($fs as $f) {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
@@ -1421,6 +1420,23 @@ class e2g_mod {
                 $name = basename(UTF8_encode($f));
                 if ($this->is_validfolder($f)) { // as a folder/directory
                     if ($name == '_thumbnails') continue;
+
+                    /*
+                     * goldsky -- if there is no index.html inside folders, this will create it.
+                    */
+                    if (!file_exists($f.'/index.html')) {
+                        // goldsky -- adds a cover file
+                        $indexFile = $f."/index.html";
+                        $fh = fopen($indexFile, 'w');
+                        if (!$fh)  $_SESSION['easy2err'][] = "Could not open file ".$indexFile;
+                        else {
+    //                                $stringData = $lng['synchro_indexfile'];
+                            $stringData = '<h2>Unauthorized access</h2>You\'re not allowed to access file folder';
+                            fwrite($fh, $stringData);
+                            fclose($fh);
+                            @chmod($indexFile, 0644);
+                        }
+                    }
 
                     if (isset($mdirs[$name])) {
                         if (!$this->_synchro($f.'/', $mdirs[$name]['id'], $cfg)) return FALSE;
@@ -1436,22 +1452,6 @@ class e2g_mod {
                     if (isset($mfiles[$name])) {
                         unset($mfiles[$name]);
                     } else {
-                        /*
-                         * goldsky -- if there is no index.html inside folders, this will create it.
-                        */
-                        if (!file_exists($path.'/index.html')) {
-                            // goldsky -- adds a cover file
-                            $indexFile = $path."/index.html";
-                            $fh = fopen($indexFile, 'w');
-                            if (!$fh)  $_SESSION['easy2err'][] = "Could not open file ".$indexFile;
-                            else {
-//                                $stringData = $lng['synchro_indexfile'];
-                                $stringData = '<h2>Unauthorized access</h2>You\'re not allowed to access file folder';
-                                fwrite($fh, $stringData);
-                                fclose($fh);
-                                @chmod($indexFile, 0644);
-                            }
-                        }
                         /*
                          * INSERT filename into database
                         */

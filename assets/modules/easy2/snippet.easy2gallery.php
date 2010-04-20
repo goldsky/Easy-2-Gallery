@@ -122,6 +122,13 @@ $cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
 $cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
 $cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
 $cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color
+
+/*
+ * additional configuration options, if there is any.
+ * this is empty, only as an holder.
+ */
+$cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : '' ;
+
 /*
  * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
  * too tall/wide images while the &ss_w and &ss_h are limited.
@@ -134,7 +141,7 @@ $cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
  * to set how many images the slide show should retrieve from the [random] gallery ID.
  * more images mean longer page loading!
  */
-$cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : NULL ;
+$cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';

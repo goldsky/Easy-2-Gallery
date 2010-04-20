@@ -779,6 +779,7 @@ class e2g_snip {
         $ss_bg = $this->cl_cfg['ss_bg'];
         $ss_allowedratio = $this->cl_cfg['ss_allowedratio'];
         $ss_limit = $this->cl_cfg['ss_limit'];
+        $ss_config = $this->cl_cfg['ss_config'];
 
         $images = $names = array();
         if (!empty($gid)) {
@@ -786,9 +787,9 @@ class e2g_snip {
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
                     . 'ORDER BY ' . $orderby . ' ' . $order . ' '
+                    . (isset($ss_limit) ? 'LIMIT 0,'.$ss_limit.' ' : '')
                     ;
-            $query = mysql_query($select) or die('777 '.mysql_error());
-            $images_limit = isset($ss_limit) ? $ss_limit : mysql_num_rows($query);
+            $query = mysql_query($select) or die('791 '.mysql_error());
 
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
@@ -798,8 +799,11 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
+                $dirid[] .= $fetch['dir_id'];
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
                 $filename[] .= $fetch['filename'];
+                $title[] .= $fetch['name'];
+                $description[] .= $fetch['description'];
             }
         }
 
@@ -818,8 +822,11 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
+                $dirid[] .= $fetch['dir_id'];
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
                 $filename[] .= $fetch['filename'];
+                $title[] .= $fetch['name'];
+                $description[] .= $fetch['description'];
             }
         }
 
@@ -828,9 +835,9 @@ class e2g_snip {
                     . 'WHERE status = 1 '
                     . 'AND dir_id IN ('. $rgid .') '
                     . 'ORDER BY RAND() '
+                    . (isset($ss_limit) ? 'LIMIT 0,'.$ss_limit.' ' : '')
                     ;
-            $query = mysql_query($select) or die('817 '.mysql_error());
-            $images_limit = isset($ss_limit) ? $ss_limit : mysql_num_rows($query);
+            $query = mysql_query($select) or die('832 '.mysql_error());
             
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
@@ -840,65 +847,31 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
+                $dirid[] .= $fetch['dir_id'];
                 $images[] .= $e2g['dir'].$path.$fetch['filename'];
                 $filename[] .= $fetch['filename'];
+                $title[] .= $fetch['name'];
+                $description[] .= $fetch['description'];
             }
         }
 
-        // http://jonraasch.com/blog/a-simple-jquery-slideshow
-        if ($slideshow=='simple') {
-            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.css','screen');
-            // amend dimension variables into CSS
-            $modx->regClientStartupHTMLBlock('
-        <style type="text/css" media="screen">
-        #slideshow {
-            '. 'width: '.$ss_w.'px; '
-             . 'height: '.$ss_h.'px; '
-             . 'background-color: '.$ss_bg.';
-         }
-        </style>
-            ');
-            $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
-            $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.js');
-
-            if ($ss_allowedratio != 'none') {
-                // create min-max slideshow width/height ratio
-                $ss_exratio = explode('-', $ss_allowedratio);
-                $ss_minratio = $ss_exratio[0];
-                $ss_maxratio = $ss_exratio[1];
-            }
-
-            $count = count($images);
-
-            // start create the slideshow box
-            $display = '<div id="slideshow"><div>';
-            $j=0;
-            for ($i=0;$i<$count;$i++) {
-                $dim = getimagesize($images[$i]);
-                $width[$i] = $dim[0];
-                $height[$i] = $dim[1];
-                $image_ratio[$i] = $width[$i]/$height[$i];
-
-                if ($ss_allowedratio != 'none') {
-                    // skipping ratio exclusion
-                    if ( $ss_minratio > $image_ratio[$i] || $ss_maxratio < $image_ratio[$i] ) continue;
-                }
-//                echo $ss_w/$ss_h .'=>'. $image_ratio[$i].'<br />';
-                $display .= '<img src="'.$images[$i].'" alt="'.$filename[$i].'" '
-                    . ( $i == 0 ? 'class="active" ' : '' )
-                    . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ?
-                        'height="'.$ss_h.'px" style="left:'.(($ss_w - ($width[$i]*$ss_h/$height[$i]))/2).'px;" ' :
-                        'width="'.$ss_w.'px" style="top:'.(($ss_h - ($height[$i]*$ss_w/$width[$i]))/2).'px;" ' )
-                    . '/>';
-
-                // if there is a image number limitation
-                $j++;
-                if ($j==$images_limit) break;
-            }
-            // end the slideshow box
-            $display .= '</div></div>';
+        if ($ss_allowedratio != 'none') {
+            // create min-max slideshow width/height ratio
+            $ss_exratio = explode('-', $ss_allowedratio);
+            $ss_minratio = $ss_exratio[0];
+            $ss_maxratio = $ss_exratio[1];
         }
-        return $display;
+
+        $count = count($images);
+
+        // include the available slideshow file config
+        if (!file_exists(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php')) {
+            $ss_display = 'slideshow config for <b>'.$slideshow.'</b> is not found.';
+        } else {
+            include_once(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php');
+        }
+        // return the slideshow
+        return $ss_display;
     }
 
     // DIRECTORY TEMPLATE
