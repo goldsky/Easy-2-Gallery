@@ -688,7 +688,6 @@ class e2g_snip {
         }
         // REGISTER the library from the config.libs.easy2gallery.php file.
         if ( isset($glibs[$glib] ) ) {
-            echo '$glib='.$glib;
             // CSS STYLES
             foreach ( $glibs[$glib]['regClient']['CSS']['screen'] as $vRegClientCSS ) {
                 $modx->regClientCSS($vRegClientCSS,'screen');
