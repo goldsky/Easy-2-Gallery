@@ -33,7 +33,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                             <tr>
                                 <td valign="top"><b><?php echo $lng['description'];?>:</b></td>
                                 <td>
-                                    <textarea name="description[]" style="width: 475px" cols="475" rows="3"></textarea>
+                                    <textarea name="description[]" style="width: 475px;" cols="475" rows="3"></textarea>
                                 </td>
                             </tr>
                         </table>
