@@ -12,7 +12,6 @@ $glibs = array(
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/colorbox/colorbox.css' )),
                         'JS' => array (
-                                MODX_BASE_URL . 'assets/libs/jquery/jquery.noconflict.js',
                                 MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js',
 //                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
                                 MODX_BASE_URL . 'assets/libs/colorbox/jquery.colorbox-min.js',

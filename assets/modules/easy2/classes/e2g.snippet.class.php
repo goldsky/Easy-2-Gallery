@@ -83,7 +83,7 @@ class e2g_snip {
 
 
         // START the grid
-        $_e2g['content'] = $notables ? '<div class="e2g">':'<table class="e2g"><tr>' ;
+        $_e2g['content'] = $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>' ;
 
         // count the directories WITHOUT limit!
         if ($showonly=='images') {
@@ -203,7 +203,7 @@ class e2g_snip {
                     }
 
                     // Populate the grid with folder's thumbnails
-                    if ( ( $i > 0 ) && ( $i % $colls == 0 ) && !$notables ) $_e2g['content'] .= '</tr><tr>';
+                    if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $notables == 0 ) $_e2g['content'] .= '</tr><tr>';
 
                     $l['title'] = $l['cat_name'];
                     if ($l['cat_name'] == '') $l['cat_name'] = '&nbsp;';
@@ -219,7 +219,7 @@ class e2g_snip {
                     $l['src'] = $this->_get_thumb($e2g['dir'], $path1.$l1['filename'], $w, $h, $thq );
 
                     // fill up the dir list with content
-                    $_e2g['content'] .= $notables ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>';
+                    $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>';
                     $i++;
                 } // while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC))
             }
@@ -280,19 +280,19 @@ class e2g_snip {
                 */
                 if ( ( $i > 0 )
                         && ( ( $i + $dir_num_rows ) % $colls == 0 )
-                        && !$notables ) {
+                        && $notables == 0 ) {
                     $_e2g['content'] .= '</tr><tr>';
                 }
 
                 // whether configuration setting is set with or without table, the template will adjust it
-                $_e2g['content'] .= $notables ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
+                $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
                 $i++;
             } // while ($l = @mysql_fetch_array($file_query_result, MYSQL_ASSOC))
         } // if( $dir_num_rows!=$limit )
 
         ########################################################################
 
-        $_e2g['content'] .= $notables ? '</div>' : '</tr></table>';
+        $_e2g['content'] .= $notables == 1 ? '</div>' : '</tr></table>';
 
 
         /*
@@ -350,21 +350,21 @@ class e2g_snip {
         $res = mysql_query($filequery) or die('350 '.mysql_error());
 
         // START the grid
-        $_e2g['content'] .= $notables ? '<div class="e2g">':'<table class="e2g"><tr>';
+        $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
 
         $this->_libs();
         $i = 0;
         while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
             // create row grid
-            if ( ( $i > 0 ) && ( $i % $colls == 0 ) && !$notables ) $_e2g['content'] .= '</tr><tr>';
+            if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $notables == 0 ) $_e2g['content'] .= '</tr><tr>';
 
             // whether configuration setting is set with or without table, the template will adjust it
-            $_e2g['content'] .= $notables ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
+            $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
             $i++;
         } // while ($l = @mysql_fetch_array($file_query_result, MYSQL_ASSOC))
 
         // END the grid
-        $_e2g['content'] .= $notables ? '</div>':'</tr></table>';
+        $_e2g['content'] .= $notables == 1 ? '</div>':'</tr></table>';
         return $this->_filler($this->_gal_tpl(), $_e2g);
     }
 
@@ -392,16 +392,16 @@ class e2g_snip {
         if (!$num_rows) return;
 
         // START the grid
-        $_e2g['content'] .= $notables ? '<div class="e2g">':'<table class="e2g"><tr>';
+        $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
         $l = mysql_fetch_array($res, MYSQL_ASSOC);
 
         $this->_libs();
         $this->_activate_libs($l);
 
-        $_e2g['content'] .= $notables ? $this->_filler($this->_random_tpl(), $this->_activate_libs($l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_activate_libs($l)).'</td>';
+        $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_random_tpl(), $this->_activate_libs($l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_activate_libs($l)).'</td>';
 
         // END the grid
-        $_e2g['content'] .= $notables ? '</div>':'</tr></table>';
+        $_e2g['content'] .= $notables == 1 ? '</div>':'</tr></table>';
         return $this->_filler($this->_gal_tpl(), $_e2g );
     }
 
@@ -779,6 +779,7 @@ class e2g_snip {
         $ss_allowedratio = $this->cl_cfg['ss_allowedratio'];
         $ss_limit = $this->cl_cfg['ss_limit'];
         $ss_config = $this->cl_cfg['ss_config'];
+        $ss_css = $this->cl_cfg['ss_css'];
 
         $images = $names = array();
         if (!empty($gid)) {

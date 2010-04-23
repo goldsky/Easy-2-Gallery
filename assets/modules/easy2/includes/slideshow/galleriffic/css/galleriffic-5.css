@@ -35,20 +35,20 @@ div.nav-controls {
 div.slideshow-container,
 div.loader,
 div.slideshow a.advance-link {
-	width: 510px; /* This should be set to be at least the width of the largest image in the slideshow with padding */
+	width: 402px; /* This should be set to be at least the width of the largest image in the slideshow with padding */
 }
 
 div.loader,
 div.slideshow a.advance-link,
 div.caption-container {
-	height: 502px; /* This should be set to be at least the height of the largest image in the slideshow with padding */	
+	height: 302px; /* This should be set to be at least the height of the largest image in the slideshow with padding */
 }
 
 div.slideshow-container {
 	position: relative;
 	clear: both;
 	float: left;
-	height: 532px;
+	height: 332px;
 }
 
 div.loader {
@@ -67,7 +67,7 @@ div.slideshow span.image-wrapper {
 }
 div.slideshow a.advance-link {
 	display: block;
-	line-height: 502px; /* This should be set to be at least the height of the largest image in the slideshow with padding */
+	line-height: 302px; /* This should be set to be at least the height of the largest image in the slideshow with padding */
 	text-align: center;
 }
 
@@ -124,12 +124,12 @@ div.photo-index {
 div.navigation-container {
 	float: left;
 	position: relative;
-	left: 50%;
+	/*left: 50%;*/
 }
 div.navigation {
 	float: left;
 	position: relative;
-	left: -50%;
+	/*left: -50%;*/
 }
 div.navigation a.pageLink {
 	display: block;

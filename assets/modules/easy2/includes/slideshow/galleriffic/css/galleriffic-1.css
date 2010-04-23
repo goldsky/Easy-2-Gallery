@@ -2,7 +2,7 @@ div.content {
 	/* The display of content is enabled using jQuery so that the slideshow content won't display unless javascript is enabled. */
 	display: none;
 	float: right;
-	width: 550px; 
+	width: 402px;
 }
 div.content a, div.navigation a {
 	text-decoration: none;
@@ -27,7 +27,7 @@ div.nav-controls {
 div.slideshow-container {
 	position: relative;
 	clear: both;
-	height: 502px; /* This should be set to be at least the height of the largest image in the slideshow */
+	height: 302px; /* This should be set to be at least the height of the largest image in the slideshow */
 }
 div.loader {
 	position: absolute;
@@ -36,8 +36,8 @@ div.loader {
 	background-image: url('loader.gif');
 	background-repeat: no-repeat;
 	background-position: center;
-	width: 550px;
-	height: 502px; /* This should be set to be at least the height of the largest image in the slideshow */
+	width: 402px;
+	height: 302px; /* This should be set to be at least the height of the largest image in the slideshow */
 }
 div.slideshow {
 
@@ -50,15 +50,17 @@ div.slideshow span.image-wrapper {
 }
 div.slideshow a.advance-link {
 	display: block;
-	width: 550px;
-	height: 502px; /* This should be set to be at least the height of the largest image in the slideshow */
-	line-height: 502px; /* This should be set to be at least the height of the largest image in the slideshow */
+	width: 402px;
+	height: 302px; /* This should be set to be at least the height of the largest image in the slideshow */
+	line-height: 302px; /* This should be set to be at least the height of the largest image in the slideshow */
 	text-align: center;
 }
 div.slideshow a.advance-link:hover, div.slideshow a.advance-link:active, div.slideshow a.advance-link:visited {
 	text-decoration: none;
 }
 div.slideshow img {
+	top: 0;
+	left: 0;
 	vertical-align: middle;
 	border: 1px solid #ccc;
 }
@@ -73,7 +75,7 @@ span.image-caption {
 	position: absolute;
 }
 div.caption {
-	background-color: #000;
+	background-color: #FFF;
 	padding: 12px;
 	color: #ccc;
 }
@@ -109,7 +111,7 @@ a.thumb {
 	border: none;
 }
 ul.thumbs li.selected a.thumb {
-	color: #000;
+	color: #FFF;
 	font-weight: bold;
 }
 a.thumb:focus {
@@ -142,8 +144,8 @@ div.pagination a:hover {
 }
 div.pagination span.current {
 	font-weight: bold;
-	background-color: #000;
-	border-color: #000;
+	background-color: #FFF;
+	border-color: #FFF;
 	color: #fff;
 }
 div.pagination span.ellipsis {

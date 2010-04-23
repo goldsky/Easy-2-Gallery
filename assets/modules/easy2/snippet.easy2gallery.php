@@ -142,6 +142,10 @@ $cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
  * more images mean longer page loading!
  */
 $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
+/*
+ * set the slideshow CSS's path
+ */
+$cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : '' ;
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
