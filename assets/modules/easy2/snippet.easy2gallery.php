@@ -140,6 +140,8 @@ $cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
 /*
  * to set how many images the slide show should retrieve from the [random] gallery ID.
  * more images mean longer page loading!
+ * @options : int | 'none'
+ * @default : (int)6
  */
 $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 /*

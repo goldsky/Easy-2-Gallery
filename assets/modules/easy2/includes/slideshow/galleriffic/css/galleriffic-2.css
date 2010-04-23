@@ -141,8 +141,8 @@ div.pagination a:hover {
 div.pagination span.current {
 	font-weight: bold;
 	background-color: #FFF;
-	border-color: #FFF;
-	color: #fff;
+	border-color: #000;
+	color: #000;
 }
 div.pagination span.ellipsis {
 	border: none;

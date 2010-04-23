@@ -97,7 +97,7 @@ span.image-caption {
 }
 
 div.caption-container, span.image-caption {
-	width: 334px;
+	width: 300px;
 }
 
 div.caption {
@@ -124,12 +124,12 @@ div.photo-index {
 div.navigation-container {
 	float: left;
 	position: relative;
-	/*left: 50%;*/
+	left: 50%;
 }
 div.navigation {
 	float: left;
 	position: relative;
-	/*left: -50%;*/
+	left: -50%;
 }
 div.navigation a.pageLink {
 	display: block;

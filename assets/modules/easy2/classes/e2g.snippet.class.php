@@ -787,7 +787,7 @@ class e2g_snip {
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
                     . 'ORDER BY ' . $orderby . ' ' . $order . ' '
-                    . (isset($ss_limit) ? 'LIMIT 0,'.$ss_limit.' ' : '')
+                    . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
                     ;
             $query = mysql_query($select) or die('791 '.mysql_error());
 
@@ -835,7 +835,7 @@ class e2g_snip {
                     . 'WHERE status = 1 '
                     . 'AND dir_id IN ('. $rgid .') '
                     . 'ORDER BY RAND() '
-                    . (isset($ss_limit) ? 'LIMIT 0,'.$ss_limit.' ' : '')
+                    . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
                     ;
             $query = mysql_query($select) or die('832 '.mysql_error());
             
