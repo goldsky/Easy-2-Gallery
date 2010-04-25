@@ -16,7 +16,6 @@ jQuery.extend({
 	historyCurrentHash: undefined,
 	historyCallback: undefined,
 	historyIframeSrc: undefined,
-	historyNeedIframe: jQuery.browser.msie && (jQuery.browser.version < 8 || document.documentMode < 8),
 
 	historyInit: function(callback, src){
 		jQuery.historyCallback = callback;
@@ -24,15 +23,17 @@ jQuery.extend({
 		var current_hash = location.hash.replace(/\?.*$/, '');
 
 		jQuery.historyCurrentHash = current_hash;
-		if (jQuery.historyNeedIframe) {
+		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
+		if (jQuery.browser.msie) {
 			// To stop the callback firing twice during initilization if no hash present
 			if (jQuery.historyCurrentHash == '') {
-				jQuery.historyCurrentHash = '#';
-			}
+			jQuery.historyCurrentHash = '#';
+		}
 
 			// add hidden iframe for IE
 			jQuery("body").prepend('<iframe id="jQuery_history" style="display: none;"'+
-				' src="javascript:false;"></iframe>'
+				(jQuery.historyIframeSrc ? ' src="'+jQuery.historyIframeSrc+'"' : '')
+				+'></iframe>'
 			);
 			var ihistory = jQuery("#jQuery_history")[0];
 			var iframe = ihistory.contentWindow.document;
@@ -63,7 +64,8 @@ jQuery.extend({
 	},
 
 	historyCheck: function(){
-		if (jQuery.historyNeedIframe) {
+		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
+		if (jQuery.browser.msie) {
 			// On IE, check for location.hash of iframe
 			var ihistory = jQuery("#jQuery_history")[0];
 			var iframe = ihistory.contentDocument || ihistory.contentWindow.document;
@@ -132,7 +134,8 @@ jQuery.extend({
 		}
 		jQuery.historyCurrentHash = newhash;
 
-		if (jQuery.historyNeedIframe) {
+		// if ((jQuery.browser.msie) && (jQuery.browser.version < 8)) {
+		if (jQuery.browser.msie) {
 			var ihistory = jQuery("#jQuery_history")[0];
 			var iframe = ihistory.contentWindow.document;
 			iframe.open();
