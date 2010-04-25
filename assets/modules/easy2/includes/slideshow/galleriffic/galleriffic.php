@@ -13,6 +13,9 @@ else {
     if ($ss_config=='example-2') {
         $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-2.css');
     }
+    if ($ss_config=='example-3') {
+        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-3.css');
+    }
     if ($ss_config=='example-5') {
         $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-5.css');
 //        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/white.css');
@@ -46,7 +49,13 @@ else {
     }
     if ($ss_config=='example-2') {
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery-1.3.2.js');
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.galleriffic.js');
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.opacityrollover.js');
+    }
+    if ($ss_config=='example-3') {
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery-1.3.2.js');
         // Optionally include jquery.history.js for history support
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.history.js');
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.galleriffic.js');
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.opacityrollover.js');
     }
@@ -70,7 +79,9 @@ else {
     if ( $ss_config=='example-2' ) {
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-2.js');
     }
-
+    if ( $ss_config=='example-3' ) {
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-3.js');
+    }
     if ( $ss_config=='example-5' ) {
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-5.js');
     }
@@ -130,7 +141,7 @@ else {
         }
 
         // display the gallery thumbs
-        if ( $ss_config=='example-2' ) {
+        if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
         <li>
             <a class="thumb" name="'.$name[$i].'" href="'.$images[$i].'">
