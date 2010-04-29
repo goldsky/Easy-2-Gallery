@@ -1,4 +1,5 @@
 <?php
+header('Content-Type: text/html; charset=UTF-8');
 //set_ini('display_errors', '1');
 /**
  * EASY 2 GALLERY
@@ -8,6 +9,7 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
+require_once E2G_SNIPPET_PATH . 'includes/utf8/utf8.php';
 
 class e2g_snip {
     public $cl_cfg = array();
@@ -176,7 +178,7 @@ class e2g_snip {
                         ;
 
                 $dirquery = mysql_query($query);
-                if (!$dirquery) die('179 '.mysql_error());
+                if (!$dirquery) die('180 '.mysql_error());
                 $dir_num_rows += mysql_num_rows($dirquery);
 
                 $i = 0;
@@ -347,7 +349,7 @@ class e2g_snip {
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
-        $res = mysql_query($filequery) or die('350 '.mysql_error());
+        $res = mysql_query($filequery) or die('351 '.mysql_error());
 
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
@@ -440,11 +442,11 @@ class e2g_snip {
          * CREATE THUMBNAIL
         */
         // goldsky -- alter the maximum execution time
-        //        set_time_limit(0);
+        set_time_limit(0);
 
         if (!file_exists($gdir.$thumb_path) && file_exists($gdir.$path)) {
             // goldsky -- adds output buffer to avoid PHP's memory limit
-            //            ob_start();
+            ob_start();
 
             $i = getimagesize($gdir.$path);
             if ($i[2] == 1) $im = imagecreatefromgif ($gdir.$path);
@@ -560,15 +562,23 @@ class e2g_snip {
             imagedestroy($im);
 
             // goldsky -- adds output buffer to avoid PHP's memory limit
-            //            ob_end_clean();
+            ob_end_clean();
         }
 
         /*
          * returned as thumbnail's path, with UTF-8 encoding
         */
-        $gdir = utf8_encode($gdir);
-        $thumb_path = utf8_encode($thumb_path);
-        return $gdir.$thumb_path;
+//        $gdir = htmlentities(utf8_encode($gdir), ENT_NOQUOTES, 'UTF-8');
+//        $thumb_path = htmlentities(utf8_encode($thumb_path), ENT_NOQUOTES, 'UTF-8');
+//$out = '1 '.urlencode($thumb_path).'<br />';
+//$out .= '2 '.urldecode($thumb_path).'<br />';
+//$out .= '3 '.htmlentities($thumb_path).'<br />';
+//$out .= '4 '.rawurldecode($thumb_path).'<br />';
+//$out .= '5 '.rawurlencode($thumb_path).'<br />';
+//        die('572 <br />'.$out);
+        $urlencoding = str_replace('%2F','/',rawurlencode($gdir.$thumb_path));
+//        die('580 '.$urlencoding);
+        return $urlencoding;
     }
 
     /*
@@ -704,15 +714,11 @@ class e2g_snip {
         require E2G_SNIPPET_PATH.'config.easy2gallery.php';
         require E2G_SNIPPET_PATH.'includes/config.libs.easy2gallery.php';
         global $modx;
-        if (file_exists( E2G_SNIPPET_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php')) {
-            include_once E2G_SNIPPET_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php';
-        } else {
-            include_once E2G_SNIPPET_PATH . 'langs/english.inc.php';
-        }
         $css = $this->cl_cfg['css'];
         $glib = $this->cl_cfg['glib'];
-        $charset = $this->lng['charset'];
+        $charset = $this->cl_cfg['charset'];
         $name_len = $this->cl_cfg['name_len'];
+        $mbstring = $this->cl_cfg['mbstring'];
 
         $row['title'] = $row['name'];
         if ($row['name'] == '') $row['name'] = '&nbsp;';

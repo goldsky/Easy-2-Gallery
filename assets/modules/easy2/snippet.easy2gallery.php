@@ -1,5 +1,5 @@
 <?php
-//set_ini('display_errors', '1');
+header('content-type: text/html; charset=utf-8');
 /**
  * EASY 2 GALLERY
  * Gallery Snippet for Easy 2 Gallery Module for MODx Evolution

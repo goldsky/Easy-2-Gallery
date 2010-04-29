@@ -1,4 +1,5 @@
 <?php
+header('content-type: text/html; charset=utf-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cl['_t']
 ?>

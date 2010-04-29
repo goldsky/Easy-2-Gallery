@@ -39,6 +39,7 @@ class e2g_mod {
         $this->e2gmod_cl['path'] = '';
         $this->e2gmod_cl['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
         $this->_explore();
+        $this->_echo_memory_usage();
     }
 
     private function _explore() {
@@ -456,7 +457,7 @@ class e2g_mod {
                 exit();
             // ADD DIRECTORY
             case 'add_dir':
-                if( $this->_add_all('../'.str_replace('../', '', utf8_decode($_GET['dir_path']) ), $parent_id, $e2g ) ) {
+                if( $this->_add_all('../'.str_replace('../', '', utf8_decode($_GET['dir_path']).'/' ), $parent_id, $e2g ) ) {
                     $_SESSION['easy2suc'][] = $lng['dir_edded'];
                 } else {
                     $_SESSION['easy2err'][] = $lng['dir_edd_err'];
@@ -465,20 +466,20 @@ class e2g_mod {
                 exit();
             // ADD IMAGE
             case 'add_file':
-                $f = '../'.str_replace('../', '', $_GET['file_path']);
+                $f = '../'.str_replace('../', '', utf8_decode($_GET['file_path']));
                 $inf = getimagesize($f);
                 if ($inf[2] <= 3 && is_numeric($_GET['pid'])) {
                     // RESIZE
                     if (($e2g['maxw'] > 0 || $e2g['maxh'] > 0) && ($inf[0] > $e2g['maxw'] || $inf[1] > $e2g['maxh'])) {
                         $this->_resize_img($f, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     }
-                    $n = htmlspecialchars(basename($f), ENT_QUOTES);
-                    $s = filesize(utf8_decode($f));
+                    $n = $this->_basename_safe($f);
+                    $s = filesize($f);
                     $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                             . '(dir_id,filename,size,name,description,date_added) '
                             . "VALUES(".(int)$_GET['pid'].",'$n',$s,'','',NOW())";
                     if (mysql_query($q)) {
-                        @chmod(utf8_decode($f), 0644);
+                        @chmod($f, 0644);
                         $_SESSION['easy2suc'][] = $lng['file_added'];
                     } else {
                         $_SESSION['easy2err'][] = $lng['add_file_err'].'<br />'.mysql_error().'<br />'.$q;
@@ -926,7 +927,7 @@ class e2g_mod {
                     ';
                 if ($dirs!=FALSE) {
                     foreach ($dirs as $f) {
-                        $name = basename(UTF8_encode($f));
+                        $name = $this->_basename_safe($f);
                         $time = filemtime($f);
                         $cnt = $this->_count_files($f);
                         if ($name == '_thumbnails') continue;
@@ -1015,7 +1016,7 @@ class e2g_mod {
                         if ($this->is_validfolder($f)) continue;
                         $size = round(filesize($f)/1024);
                         $time = filemtime($f);
-                        $name = basename(UTF8_encode($f));
+                        $name = $this->_basename_safe($f);
                         $ext = 'picture';
                         $id = $mfiles[$name]['id'];
                         if (isset($mfiles[$name])) {
@@ -1177,7 +1178,7 @@ class e2g_mod {
         require_once E2G_MODULE_PATH . 'classes/TTree.class.php';
         $tree = new TTree();
         $tree->table = $modx->db->config['table_prefix'].'easy2_dirs';
-        $name = htmlspecialchars(basename(UTF8_encode($path)), ENT_QUOTES);
+        $name = $this->_basename_safe($path);
         if ( !($id = $tree->insert($name, $pid)) ) {
             $_SESSION['easy2err'][] = $tree->error;
             return FALSE;
@@ -1212,7 +1213,7 @@ class e2g_mod {
                     if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
                         $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
                     }
-                    $n = htmlspecialchars(basename(UTF8_encode($f)), ENT_QUOTES);
+                    $n = $this->_basename_safe($f);
                     $s = filesize($f);
                     $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                             . '(dir_id,filename,size,name,description,date_added) '
@@ -1342,7 +1343,7 @@ class e2g_mod {
             if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
                 $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
             }
-            $n = htmlspecialchars(basename(UTF8_encode($f)), ENT_QUOTES);
+            $n = $this->_basename_safe($f);
             $s = filesize($f);
             $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                     . '(dir_id,filename,size,name,description,date_added) '
@@ -1417,7 +1418,7 @@ class e2g_mod {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
 
-                $name = basename(UTF8_encode($f));
+                $name = $this->_basename_safe($f);
                 if ($this->is_validfolder($f)) { // as a folder/directory
                     if ($name == '_thumbnails') continue;
 
@@ -1597,7 +1598,7 @@ class e2g_mod {
      *
     */
     public function is_validfile ( $filename, $debug=0 ) {
-        $f = basename(UTF8_encode($filename));
+        $f = $this->_basename_safe($filename);
         if ($this->is_validfolder($filename)) {
             if ($debug==1) {
                 return '<b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
@@ -1662,5 +1663,17 @@ class e2g_mod {
         if ($debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
         else return TRUE;
     }
-    
+    /*
+     * Replace the basename function with this to grab non-unicode character.
+     * http://drupal.org/node/278425#comment-2571500
+     */
+    private function _basename_safe($path) {
+        $path = rtrim($path,'/');
+        $path = explode('/',$path);
+
+        // encoding
+        $endpath = end($path);
+        $encodinghtml= htmlspecialchars(UTF8_encode($endpath), ENT_QUOTES);
+        return $encodinghtml;
+    }
 }

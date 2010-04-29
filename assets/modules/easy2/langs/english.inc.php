@@ -26,8 +26,8 @@ for ($i = 3; $i < $numLines; $i++) {
 }
 
 $lng = array (
-        'charset' => 'ISO-8859-1',
-//        'charset' => 'UTF-8',
+//        'charset' => 'ISO-8859-1',
+        'charset' => 'UTF-8',
         'create_dir' => 'Create folder',
         'manager' => 'Files',
         'upload' => 'Image Upload',
