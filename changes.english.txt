@@ -3,6 +3,46 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/  
 
+********** 1.4.0-Beta 4 **********
++ UTF 8 Bug Fix
++ Filenaming bug fix
++ Simple slideshow is turned to be independent from the core code.
++ Slideshow Galleriffic (http://www.twospy.com/galleriffic/) was added.
+Available parameters for the slideshow:
+
+    * &gid
+      Gallery ID
+    * &fid
+      File ID
+    * &rgid
+      Random file from the specified Gallery ID
+    * &slideshow=`galleriffic`
+      this is the mandatory call to this slideshow type
+    * &ss_config
+      These are the slideshow selections which are explicitelly taken from the galleriffic site's examples, so all users will know exactly which one to be selected.
+      Options:
+          o `example-1`
+          o `example-2`
+          o `example-5`
+    * &ss_w : the width of the slideshow image
+      Default: 400px
+    * &ss_h : the height of it
+      Default: 300px
+    * &w : the width of the thumbnail images
+      Default: whatever you've set in the module's config
+    * &h : the height of it
+      Default: whatever you've set in the module's config
+    * &ss_bg
+      background color of the slideshow, not for the thumbnail
+    * &ss_limit
+      the SQL limitation when selecting the images. Only applied to gallery ID and random gallery ID.
+      Options:
+          o integers
+          o `none` : you don't make any limit, show all images under the directory.
+      Default: (int) 6
+    * &ss_css : the CSS path of your own styling, which will override the default styles.
+
+
 ********** 1.4.0-Beta 3 **********
 + Fixed small bug in pagination calculation, again...
 + Introducing additional parameters:
