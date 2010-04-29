@@ -704,8 +704,15 @@ class e2g_snip {
         require E2G_SNIPPET_PATH.'config.easy2gallery.php';
         require E2G_SNIPPET_PATH.'includes/config.libs.easy2gallery.php';
         global $modx;
+        if (file_exists( E2G_SNIPPET_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php')) {
+            include_once E2G_SNIPPET_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php';
+        } else {
+            include_once E2G_SNIPPET_PATH . 'langs/english.inc.php';
+        }
         $css = $this->cl_cfg['css'];
         $glib = $this->cl_cfg['glib'];
+        $charset = $this->lng['charset'];
+        $name_len = $this->cl_cfg['name_len'];
 
         $row['title'] = $row['name'];
         if ($row['name'] == '') $row['name'] = '&nbsp;';
