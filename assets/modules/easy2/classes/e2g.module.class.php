@@ -872,8 +872,8 @@ class e2g_mod {
                 }
 
                 // Dir list
-                $dirs = glob('../'.$gdir.'*', GLOB_ONLYDIR);
-                natsort($dirs);
+                $dirs = @glob('../'.$gdir.'*', GLOB_ONLYDIR);
+                if(is_array($dirs)) natsort($dirs);
                 $content = '
 <div id="e2g_topmenu">
     <ul class="actionButtons">
@@ -1009,8 +1009,8 @@ class e2g_mod {
                         '../'.$gdir.'Thumbs.db',
                         '../'.$gdir.'index.php'
                 );
-                $files = array_diff(glob('../'.$gdir.'*.*'), $excludefiles);
-                natsort($files);
+                $files = array_diff(@glob('../'.$gdir.'*.*'), $excludefiles);
+                if(is_array($files)) natsort($files);
                 if ($files!=FALSE)
                     foreach ($files as $f) {
                         if ($this->is_validfolder($f)) continue;

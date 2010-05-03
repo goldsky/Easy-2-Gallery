@@ -1,25 +1,34 @@
 <?php
 // just to avoid direct call to this file. it's recommended to always use this.
 if ( !defined(E2G_SNIPPET_URL) && $slideshow!='simple') {
-    die();
+    return;
 }
 
 // http://jonraasch.com/blog/a-simple-jquery-slideshow
 else {
-    $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.css','screen');
-    // amend dimension variables into CSS
-    $modx->regClientStartupHTMLBlock('
+    if (!empty($ss_css)) {
+        $modx->regClientCSS($ss_css,'screen');
+    } else {
+        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.css','screen');
+        // amend dimension variables into CSS
+        $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
         #slideshow {
             '. 'width: '.$ss_w.'px; '
-            . 'height: '.$ss_h.'px; '
-            . 'background-color: '.$ss_bg.';
+                . 'height: '.$ss_h.'px; '
+                . 'background-color: '.$ss_bg.';
          }
         </style>
             ');
-    
+    }
+
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
-    $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.js');
+    
+    if (!empty($ss_js)) {
+        $modx->regClientStartupScript($ss_js);
+    } else {
+        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/simple/simple.js');
+    }
 
     // start create the slideshow box
     $ss_display = '<div id="slideshow"><div>';

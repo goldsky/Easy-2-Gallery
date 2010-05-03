@@ -18,11 +18,13 @@ if(!defined('E2G_SNIPPET_URL')) {
     define('E2G_SNIPPET_URL', MODX_BASE_URL . 'assets/modules/easy2/');
 }
 
-require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+require_once E2G_SNIPPET_PATH.'config.easy2gallery.php';
+// ROOT directory
+$cl_cfg['gdir'] = $e2g['dir'];
 
 if ( !empty($fid) ) {
     // FILE ID
-    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? (int) $_GET['fid'] : ( !empty($fid) ? $fid : '' );
+    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : ( !empty($fid) ? $fid : '' );
 }
 elseif ( !empty($rgid) ) {
     // RANDOMIZED GALLERY ID
@@ -30,7 +32,7 @@ elseif ( !empty($rgid) ) {
 }
 else {
     // GALLERY ID
-    $cl_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? (int) $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
+    $cl_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
 }
 
 // CUSTOM PARAMETER $_GET FOR OTHER SNIPPETS
@@ -148,6 +150,10 @@ $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
  * set the slideshow CSS's path
  */
 $cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : '' ;
+/*
+ * set the slideshow CSS's path
+ */
+$cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : '' ;
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
@@ -167,7 +173,7 @@ if(!class_exists('e2g_snip')) {
 }
 if (class_exists('e2g_snip')) {
     $e2g = new e2g_snip($cl_cfg);
-    $output = $e2g->display();
+    $output = $e2g->display($cl_cfg);
 } else {
     $output = "<h3>error: e2g_snip class not found</h3>";
 }

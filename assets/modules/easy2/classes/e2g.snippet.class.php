@@ -20,7 +20,7 @@ class e2g_snip {
         $this->_e2g = $_e2g;
     }
 
-    public function display() {
+    public function display($cl_cfg) {
         /*
          * 1. '&gid' : full gallery directory (directory - &gid - default)
          * 2. '&fid' : one file only (file - $fid)
@@ -32,20 +32,19 @@ class e2g_snip {
         $rgid = $this->cl_cfg['rgid'];
         $gid = $this->cl_cfg['gid']; // default
         $slideshow = $this->cl_cfg['slideshow'];
-        $notables = $this->cl_cfg['notables'];
 
         if ( !empty($fid) && !isset($slideshow) ) {
-            echo $this->_imagefile();
+            echo $this->_imagefile($cl_cfg);
         }
         if ( !empty($rgid) && !isset($slideshow) ) {
-            echo $this->_randomimage();
+            echo $this->_randomimage($cl_cfg);
         }
         if ( !$fid && !$rgid && !isset($slideshow) ) {
-            echo $this->_gallery(); // default
+            echo $this->_gallery($cl_cfg); // default
         }
 
         if ( isset($slideshow) ) {
-            echo $this->_slideshow($slideshow);
+            echo $this->_slideshow($cl_cfg, $slideshow);
         }
 
     }
@@ -53,10 +52,10 @@ class e2g_snip {
     /*
      * full gallery execution
     */
-    private function _gallery() {
-        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+    private function _gallery($cl_cfg) {
         global $modx;
 
+        $gdir = $this->cl_cfg['gdir'];
         $gid = $this->cl_cfg['gid'];
         $cat_orderby = $this->cl_cfg['cat_orderby'];
         $cat_order = $this->cl_cfg['cat_order'];
@@ -159,7 +158,7 @@ class e2g_snip {
                 }
             }
 
-            $this->_libs();
+            $this->_libs($cl_cfg);
 
             if ( $showonly != 'images' ) {
                 // SUBDIRS & THUMBS FOR SUBDIRS
@@ -185,7 +184,7 @@ class e2g_snip {
                 while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
 
                     // search image for subdir
-                    $l1=$this->_get_folder_img($l['cat_id']);
+                    $l1=$this->_get_folder_img($cl_cfg, $l['cat_id']);
                     // if there is an empty folder, or invalid content
                     if (!$l1) continue;
                     
@@ -214,14 +213,14 @@ class e2g_snip {
                     }
                     elseif (strlen($l['cat_name']) > $cat_name_len) $l['cat_name'] = substr($l['cat_name'], 0, $cat_name_len-1).'...';
 
-                    $w = $l['w'] = $this->cl_cfg['w'];
-                    $h = $l['h'] = $this->cl_cfg['h'];
+                    $w = $this->cl_cfg['w'];
+                    $h = $this->cl_cfg['h'];
                     $thq = $this->cl_cfg['thq'];
 
-                    $l['src'] = $this->_get_thumb($e2g['dir'], $path1.$l1['filename'], $w, $h, $thq );
+                    $l['src'] = $this->_get_thumb($cl_cfg, $gdir, $path1.$l1['filename'], $w, $h, $thq );
 
                     // fill up the dir list with content
-                    $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>';
+                    $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_dir_tpl($cl_cfg), $l) : '<td>'. $this->_filler($this->_dir_tpl($cl_cfg), $l ).'</td>';
                     $i++;
                 } // while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC))
             }
@@ -287,7 +286,7 @@ class e2g_snip {
                 }
 
                 // whether configuration setting is set with or without table, the template will adjust it
-                $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
+                $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ) : '<td>'. $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ).'</td>';
                 $i++;
             } // while ($l = @mysql_fetch_array($file_query_result, MYSQL_ASSOC))
         } // if( $dir_num_rows!=$limit )
@@ -334,14 +333,13 @@ class e2g_snip {
             }
             $_e2g['pages'] .= '</div>';
         }
-        return $this->_filler($this->_gal_tpl(), $_e2g);
+        return $this->_filler($this->_gal_tpl($cl_cfg), $_e2g);
     }
 
     /*
      * $fid is set
     */
-    private function _imagefile() {
-        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+    private function _imagefile($cl_cfg) {
         global $modx;
         $fid = $this->cl_cfg['fid'];
         $colls = $this->cl_cfg['colls'];
@@ -354,20 +352,20 @@ class e2g_snip {
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
 
-        $this->_libs();
+        $this->_libs($cl_cfg);
         $i = 0;
         while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
             // create row grid
             if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $notables == 0 ) $_e2g['content'] .= '</tr><tr>';
 
             // whether configuration setting is set with or without table, the template will adjust it
-            $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>';
+            $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ) : '<td>'. $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ).'</td>';
             $i++;
         } // while ($l = @mysql_fetch_array($file_query_result, MYSQL_ASSOC))
 
         // END the grid
         $_e2g['content'] .= $notables == 1 ? '</div>':'</tr></table>';
-        return $this->_filler($this->_gal_tpl(), $_e2g);
+        return $this->_filler($this->_gal_tpl($cl_cfg), $_e2g);
     }
 
     /*
@@ -376,8 +374,7 @@ class e2g_snip {
      * @param string $orderby == 'random'
      * @param int $limit == 1
     */
-    private function _randomimage() {
-        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+    private function _randomimage($cl_cfg) {
         global $modx;
 
         $limit = $this->cl_cfg['limit'];
@@ -397,14 +394,14 @@ class e2g_snip {
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
         $l = mysql_fetch_array($res, MYSQL_ASSOC);
 
-        $this->_libs();
-        $this->_activate_libs($l);
+        $this->_libs($cl_cfg);
+        $this->_activate_libs($cl_cfg, $l);
 
-        $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_random_tpl(), $this->_activate_libs($l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_activate_libs($l)).'</td>';
+        $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_random_tpl(), $this->_activate_libs($cl_cfg, $l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_activate_libs($cl_cfg, $l)).'</td>';
 
         // END the grid
         $_e2g['content'] .= $notables == 1 ? '</div>':'</tr></table>';
-        return $this->_filler($this->_gal_tpl(), $_e2g );
+        return $this->_filler($this->_gal_tpl($cl_cfg), $_e2g );
     }
 
     /*
@@ -420,14 +417,14 @@ class e2g_snip {
      *          'resize' = autofit the thumbnail
      *
     */
-    private function _get_thumb ($gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner', $red = 255, $green = 255, $blue = 255) {
+    private function _get_thumb ($cl_cfg, $gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner', $red = 255, $green = 255, $blue = 255) {
         global $modx;
         // decoding UTF-8
         $gdir = utf8_decode($gdir);
         $path = utf8_decode($path);
-        
-        $w = $this->cl_cfg['w'];
-        $h = $this->cl_cfg['h'];
+
+        $w = ( ( !empty($w) && $w!=$this->cl_cfg['w'] ) ? $w : $this->cl_cfg['w'] );
+        $h =  ( ( !empty($h) && $h!=$this->cl_cfg['h'] ) ? $h : $this->cl_cfg['h'] );
         $thq = $this->cl_cfg['thq'];
         $resize_type = $this->cl_cfg['resize_type'];
         $red = isset($this->cl_cfg['thbg_red']) ? $this->cl_cfg['thbg_red'] : $red ;
@@ -564,20 +561,10 @@ class e2g_snip {
             // goldsky -- adds output buffer to avoid PHP's memory limit
             ob_end_clean();
         }
-
-        /*
-         * returned as thumbnail's path, with UTF-8 encoding
-        */
-//        $gdir = htmlentities(utf8_encode($gdir), ENT_NOQUOTES, 'UTF-8');
-//        $thumb_path = htmlentities(utf8_encode($thumb_path), ENT_NOQUOTES, 'UTF-8');
-//$out = '1 '.urlencode($thumb_path).'<br />';
-//$out .= '2 '.urldecode($thumb_path).'<br />';
-//$out .= '3 '.htmlentities($thumb_path).'<br />';
-//$out .= '4 '.rawurldecode($thumb_path).'<br />';
-//$out .= '5 '.rawurlencode($thumb_path).'<br />';
-//        die('572 <br />'.$out);
-        $urlencoding = str_replace('%2F','/',rawurlencode($gdir.$thumb_path));
-//        die('580 '.$urlencoding);
+        // only to switch between localhost and live site.
+        if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
+            $urlencoding = str_replace('%2F','/',rawurlencode($gdir.$thumb_path));
+        } else $urlencoding = utf8_encode($gdir.$thumb_path);
         return $urlencoding;
     }
 
@@ -631,7 +618,7 @@ class e2g_snip {
      * To get thumbnail for each folder
      * @param int $gid folder's ID
     */
-    private function _get_folder_img ($gid) {
+    private function _get_folder_img ($cl_cfg, $gid) {
         global $modx;
         $orderby = $this->cl_cfg['orderby'];
         $order = $this->cl_cfg['order'];
@@ -683,7 +670,7 @@ class e2g_snip {
         return $result;
     }
 
-    private function _libs() {
+    private function _libs($cl_cfg) {
         global $modx;
         $css = $this->cl_cfg['css'];
         $glib = $this->cl_cfg['glib'];
@@ -710,15 +697,22 @@ class e2g_snip {
         }
     }
 
-    private function _activate_libs($row) {
-        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+    private function _activate_libs($cl_cfg, $row) {
         require E2G_SNIPPET_PATH.'includes/config.libs.easy2gallery.php';
         global $modx;
+        $gdir = $this->cl_cfg['gdir'];
         $css = $this->cl_cfg['css'];
         $glib = $this->cl_cfg['glib'];
         $charset = $this->cl_cfg['charset'];
         $name_len = $this->cl_cfg['name_len'];
         $mbstring = $this->cl_cfg['mbstring'];
+        $w = $this->cl_cfg['w'];
+        $h = $this->cl_cfg['h'];
+        $thq = $this->cl_cfg['thq'];
+        // COMMENT
+        $ecm = $this->cl_cfg['ecm'];
+        // SLIDESHOW
+        $show_group = $this->cl_cfg['show_group'];
 
         $row['title'] = $row['name'];
         if ($row['name'] == '') $row['name'] = '&nbsp;';
@@ -735,14 +729,11 @@ class e2g_snip {
             $path = '';
         }
 
-        $w = $row['w'] = $this->cl_cfg['w'];
-        $h = $row['h'] = $this->cl_cfg['h'];
-        $thq = $this->cl_cfg['thq'];
+//        $row['w'] = ( !empty($w) ? $w : $this->cl_cfg['w']);
+//        $row['h'] = ( !empty($h) ? $h : $this->cl_cfg['h']);
+//        $thq = $this->cl_cfg['thq'];
 
-        $row['src'] = $this->_get_thumb($e2g['dir'], $path.$row['filename'], $w, $h, $thq);
-
-        // SLIDESHOW
-        $show_group = $this->cl_cfg['show_group'];
+        $row['src'] = $this->_get_thumb($cl_cfg, $gdir, $path.$row['filename'], $w, $h, $thq);
 
         // gallery activation
         if ( $glibs[$glib] ) {
@@ -758,7 +749,6 @@ class e2g_snip {
 
         $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-        $ecm = $this->cl_cfg['ecm'];
         /*
          * COMMENTS
         */
@@ -777,8 +767,7 @@ class e2g_snip {
         return $row;
     }
 
-    private function _slideshow($slideshow) {
-        require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+    private function _slideshow($cl_cfg, $slideshow) {
         global $modx;
         $gdir = $this->cl_cfg['gdir'];
         $gid = $this->cl_cfg['gid'];
@@ -786,13 +775,17 @@ class e2g_snip {
         $rgid = $this->cl_cfg['rgid'];
         $orderby = $this->cl_cfg['orderby'];
         $order = $this->cl_cfg['order'];
+        $w = $this->cl_cfg['w'];
+        $h = $this->cl_cfg['h'];
+        $thq = $this->cl_cfg['thq'];
         $ss_w = $this->cl_cfg['ss_w'];
-        $ss_h = ( $this->cl_cfg['ss_h'] == 0 ? '300' : $this->cl_cfg['ss_h']);
+        $ss_h = $this->cl_cfg['ss_h'];
         $ss_bg = $this->cl_cfg['ss_bg'];
         $ss_allowedratio = $this->cl_cfg['ss_allowedratio'];
         $ss_limit = $this->cl_cfg['ss_limit'];
         $ss_config = $this->cl_cfg['ss_config'];
         $ss_css = $this->cl_cfg['ss_css'];
+        $ss_js = $this->cl_cfg['ss_js'];
 
         $images = $names = array();
         if (!empty($gid)) {
@@ -812,11 +805,22 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $dirid[] .= $fetch['dir_id'];
-                $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $filename[] .= $fetch['filename'];
-                $title[] .= $fetch['name'];
-                $description[] .= $fetch['description'];
+                $fileid[] = $fetch['id'];
+                $dirid[] = $fetch['dir_id'];
+                $images[] = $gdir.$path.$fetch['filename'];
+                $filename[] = $fetch['filename'];
+                $title[] = $fetch['name'];
+                $description[] = $fetch['description'];
+                $name[] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $thumbsrc[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $slide_images[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -835,11 +839,22 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $dirid[] .= $fetch['dir_id'];
-                $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $filename[] .= $fetch['filename'];
-                $title[] .= $fetch['name'];
-                $description[] .= $fetch['description'];
+                $fileid[] = $fetch['id'];
+                $dirid[] = $fetch['dir_id'];
+                $images[] = $gdir.$path.$fetch['filename'];
+                $filename[] = $fetch['filename'];
+                $title[] = $fetch['name'];
+                $description[] = $fetch['description'];
+                $name[] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $thumbsrc[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $slide_images[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -860,11 +875,22 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $dirid[] .= $fetch['dir_id'];
-                $images[] .= $e2g['dir'].$path.$fetch['filename'];
-                $filename[] .= $fetch['filename'];
-                $title[] .= $fetch['name'];
-                $description[] .= $fetch['description'];
+                $fileid[] = $fetch['id'];
+                $dirid[] = $fetch['dir_id'];
+                $images[] = $gdir.$path.$fetch['filename'];
+                $filename[] = $fetch['filename'];
+                $title[] = $fetch['name'];
+                $description[] = $fetch['description'];
+                $name[] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $path = $this->_get_path($fetch['dir_id']);
+                if (count($path) > 1) {
+                    unset($path[1]);
+                    $path = implode('/', array_values($path)).'/';
+                } else {
+                    $path = '';
+                }
+                $thumbsrc[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $slide_images[] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -876,7 +902,9 @@ class e2g_snip {
         }
 
         $count = count($images);
-
+    if ( isset($_GET['fid']) ) {
+        echo 'test getting fid';
+    }
         // include the available slideshow file config
         if (!file_exists(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php')) {
             $ss_display = 'slideshow config for <b>'.$slideshow.'</b> is not found.';
@@ -888,7 +916,7 @@ class e2g_snip {
     }
 
     // DIRECTORY TEMPLATE
-    private function _dir_tpl() {
+    private function _dir_tpl($cl_cfg) {
         global $modx;
         $dir_tpl = $this->cl_cfg['dir_tpl'];
         if (file_exists($dir_tpl)) {
@@ -903,7 +931,7 @@ class e2g_snip {
     }
 
     // THUMBNAIL TEMPLATE
-    private function _thumb_tpl() {
+    private function _thumb_tpl($cl_cfg) {
         global $modx;
         $thumb_tpl = $this->cl_cfg['thumb_tpl'];
         if (file_exists($thumb_tpl)) {
@@ -918,7 +946,7 @@ class e2g_snip {
     }
 
     // GALLERY TEMPLATE
-    private function _gal_tpl() {
+    private function _gal_tpl($cl_cfg) {
         global $modx;
         $tpl = $this->cl_cfg['tpl'];
         if (file_exists($tpl)) {
@@ -933,7 +961,7 @@ class e2g_snip {
     }
 
     // RANDOM TEMPLATE
-    private function _random_tpl() {
+    private function _random_tpl($cl_cfg) {
         global $modx;
         $rand_tpl = $this->cl_cfg['rand_tpl'];
         if (file_exists($rand_tpl)) {

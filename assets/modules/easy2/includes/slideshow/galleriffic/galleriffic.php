@@ -1,29 +1,51 @@
 <?php
 // just to avoid direct call to this file. it's recommended to always use this.
 if ( !defined(E2G_SNIPPET_URL) && $slideshow!='galleriffic') {
-    die();
+    return;
 }
 
 //http://www.twospy.com/galleriffic/
 else {
+
+    /**************************************************/
+    /*            PREPARE THE HTML HEADERS            */
+    /**************************************************/
+
 //    $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/basic.css');
     if ($ss_config=='example-1') {
-        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-1.css');
+        if (!empty($ss_css)) {
+            $modx->regClientCSS($ss_css,'screen');
+        } else {
+            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-1.css','screen');
+        }
     }
     if ($ss_config=='example-2') {
-        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-2.css');
+        if (!empty($ss_css)) {
+            $modx->regClientCSS($ss_css,'screen');
+        } else {
+            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-2.css','screen');
+        }
     }
     if ($ss_config=='example-3') {
-        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-3.css');
+        if (!empty($ss_css)) {
+            $modx->regClientCSS($ss_css,'screen');
+        } else {
+            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-3.css','screen');
+        }
     }
     if ($ss_config=='example-5') {
-        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-5.css');
-//        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/white.css');
-        $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/black.css');
+        if (!empty($ss_css)) {
+            $modx->regClientCSS($ss_css,'screen');
+        } else {
+            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/galleriffic-5.css','screen');
+//            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/white.css','screen');
+            $modx->regClientCSS(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/css/black.css','screen');
+        }
     }
 
-    // defining the dimension in CSS style
-    $modx->regClientStartupHTMLBlock('
+    if (empty($ss_css)) {
+        // defining the dimension in CSS style
+        $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
          div.slideshow img {
             position: absolute;
@@ -35,16 +57,11 @@ else {
             background-color: '.$ss_bg.';
         }
         </style>');
-
-    // overiding a custom CSS if there is any
-    if (!($ss_css)) {
-        $modx->regClientCSS($ss_css);
     }
 
     // Javascript
     if ($ss_config=='example-1') {
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery-1.3.2.js');
-        // Optionally include jquery.history.js for history support
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.galleriffic.js');
     }
     if ($ss_config=='example-2') {
@@ -66,7 +83,7 @@ else {
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.galleriffic.js');
         $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/jquery.opacityrollover.js');
     }
-        $modx->regClientStartupHTMLBlock('
+    $modx->regClientStartupHTMLBlock('
         <script type="text/javascript">jQuery.noConflict();</script>');
     // header
     $modx->regClientStartupHTMLBlock('
@@ -74,21 +91,41 @@ else {
         <script type="text/javascript">document.write(\'<style>.noscript { display: none; }</style>\');</script>');
 
     if ($ss_config=='example-1') {
-        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-1.js');
+        if (!empty($ss_js)) {
+            $modx->regClientStartupScript($ss_js);
+        } else {
+            $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-1.js');
+        }
     }
     if ( $ss_config=='example-2' ) {
-        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-2.js');
+        if (!empty($ss_js)) {
+            $modx->regClientStartupScript($ss_js);
+        } else {
+            $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-2.js');
+        }
     }
     if ( $ss_config=='example-3' ) {
-        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-3.js');
+        if (!empty($ss_js)) {
+            $modx->regClientStartupScript($ss_js);
+        } else {
+            $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-3.js');
+        }
     }
     if ( $ss_config=='example-5' ) {
-        $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-5.js');
+        if (!empty($ss_js)) {
+            $modx->regClientStartupScript($ss_js);
+        } else {
+            $modx->regClientStartupScript(E2G_SNIPPET_URL.'includes/slideshow/galleriffic/js/galleriffic-5.js');
+        }
     }
 
+    /**************************************************/
+    /*              THE SLIDESHOW DISPLAY             */
+    /**************************************************/
+
     if ( $ss_config != 'example-5' ) {
-    // start the galleriffic part.
-    $ss_display = '
+        // start the galleriffic part.
+        $ss_display = '
 <div id="gallery" class="content">
     <div id="controls" class="controls"></div>
     <div class="slideshow-container">
@@ -101,7 +138,7 @@ else {
     <ul class="thumbs noscript">';
     }
     if ( $ss_config == 'example-5' ) {
-    $ss_display = '
+        $ss_display = '
 <!-- Start Advanced Gallery Html Containers -->
 <div class="navigation-container">
     <div id="thumbs" class="navigation">
@@ -122,24 +159,6 @@ else {
             if ($j==$ss_limit) break;
         } // if ($ss_config=='example-1')
 
-        // holding the thumbnail path and dimension
-        if ($ss_config!='example-1') {
-            $name[$i] = $title[$i]!='' ? $title[$i] : $filename[$i];
-                    $path = $this->_get_path($dirid[$i]);
-            if (count($path) > 1) {
-                unset($path[1]);
-                $path = implode('/', array_values($path)).'/';
-            } else {
-                $path = '';
-            }
-
-            $w = $row['w'] = $this->cl_cfg['w'];
-            $h = $row['h'] = $this->cl_cfg['h'];
-            $thq = $this->cl_cfg['thq'];
-
-            $thumbsrc[$i] = $this->_get_thumb($e2g['dir'], $path.$filename[$i], $w, $h, $thq);
-        }
-
         // display the gallery thumbs
         if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
@@ -159,7 +178,7 @@ else {
             $j++;
             if ($j==$ss_limit) break;
         } // if ( $ss_config=='example-2' )
-        
+
         if ( $ss_config=='example-5' ) {
             $ss_display .= '
             <li>
