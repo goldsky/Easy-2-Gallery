@@ -108,6 +108,9 @@ $cl_cfg['thumb_tpl'] = (!empty($thumb_tpl)) ? str_replace('../', '' , $thumb_tpl
 // THUMB RAND TEMPLATE
 $cl_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_tpl) : $e2g['rand_tpl'];
 
+// LANDING PAGE TEMPLATE
+$cl_cfg['page_tpl'] = (!empty($page_tpl)) ? str_replace('../', '' , $page_tpl) : $e2g['page_tpl'];
+
 // THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit)
 $cl_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
 
@@ -119,8 +122,15 @@ $cl_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
 // JAVASCRIPT LIBRARY'S SLIDESHOW GROUP
 $cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
 
-// STAND ALONE SLIDESHOW PARAMETERS
+/*
+ * STAND ALONE SLIDESHOW PARAMETERS
+ */
+
+// SLIDESHOW TYPE
 $cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
+// SLIDESHOW PROCESSOR FILE. IF NOT EXIST, WILL USE DEFAULT.
+$cl_cfg['ss_indexfile'] = isset($ss_indexfile) ? $ss_indexfile : NULL;
+// SLIDESHOW'S BOX DIMENSION, NOT THUMBNAIL
 $cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
 $cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
 $cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color

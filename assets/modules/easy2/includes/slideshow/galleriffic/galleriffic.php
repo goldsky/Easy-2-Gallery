@@ -3,7 +3,12 @@
 if ( !defined(E2G_SNIPPET_URL) && $slideshow!='galleriffic') {
     return;
 }
-
+// result with no images
+elseif ($count == 0) {
+    $ss_display = 'No image inside the gallery id '.$gid;
+    // this slideshow heavily dependent on any image existence.
+    return;
+}
 //http://www.twospy.com/galleriffic/
 else {
 
@@ -152,7 +157,7 @@ else {
         if ($ss_config=='example-1') {
             $ss_display .= '
         <li>
-            <a class="thumb" href="'.$images[$i].'" title="'.$title[$i].'">' . ( $title[$i]!='' ? $title[$i] : $filename[$i] ) . '</a>
+            <a class="thumb" href="'.$ssfile['src'][$i].'" title="'.$ssfile['title'][$i].'">' . $ssfile['title'][$i] . '</a>
         </li>';
             // if there is a image number limitation
             $j++;
@@ -163,15 +168,15 @@ else {
         if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
         <li>
-            <a class="thumb" name="'.$name[$i].'" href="'.$images[$i].'">
-                <img src="'.$thumbsrc[$i].'" />
+            <a class="thumb" name="'.$ssfile['title'][$i].'" href="'.$ssfile['src'][$i].'">
+                <img src="'.$ssfile['thumbsrc'][$i].'" />
             </a>
             <div class="caption">
                 <div class="download">
-                    <a href="'.$images[$i].'">Download Original</a>
+                    <a href="'.$ssfile['src'][$i].'">Download Original</a>
                 </div>
-                <div class="image-title">'.$name[$i].'</div>
-                <div class="image-desc">'.$description[$i].'</div>
+                <div class="image-title">'.$ssfile['title'][$i].'</div>
+                <div class="image-desc">'.$ssfile['description'][$i].'</div>
             </div>
         </li>';
             // if there is a image number limitation
@@ -182,15 +187,15 @@ else {
         if ( $ss_config=='example-5' ) {
             $ss_display .= '
             <li>
-                <a class="thumb" name="'.$name[$i].'" href="'.$images[$i].'" title="'.$name[$i].'">
-                    <img src="'.$thumbsrc[$i].'" alt="'.$name[$i].'" />
+                <a class="thumb" name="'.$ssfile['title'][$i].'" href="'.$ssfile['src'][$i].'" title="'.$ssfile['title'][$i].'">
+                    <img src="'.$ssfile['thumbsrc'][$i].'" alt="'.$ssfile['title'][$i].'" />
                 </a>
                 <div class="caption">
-                    <div class="image-title">'.$name[$i].'</div>
-                    <div class="image-desc">'.$description[$i].'</div>
+                    <div class="image-title">'.$ssfile['title'][$i].'</div>
+                    <div class="image-desc">'.$ssfile['description'][$i].'</div>
 
                     <div class="download">
-                        <a href="'.$images[$i].'">Download Original</a>
+                        <a href="'.$ssfile['src'][$i].'">Download Original</a>
                     </div>
                 </div>
             </li>';

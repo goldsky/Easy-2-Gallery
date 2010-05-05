@@ -54,7 +54,6 @@ $lng = array (
             This name will also be used as the URL (web address).',
         'debug' => 'Debug option',
         'dir' => 'folder',
-        'tinymcefolder' => 'TinyMCE folder',
         'thumb' => 'thumbnail',
         'empty' => 'empty',
         'valid_extensions' => 'Valid extensions are',
@@ -72,7 +71,8 @@ $lng = array (
         'file_delete' => 'file deleted',
         'file_delete_fdb' => 'file removed only from DB',
         'file_delete_fhdd' => 'file removed only from HD',
-
+        'hidden' => 'Hidden',
+        'invisible' => 'Invisible',
         'dir_edded' => 'Folder created',
         'dir_edd_err' => 'There was an error while trying to create a folder',
 
@@ -121,6 +121,7 @@ $lng = array (
         'config' => 'Config',
 
         'newimgcfg' => 'Images settings',
+        'oldimgcfg' => 'Resize existing images',
         'thumbscfg' => 'Thumbnails settings',
         'thumbcnt' => 'Display settings',
         'w' => 'Width',
@@ -143,6 +144,7 @@ $lng = array (
         'css' => 'CSS',
         'gallery' => 'Gallery',
         'comments_row' => 'Comments row',
+        'landing_page' => 'Landing page tpl',
         'wm' => 'Watermarks',
         'type' => 'type',
         'text' => 'text',
@@ -173,10 +175,10 @@ $lng = array (
 
         'cfg_com0' => 'Debug mode.',
         'cfg_com1' => 'Path to folder with <b class="warning">trailing slash</b>, e.g.: assets/easy2gallery/.',
-        'cfg_com1a' => 'TinyMCE folder, e.g.: tinymce3241 (MODx Evolution 1.0.2)',
         'cfg_com2' => 'Max width in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com3' => 'Max height in pixels, larger images will be resized automatically.<br> <b>0 - no limit</b>.',
         'cfg_com4' => 'Level of jpeg comression from 0 to 100%.<br><b class="warning">Only for images larger than limits</b>.',
+        'cfg_com4a' => 'Set this option \'Yes\' if the change should also apply to ALL existing images. Click the \'Synchronize\' button to run the process.',
         'cfg_com5' => 'Thumbnail width, px.',
         'cfg_com6' => 'Thumbnail height, px',
         'cfg_com6a' => 'Inner: cropped | Shrink: shrink | Resize: proportional autofit',
@@ -193,6 +195,7 @@ $lng = array (
         'cfg_com15' => 'vertical position of watermark',
         'cfg_com16' => 'Sorting method',
         'cfg_com17' => 'Chunk name or path to tpl file',
+        'cfg_com17a' => 'chunk name or path to template file of a single landing page',
         'cfg_com18' => 'Max name length',
         'cfg_com19' => 'chunk name or path to file, <b class="warning">relative to comments.easy2gallery.php</b>',
         'cfg_com20' => 'Max folder name length',
@@ -217,6 +220,7 @@ $lng = array (
         'upload_err' => 'Can\'t upload file',
         'add_file_err' => 'Can\'t add file',
         'ren_file_err' => 'Can\'t rename file',
+        'rez_file_err' => 'Can\'t resize file',
         'type_err' => 'Restricted type of file',
         'db_err' => 'DB error',
         'directory_create_err' => 'Can\'t create folder',
@@ -244,7 +248,6 @@ $lng = array (
 <p><a href="http://e2g.info/documentation.htm" target="_blank"><b>Documentation</b></a></p>
 <p><b><a href="http://e2g.info/" target="_blank">Easy 2 Gallery official site</a></b></p>
 <p><b><a href="http://wiki.modxcms.com/index.php/Easy2gallery" target="_blank">Easy 2 Gallery WIKI</a></b></p>
-
 '
 );
 

@@ -844,27 +844,31 @@ class e2g_mod {
             default:
                 if (empty($cpath)) {
                     // MySQL Dir list
-                    $q = 'SELECT cat_id,cat_name '
+                    $q = 'SELECT cat_id,cat_name,cat_visible '
                             .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
-                            .'WHERE parent_id = '.$parent_id.' AND cat_visible = 1'.' ';
+                            .'WHERE parent_id = '.$parent_id;
                     $res = mysql_query($q);
                     $mdirs = array();
                     if ($res) {
                         while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                            $mdirs[$l['cat_name']]['id'] = $l['cat_id']; // goldsky -- to be connected between db <--> fs
+                            // goldsky -- store the array to be connected between db <--> fs
+                            $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
+                            $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
                         }
                     } else {
                         $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
                     }
                     // MySQL File list
-                    $q = 'SELECT id,filename FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
+                    $q = 'SELECT id,filename,status FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
                     $res = mysql_query($q);
                     $mfiles = array();
                     if ($res) {
                         while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                            $mfiles[$l['filename']]['id'] = $l['id']; // goldsky -- to be connected between db <--> fs
+                            // goldsky -- store the array to be connected between db <--> fs
+                            $mfiles[$l['filename']]['id'] = $l['id'];
                             $mfiles[$l['filename']]['name'] = $l['filename'];
+                            $mfiles[$l['filename']]['status'] = $l['status'];
                         }
                     } else {
                         $_SESSION['easy2err'][] = 'MySQL ERROR: '.mysql_error();
@@ -931,8 +935,12 @@ class e2g_mod {
                         $time = filemtime($f);
                         $cnt = $this->_count_files($f);
                         if ($name == '_thumbnails') continue;
-                        if (isset($mdirs[$name])) {
-                            $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><b>'.$mdirs[$name]['name'].'</b></a> [id: '.$mdirs[$name]['id'].']';
+                        if ( isset($mdirs[$name]) ) {
+                            if (($mdirs[$name]['cat_visible']=='1')) {
+                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><b>'.$mdirs[$name]['name'].'</b></a> [id: '.$mdirs[$name]['id'].']';
+                            } else {
+                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><i>'.$mdirs[$name]['name'].'</i></a> [id: '.$mdirs[$name]['id'].'] <i>('.$lng['invisible'].')</i>';
+                            }
                             $id = $mdirs[$name]['id'];
                             unset($mdirs[$name]);
                             $ext = '';
@@ -1020,7 +1028,11 @@ class e2g_mod {
                         $ext = 'picture';
                         $id = $mfiles[$name]['id'];
                         if (isset($mfiles[$name])) {
-                            $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
+                            if ($mfiles[$name]['status']=='1') {
+                                $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
+                            } else {
+                                $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
+                            }
                             unset($mfiles[$name]);
                             $buttons = '
  <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
@@ -1248,11 +1260,11 @@ class e2g_mod {
     /*
      * private function _resize_img()
      * To resize image by configuration settings
-     * @param string $f file's/folder's name
-     * @param int $inf ???
-     * @param int $w width
-     * @param int $h height
-     * @param int $thq thumbnail quality
+     * @param string $f   :file's/folder's name
+     * @param int    $inf :getimagesize($f);
+     * @param int    $w   :width
+     * @param int    $h   :height
+     * @param int    $thq :thumbnail quality
     */
     private function _resize_img ($f, $inf, $w, $h, $thq) {
         global $modx;
@@ -1451,6 +1463,25 @@ class e2g_mod {
                 } elseif ($this->is_validfile($f)) { // as a file in the current directory
                     // goldsky -- if this already belongs to a file in the record, skip it!
                     if (isset($mfiles[$name])) {
+                        // goldsky -- add the resizing of old images
+                        if ($cfg['resizeoldimg']==1) {
+                            $inf = getimagesize($f);
+                            if ($inf[2] <= 3) {
+                                // RESIZE
+                                if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+                                    $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
+                                }
+                                $n = $this->_basename_safe($f);
+                                $s = filesize($f);
+                                $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                        . 'SET size=\''.$s.'\', date_added=NOW() '
+                                        ;
+                                if (!mysql_query($q)) {
+                                    $_SESSION['easy2err'][] = $lng['rez_file_err'].'<br/>'.mysql_error();
+                                    return FALSE;
+                                }
+                            }
+                        }
                         unset($mfiles[$name]);
                     } else {
                         /*

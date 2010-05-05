@@ -37,13 +37,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com1']; ?></td>
                     </tr>
-                    <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['tinymcefolder']; ?>:</b></td>
-                        <td width="88%"><input name="tinymcefolder" type="text" value="<?php echo $e2g['tinymcefolder']; ?>"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com1a']; ?></td>
-                    </tr>
                 </table>
             </div>
             <div class="tab-page" id="tabImagesSettings">
@@ -72,6 +65,16 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com4']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td width="12%"><b><?php echo $lng['oldimgcfg']; ?>:</b></td>
+                        <td>
+                            <input type="radio" name="resizeoldimg" value="0" <?php echo ($e2g['resizeoldimg']=='0' ? 'checked="checked"' : '');?>> No
+                            <input type="radio" name="resizeoldimg" value="1" <?php echo ($e2g['resizeoldimg']=='1' ? 'checked="checked"' : '');?>> Yes
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com4a']; ?></td>
                     </tr>
                 </table>
             </div>
@@ -261,6 +264,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com17']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['landing_page']; ?>:</b></td>
+                        <td><input name="page_tpl" type="text" value="<?php echo $e2g['page_tpl']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com17a']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments']; ?>:</b></td>

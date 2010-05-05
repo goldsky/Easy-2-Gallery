@@ -251,33 +251,39 @@ else {
             || $ss_config=='horcontinuous'
             || $ss_config=='vercontinuous'
     ) {
-
-        // ------------- open slideshow wrapper ------------- //
-        $ss_display .= '
+        // result with no images
+        if ($count == 0) {
+            $ss_display = 'No image inside the gallery id '.$gid;
+            // this slideshow heavily dependent on any image existence.
+            return;
+        } else {
+            
+            // ------------- open slideshow wrapper ------------- //
+            $ss_display .= '
 <div id="myGallery">';
 
-        // ------------- start the images looping ------------- //
-        $j=0;
-        for ($i=0;$i<$count;$i++) {
-            $ss_display .= '
+            // ------------- start the images looping ------------- //
+            $j=0;
+            for ($i=0;$i<$count;$i++) {
+                $ss_display .= '
     <div class="imageElement">
-        <h3>'.$name[$i].'</h3>
-        <p>'.$description[$i].'</p>
-        <a href="[~[*id*]~]?fid='.$fileid[$i].'" title="open image" class="open"></a>
-        <img src="'.$slide_images[$i].'" class="full" alt="" />
-        <img src="'.$thumbsrc[$i].'" class="thumbnail" alt="" />
+        <h3>'.$ssfile['title'][$i].'</h3>
+        <p>'.$ssfile['description'][$i].'</p>
+        <a href="[~[*id*]~]?fid='.$ssfile['id'][$i].'" title="open image" class="open"></a>
+        <img src="'.$ssfile['image'][$i].'" class="full" alt="" />
+        <img src="'.$ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
 
-            // if there is a image number limitation
-            $j++;
-            if ($j==$ss_limit) break;
-        }
-        // ------------- end the images looping ------------- //
+                // if there is a image number limitation
+                $j++;
+                if ($j==$ss_limit) break;
+            }
+            // ------------- end the images looping ------------- //
 
-        // ------------- close slideshow wrapper ------------- //
-        $ss_display .= '
+            // ------------- close slideshow wrapper ------------- //
+            $ss_display .= '
 </div>';
-
+        }
     } // if ( $ss_config=='fullgallery' || $ss_config=='timedgallery' )
 
     /**************************************************/
@@ -287,6 +293,7 @@ else {
     if ($ss_config=='galleryset') {
         $cat_orderby = $this->cl_cfg['cat_orderby'];
         $cat_order = $this->cl_cfg['cat_order'];
+
         if (!empty($gid)) {
 
             // ************** select directories ************** //
@@ -297,7 +304,7 @@ else {
                     . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' '
                     . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
             ;
-            $querydir = mysql_query($selectdir) or die('307 '.mysql_error());
+            $querydir = mysql_query($selectdir) or die('301 '.mysql_error());
             $countdir = mysql_num_rows($querydir);
 
             while ($fetchdir = mysql_fetch_array($querydir)) {
@@ -315,8 +322,10 @@ else {
                             . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                             . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
                     ;
-                    $query = mysql_query($select) or die('320 '.$select.mysql_error());
+                    $query = mysql_query($select) or die('319 '.$select.mysql_error());
                     $countimg[$k] = mysql_num_rows($query);
+                    // for an empty folder
+//                    if ($countimg[$k]==0) continue;
 
                     while ($fetch = mysql_fetch_array($query)) {
                         $path = $this->_get_path($fetch['dir_id']);
@@ -326,14 +335,14 @@ else {
                         } else {
                             $path = '';
                         }
-                        $fileid[$k][] = $fetch['id'];
-                        $dirid[$k][] = $fetch['dir_id'];
-                        $images[$k][] = $e2g['dir'].$path.$fetch['filename'];
-                        $filename[$k][] = $fetch['filename'];
-                        $title[$k][] = $fetch['name'];
-                        $description[$k][] = $fetch['description'];
-                        $thumbsrc[$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                        $slide_images[$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                        $ssfile['id'][$k][] = $fetch['id'];
+                        $ssfile['dirid'][$k][] = $fetch['dir_id'];
+                        $ssfile['src'][$k][] = $gdir.$path.$fetch['filename'];
+                        $ssfile['filename'][$k][] = $fetch['filename'];
+                        $ssfile['title'][$k][] = $fetch['name'];
+                        $ssfile['description'][$k][] = $fetch['description'];
+                        $ssfile['thumbsrc'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                        $ssfile['image'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
                     }
                 }
             }
@@ -342,6 +351,10 @@ else {
         $ss_display .= '
 <div id="myGallerySet">';
         // ------------- start the images looping ------------- //
+        if(!is_array($galleries)) { // something wrong! escape!
+            $ss_display = 'wrong parameters';
+            return;
+        }
         foreach ($galleries as $k => $v ) {
             $ss_display .= '
     <div id="gallery1" class="galleryElement">
@@ -349,14 +362,14 @@ else {
 
             $j=0;
             for ($i=0;$i<$countimg[$k];$i++) {
-                $name[$k][$i] = ($title[$k][$i]!='' ? $title[$k][$i] : $filename[$k][$i]);
+                $ssfile['title'][$k][$i] = ($ssfile['title'][$k][$i]!='' ? $ssfile['title'][$k][$i] : $ssfile['filename'][$k][$i]);
                 $ss_display .= '
         <div class="imageElement">
-            <h3>'.$name[$k][$i].'</h3>
-            <p>'.$description[$k][$i].'</p>
-            <a href="[~[*id*]~]?fid='.$fileid[$k][$i].'" title="open image" class="open"></a>
-            <img src="'.$slide_images[$k][$i].'" class="full" alt="" />
-            <img src="'.$thumbsrc[$k][$i].'" class="thumbnail" />
+            <h3>'.$ssfile['title'][$k][$i].'</h3>
+            <p>'.$ssfile['description'][$k][$i].'</p>
+            <a href="[~[*id*]~]?fid='.$ssfile['id'][$k][$i].'" title="open image" class="open"></a>
+            <img src="'.$ssfile['image'][$k][$i].'" class="full" alt="" />
+            <img src="'.$ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
         </div>';
                 // if there is a image number limitation
                 $j++;
@@ -378,45 +391,50 @@ else {
     /**************************************************/
 
     if ( $ss_config=='zoom' ) {
-
-        // ------------- open slideshow wrapper ------------- //
-        $ss_display .= '
+        // result with no images
+        if ($count == 0) {
+            $ss_display = 'No image inside the gallery';
+            // this slideshow heavily dependent on any image existence.
+            return;
+        } else {
+            // ------------- open slideshow wrapper ------------- //
+            $ss_display .= '
 <div id="myGallery">';
 
-        // ------------- start the images looping ------------- //
-        $j=0;
-        for ($i=0;$i<$count;$i++) {
-            $dim = getimagesize(utf8_decode($images[$i]));
-            $width[$i] = $dim[0];
-            $height[$i] = $dim[1];
-            $image_ratio[$i] = $width[$i]/$height[$i];
+            // ------------- start the images looping ------------- //
+            $j=0;
+            for ($i=0;$i<$count;$i++) {
+                $dim = getimagesize(utf8_decode($ssfile['src'][$i]));
+                $width[$i] = $dim[0];
+                $height[$i] = $dim[1];
+                $image_ratio[$i] = $width[$i]/$height[$i];
 
-            if ($ss_allowedratio != 'none') {
-                // skipping ratio exclusion
-                if ( $ss_minratio > $image_ratio[$i] || $ss_maxratio < $image_ratio[$i] ) continue;
-            }
+                if ($ss_allowedratio != 'none') {
+                    // skipping ratio exclusion
+                    if ( $ss_minratio > $image_ratio[$i] || $ss_maxratio < $image_ratio[$i] ) continue;
+                }
 
-            $ss_display .= '
+                $ss_display .= '
     <div class="imageElement">
-        <h3>'.$name[$i].'</h3>
-        <p>'.$description[$i].'</p>
-        <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($images[$i]))).'" title="open image" class="open"></a>
-        <img src="'.$slide_images[$i].'" class="full" alt="" '
-            . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ? 'height="'.$ss_h.'px" ' : 'width="'.$ss_w.'px" ' )
-                    .'/>
-        <img src="'.$thumbsrc[$i].'" class="thumbnail" alt="" />
+        <h3>'.$ssfile['title'][$i].'</h3>
+        <p>'.$ssfile['description'][$i].'</p>
+        <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($ssfile['src'][$i]))).'" title="open image" class="open"></a>
+        <img src="'.$ssfile['image'][$i].'" class="full" alt="" '
+                        . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ? 'height="'.$ss_h.'px" ' : 'width="'.$ss_w.'px" ' )
+                        .'/>
+        <img src="'.$ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
+                
+                // if there is a image number limitation
+                $j++;
+                if ($j==$ss_limit) break;
+            }
+            // ------------- end the images looping ------------- //
 
-            // if there is a image number limitation
-            $j++;
-            if ($j==$ss_limit) break;
-        }
-        // ------------- end the images looping ------------- //
-
-        // ------------- close slideshow wrapper ------------- //
-        $ss_display .= '
+            // ------------- close slideshow wrapper ------------- //
+            $ss_display .= '
 </div>';
-
+        }
     } // if ( $ss_config=='fullgallery' || $ss_config=='timedgallery' )
 }
 

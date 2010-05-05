@@ -3,7 +3,12 @@
 if ( !defined(E2G_SNIPPET_URL) && $slideshow!='simple') {
     return;
 }
-
+// result with no images
+elseif ($count == 0) {
+    $ss_display = 'No image inside the gallery id '.$gid;
+    // this slideshow heavily dependent on any image existence.
+    return;
+}
 // http://jonraasch.com/blog/a-simple-jquery-slideshow
 else {
     if (!empty($ss_css)) {
@@ -34,7 +39,7 @@ else {
     $ss_display = '<div id="slideshow"><div>';
     $j=0;
     for ($i=0;$i<$count;$i++) {
-        $dim = getimagesize($images[$i]);
+        $dim = getimagesize($ssfile['src'][$i]);
         $width[$i] = $dim[0];
         $height[$i] = $dim[1];
         $image_ratio[$i] = $width[$i]/$height[$i];
@@ -44,7 +49,8 @@ else {
             if ( $ss_minratio > $image_ratio[$i] || $ss_maxratio < $image_ratio[$i] ) continue;
         }
 //        echo $ss_w/$ss_h .'=>'. $image_ratio[$i].'<br />';
-        $ss_display .= '<img src="'.$images[$i].'" alt="" title="'.$title[$i].'" '
+        $ss_display .= '
+                <img src="'.utf8_encode($ssfile['src'][$i]).'" alt="" title="'.$ssfile['title'][$i].'" '
                 . ( $i == 0 ? 'class="active" ' : '' )
                 . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ?
                 'height="'.$ss_h.'px" style="left:'.(($ss_w - ($width[$i]*$ss_h/$height[$i]))/2).'px;" ' :

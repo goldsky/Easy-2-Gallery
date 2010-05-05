@@ -42,4 +42,18 @@ div.e2g {display:block}
 .e2g_crumbs {font:bold 12px Tahoma;}
 .e2g_currentCrumb {}
 
-
+/* landing page */
+div.image {
+    padding: 6px 9px 6px 6px;
+    background-color: white;
+}
+.image img {
+    border: 1px solid black;
+    padding: 4px;
+    margin: -3px;
+}
+div.imagetitle {
+    margin-top: 10px;
+    font-size: 30px;
+}
+div.imagedesc {}
