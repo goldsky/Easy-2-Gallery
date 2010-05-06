@@ -46,7 +46,11 @@ mysql_select_db(str_replace('`', '', $GLOBALS['dbase']));
 if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
 if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
-require E2G_MODULE_PATH . 'config.easy2gallery.php';
+if (file_exists( E2G_MODULE_PATH . 'config.easy2gallery.php' )) {
+    require E2G_MODULE_PATH . 'config.easy2gallery.php';
+} else {
+    require E2G_MODULE_PATH . 'default.config.easy2gallery.php';
+}
 
 $gdir = $e2g['dir'];
 $path = '';

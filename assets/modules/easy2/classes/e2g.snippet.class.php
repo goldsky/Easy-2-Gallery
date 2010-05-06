@@ -224,12 +224,12 @@ class e2g_snip {
                     // Populate the grid with folder's thumbnails
                     if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $notables == 0 ) $_e2g['content'] .= '</tr><tr>';
 
-                    $l['title'] = $l['cat_name'];
-                    if ($l['cat_name'] == '') $l['cat_name'] = '&nbsp;';
+                    $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] ) ;
+                    if ($l['title'] == '') $l['title'] = '&nbsp;';
                     elseif ($mbstring) {
-                        if (mb_strlen($l['cat_name'], $charset ) > $cat_name_len ) $l['cat_name'] = mb_substr($l['cat_name'], 0, $cat_name_len-1, $charset).'...';
+                        if (mb_strlen($l['title'], $charset ) > $title_len ) $l['title'] = mb_substr($l['title'], 0, $title_len-1, $charset).'...';
                     }
-                    elseif (strlen($l['cat_name']) > $cat_name_len) $l['cat_name'] = substr($l['cat_name'], 0, $cat_name_len-1).'...';
+                    elseif (strlen($l['title']) > $title_len) $l['title'] = substr($l['title'], 0, $title_len-1).'...';
 
                     $w = $this->cl_cfg['w'];
                     $h = $this->cl_cfg['h'];

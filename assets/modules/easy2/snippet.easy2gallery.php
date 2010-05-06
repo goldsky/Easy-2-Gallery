@@ -18,7 +18,13 @@ if(!defined('E2G_SNIPPET_URL')) {
     define('E2G_SNIPPET_URL', MODX_BASE_URL . 'assets/modules/easy2/');
 }
 
-require E2G_SNIPPET_PATH.'config.easy2gallery.php';
+if (file_exists( E2G_SNIPPET_PATH . 'config.easy2gallery.php' )) {
+    require E2G_SNIPPET_PATH . 'config.easy2gallery.php';
+} else {
+    echo 'Missing config file.';
+    return;
+}
+
 // ROOT directory
 $cl_cfg['gdir'] = $e2g['dir'];
 

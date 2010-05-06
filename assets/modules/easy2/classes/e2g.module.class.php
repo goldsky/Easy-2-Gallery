@@ -562,7 +562,9 @@ class e2g_mod {
                         $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
                         if ( ($id = $tree->insert($dirname, $parent_id)) ) {
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                    .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                                    .'SET '
+                                    .'cat_alias = \''.stripslashes($_POST['alias']).'\''
+                                    .', cat_description = \''.stripslashes($_POST['description']).'\''
                                     .', last_modified=NOW() '
                                     .'WHERE cat_id='.$id;
                             mysql_query($q);
@@ -599,8 +601,12 @@ class e2g_mod {
             <td><input name="name" type="text" size="30"></td>
         </tr>
         <tr>
+            <td><b>'.$lng['enter_new_alias'].' :</b></td>
+            <td><input name="alias" type="text" size="30"></td>
+        </tr>
+        <tr>
             <td valign="top"><b>'.$lng['description'].' :</b></td>
-            <td><textarea name="description" style="width:100%"></textarea></td>
+            <td><textarea name="description" style="width:500px"></textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="'.$lng['save'].'">
@@ -627,17 +633,20 @@ class e2g_mod {
                         $_SESSION['easy2err'][] = $lng['badchars'];
                     } else {
                         $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                .'SET cat_description = \''.stripslashes($_POST['description']).'\''
+                                .'SET '
+                                .'cat_alias = \''.stripslashes($_POST['alias']).'\''
+                                .', cat_description = \''.stripslashes($_POST['description']).'\''
                                 .', last_modified=NOW() '
                                 .'WHERE cat_id='.(int)$_GET['dir_id'];
-                        $qResult = mysql_query($q) or die('574'.mysql_error());
+                        $qResult = mysql_query($q) or die('637'.mysql_error());
                         if($qResult) {
                             // rename dir
                             if( $_POST['newdirname'] != $row['cat_name'] ) {
                                 rename('../'.$gdir.utf8_decode($row['cat_name']), '../'.$gdir.utf8_decode($_POST['newdirname']));
                                 @chmod('../'.$gdir.utf8_decode($_POST['newdirname']), 0755);
                                 $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
-                                        .'SET cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\''
+                                        .'SET '
+                                        .'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\''
                                         .', last_modified=NOW() '
                                         .'WHERE cat_id='.(int)$_GET['dir_id'];
                                 mysql_query($renamedir);
@@ -670,8 +679,12 @@ class e2g_mod {
                 }
                 $content .= '
         <tr>
+            <td><b>'.$lng['enter_new_alias'].' :</b></td>
+            <td><input name="alias" type="text" value="'.$row['cat_alias'].'" size="30"></td>
+        </tr>
+        <tr>
             <td valign="top"><b>'.$lng['description'].' :</b></td>
-            <td><textarea name="description" style="width:100%">'.$row['cat_description'].'</textarea></td>
+            <td><textarea name="description" style="width:500px">'.$row['cat_description'].'</textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="'.$lng['save'].'">
@@ -749,7 +762,7 @@ class e2g_mod {
                     <tr>
                         <td valign="top"><b>'.$lng['description'].' :</b></td>
                         <td>
-                            <textarea name="description" style="width:100%">'.$row['description'].'</textarea>
+                            <textarea name="description" style="width:500px">'.$row['description'].'</textarea>
                         </td>
                     </tr>
                     <tr><td></td>

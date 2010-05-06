@@ -47,6 +47,7 @@ $lng = array (
         'unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
         'enter_dirname' => 'Enter new folder name',
         'enter_new_dirname' => 'Rename folder',
+        'enter_new_alias' => 'Folder\'s title',
         'badchars' => 'Invalid characters for file system',
         'char_limitation' => 'Please use <b>common latin letters</b> for the filenames inside the ZIP contents, or the file system will find errors while uploading.<br />UTF-8 letter will be ignored or translated to the closest character.',
         'zip_foldername' => 'Zip\'s name will be used as the new folder name.<br />
