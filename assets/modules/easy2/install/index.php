@@ -74,6 +74,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         cat_right int(10) unsigned NOT NULL default \'0\',
                         cat_level int(10) unsigned NOT NULL default \'0\',
                         cat_name varchar(255) NOT NULL default \'\',
+                        cat_alias varchar(255) NULL default \'\',
                         cat_visible tinyint(4) NOT NULL default \'1\',
                         cat_description varchar(255) default NULL,
                         last_modified datetime default NULL,
@@ -102,10 +103,19 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.last_modified '.$lngi['created'];
     }
 
+    // additional field for 1.4.0 Beta4
+    // last_modified
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_alias')===FALSE) {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_alias varchar(255) default NULL AFTER cat_name');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_alias '.$lngi['created'];
+    }
+
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
-
-        if (mysql_query('INSERT INTO '.$GLOBALS['table_prefix']."easy2_dirs VALUES (0,1,1,2,0,'Easy 2',1,'','')")) {
+        if (mysql_query(
+                'INSERT INTO '.$GLOBALS['table_prefix'].'easy2_dirs '
+                .'(parent_id, cat_id, cat_left, cat_right, cat_level, cat_name, cat_alias, cat_visible, cat_description, last_modified) '
+                ."VALUES (0,1,1,2,0,'Easy 2','',1,'','')")) {
             $_SESSION['easy2suc'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['added'];
         } else {
             $_SESSION['easy2err'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['add_err'].'<br />'.mysql_error();
@@ -337,7 +347,13 @@ function chref ($href) {
 
 function restore ($path, $pid) {
     global $modx;
-    if (!include MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php') die('336 config.easy2gallery.php IS missing.');
+
+    if (file_exists( E2G_MODULE_PATH . 'config.easy2gallery.php' )) {
+        require E2G_MODULE_PATH . 'config.easy2gallery.php';
+    } else {
+        require E2G_MODULE_PATH . 'default.config.easy2gallery.php';
+    }
+//    if (!include MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php') die('355 config.easy2gallery.php IS missing.');
     $time_start = microtime(TRUE);
     /*
      * STORE variable arrays for synchronizing comparison
@@ -689,7 +705,7 @@ function restore_all ($path, $pid) {
     return TRUE;
 }
 
-// goldsky -- a snippet function to do the database upgrading.
+// goldsky -- function to do the database upgrading.
 function check_field($table,$checkingfield) {
     $res = mysql_query('DESCRIBE '.$table);
     while($row = mysql_fetch_array($res)) {
