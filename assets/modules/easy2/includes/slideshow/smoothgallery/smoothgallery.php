@@ -267,11 +267,11 @@ else {
             for ($i=0;$i<$count;$i++) {
                 $ss_display .= '
     <div class="imageElement">
-        <h3>'.$ssfile['title'][$i].'</h3>
-        <p>'.$ssfile['description'][$i].'</p>
-        <a href="[~[*id*]~]?fid='.$ssfile['id'][$i].'" title="open image" class="open"></a>
-        <img src="'.$ssfile['image'][$i].'" class="full" alt="" />
-        <img src="'.$ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
+        <h3>'.$_ssfile['title'][$i].'</h3>
+        <p>'.$_ssfile['description'][$i].'</p>
+        <a href="[~[*id*]~]?fid='.$_ssfile['id'][$i].'" title="open image" class="open"></a>
+        <img src="'.$_ssfile['image'][$i].'" class="full" alt="" />
+        <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
 
                 // if there is a image number limitation
@@ -335,14 +335,14 @@ else {
                         } else {
                             $path = '';
                         }
-                        $ssfile['id'][$k][] = $fetch['id'];
-                        $ssfile['dirid'][$k][] = $fetch['dir_id'];
-                        $ssfile['src'][$k][] = $gdir.$path.$fetch['filename'];
-                        $ssfile['filename'][$k][] = $fetch['filename'];
-                        $ssfile['title'][$k][] = $fetch['name'];
-                        $ssfile['description'][$k][] = $fetch['description'];
-                        $ssfile['thumbsrc'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                        $ssfile['image'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                        $_ssfile['id'][$k][] = $fetch['id'];
+                        $_ssfile['dirid'][$k][] = $fetch['dir_id'];
+                        $_ssfile['src'][$k][] = $gdir.$path.$fetch['filename'];
+                        $_ssfile['filename'][$k][] = $fetch['filename'];
+                        $_ssfile['title'][$k][] = $fetch['name'];
+                        $_ssfile['description'][$k][] = $fetch['description'];
+                        $_ssfile['thumbsrc'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                        $_ssfile['image'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
                     }
                 }
             }
@@ -362,14 +362,14 @@ else {
 
             $j=0;
             for ($i=0;$i<$countimg[$k];$i++) {
-                $ssfile['title'][$k][$i] = ($ssfile['title'][$k][$i]!='' ? $ssfile['title'][$k][$i] : $ssfile['filename'][$k][$i]);
+                $_ssfile['title'][$k][$i] = ($_ssfile['title'][$k][$i]!='' ? $_ssfile['title'][$k][$i] : $_ssfile['filename'][$k][$i]);
                 $ss_display .= '
         <div class="imageElement">
-            <h3>'.$ssfile['title'][$k][$i].'</h3>
-            <p>'.$ssfile['description'][$k][$i].'</p>
-            <a href="[~[*id*]~]?fid='.$ssfile['id'][$k][$i].'" title="open image" class="open"></a>
-            <img src="'.$ssfile['image'][$k][$i].'" class="full" alt="" />
-            <img src="'.$ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
+            <h3>'.$_ssfile['title'][$k][$i].'</h3>
+            <p>'.$_ssfile['description'][$k][$i].'</p>
+            <a href="[~[*id*]~]?fid='.$_ssfile['id'][$k][$i].'" title="open image" class="open"></a>
+            <img src="'.$_ssfile['image'][$k][$i].'" class="full" alt="" />
+            <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
         </div>';
                 // if there is a image number limitation
                 $j++;
@@ -404,7 +404,7 @@ else {
             // ------------- start the images looping ------------- //
             $j=0;
             for ($i=0;$i<$count;$i++) {
-                $dim = getimagesize(utf8_decode($ssfile['src'][$i]));
+                $dim = getimagesize(utf8_decode($_ssfile['src'][$i]));
                 $width[$i] = $dim[0];
                 $height[$i] = $dim[1];
                 $image_ratio[$i] = $width[$i]/$height[$i];
@@ -416,13 +416,13 @@ else {
 
                 $ss_display .= '
     <div class="imageElement">
-        <h3>'.$ssfile['title'][$i].'</h3>
-        <p>'.$ssfile['description'][$i].'</p>
-        <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($ssfile['src'][$i]))).'" title="open image" class="open"></a>
-        <img src="'.$ssfile['image'][$i].'" class="full" alt="" '
+        <h3>'.$_ssfile['title'][$i].'</h3>
+        <p>'.$_ssfile['description'][$i].'</p>
+        <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($_ssfile['src'][$i]))).'" title="open image" class="open"></a>
+        <img src="'.$_ssfile['image'][$i].'" class="full" alt="" '
                         . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ? 'height="'.$ss_h.'px" ' : 'width="'.$ss_w.'px" ' )
                         .'/>
-        <img src="'.$ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
+        <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
                 
                 // if there is a image number limitation

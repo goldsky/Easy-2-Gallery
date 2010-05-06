@@ -27,25 +27,26 @@ class e2g_snip {
          * 3. '&rgid' : random file in a directory (random - $rgid)
          * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
         */
-
+        global $modx;
         $fid = $this->cl_cfg['fid'];
         $rgid = $this->cl_cfg['rgid'];
         $gid = $this->cl_cfg['gid']; // default
         $slideshow = $this->cl_cfg['slideshow'];
+        $landingpage = $this->cl_cfg['landingpage'];
 
-        if ( !empty($fid) && !isset($slideshow) ) {
-            echo $this->_imagefile($cl_cfg);
+        if ( !(isset($landingpage)) ) {
+            if ( !empty($fid) && !isset($slideshow) ) {
+                echo $this->_imagefile($cl_cfg);
+            }
+            if ( !empty($rgid) && !isset($slideshow) ) {
+                echo $this->_randomimage($cl_cfg);
+            }
+            if ( empty($fid) && empty($rgid) && !isset($slideshow) ) {
+                echo $this->_gallery($cl_cfg); // default
+            }
         }
-        elseif ( !empty($rgid) && !isset($slideshow) ) {
-            echo $this->_randomimage($cl_cfg);
-        }
-        elseif ( empty($fid) && empty($rgid) && !isset($slideshow) ) {
-            echo $this->_gallery($cl_cfg); // default
-        }
-        elseif ( !empty($slideshow) ) {
+        if ( !empty($slideshow) ) {
             echo $this->_slideshow($cl_cfg);
-        } else {
-            echo 'Please check your parameters.';
         }
     }
 
@@ -102,16 +103,16 @@ class e2g_snip {
 //                    . 'WHERE f.dir_id = d.cat_id '
 //                    . ')<>0 '
                     . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
-                        . 'WHERE F.dir_id in '
-                            . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-                                . $modx->db->config['table_prefix'].'easy2_dirs B '
-                                . 'WHERE (B.cat_id=d.cat_id '
-                                . 'AND A.cat_left >= B.cat_left '
-                                . 'AND A.cat_right <= B.cat_right '
-                                . 'AND A.cat_level >= B.cat_level '
-                                . 'AND A.cat_visible = 1)'
-                                .')'
-                            .')<>0 '
+                    . 'WHERE F.dir_id in '
+                    . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
+                    . $modx->db->config['table_prefix'].'easy2_dirs B '
+                    . 'WHERE (B.cat_id=d.cat_id '
+                    . 'AND A.cat_left >= B.cat_left '
+                    . 'AND A.cat_right <= B.cat_right '
+                    . 'AND A.cat_level >= B.cat_level '
+                    . 'AND A.cat_visible = 1)'
+                    .')'
+                    .')<>0 '
                     ), 0 ,0);
 
             ########################################################################
@@ -181,20 +182,20 @@ class e2g_snip {
                         . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
                         . 'WHERE F.dir_id in '
                         . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-                            . $modx->db->config['table_prefix'].'easy2_dirs B '
-                            . 'WHERE (B.cat_id=d.cat_id '
-                                . 'AND A.cat_left >= B.cat_left '
-                                . 'AND A.cat_right <= B.cat_right '
-                                . 'AND A.cat_level >= B.cat_level '
-                                . 'AND A.cat_visible = 1)'
-                            .')'
+                        . $modx->db->config['table_prefix'].'easy2_dirs B '
+                        . 'WHERE (B.cat_id=d.cat_id '
+                        . 'AND A.cat_left >= B.cat_left '
+                        . 'AND A.cat_right <= B.cat_right '
+                        . 'AND A.cat_level >= B.cat_level '
+                        . 'AND A.cat_visible = 1)'
+                        .')'
                         .')<>0 '
                         . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' '
                         . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit // goldsky -- limit the subdirs per page
                 ;
 
                 $dirquery = mysql_query($query);
-                if (!$dirquery) die('180 '.mysql_error());
+                if (!$dirquery) die('198 '.mysql_error());
                 $dir_num_rows += mysql_num_rows($dirquery);
 
                 $i = 0;
@@ -364,7 +365,7 @@ class e2g_snip {
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
-        $res = mysql_query($filequery) or die('350 '.mysql_error());
+        $res = mysql_query($filequery) or die('368 '.mysql_error());
 
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
@@ -494,12 +495,40 @@ class e2g_snip {
                 $w2 = $w;
                 $h2 = $h;
 
-                if ($i[0] > $i[1]) {
-                    $w2 = round($i[0] * $h / $i[1]);
-                    if ($w2 > $w) $x = ($w2 - $w)/2 * (-1);
-                } else {
-                    $h2 = round($i[1] * $w / $i[0]);
-                    if ($h2 > $h) $y = ($h2 - $h)/2 * (-1);
+                if ($i[0] > $i[1]) {        // landscape image
+                    if ($w > $h) {              // landscape thumbnail box
+                        $h2 = round($i[1] * $w / $i[0]);
+                        $y = ($h2 - $h)/2 * (-1);
+//                        $w2 = round($i[0] * $h / $i[1]);
+//                        $x = ($w2 - $w)/2 * (-1);
+                    }
+                    elseif ($w == $h) {         // square thumbnail box
+                        $w2 = round($i[0] * $h / $i[1]);
+                        $x = ($w2 - $w)/2 * (-1);
+                    }
+                    else {                      // portrait thumbnail box
+                        $w2 = round($i[0] * $h / $i[1]);
+                        $x = ($w2 - $w)/2 * (-1);
+                    }
+                } else {                    // portrait image
+                    if ($w < $h) {              // portrait thumbnail box
+                        $w2 = round($i[0] * $h / $i[1]);
+                        $x = ($w2 - $w)/2 * (-1);
+//                        $h2 = round($i[1] * $w / $i[0]);
+//                        $y = ($h2 - $h)/2 * (-1);
+                    }
+                    elseif ($w == $h) {         // square thumbnail box
+//                        $w2 = round($i[0] * $h / $i[1]);
+//                        $x = ($w2 - $w)/2 * (-1);
+                        $h2 = round($i[1] * $w / $i[0]);
+                        $y = ($h2 - $h)/2 * (-1);
+                    }
+                    else {                      // landspace thumbnail box
+                        $h2 = round($i[1] * $w / $i[0]);
+                        $y = ($h2 - $h)/2 * (-1);
+//                        $w2 = round($i[0] * $h / $i[1]);
+//                        $x = ($w2 - $w)/2 * (-1);
+                    }
                 }
 
                 $pic = imagecreatetruecolor($w, $h);
@@ -534,13 +563,12 @@ class e2g_snip {
                 $w2 = $w;
                 $h2 = $h;
 
-                if ($i[0] > $i[1]) {
-                    $h2 = round($i[1] * $w / $i[0]);
-                    $y = abs($h-$h2)/2;
-                }
-                else {
+                if ($w > $h) {          // landscape thumbnail box
                     $w2 = round($i[0] * $h / $i[1]);
                     $x = abs($w-$w2)/2;
+                } else {                // portrait thumbnail box
+                    $h2 = round($i[1] * $w / $i[0]);
+                    $y = abs($h-$h2)/2;
                 }
 
                 $pic = imagecreatetruecolor($w, $h);
@@ -659,14 +687,14 @@ class e2g_snip {
         $q = 'SELECT F.* '
                 . 'FROM '. $modx->db->config['table_prefix'].'easy2_files F '
                 . 'WHERE F.dir_id in (SELECT A.cat_id FROM '
-                    . $modx->db->config['table_prefix'].'easy2_dirs A, '
-                    . $modx->db->config['table_prefix'].'easy2_dirs B '
-                    . 'WHERE (B.cat_id=' . $gid . ' '
-                        . 'AND A.cat_left >= B.cat_left '
-                        . 'AND A.cat_right <= B.cat_right '
-                        . 'AND A.cat_level >= B.cat_level '
-                        . 'AND A.cat_visible = 1) '
-                    . 'ORDER BY A.cat_level ASC ) '
+                . $modx->db->config['table_prefix'].'easy2_dirs A, '
+                . $modx->db->config['table_prefix'].'easy2_dirs B '
+                . 'WHERE (B.cat_id=' . $gid . ' '
+                . 'AND A.cat_left >= B.cat_left '
+                . 'AND A.cat_right <= B.cat_right '
+                . 'AND A.cat_level >= B.cat_level '
+                . 'AND A.cat_visible = 1) '
+                . 'ORDER BY A.cat_level ASC ) '
 //                . 'ORDER BY F.id DESC '
                 . 'LIMIT 1 '
         ;
@@ -753,7 +781,7 @@ class e2g_snip {
 
         // HIDE COMMENTS from Ignored IP Addresses
         $comstatusq = 'SELECT ign_ip_address FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip ';
-        $comstatusres = mysql_query($comstatusq) or die('745 '.mysql_error());
+        $comstatusres = mysql_query($comstatusq) or die('784 '.mysql_error());
         while ($comrow = mysql_fetch_array($comstatusres)) {
             $ignored_ip[$comrow['ign_ip_address']] = $comrow['ign_ip_address'];
         }
@@ -790,6 +818,8 @@ class e2g_snip {
         $w = $this->cl_cfg['w'];
         $h = $this->cl_cfg['h'];
         $thq = $this->cl_cfg['thq'];
+        $css = $this->cl_cfg['css'];
+        $landingpage = $this->cl_cfg['landingpage'];
         $ss_indexfile = $this->cl_cfg['ss_indexfile'];
         $ss_w = $this->cl_cfg['ss_w'];
         $ss_h = $this->cl_cfg['ss_h'];
@@ -799,11 +829,9 @@ class e2g_snip {
         $ss_config = $this->cl_cfg['ss_config'];
         $ss_css = $this->cl_cfg['ss_css'];
         $ss_js = $this->cl_cfg['ss_js'];
-        $css = $this->cl_cfg['css'];
 
-        $fileid = $dirid = $images = $filename = $names = $thumbsrc = $slide_images = array();
-        $ssfile = array();
-        if (!empty($gid)) {
+        $_ssfile = array();
+        if (!empty($gid) && $modx->documentIdentifier!=$landingpage ) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
@@ -812,8 +840,11 @@ class e2g_snip {
             ;
             $query = mysql_query($select);
             if (!$query) {
-//                die('813 '.mysql_error());
-                return 'snippet calls wrong gallery id or limit';
+//                die('843 '.mysql_error());
+                $o = 'snippet calls wrong gallery id:'.$gid.', order, or wrong limit.<br />';
+                $o .= $select.'<br />';
+                $o .= mysql_error();
+                return $o;
             }
 
             while ($fetch = mysql_fetch_array($query)) {
@@ -824,13 +855,13 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['id'][] .= $fetch['id'];
-                $ssfile['dirid'][] .= $fetch['dir_id'];
-                $ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
-                $ssfile['filename'][] .= $fetch['filename'];
-                $ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
-                $ssfile['name'][] .= $fetch['name'];
-                $ssfile['description'][] .= $fetch['description'];
+                $_ssfile['id'][] .= $fetch['id'];
+                $_ssfile['dirid'][] .= $fetch['dir_id'];
+                $_ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
+                $_ssfile['filename'][] .= $fetch['filename'];
+                $_ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $_ssfile['name'][] .= $fetch['name'];
+                $_ssfile['description'][] .= $fetch['description'];
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -838,8 +869,8 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -850,8 +881,8 @@ class e2g_snip {
             ;
             $query = mysql_query($select);
             if (!$query) {
-//                die('851 '.mysql_error());
-                return 'snippet calls wrong file id';
+//                die('884 '.mysql_error());
+                return 'snippet calls wrong file id:'.$fid;
             }
 
             while ($fetch = mysql_fetch_array($query)) {
@@ -862,13 +893,13 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['id'][] .= $fetch['id'];
-                $ssfile['dirid'][] .= $fetch['dir_id'];
-                $ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
-                $ssfile['filename'][] .= $fetch['filename'];
-                $ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
-                $ssfile['name'][] .= $fetch['name'];
-                $ssfile['description'][] .= $fetch['description'];
+                $_ssfile['id'][] .= $fetch['id'];
+                $_ssfile['dirid'][] .= $fetch['dir_id'];
+                $_ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
+                $_ssfile['filename'][] .= $fetch['filename'];
+                $_ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $_ssfile['name'][] .= $fetch['name'];
+                $_ssfile['description'][] .= $fetch['description'];
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -876,8 +907,8 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -890,8 +921,8 @@ class e2g_snip {
             ;
             $query = mysql_query($select);
             if (!$query) {
-//                die('890 '.mysql_error());
-                return 'snippet calls wrong random file id or limit';
+//                die('924 '.mysql_error());
+                return 'snippet calls wrong random file id:'.$gid.', or wrong limit';
             }
             while ($fetch = mysql_fetch_array($query)) {
                 $path = $this->_get_path($fetch['dir_id']);
@@ -901,13 +932,13 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['id'][] .= $fetch['id'];
-                $ssfile['dirid'][] .= $fetch['dir_id'];
-                $ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
-                $ssfile['filename'][] .= $fetch['filename'];
-                $ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
-                $ssfile['name'][] .= $fetch['name'];
-                $ssfile['description'][] .= $fetch['description'];
+                $_ssfile['id'][] .= $fetch['id'];
+                $_ssfile['dirid'][] .= $fetch['dir_id'];
+                $_ssfile['src'][] .= utf8_decode($gdir.$path.$fetch['filename']);
+                $_ssfile['filename'][] .= $fetch['filename'];
+                $_ssfile['title'][] .= ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+                $_ssfile['name'][] .= $fetch['name'];
+                $_ssfile['description'][] .= $fetch['description'];
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -915,8 +946,8 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
+                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -930,8 +961,8 @@ class e2g_snip {
         /*
          * if the counting below = 0 (zero), then should be considered inside
          * the slideshow types, while in some slideshows this doesn't matter.
-         */
-        $count = count($ssfile['image']);
+        */
+        $count = count($_ssfile['image']);
 
         // added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
         if ( isset($_GET['fid']) ) {
@@ -941,7 +972,7 @@ class e2g_snip {
             ;
             $query = mysql_query($select);
             if (!$query) {
-//                die('944 '.mysql_error());
+//                die('975 '.mysql_error());
                 return 'snippet calls wrong file id.';
             }
 
@@ -953,7 +984,8 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-                $l['src'] = utf8_decode($gdir.$path.$fetch['filename']);
+//                $l['src'] = utf8_decode($gdir.$path.$fetch['filename']);
+                $l['src'] = $gdir.$path.$fetch['filename'];
                 $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $l['name'] = $fetch['name'];
                 $l['description'] = $fetch['description'];
@@ -965,11 +997,14 @@ class e2g_snip {
                     $path = '';
                 }
             }
+            if ( isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
+                $modx->sendForward($landingpage).'&fid='.$fileid.'&lp='.$landingpage;
+            }
             return $this->_filler( $this->_page_tpl($cl_cfg), $l );
         } else {
             // use custom index file if it's been called.
             if ( isset($ss_indexfile) && file_exists($ss_indexfile) ) {
-                include_once($ss_indexfile);
+                include($ss_indexfile);
             } elseif ( isset($ss_indexfile) && !file_exists($ss_indexfile) ) {
                 $ss_display = 'slideshow index file <b>'.$ss_indexfile.'</b> is not found.';
             }
@@ -977,11 +1012,22 @@ class e2g_snip {
             elseif ( !isset($ss_indexfile) && !file_exists(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php')) {
                 $ss_display = 'slideshow config for <b>'.$slideshow.'</b> is not found.';
             } else {
-                include_once(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php');
+                include(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php');
             }
         }
+        $_ssfile = array();
+        unset($_ssfile);
         // return the slideshow
         return $ss_display;
+    }
+
+    /*
+     * function landingpage
+     * a whole page to show the image, including informations within it.
+    */
+    private function _landingpage($cl_cfg, $fileid) {
+        global $modx;
+        $landingpage = $this->cl_cfg['landingpage'];
     }
 
     // DIRECTORY TEMPLATE

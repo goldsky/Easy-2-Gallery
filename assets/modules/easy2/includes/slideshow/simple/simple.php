@@ -39,7 +39,7 @@ else {
     $ss_display = '<div id="slideshow"><div>';
     $j=0;
     for ($i=0;$i<$count;$i++) {
-        $dim = getimagesize($ssfile['src'][$i]);
+        $dim = getimagesize($_ssfile['src'][$i]);
         $width[$i] = $dim[0];
         $height[$i] = $dim[1];
         $image_ratio[$i] = $width[$i]/$height[$i];
@@ -50,7 +50,7 @@ else {
         }
 //        echo $ss_w/$ss_h .'=>'. $image_ratio[$i].'<br />';
         $ss_display .= '
-                <img src="'.utf8_encode($ssfile['src'][$i]).'" alt="" title="'.$ssfile['title'][$i].'" '
+                <img src="'.utf8_encode($_ssfile['src'][$i]).'" alt="" title="'.$_ssfile['title'][$i].'" '
                 . ( $i == 0 ? 'class="active" ' : '' )
                 . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ?
                 'height="'.$ss_h.'px" style="left:'.(($ss_w - ($width[$i]*$ss_h/$height[$i]))/2).'px;" ' :

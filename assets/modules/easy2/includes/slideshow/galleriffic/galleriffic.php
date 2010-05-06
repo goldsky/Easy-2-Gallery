@@ -125,7 +125,11 @@ else {
     }
 
     /**************************************************/
-    /*              THE SLIDESHOW DISPLAY             */
+    /**************************************************/
+    /***                                            ***/
+    /***           THE SLIDESHOW DISPLAY            ***/
+    /***                                            ***/
+    /**************************************************/
     /**************************************************/
 
     if ( $ss_config != 'example-5' ) {
@@ -157,7 +161,7 @@ else {
         if ($ss_config=='example-1') {
             $ss_display .= '
         <li>
-            <a class="thumb" href="'.$ssfile['src'][$i].'" title="'.$ssfile['title'][$i].'">' . $ssfile['title'][$i] . '</a>
+            <a class="thumb" href="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'">' . $_ssfile['title'][$i] . '</a>
         </li>';
             // if there is a image number limitation
             $j++;
@@ -168,15 +172,15 @@ else {
         if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
         <li>
-            <a class="thumb" name="'.$ssfile['title'][$i].'" href="'.$ssfile['src'][$i].'">
-                <img src="'.$ssfile['thumbsrc'][$i].'" />
+            <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['src'][$i].'">
+                <img src="'.$_ssfile['thumbsrc'][$i].'" />
             </a>
             <div class="caption">
                 <div class="download">
-                    <a href="'.$ssfile['src'][$i].'">Download Original</a>
+                    <a href="'.$_ssfile['src'][$i].'">Download Original</a>
                 </div>
-                <div class="image-title">'.$ssfile['title'][$i].'</div>
-                <div class="image-desc">'.$ssfile['description'][$i].'</div>
+                <div class="image-title">'.$_ssfile['title'][$i].'</div>
+                <div class="image-desc">'.$_ssfile['description'][$i].'</div>
             </div>
         </li>';
             // if there is a image number limitation
@@ -187,15 +191,15 @@ else {
         if ( $ss_config=='example-5' ) {
             $ss_display .= '
             <li>
-                <a class="thumb" name="'.$ssfile['title'][$i].'" href="'.$ssfile['src'][$i].'" title="'.$ssfile['title'][$i].'">
-                    <img src="'.$ssfile['thumbsrc'][$i].'" alt="'.$ssfile['title'][$i].'" />
+                <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'">
+                    <img src="'.$_ssfile['thumbsrc'][$i].'" alt="'.$_ssfile['title'][$i].'" />
                 </a>
                 <div class="caption">
-                    <div class="image-title">'.$ssfile['title'][$i].'</div>
-                    <div class="image-desc">'.$ssfile['description'][$i].'</div>
+                    <div class="image-title">'.$_ssfile['title'][$i].'</div>
+                    <div class="image-desc">'.$_ssfile['description'][$i].'</div>
 
                     <div class="download">
-                        <a href="'.$ssfile['src'][$i].'">Download Original</a>
+                        <a href="'.$_ssfile['src'][$i].'">Download Original</a>
                     </div>
                 </div>
             </li>';

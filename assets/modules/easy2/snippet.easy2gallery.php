@@ -18,7 +18,7 @@ if(!defined('E2G_SNIPPET_URL')) {
     define('E2G_SNIPPET_URL', MODX_BASE_URL . 'assets/modules/easy2/');
 }
 
-require_once E2G_SNIPPET_PATH.'config.easy2gallery.php';
+require E2G_SNIPPET_PATH.'config.easy2gallery.php';
 // ROOT directory
 $cl_cfg['gdir'] = $e2g['dir'];
 
@@ -139,7 +139,7 @@ $cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background col
  * additional configuration options, if there is any.
  * this is empty, only as an holder.
  */
-$cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : '' ;
+$cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 
 /*
  * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
@@ -159,12 +159,15 @@ $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 /*
  * set the slideshow CSS's path
  */
-$cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : '' ;
+$cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
 /*
  * set the slideshow CSS's path
  */
-$cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : '' ;
-
+$cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
+/*
+ * set the slideshow CSS's path
+ */
+$cl_cfg['landingpage'] = isset($landingpage) ? $landingpage : NULL ;
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
 $cl_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
