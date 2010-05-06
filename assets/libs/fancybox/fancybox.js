@@ -17,6 +17,7 @@ jQuery(function($) {
 	$("a.iframe").fancybox({
 	/* Put custom options here */
 	'frameWidth': 400,
-	'frameHeight': 350
+	'frameHeight': 300,
+    'autoDimensions': true
 	});
 });
