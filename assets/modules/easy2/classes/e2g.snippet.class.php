@@ -785,6 +785,7 @@ class e2g_snip {
         $gid = $this->cl_cfg['gid'];
         $fid = $this->cl_cfg['fid'];
         $rgid = $this->cl_cfg['rgid'];
+        $gpn = $this->cl_cfg['gpn'];
         $orderby = $this->cl_cfg['orderby'];
         $order = $this->cl_cfg['order'];
         $w = $this->cl_cfg['w'];
@@ -802,13 +803,13 @@ class e2g_snip {
         $ss_css = $this->cl_cfg['ss_css'];
         $ss_js = $this->cl_cfg['ss_js'];
 
-        $_ssfile = array();
+//        $_ssfile = array();
         if (!empty($gid) && $modx->documentIdentifier!=$landingpage ) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
                     . 'ORDER BY ' . $orderby . ' ' . $order . ' '
-                    . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
+                    . ( $ss_limit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ss_limit ) . ', ' . $ss_limit )
             ;
             $query = mysql_query($select);
             if (!$query) {
@@ -987,8 +988,8 @@ class e2g_snip {
                 include(E2G_SNIPPET_PATH.'includes/slideshow/'.$slideshow.'/'.$slideshow.'.php');
             }
         }
-        $_ssfile = array();
-        unset($_ssfile);
+//        $_ssfile = array();
+//        unset($_ssfile);
         // return the slideshow
         return $ss_display;
     }

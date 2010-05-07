@@ -172,7 +172,7 @@ else {
         if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
         <li>
-            <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['src'][$i].'">
+            <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['image'][$i].'">
                 <img src="'.$_ssfile['thumbsrc'][$i].'" />
             </a>
             <div class="caption">
