@@ -270,7 +270,7 @@ else {
         <h3>'.$_ssfile['title'][$i].'</h3>
         <p>'.$_ssfile['description'][$i].'</p>
         <a href="[~[*id*]~]?fid='.$_ssfile['id'][$i].'" title="open image" class="open"></a>
-        <img src="'.$_ssfile['image'][$i].'" class="full" alt="" />
+        <img src="'.$_ssfile['resizedimg'][$i].'" class="full" alt="" />
         <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
 
@@ -342,7 +342,7 @@ else {
                         $_ssfile['title'][$k][] = $fetch['name'];
                         $_ssfile['description'][$k][] = $fetch['description'];
                         $_ssfile['thumbsrc'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                        $_ssfile['image'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                        $_ssfile['resizedimg'][$k][] = $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
                     }
                 }
             }
@@ -368,7 +368,7 @@ else {
             <h3>'.$_ssfile['title'][$k][$i].'</h3>
             <p>'.$_ssfile['description'][$k][$i].'</p>
             <a href="[~[*id*]~]?fid='.$_ssfile['id'][$k][$i].'" title="open image" class="open"></a>
-            <img src="'.$_ssfile['image'][$k][$i].'" class="full" alt="" />
+            <img src="'.$_ssfile['resizedimg'][$k][$i].'" class="full" alt="" />
             <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
         </div>';
                 // if there is a image number limitation
@@ -419,7 +419,7 @@ else {
         <h3>'.$_ssfile['title'][$i].'</h3>
         <p>'.$_ssfile['description'][$i].'</p>
         <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($_ssfile['src'][$i]))).'" title="open image" class="open"></a>
-        <img src="'.$_ssfile['image'][$i].'" class="full" alt="" '
+        <img src="'.$_ssfile['resizedimg'][$i].'" class="full" alt="" '
                         . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ? 'height="'.$ss_h.'px" ' : 'width="'.$ss_w.'px" ' )
                         .'/>
         <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />

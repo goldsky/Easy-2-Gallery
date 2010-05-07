@@ -843,7 +843,7 @@ class e2g_snip {
                     $path = '';
                 }
                 $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -881,7 +881,7 @@ class e2g_snip {
                     $path = '';
                 }
                 $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -920,7 +920,7 @@ class e2g_snip {
                     $path = '';
                 }
                 $_ssfile['thumbsrc'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['image'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($cl_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
             }
         }
 
@@ -935,7 +935,7 @@ class e2g_snip {
          * if the counting below = 0 (zero), then should be considered inside
          * the slideshow types, while in some slideshows this doesn't matter.
         */
-        $count = count($_ssfile['image']);
+        $count = count($_ssfile['resizedimg']);
 
         // added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
         if ( isset($_GET['fid']) ) {

@@ -161,7 +161,7 @@ else {
         if ($ss_config=='example-1') {
             $ss_display .= '
         <li>
-            <a class="thumb" href="'.$_ssfile['image'][$i].'" title="'.$_ssfile['title'][$i].'">' . $_ssfile['title'][$i] . '</a>
+            <a class="thumb" href="'.$_ssfile['resizedimg'][$i].'" title="'.$_ssfile['title'][$i].'">' . $_ssfile['title'][$i] . '</a>
         </li>';
             // if there is a image number limitation
             $j++;
@@ -172,7 +172,7 @@ else {
         if ( $ss_config=='example-2' || $ss_config=='example-3' ) {
             $ss_display .= '
         <li>
-            <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['image'][$i].'">
+            <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['resizedimg'][$i].'">
                 <img src="'.$_ssfile['thumbsrc'][$i].'" />
             </a>
             <div class="caption">
@@ -191,7 +191,7 @@ else {
         if ( $ss_config=='example-5' ) {
             $ss_display .= '
             <li>
-                <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['image'][$i].'" title="'.$_ssfile['title'][$i].'">
+                <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['resizedimg'][$i].'" title="'.$_ssfile['title'][$i].'">
                     <img src="'.$_ssfile['thumbsrc'][$i].'" alt="'.$_ssfile['title'][$i].'" />
                 </a>
                 <div class="caption">

@@ -21,8 +21,7 @@ if(!defined('E2G_SNIPPET_URL')) {
 if (file_exists( E2G_SNIPPET_PATH . 'config.easy2gallery.php' )) {
     require E2G_SNIPPET_PATH . 'config.easy2gallery.php';
 } else {
-    echo 'Missing config file.';
-    return;
+    return 'Missing config file.';
 }
 
 // ROOT directory

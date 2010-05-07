@@ -181,7 +181,7 @@ else {
         for ($i=0;$i<$count;$i++) {
             $ss_display .= '
         <div class="panel">
-            <img src="'.$_ssfile['image'][$i].'" alt="" />
+            <img src="'.$_ssfile['resizedimg'][$i].'" alt="" />
             <div class="panel-overlay">
                 <div class="panel-title">'.$_ssfile['title'][$i].'</div>
                 <div class="panel-description">'.$_ssfile['description'][$i].'</div>
@@ -227,7 +227,7 @@ else {
         for ($i=0;$i<$count;$i++) {
             $ss_display .= '
         <div class="panel">
-            <img src="'.$_ssfile['image'][$i].'" alt="" />
+            <img src="'.$_ssfile['resizedimg'][$i].'" alt="" />
             <div class="panel-overlay">
                 <div class="panel-title">'.$_ssfile['title'][$i].'</div>
                 <div class="panel-description">'.$_ssfile['description'][$i].'</div>
@@ -301,7 +301,7 @@ else {
         for ($i=0;$i<$count;$i++) {
             $ss_display .= '
         <div class="panel">
-            <img src="'.$_ssfile['image'][$i].'" alt="" />
+            <img src="'.$_ssfile['resizedimg'][$i].'" alt="" />
             <div class="panel-overlay">
                 <div class="panel-title">'.$_ssfile['title'][$i].'</div>
                 <div class="panel-description">'.$_ssfile['description'][$i].'</div>
