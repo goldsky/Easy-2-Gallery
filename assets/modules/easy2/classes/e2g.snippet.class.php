@@ -469,9 +469,9 @@ class e2g_snip {
             elseif ($i[2] == 3) $im = imagecreatefrompng ($gdir.$path);
             else return false;
 
-            if ($i[0]/$w > 2 || $i[1]/$h > 2) {
-                $tmp_w = $w*2;
-                $tmp_h = round($i[1] * ($tmp_w/$i[0]));
+            if ( $i[0]/$w > 2.00 || $i[1]/$h > 2.00 ) {
+                $tmp_w = $w*2.00;
+                $tmp_h = round($i[1] * ($tmp_w/$i[0]), 2);
 
                 $temp = imagecreatetruecolor ($tmp_w, $tmp_h);
                 imagecopyresized ($temp, $im, 0, 0, 0, 0, $tmp_w, $tmp_h, $i[0], $i[1]);
@@ -494,41 +494,13 @@ class e2g_snip {
                 // Dimensions
                 $w2 = $w;
                 $h2 = $h;
-
-                if ($i[0] > $i[1]) {        // landscape image
-                    if ($w > $h) {              // landscape thumbnail box
-                        $h2 = round($i[1] * $w / $i[0]);
-                        $y = ($h2 - $h)/2 * (-1);
-//                        $w2 = round($i[0] * $h / $i[1]);
-//                        $x = ($w2 - $w)/2 * (-1);
-                    }
-                    elseif ($w == $h) {         // square thumbnail box
-                        $w2 = round($i[0] * $h / $i[1]);
-                        $x = ($w2 - $w)/2 * (-1);
-                    }
-                    else {                      // portrait thumbnail box
-                        $w2 = round($i[0] * $h / $i[1]);
-                        $x = ($w2 - $w)/2 * (-1);
-                    }
-                } else {                    // portrait image
-                    if ($w < $h) {              // portrait thumbnail box
-                        $w2 = round($i[0] * $h / $i[1]);
-                        $x = ($w2 - $w)/2 * (-1);
-//                        $h2 = round($i[1] * $w / $i[0]);
-//                        $y = ($h2 - $h)/2 * (-1);
-                    }
-                    elseif ($w == $h) {         // square thumbnail box
-//                        $w2 = round($i[0] * $h / $i[1]);
-//                        $x = ($w2 - $w)/2 * (-1);
-                        $h2 = round($i[1] * $w / $i[0]);
-                        $y = ($h2 - $h)/2 * (-1);
-                    }
-                    else {                      // landspace thumbnail box
-                        $h2 = round($i[1] * $w / $i[0]);
-                        $y = ($h2 - $h)/2 * (-1);
-//                        $w2 = round($i[0] * $h / $i[1]);
-//                        $x = ($w2 - $w)/2 * (-1);
-                    }
+                
+                if (($i[0] / $i[1]) > ($w / $h)) {
+                    $w2 = round($i[0] * $h / $i[1], 2);
+                    $x = ($w2 - $w)/2.00 * (-1.00);
+                } else {
+                    $h2 = round($i[1] * $w / $i[0], 2);
+                    $y = ($h2 - $h)/2.00 * (-1.00);
                 }
 
                 $pic = imagecreatetruecolor($w, $h);
@@ -543,8 +515,8 @@ class e2g_snip {
                  * shrink to default dimensions
                 */
 
-                if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0]);
-                else $w = round($i[0] * $h / $i[1]);
+                if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0], 2);
+                else $w = round($i[0] * $h / $i[1], 2);
 
                 $pic = imagecreatetruecolor($w, $h);
                 $bgc = imagecolorallocate($pic, $red, $green, $blue);
@@ -564,11 +536,11 @@ class e2g_snip {
                 $h2 = $h;
 
                 if ($w > $h) {          // landscape thumbnail box
-                    $w2 = round($i[0] * $h / $i[1]);
-                    $x = abs($w-$w2)/2;
+                    $w2 = round($i[0] * $h / $i[1], 2);
+                    $x = abs($w-$w2)/2.00 ;
                 } else {                // portrait thumbnail box
-                    $h2 = round($i[1] * $w / $i[0]);
-                    $y = abs($h-$h2)/2;
+                    $h2 = round($i[1] * $w / $i[0], 2);
+                    $y = abs($h-$h2)/2.00 ;
                 }
 
                 $pic = imagecreatetruecolor($w, $h);

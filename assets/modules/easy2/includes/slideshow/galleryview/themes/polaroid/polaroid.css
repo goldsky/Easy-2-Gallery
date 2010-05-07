@@ -1,7 +1,3 @@
-body {
-	background: #444;
-	color: white;
-}
 #gallery_wrap {
 	position: relative;
 	width: 469px;
@@ -12,14 +8,7 @@ body {
 .panel {
 	margin-bottom: 10px;
 }
-a:link,a:visited {
-	color: #ddd !important;
-	text-decoration: underline;
-}
-a:hover {
-	text-decoration: none;
-}
-h3 {
+div.panel-title {
 	border-bottom-color: white;
 }
 #polaroid_overlay {

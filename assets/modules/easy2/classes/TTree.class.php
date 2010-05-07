@@ -4,8 +4,10 @@
    ****************************************************************************
    *   TraversalTree 1.0 (19/07/2006)                                         *
    *                                                                          *
-   *   Автор Андрей Яковлев (inteldesign@mail.ru)                             *
-   *   PHP Класс для работы с траверсными деревьями                           *
+   *   РђРІС‚РѕСЂ РђРЅРґСЂРµР№ РЇРєРѕРІР»РµРІ (inteldesign@mail.ru)                             *
+   *   Author Andrew Jakovlev
+   *   PHP РљР»Р°СЃСЃ РґР»СЏ СЂР°Р±РѕС‚С‹ СЃ С‚СЂР°РІРµСЂСЃРЅС‹РјРё РґРµСЂРµРІСЊСЏРјРё                           *
+   *   PHP Class for traversal trees
    *
    *   SQL
 
@@ -38,13 +40,13 @@
       var $name   = 'cat_name';
       var $error;
 
-      // добавление ветви
-
+      // РґРѕР±Р°РІР»РµРЅРёРµ РІРµС‚РІРё
+      // add branch
       function insert ($name, $parent_id = 1)
       {
 
-          // Родительский каталог
-
+          // Р РѕРґРёС‚РµР»СЊСЃРєРёР№ РєР°С‚Р°Р»РѕРі
+          // Parrent catalog
           $query = 'SELECT * FROM ' . $this->table . ' WHERE '
                  . $this->id . ' = '.$parent_id;
           $result = mysql_query($query);
@@ -95,8 +97,8 @@
           }
       }
 
-      // изменение ветви
-
+      // РёР·РјРµРЅРµРЅРёРµ РІРµС‚РІРё
+      // modify/update branch
       function update ($id, $name, $parent_id = false)
       {
 
@@ -108,8 +110,8 @@
 
           if (!empty($parent_id)) {
 
-              // Проверка на изменение родительского каталога
-
+              // РџСЂРѕРІРµСЂРєР° РЅР° РёР·РјРµРЅРµРЅРёРµ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ РєР°С‚Р°Р»РѕРіР°
+              // Check for modification/change of parrent catalog
               $query = 'SELECT * FROM ' . $this->table . ' WHERE '
                      . $this->id . ' = ' . $id;
 
@@ -135,8 +137,8 @@
           }
       }
 
-      // Перемещение ветви
-
+      // РџРµСЂРµРјРµС‰РµРЅРёРµ РІРµС‚РІРё
+      // Move/replace??? branch
       function replace ($id, $to_id, $c = false)
       {
 
@@ -145,7 +147,8 @@
               return false;
           }
 
-          // Если данные каталога не переданы по ссылке
+          // Р•СЃР»Рё РґР°РЅРЅС‹Рµ РєР°С‚Р°Р»РѕРіР° РЅРµ РїРµСЂРµРґР°РЅС‹ РїРѕ СЃСЃС‹Р»РєРµ
+          // If catalog data is not send with link
           if (!$c) {
               $query = 'SELECT * FROM ' . $this->table . ' WHERE '
                      . $this->id . ' = ' . $id;
@@ -155,7 +158,8 @@
           }
 
 
-          // Переносимая ветка * (-1)
+          // РџРµСЂРµРЅРѕСЃРёРјР°СЏ РІРµС‚РєР° * (-1)
+          // The branch to branch to be moved
           $query = 'UPDATE ' . $this->table . ' SET '
                  . $this->left . ' = ' . $this->left . ' * (-1) '
                  . 'WHERE '
@@ -167,7 +171,8 @@
               return false;
           }
 
-          // Данные о новой родительской ветви
+          // Р”Р°РЅРЅС‹Рµ Рѕ РЅРѕРІРѕР№ СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ РІРµС‚РІРё
+          // Data for new parent
           $query = 'SELECT * FROM ' . $this->table
                  . ' WHERE ' . $this->id . ' = ' . $to_id;
 
@@ -182,10 +187,12 @@
               return false;
           }
 
-          // Разность Л и Р переносимой ветки
+          // Р Р°Р·РЅРѕСЃС‚СЊ Р› Рё Р  РїРµСЂРµРЅРѕСЃРёРјРѕР№ РІРµС‚РєРё
+          // Difference???/distance between Left and Right of the branch to be moved
           $razn = $c[$this->right] - $c[$this->left] + 1;
 
-          // Определение операции +/- над новой род. веткой
+          // РћРїСЂРµРґРµР»РµРЅРёРµ РѕРїРµСЂР°С†РёРё +/- РЅР°Рґ РЅРѕРІРѕР№ СЂРѕРґ. РІРµС‚РєРѕР№
+          // Operations +/- over the new parent
           if ($c[$this->left]<$to[$this->right] && $c[$this->left]>$to[$this->left]) {
               $query = 'UPDATE ' . $this->table . ' SET '
                  . $this->right . ' = '
@@ -223,8 +230,8 @@
 
               $razn2 = $to[$this->left] - $c[$this->left] + 1;
           }
-          // $razn2 - разность между родительской веткой и переносимой
-
+          // $razn2 - СЂР°Р·РЅРѕСЃС‚СЊ РјРµР¶РґСѓ СЂРѕРґРёС‚РµР»СЊСЃРєРѕР№ РІРµС‚РєРѕР№ Рё РїРµСЂРµРЅРѕСЃРёРјРѕР№
+          // difference??/distance between the parent and the branch to be moved
 
           echo $query .'<br />';
 
@@ -254,8 +261,8 @@
 
       }
 
-      // Удаление ветви
-
+      // РЈРґР°Р»РµРЅРёРµ РІРµС‚РІРё
+      // removal of a branch
       function delete ($id)
       {
           $query = 'SELECT * FROM ' . $this->table . ' WHERE ' . $this->id . ' = '.$id;
@@ -271,13 +278,15 @@
 
           $cat = mysql_fetch_array($result, MYSQL_ASSOC);
 
-          // Список вложенний
+          // РЎРїРёСЃРѕРє РІР»РѕР¶РµРЅРЅРёР№
+          // List of nested ???
           $query = 'SELECT ' . $this->id . ' FROM ' . $this->table
                  . ' WHERE ' . $this->left
                  . ' BETWEEN ' . $cat[$this->left] . ' AND ' . $cat[$this->right];
           $ids = $this->sql2array($query, $this->id);
 
-          // Удаление
+          // РЈРґР°Р»РµРЅРёРµ
+          // Removal
           $query = 'DELETE FROM ' . $this->table
                  . ' WHERE ' . $this->left
                  . ' BETWEEN ' . $cat[$this->left] . ' AND ' . $cat[$this->right];
@@ -290,8 +299,8 @@
           }
       }
 
-      // удаление дерева
-
+      // СѓРґР°Р»РµРЅРёРµ РґРµСЂРµРІР°
+      // Removal of the tree
       function clear ()
       {
 
@@ -318,8 +327,8 @@
           }
       }
 
-      // Каталог в массив
-
+      // РљР°С‚Р°Р»РѕРі РІ РјР°СЃСЃРёРІ
+      // Catalog to array :-)
       function catalog2array ()
       {
          $query = 'SELECT * FROM ' . $this->table . ' ORDER BY ' . $this->left;
