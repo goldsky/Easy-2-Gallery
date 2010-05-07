@@ -19,9 +19,9 @@ else {
         $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
         #slideshow {
-            '. 'width: '.$ss_w.'px; '
-                . 'height: '.$ss_h.'px; '
-                . 'background-color: '.$ss_bg.';
+            width: '.$ss_w.'px;
+            height: '.$ss_h.'px;
+            background-color: '.$ss_bg.';
          }
         </style>
             ');
