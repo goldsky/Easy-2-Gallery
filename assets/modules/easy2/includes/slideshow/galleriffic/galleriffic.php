@@ -191,7 +191,7 @@ else {
         if ( $ss_config=='example-5' ) {
             $ss_display .= '
             <li>
-                <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'">
+                <a class="thumb" name="'.$_ssfile['title'][$i].'" href="'.$_ssfile['image'][$i].'" title="'.$_ssfile['title'][$i].'">
                     <img src="'.$_ssfile['thumbsrc'][$i].'" alt="'.$_ssfile['title'][$i].'" />
                 </a>
                 <div class="caption">
