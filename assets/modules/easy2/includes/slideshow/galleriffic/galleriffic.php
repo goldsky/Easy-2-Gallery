@@ -161,7 +161,7 @@ else {
         if ($ss_config=='example-1') {
             $ss_display .= '
         <li>
-            <a class="thumb" href="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'">' . $_ssfile['title'][$i] . '</a>
+            <a class="thumb" href="'.$_ssfile['image'][$i].'" title="'.$_ssfile['title'][$i].'">' . $_ssfile['title'][$i] . '</a>
         </li>';
             // if there is a image number limitation
             $j++;
