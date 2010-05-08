@@ -740,10 +740,6 @@ class e2g_snip {
             $path = '';
         }
 
-//        $row['w'] = ( !empty($w) ? $w : $this->cl_cfg['w']);
-//        $row['h'] = ( !empty($h) ? $h : $this->cl_cfg['h']);
-//        $thq = $this->cl_cfg['thq'];
-
         $row['src'] = $this->_get_thumb($cl_cfg, $gdir, $path.$row['filename'], $w, $h, $thq);
 
         // gallery activation
