@@ -42,7 +42,7 @@ else {
 
 // CUSTOM PARAMETER $_GET FOR OTHER SNIPPETS
 if ( !empty($customgetparams)) {
-    $cl_cfg['customgetparams'] = !empty($customgetparams) ? $customgetparams : '';
+    $cl_cfg['customgetparams'] = !empty($customgetparams) ? $customgetparams : NULL;
 }
  
 // WIDTH
@@ -71,7 +71,7 @@ $cl_cfg['notables'] = (isset($notables) && is_numeric($notables)) ? $notables : 
 $cl_cfg['limit'] = (!empty($limit) && is_numeric($limit)) ? (int) $limit : $e2g['limit'];
 
 // SHOW ONLY: 'images' | 'folders' (under &gid parameter)
-$cl_cfg['showonly'] = (!empty($showonly)) ? $showonly : 'test' ;
+$cl_cfg['showonly'] = (!empty($showonly)) ? $showonly : NULL ;
 
 // GLIB
 $cl_cfg['glib'] = (!empty($glib)) ? $glib : $e2g['glib'];
@@ -116,7 +116,7 @@ $cl_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_tpl) :
 // LANDING PAGE TEMPLATE
 $cl_cfg['page_tpl'] = (!empty($page_tpl)) ? str_replace('../', '' , $page_tpl) : $e2g['page_tpl'];
 
-// THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit)
+// THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
 $cl_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
 
 // THUMB BACKGROUND COLOR
@@ -155,24 +155,26 @@ $cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 $cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
 (0.75*$cl_cfg['ss_w']/$cl_cfg['ss_h']).'-'.(1.25*$cl_cfg['ss_w']/$cl_cfg['ss_h']);
 /*
- * to set how many images the slide show should retrieve from the [random] gallery ID.
+ * to set how many images the slide show should retrieve from the gallery ID.
  * more images mean longer page loading!
  * @options : int | 'none'
  * @default : (int)6
  */
 $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 /*
- * set the slideshow CSS's path
+ * set the slideshow's CSS path
  */
 $cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
 /*
- * set the slideshow CSS's path
+ * set the slideshow's CSS path
  */
 $cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
 /*
- * set the slideshow CSS's path
+ * set the slideshow's landing page.
+ * @options: document ID.
  */
 $cl_cfg['landingpage'] = isset($landingpage) ? $landingpage : NULL ;
+
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
 $cl_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
