@@ -231,11 +231,11 @@ class e2g_snip {
                     }
                     elseif (strlen($l['title']) > $title_len) $l['title'] = substr($l['title'], 0, $title_len-1).'...';
 
-                    $w = $this->cl_cfg['w'];
-                    $h = $this->cl_cfg['h'];
+                    $l['w'] = $this->cl_cfg['w'];
+                    $l['h'] = $this->cl_cfg['h'];
                     $thq = $this->cl_cfg['thq'];
 
-                    $l['src'] = $this->_get_thumb($cl_cfg, $gdir, $path1.$l1['filename'], $w, $h, $thq );
+                    $l['src'] = $this->_get_thumb($cl_cfg, $gdir, $path1.$l1['filename'], $l['w'], $l['h'], $thq );
 
                     // fill up the dir list with content
                     $_e2g['content'] .= $notables == 1 ? $this->_filler($this->_dir_tpl($cl_cfg), $l) : '<td>'. $this->_filler($this->_dir_tpl($cl_cfg), $l ).'</td>';
@@ -302,6 +302,9 @@ class e2g_snip {
                         && $notables == 0 ) {
                     $_e2g['content'] .= '</tr><tr>';
                 }
+
+                $l['w'] = $this->cl_cfg['w'];
+                $l['h'] = $this->cl_cfg['h'];
 
                 // whether configuration setting is set with or without table, the template will adjust it
                 $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ) : '<td>'. $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ).'</td>';
@@ -376,6 +379,9 @@ class e2g_snip {
             // create row grid
             if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $notables == 0 ) $_e2g['content'] .= '</tr><tr>';
 
+            $l['w'] = $this->cl_cfg['w'];
+            $l['h'] = $this->cl_cfg['h'];
+
             // whether configuration setting is set with or without table, the template will adjust it
             $_e2g['content'] .= $notables == 1 ?  $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ) : '<td>'. $this->_filler( $this->_thumb_tpl($cl_cfg), $this->_activate_libs($cl_cfg, $l) ).'</td>';
             $i++;
@@ -411,6 +417,9 @@ class e2g_snip {
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
         $l = mysql_fetch_array($res, MYSQL_ASSOC);
+
+        $l['w'] = $this->cl_cfg['w'];
+        $l['h'] = $this->cl_cfg['h'];
 
         $this->_libs($cl_cfg);
         $this->_activate_libs($cl_cfg, $l);
