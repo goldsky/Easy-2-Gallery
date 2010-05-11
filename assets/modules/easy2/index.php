@@ -48,8 +48,21 @@ if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
 if (file_exists( E2G_MODULE_PATH . 'config.easy2gallery.php' )) {
     require E2G_MODULE_PATH . 'config.easy2gallery.php';
-} else {
+    foreach ($e2g as $ck => $cv) {
+        $keyconf[$ck] = $ck;
+        $valconf[$ck] = $cv;
+    }
+}
+// the default config will replace blank value of config's.
+if (file_exists( E2G_MODULE_PATH . 'default.config.easy2gallery.php' )) {
     require E2G_MODULE_PATH . 'default.config.easy2gallery.php';
+    foreach ($def_e2g as $dk => $dv) {
+        if ($valconf[$dk]=='') {
+            $e2g[$dk] = $dv;
+        }
+    }
+    $def_e2g = array();
+    unset($def_e2g);
 }
 
 $gdir = $e2g['dir'];

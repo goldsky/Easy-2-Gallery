@@ -1,5 +1,5 @@
 <?php
-$e2g = array (
+$def_e2g = array (
 'debug' => 1,
 'dir' => 'assets/gallery/',
 'maxw' => 0,
