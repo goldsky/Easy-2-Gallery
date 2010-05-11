@@ -8,6 +8,14 @@
 + Filenaming bug fix
 + Simple slideshow is turned to be independent from the core code.
 + Slideshow Galleriffic (http://www.twospy.com/galleriffic/) was added.
++ Slideshow SmoothGallery (http://smoothgallery.jondesign.net) was added.
++ Slideshow GalleryView (http://spaceforaname.com/galleryview) was added.
++ Slideshow ContentFlow (http://www.jacksasylum.eu/ContentFlow) was added.
++ Added &landingpage parameter, to be used as a single page template of slideshow's hyperlink.
+--+ inside the landing page, the snippet call is : [!easy2? &landingpage=`-its own pageID number-`!]
+--+ the landingpage template is 'page.htm'
+--+ this still can use &css and &js parameter, if it's needed.
+
 Available parameters for the slideshow:
 
     * &gid
@@ -19,12 +27,13 @@ Available parameters for the slideshow:
     * &slideshow=`galleriffic`
       this is the mandatory call to this slideshow type
     * &ss_config
-      These are the slideshow selections which are explicitelly taken from the galleriffic site's examples, so all users will know exactly which one to be selected.
-      Options:
+      Each of slideshow can have different options or types.
+      Eg Options in galleriffic slideshow:
           o `example-1`
           o `example-2`
+          o `example-3`
           o `example-5`
-    * &ss_w : the width of the slideshow image
+    * &ss_w : the width of the slideshow box (image size)
       Default: 400px
     * &ss_h : the height of it
       Default: 300px
@@ -40,9 +49,21 @@ Available parameters for the slideshow:
           o integers
           o `none` : you don't make any limit, show all images under the directory.
       Default: (int) 6
+    * &ss_indexfile : the index file path of your own slideshow's generator.
     * &ss_css : the CSS path of your own styling, which will override the default styles.
+    * &ss_js : the JS path of your own Javascript, which will override the default JS.
 
-
+Available parameters for your own slideshow:
+    * $_ssfile['id'] : image ID.
+    * $_ssfile['dirid'] : directory ID.
+    * $_ssfile['src'] : image's source path.
+    * $_ssfile['filename'] : image filename (basename).
+    * $_ssfile['title'] : image's title (if name doesn't exist, it'll use filename).
+    * $_ssfile['name'] : image's name (only).
+    * $_ssfile['description'] : image's description.
+    * $_ssfile['thumbsrc'] : thumbnail's path.
+    * $_ssfile['resizedimg'] : resized image's path (resized by restricting width + height of slideshow's box).
+    
 ********** 1.4.0-Beta 3 **********
 + Fixed small bug in pagination calculation, again...
 + Introducing additional parameters:
