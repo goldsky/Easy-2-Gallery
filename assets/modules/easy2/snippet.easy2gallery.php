@@ -105,6 +105,12 @@ $cl_cfg['js'] = (!empty($js)) ? str_replace('../', '' , $js) : $e2g['js'];
 
 // GALLERY TEMPLATE
 $cl_cfg['tpl'] = (!empty($tpl)) ? str_replace('../', '' , $tpl) : $e2g['tpl'];
+/*
+ * GALLERY'S DESCRIPTION OPTION
+ * Options: 1 = On
+ *          0 = Off
+ */
+$cl_cfg['gal_desc'] = (!empty($gal_desc)) ? $gal_desc : 0;
 
 // DIR TEMPLATE
 $cl_cfg['dir_tpl'] = (!empty($dir_tpl)) ? str_replace('../', '', $dir_tpl) : $e2g['dir_tpl'];

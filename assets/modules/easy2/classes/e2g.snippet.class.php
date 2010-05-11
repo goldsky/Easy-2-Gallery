@@ -73,6 +73,7 @@ class e2g_snip {
         $order = $this->cl_cfg['order'];
         $showonly = $this->cl_cfg['showonly'];
         $customgetparams = $this->cl_cfg['customgetparams'];
+        $gal_desc = $this->cl_cfg['gal_desc'];
 
         // CRUMBS
         $crumbs_separator = $this->cl_cfg['crumbs_separator'];
@@ -201,10 +202,17 @@ class e2g_snip {
                 if (!$dirquery) die('198 '.mysql_error());
                 $dir_num_rows += mysql_num_rows($dirquery);
 
-                $_e2g['cat_description'] = $this->_get_dir_info($single_gid,'cat_description');
-                $_e2g['cat_title'] = $this->_get_dir_info($single_gid,'cat_alias');
-                $_e2g['title'] = ($_e2g['cat_title'] != '' ? $_e2g['cat_title'] : $_e2g['cat_name'] );
-                
+                if ($gal_desc=='1') {
+                    $_e2g['cat_description'] = $this->_get_dir_info($single_gid,'cat_description');
+                    $_e2g['cat_title'] = $this->_get_dir_info($single_gid,'cat_alias');
+                    $_e2g['title'] = ($_e2g['cat_title'] != '' ? $_e2g['cat_title'] : $_e2g['cat_name'] );
+                    if ( $_e2g['title']=='' && $_e2g['cat_description']=='' ) {
+                        $_e2g['desc_class']= 'style="display:none;"';
+                    }
+                } else {
+                    $_e2g['desc_class']= 'style="display:none;"';
+                }
+
                 $i = 0;
                 while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
 
@@ -377,6 +385,11 @@ class e2g_snip {
                 . 'AND status = 1 ';
         $res = mysql_query($filequery) or die('368 '.mysql_error());
 
+        // just to hide gallery's description CSS box in gallery template
+        if ( !isset($_e2g['title']) || !isset($_e2g['cat_description']) ) {
+            $_e2g['desc_class']= 'style="display:none;"';
+        } else $_e2g['e2gdir_class']='';
+        
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
 
@@ -420,6 +433,11 @@ class e2g_snip {
         $res = mysql_query($q);
         $num_rows = mysql_num_rows($res);
         if (!$num_rows) return;
+
+        // just to hide gallery's description CSS box in gallery template
+        if ( !isset($_e2g['title']) || !isset($_e2g['cat_description']) ) {
+            $_e2g['desc_class']= 'style="display:none;"';
+        } else $_e2g['e2gdir_class']='';
 
         // START the grid
         $_e2g['content'] .= $notables == 1 ? '<div class="e2g">':'<table class="e2g"><tr>';
