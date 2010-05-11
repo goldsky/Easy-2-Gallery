@@ -13,6 +13,8 @@ Default: assets/modules/easy2/templates/style.css
 chunk name or path to file<br />
 Default: assets/modules/easy2/templates/gallery.htm
 </p>
+<p><strong>1.4.0</strong>: You have to use <strong>&amp;gal_desc=`1`</strong> (on) to see the Gallery's information (title &amp; description) above the template.
+</p>
 <p><strong>dir_tpl</strong> - folder template<br />
 chunk name or path to file.<br />
 Default: assets/modules/easy2/templates/directory.htm
@@ -25,6 +27,9 @@ Default: assets/modules/easy2/templates/thumbnail.htm
 chunk name or path to file.<br />
 Default: assets/modules/easy2/templates/random_thumbnail.htm
 </p>
+<p><strong>page_tpl</strong> - landing page template <strong>(1.4.0)</strong><br />
+chunk name or path to file.<br />
+Default: assets/modules/easy2/templates/page.htm</p>
 <p><strong>comments_tpl</strong> - comments template.<br />
 chunk name or path to file, relative to file comments.easy2gallery.php.<br />
 Default: assets/modules/easy2/templates/comments.htm
@@ -63,6 +68,14 @@ Default: assets/modules/easy2/templates/comments_row.htm
 <strong>[+easy2:date_added+]</strong> - date added<br />
 <strong>[+easy2:last_modified+]</strong> - last modified date<br />
 <strong>[+easy2:dir_id+]</strong> - folder id</p>
+<h3> Page <strong>(1.4.0)</strong></h3>
+<p>for landing page
+</p>
+<p>
+<strong>[+easy2:src+]</strong> - path to thumbnail<br />
+<strong>[+easy2:name+]</strong> - image name (if &gt; name_len, that lenght = name_len-2)<br />
+<strong>[+easy2:title+]</strong> - title (if there is no alias, it'll use name)<br />
+<strong>[+easy2:description+]</strong> - image description</p>
 <h3> Comments (row) </h3>
 <p><strong>[+easy2:id+]</strong> - comment id<br />
 <strong>[+easy2:file_id+]</strong> - file id<br />
