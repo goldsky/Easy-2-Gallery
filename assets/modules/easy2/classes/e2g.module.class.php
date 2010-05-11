@@ -1477,7 +1477,7 @@ class e2g_mod {
                     // goldsky -- if this already belongs to a file in the record, skip it!
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
-                        if ($cfg['resizeoldimg']==1) {
+                        if ($cfg['resizeoldimg']=='1') {
                             $inf = getimagesize($f);
                             if ($inf[2] <= 3) {
                                 // RESIZE
@@ -1644,7 +1644,7 @@ class e2g_mod {
     public function is_validfile ( $filename, $debug=0 ) {
         $f = $this->_basename_safe($filename);
         if ($this->is_validfolder($filename)) {
-            if ($debug==1) {
+            if ($debug=='1') {
                 return '<b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
             }
             else return FALSE;
@@ -1659,20 +1659,20 @@ class e2g_mod {
                         'image/png' => TRUE
                 );
                 if ( $allowedext[$size["mime"]] && $fp ) {
-                    if ($debug==1) {
+                    if ($debug=='1') {
                         $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is a valid image file: '.$size["mime"].' - '.$size[3];
                     }
                     else return TRUE;
                 } else {
-                    if ($debug==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
+                    if ($debug=='1') $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
                     else return FALSE;
                 }
             }
             else {
-                if ($debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
+                if ($debug=='1') $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
                 else return FALSE;
             }
-            if ($debug==1) return $fileinfo;
+            if ($debug=='1') return $fileinfo;
             else return TRUE;
         }
         else continue;
@@ -1684,10 +1684,10 @@ class e2g_mod {
     public function is_validfolder($foldername, $debug=0) {
         $openfolder = @opendir($foldername);
         if (!$openfolder) {
-            if ($debug==1) return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
+            if ($debug=='1') return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
             else return FALSE;
         } else {
-            if ($debug==1) {
+            if ($debug=='1') {
                 echo '<h2>' . $foldername . '</h2>';
                 echo '<ul>';
                 $file = array();
@@ -1704,7 +1704,7 @@ class e2g_mod {
             }
             closedir ( $openfolder );
         }
-        if ($debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
+        if ($debug=='1') return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
         else return TRUE;
     }
     /*
