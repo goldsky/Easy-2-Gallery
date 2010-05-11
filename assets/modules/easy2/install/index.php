@@ -76,7 +76,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         cat_name varchar(255) NOT NULL default \'\',
                         cat_alias varchar(255) NULL default \'\',
                         cat_visible tinyint(4) NOT NULL default \'1\',
-                        cat_description varchar(255) default NULL,
+                        cat_description text default NULL,
                         last_modified datetime default NULL,
                         PRIMARY KEY  (cat_id),
                         KEY cat_left (cat_left)
@@ -92,7 +92,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // additional field for 1.3.6 Beta4
     // cat_description
     if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_description')===FALSE) {
-        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_description varchar(255) default NULL');
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_description text default NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_description '.$lngi['created'];
     }
 

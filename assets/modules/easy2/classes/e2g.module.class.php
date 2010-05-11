@@ -634,8 +634,8 @@ class e2g_mod {
                     } else {
                         $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
                                 .'SET '
-                                .'cat_alias = \''.stripslashes($_POST['alias']).'\''
-                                .', cat_description = \''.stripslashes($_POST['description']).'\''
+                                .'cat_alias = \''.addslashes($_POST['alias']).'\''
+                                .', cat_description = \''.addslashes($_POST['description']).'\''
                                 .', last_modified=NOW() '
                                 .'WHERE cat_id='.(int)$_GET['dir_id'];
                         $qResult = mysql_query($q) or die('637'.mysql_error());

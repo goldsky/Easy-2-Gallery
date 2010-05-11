@@ -1,6 +1,6 @@
-.e2gtitle {font:bold 14px Tahoma;}
-.e2gdesc {font:normal 12px Tahoma;}
-.e2gdir {border: 1px solid #ccc; padding: 5px; margin-top: 10px; margin-bottom: 10px;}
+.e2gtitle {font:bold 14px Tahoma; color: #000;}
+.e2gdesc {font:italic 12px Tahoma;color: #000;}
+.e2gdir {border: 1px solid #ccc; padding: 5px; margin-top: 10px; margin-bottom: 10px; background-color: #ddd;}
 .e2gback {font:bold 10px Tahoma;}
 .e2g {font:11px Tahoma; margin-left:-7px;}
 .e2g td {vertical-align:bottom;text-align:center;padding:7px;}
