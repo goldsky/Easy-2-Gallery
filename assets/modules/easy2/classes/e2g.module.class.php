@@ -641,7 +641,7 @@ class e2g_mod {
                         $qResult = mysql_query($q) or die('637'.mysql_error());
                         if($qResult) {
                             // rename dir
-                            if( $_POST['newdirname'] != $row['cat_name'] ) {
+                            if( $row['cat_id']!='1' && $_POST['newdirname'] != $row['cat_name'] ) {
                                 rename('../'.$gdir.utf8_decode($row['cat_name']), '../'.$gdir.utf8_decode($_POST['newdirname']));
                                 @chmod('../'.$gdir.utf8_decode($_POST['newdirname']), 0755);
                                 $renamedir = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '

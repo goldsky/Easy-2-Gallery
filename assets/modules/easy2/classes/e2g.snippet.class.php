@@ -103,15 +103,15 @@ class e2g_snip {
 //                    . 'WHERE f.dir_id = d.cat_id '
 //                    . ')<>0 '
                     . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
-                    . 'WHERE F.dir_id in '
-                    . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-                    . $modx->db->config['table_prefix'].'easy2_dirs B '
-                    . 'WHERE (B.cat_id=d.cat_id '
-                    . 'AND A.cat_left >= B.cat_left '
-                    . 'AND A.cat_right <= B.cat_right '
-                    . 'AND A.cat_level >= B.cat_level '
-                    . 'AND A.cat_visible = 1)'
-                    .')'
+                        . 'WHERE F.dir_id in '
+                            . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
+                            . $modx->db->config['table_prefix'].'easy2_dirs B '
+                            . 'WHERE (B.cat_id=d.cat_id '
+                                . 'AND A.cat_left >= B.cat_left '
+                                . 'AND A.cat_right <= B.cat_right '
+                                . 'AND A.cat_level >= B.cat_level '
+                                . 'AND A.cat_visible = 1)'
+                        .')'
                     .')<>0 '
                     ), 0 ,0);
 
@@ -180,15 +180,15 @@ class e2g_snip {
                         . 'AND d.cat_visible = 1 '
                         // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
                         . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
-                        . 'WHERE F.dir_id in '
-                        . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
-                        . $modx->db->config['table_prefix'].'easy2_dirs B '
-                        . 'WHERE (B.cat_id=d.cat_id '
-                        . 'AND A.cat_left >= B.cat_left '
-                        . 'AND A.cat_right <= B.cat_right '
-                        . 'AND A.cat_level >= B.cat_level '
-                        . 'AND A.cat_visible = 1)'
-                        .')'
+                            . 'WHERE F.dir_id in '
+                                . '(SELECT A.cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
+                                . $modx->db->config['table_prefix'].'easy2_dirs B '
+                                . 'WHERE (B.cat_id=d.cat_id '
+                                . 'AND A.cat_left >= B.cat_left '
+                                . 'AND A.cat_right <= B.cat_right '
+                                . 'AND A.cat_level >= B.cat_level '
+                                . 'AND A.cat_visible = 1)'
+                            .')'
                         .')<>0 '
                         . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' '
                         . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit // goldsky -- limit the subdirs per page
@@ -198,6 +198,10 @@ class e2g_snip {
                 if (!$dirquery) die('198 '.mysql_error());
                 $dir_num_rows += mysql_num_rows($dirquery);
 
+                $_e2g['cat_description'] = $this->_get_dir_info($single_gid,'cat_description');
+                $_e2g['cat_title'] = $this->_get_dir_info($single_gid,'cat_alias');
+                $_e2g['title'] = ($_e2g['cat_title'] != '' ? $_e2g['cat_title'] : $_e2g['cat_name'] );
+                
                 $i = 0;
                 while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
 
@@ -618,6 +622,28 @@ class e2g_snip {
         }
         if (empty($result)) return null;
         return $result;
+    }
+
+    /*
+     * function get_dir_info
+     * function to get directory's information
+     * @param int $dirid = gallery's ID
+    */
+    private function _get_dir_info($dirid,$field) {
+        global $modx;
+
+        $dirinfo = array();
+
+        $q = 'SELECT '.$field.' FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+            . 'WHERE cat_id='.$dirid.' '
+        ;
+
+        if (!($res = mysql_query($q))) return ('Wrong field.');
+        while ($l = mysql_fetch_array($res)) {
+            $dirinfo[$field] = $l[$field];
+        }
+        if (empty($dirinfo[$field])) return null;
+        return $dirinfo[$field];
     }
 
     /*
