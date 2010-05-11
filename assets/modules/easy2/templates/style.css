@@ -1,6 +1,8 @@
+/* for gallery.htm template */
 .e2gtitle {font:bold 14px Tahoma; color: #000;}
 .e2gdesc {font:italic 12px Tahoma;color: #000;}
 .e2gdir {border: 1px solid #ccc; padding: 5px; margin-top: 10px; margin-bottom: 10px; background-color: #ddd;}
+
 .e2gback {font:bold 10px Tahoma;}
 .e2g {font:11px Tahoma; margin-left:-7px;}
 .e2g td {vertical-align:bottom;text-align:center;padding:7px;}
@@ -29,6 +31,8 @@
 .dir .b2, .dir .b3, .dir .b4, .dir .b4b, .dir .b3b, .dir .b2b, .dir .boxcontent { border-left:1px solid #FFD2A6; border-right:1px solid #FFD2A6; display:block; }
 .dir .b1, .dir .b1b { margin:0 5px; background:#FFD2A6; }
 .b2, .b2b, .dir .b2, .dir .b2b { margin:0 3px; border-width:0 2px; }
+
+/* for gallery.htm template */
 .e2g_gallery {display: block;}
 .e2g_gallery table { display: block; }
 .e2g_gallery tr {}

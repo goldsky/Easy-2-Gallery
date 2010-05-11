@@ -352,7 +352,7 @@ else {
 <div id="myGallerySet">';
         // ------------- start the images looping ------------- //
         if(!is_array($galleries)) { // something wrong! escape!
-            $ss_display = 'wrong parameters';
+            $ss_display = 'There is no gallery inside ID:'.$gid;
             return;
         }
         foreach ($galleries as $k => $v ) {

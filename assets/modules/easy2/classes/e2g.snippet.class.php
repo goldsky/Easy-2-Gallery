@@ -48,6 +48,9 @@ class e2g_snip {
         if ( !empty($slideshow) ) {
             echo $this->_slideshow($cl_cfg);
         }
+        if ( isset($landingpage) && isset($_GET['fid']) ) {
+            echo $this->_landingpage($cl_cfg, $_GET['fid']);
+        }
     }
 
     /*
@@ -969,7 +972,10 @@ class e2g_snip {
         $count = count($_ssfile['resizedimg']);
 
         // added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
-        if ( isset($_GET['fid']) ) {
+        if ( isset($_GET['fid']) && isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
+            $modx->sendRedirect($modx->makeUrl($landingpage).'&fid='.$_GET['fid'].'&lp='.$landingpage);
+        }
+        elseif ( isset($_GET['fid']) && !isset($landingpage) ) {
             $modx->regClientCSS($css,'screen');
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE id = '.$_GET['fid'].' '
@@ -1001,9 +1007,6 @@ class e2g_snip {
                     $path = '';
                 }
             }
-            if ( isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
-                $modx->sendForward($landingpage).'&fid='.$fileid.'&lp='.$landingpage;
-            }
             return $this->_filler( $this->_page_tpl($cl_cfg), $l );
         } else {
             // use custom index file if it's been called.
@@ -1032,6 +1035,48 @@ class e2g_snip {
     private function _landingpage($cl_cfg, $fileid) {
         global $modx;
         $landingpage = $this->cl_cfg['landingpage'];
+        $gdir = $this->cl_cfg['gdir'];
+        $css = $this->cl_cfg['css'];
+        $js = $this->cl_cfg['js'];
+        $ss_css = $this->cl_cfg['ss_css'];
+        $ss_js = $this->cl_cfg['ss_js'];
+
+        $modx->regClientCSS($css,'screen');
+        if (!empty($js)) {
+            $modx->regClientStartupScript($js);
+        }
+        
+        $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                . 'WHERE id = '.$fileid
+        ;
+        $query = mysql_query($select);
+        if (!$query) {
+//            die('1054 '.$select);
+            return '1055 snippet calls wrong file id.';
+        }
+
+        while ($fetch = mysql_fetch_array($query)) {
+            $path = $this->_get_path($fetch['dir_id']);
+            if (count($path) > 1) {
+                unset($path[1]);
+                $path = implode('/', array_values($path)).'/';
+            } else {
+                $path = '';
+            }
+//            $l['src'] = utf8_decode($gdir.$path.$fetch['filename']);
+            $l['src'] = $gdir.$path.$fetch['filename'];
+            $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
+            $l['name'] = $fetch['name'];
+            $l['description'] = $fetch['description'];
+            $path = $this->_get_path($fetch['dir_id']);
+            if (count($path) > 1) {
+                unset($path[1]);
+                $path = implode('/', array_values($path)).'/';
+            } else {
+                $path = '';
+            }
+        }
+        return $this->_filler( $this->_page_tpl($cl_cfg), $l );
     }
 
     // DIRECTORY TEMPLATE

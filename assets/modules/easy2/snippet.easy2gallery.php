@@ -100,6 +100,8 @@ $cl_cfg['cat_order'] = preg_replace('/[^a-z]/i', '', $cat_order);
 
 // GALLERY CSS
 $cl_cfg['css'] = (!empty($css)) ? str_replace('../', '' , $css) : $e2g['css'];
+// GALLERY JS
+$cl_cfg['js'] = (!empty($js)) ? str_replace('../', '' , $js) : $e2g['js'];
 
 // GALLERY TEMPLATE
 $cl_cfg['tpl'] = (!empty($tpl)) ? str_replace('../', '' , $tpl) : $e2g['tpl'];
@@ -173,7 +175,7 @@ $cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
  * set the slideshow's landing page.
  * @options: document ID.
  */
-$cl_cfg['landingpage'] = isset($landingpage) ? $landingpage : NULL ;
+$cl_cfg['landingpage'] = (!empty($_GET['lp']) ? $_GET['lp'] : (isset($landingpage) ? $landingpage : NULL)) ;
 
 // CRUMBS
 $cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
