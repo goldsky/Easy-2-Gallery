@@ -1,5 +1,4 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 /**
@@ -20,38 +19,18 @@ class e2g_mod {
         $this->e2gmod_cl = $e2gmod_cl;
         $this->e2g = $e2g;
         $this->lng = $lng;
-        global $modx;
-
-        require_once E2G_MODULE_PATH . 'config.easy2gallery.php';
-
-        if (!is_dir( MODX_BASE_PATH . $e2g['dir'])) {
-            echo '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
-            exit;
-        } elseif (!is_dir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
-            if (mkdir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
-                @chmod( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails', 0755 );
-            } else {
-                echo '<b style="color:red">' . $lng['_thumb_err'] . '</b>';
-                exit;
-            }
-        }
-        $this->e2gmod_cl['gdir'] = $e2g['dir'];
-        $this->e2gmod_cl['path'] = '';
-        $this->e2gmod_cl['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
-        $this->_explore();
+        $this->_explore($e2gmod_cl, $e2g, $lng);
         $this->_echo_memory_usage();
     }
 
-    private function _explore() {
+    private function _explore($e2gmod_cl, $e2g, $lng) {
         global $modx;
-        $e2gmod_cl = $this->e2gmod_cl;
-        $e2g = $this->e2g;
         $e2g['mdate_format'] = 'd-m-y H:i';
-
-        $lng = $this->lng;
         $parent_id = $this->e2gmod_cl['parent_id'];
         $index = $this->e2gmod_cl['index'];
         $gdir = $this->e2gmod_cl['gdir'];
+
+        // CREATE PATH
         $p = $this->_path_to($parent_id);
         foreach ($p as $k => $v) {
             $path .= '<a href="' . $index . '&pid=' . $k . '">' . $v . '</a>/';
@@ -71,7 +50,6 @@ class e2g_mod {
             $gdir .= $cpath;
         }
         $path .= '</b>';
-        $this->e2gmod_cl['path'] = $path;
 
         // decoding UTF-8 the path, as the default URL address
         $gdir = utf8_decode($gdir);
@@ -192,7 +170,7 @@ class e2g_mod {
                         continue;
                     }
                     $inf = getimagesize($_FILES['img']['tmp_name'][$i]);
-                    if (($e2g['maxw'] > 0 || $e2g['maxh'] > 0) && ($inf[0] > $e2g['maxw'] || $inf[1] > $e2g['maxh'])) {
+                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
                         $this->_resize_img ($_FILES['img']['tmp_name'][$i], $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     }
                     if (! move_uploaded_file($_FILES['img']['tmp_name'][$i], '../'.$gdir.utf8_decode($filteredname))) {
@@ -446,7 +424,7 @@ class e2g_mod {
                 }
                 $c = "<?php\r\n\$e2g = array (\r\n";
                 foreach($_POST as $k => $v) {
-                    $c .= "'$k' => ".(is_numeric($v)?$v:"'$v'").",\r\n";
+                    $c .= "'$k' => ".(is_numeric($v)?$v:"'".addslashes($v)."'").",\r\n";
                 }
                 $c .= ");\r\n?>";
                 $f = fopen(E2G_MODULE_PATH . 'config.easy2gallery.php', 'w');
@@ -470,7 +448,7 @@ class e2g_mod {
                 $inf = getimagesize($f);
                 if ($inf[2] <= 3 && is_numeric($_GET['pid'])) {
                     // RESIZE
-                    if (($e2g['maxw'] > 0 || $e2g['maxh'] > 0) && ($inf[0] > $e2g['maxw'] || $inf[1] > $e2g['maxh'])) {
+                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
                         $this->_resize_img($f, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     }
                     $n = $this->_basename_safe($f);
@@ -563,8 +541,8 @@ class e2g_mod {
                         if ( ($id = $tree->insert($dirname, $parent_id)) ) {
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
                                     .'SET '
-                                    .'cat_alias = \''.stripslashes($_POST['alias']).'\''
-                                    .', cat_description = \''.stripslashes($_POST['description']).'\''
+                                    .'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                    .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '
                                     .'WHERE cat_id='.$id;
                             mysql_query($q);
@@ -634,8 +612,8 @@ class e2g_mod {
                     } else {
                         $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
                                 .'SET '
-                                .'cat_alias = \''.addslashes($_POST['alias']).'\''
-                                .', cat_description = \''.addslashes($_POST['description']).'\''
+                                .'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                 .', last_modified=NOW() '
                                 .'WHERE cat_id='.(int)$_GET['dir_id'];
                         $qResult = mysql_query($q) or die('637'.mysql_error());
@@ -714,8 +692,8 @@ class e2g_mod {
                         header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     } else {
                         $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                                .'SET name = \''.htmlspecialchars($_POST['name'], ENT_QUOTES).'\''
-                                .', description = \''.stripslashes($_POST['description']).'\''
+                                .'SET name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
+                                .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                 .', last_modified=NOW() '
                                 .'WHERE id='.(int)$_GET['file_id'];
                         $qResult = mysql_query($q);
@@ -726,7 +704,7 @@ class e2g_mod {
                                         or die('713');
                                 chmod('../'.$gdir.utf8_decode($_POST['newfilename'].$ext), 0644) or die('714');
                                 $renamefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                                        .'SET filename = \''.htmlspecialchars($_POST['newfilename'].$ext, ENT_QUOTES).'\''
+                                        .'SET filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\''
                                         .', last_modified=NOW() '
                                         .'WHERE id='.(int)$_GET['file_id'];
                                 mysql_query($renamefile);
@@ -949,7 +927,7 @@ class e2g_mod {
                         $cnt = $this->_count_files($f);
                         if ($name == '_thumbnails') continue;
                         if ( isset($mdirs[$name]) ) {
-                            if (($mdirs[$name]['cat_visible']=='1')) {
+                            if (($mdirs[$name]['cat_visible']==1)) {
                                 $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><b>'.$mdirs[$name]['name'].'</b></a> [id: '.$mdirs[$name]['id'].']';
                             } else {
                                 $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><i>'.$mdirs[$name]['name'].'</i></a> [id: '.$mdirs[$name]['id'].'] <i>('.$lng['invisible'].')</i>';
@@ -1041,7 +1019,7 @@ class e2g_mod {
                         $ext = 'picture';
                         $id = $mfiles[$name]['id'];
                         if (isset($mfiles[$name])) {
-                            if ($mfiles[$name]['status']=='1') {
+                            if ($mfiles[$name]['status']==1) {
                                 $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
                             } else {
                                 $n = '<a href="javascript:imPreview(\''.utf8_encode($gdir).$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
@@ -1128,11 +1106,11 @@ class e2g_mod {
                                 <img src="media/style/MODxCarbon/images/icons/delete.png" /> '.$lng['delete'].'
                             </a>
                         </li>
-                        <!--li id="Button5">
-                            <a href="'.$index.'&act=synchro">
+                        <li id="Button5">
+                            <a href="'.$index.'&act=move2folder">
                                 <img src="media/style/MODxCarbon/images/icons/sort.png" /> '.$lng['movetofolder'].'
                             </a>
-                        </li-->
+                        </li>
                     </ul>
                 </div>
             </form>
@@ -1235,7 +1213,7 @@ class e2g_mod {
                     $inf = getimagesize($f);
                     if ($inf[2] > 3) continue;
                     // RESIZE
-                    if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
                         $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
                     }
                     $n = $this->_basename_safe($f);
@@ -1365,7 +1343,7 @@ class e2g_mod {
         $inf = getimagesize($f);
         if ($inf[2] <= 3 && is_numeric($pid)) {
             // RESIZE
-            if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+            if ( ( ($cfg['maxw'] > 0) && ($inf[0] > $cfg['maxw']) ) || ( ($cfg['maxh'] > 0) && ($inf[1] > $cfg['maxh']) ) ) {
                 $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
             }
             $n = $this->_basename_safe($f);
@@ -1474,14 +1452,13 @@ class e2g_mod {
                         if (!$this->_add_all($f.'/', $pid, $cfg)) return FALSE;
                     }
                 } elseif ($this->is_validfile($f)) { // as a file in the current directory
-                    // goldsky -- if this already belongs to a file in the record, skip it!
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
-                        if ($cfg['resizeoldimg']=='1') {
+                        if ($cfg['resizeoldimg']==1) {
                             $inf = getimagesize($f);
                             if ($inf[2] <= 3) {
                                 // RESIZE
-                                if (($cfg['maxw'] > 0 || $cfg['maxh'] > 0) && ($inf[0] > $cfg['maxw'] || $inf[1] > $cfg['maxh'])) {
+                                if ( ( ($cfg['maxw'] > 0) && ($inf[0] > $cfg['maxw']) ) || ( ($cfg['maxh'] > 0) && ($inf[1] > $cfg['maxh']) ) ) {
                                     $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
                                 }
                                 $n = $this->_basename_safe($f);
@@ -1495,6 +1472,7 @@ class e2g_mod {
                                 }
                             }
                         }
+                        // goldsky -- if this already belongs to a file in the record, skip it!
                         unset($mfiles[$name]);
                     } else {
                         /*
@@ -1555,7 +1533,7 @@ class e2g_mod {
 
         $time_end = microtime(TRUE);
         $timetotal = $time_end - $time_start;
-        if ( $e2g['debug']== 1 ) {
+        if ( $e2g['debug']== '1' ) {
             $_SESSION['easy2suc'][] = "Syncronized $path in $timetotal seconds\n";
         }
         return TRUE;
@@ -1644,7 +1622,7 @@ class e2g_mod {
     public function is_validfile ( $filename, $debug=0 ) {
         $f = $this->_basename_safe($filename);
         if ($this->is_validfolder($filename)) {
-            if ($debug=='1') {
+            if ($debug==1) {
                 return '<b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
             }
             else return FALSE;
@@ -1659,20 +1637,20 @@ class e2g_mod {
                         'image/png' => TRUE
                 );
                 if ( $allowedext[$size["mime"]] && $fp ) {
-                    if ($debug=='1') {
+                    if ($debug==1) {
                         $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is a valid image file: '.$size["mime"].' - '.$size[3];
                     }
                     else return TRUE;
                 } else {
-                    if ($debug=='1') $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
+                    if ($debug==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
                     else return FALSE;
                 }
             }
             else {
-                if ($debug=='1') $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
+                if ($debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
                 else return FALSE;
             }
-            if ($debug=='1') return $fileinfo;
+            if ($debug==1) return $fileinfo;
             else return TRUE;
         }
         else continue;
@@ -1684,10 +1662,10 @@ class e2g_mod {
     public function is_validfolder($foldername, $debug=0) {
         $openfolder = @opendir($foldername);
         if (!$openfolder) {
-            if ($debug=='1') return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
+            if ($debug==1) return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
             else return FALSE;
         } else {
-            if ($debug=='1') {
+            if ($debug==1) {
                 echo '<h2>' . $foldername . '</h2>';
                 echo '<ul>';
                 $file = array();
@@ -1704,7 +1682,7 @@ class e2g_mod {
             }
             closedir ( $openfolder );
         }
-        if ($debug=='1') return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
+        if ($debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
         else return TRUE;
     }
     /*

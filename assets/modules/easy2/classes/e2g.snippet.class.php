@@ -74,6 +74,8 @@ class e2g_snip {
         $showonly = $this->cl_cfg['showonly'];
         $customgetparams = $this->cl_cfg['customgetparams'];
         $gal_desc = $this->cl_cfg['gal_desc'];
+        $plugin = $this->cl_cfg['plugin'];
+        $pluginindex = $this->cl_cfg['pluginindex'];
 
         // CRUMBS
         $crumbs_separator = $this->cl_cfg['crumbs_separator'];
@@ -318,6 +320,11 @@ class e2g_snip {
                     $_e2g['content'] .= '</tr><tr>';
                 }
 
+                /*
+                 * insert plugin for each thumb
+                 */
+                if (isset($plugin)) $l['thumbplugin'] = $this->_plugin($cl_cfg, $l);
+                
                 $l['w'] = $this->cl_cfg['w'];
                 $l['h'] = $this->cl_cfg['h'];
 
@@ -1170,6 +1177,35 @@ class e2g_snip {
             return $page_tpl;
         } else {
             echo 'Landing page template '.$page_tpl.' not found!';
+        }
+    }
+
+    /*
+     * plugin interception for thumbnails
+    */
+    private function _plugin($cl_cfg, $row) {
+        global $modx;
+        $plugin = $this->cl_cfg['plugin'];
+        $pluginindex = $this->cl_cfg['pluginindex'];
+
+        if (isset($plugin_display)) unset($plugin_display);
+        
+        if (isset($plugin)) {
+            if (isset($pluginindex)) {
+                if (file_exists($pluginindex)) {
+                    include($pluginindex);
+                } else {
+                    return 'Plugin file '.$pluginindex.' does not exist.';
+                }
+            } elseif (file_exists(E2G_SNIPPET_PATH.'includes/plugins/'.$plugin.'/'.$plugin.'.php')) {
+                include E2G_SNIPPET_PATH.'includes/plugins/'.$plugin.'/'.$plugin.'.php';
+                /*
+                 * the result returns as a STRING
+                 */
+                return $plugin_display;
+            } else {
+                return 'Plugin '.$plugin.' does not exist.';
+            }
         }
     }
 }

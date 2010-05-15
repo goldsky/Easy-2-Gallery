@@ -17,7 +17,7 @@
 .e2gpnums a:hover {background:#B3EC6C;border:1px solid #83D71C;color:white;text-decoration:none;}
 .e2gpnums a, .e2gpnums b {padding:3px 6px;line-height:2em;}
 .not_display {display:none;}
-.boxcontent {padding:1px 5px;}
+.boxcontent {position: relative; padding:1px 5px;}
 .boxcontent img {margin-bottom:3px; border:1px solid #ccc;}
 .boxcontent div {width:100%; text-align:center;}
 .thumb .b2, .thumb .b3, .thumb .b4, .thumb .b4b, .thumb .b3b, .thumb .b2b, .thumb .boxcontent { background:#F5F5F5;}

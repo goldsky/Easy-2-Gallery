@@ -55,9 +55,6 @@ while ($l = mysql_fetch_row($res)) {
 $fp = '../../../'.$e2g['dir'].$path.$filename2send;
 $fp = utf8_decode($fp);
 
-// preparing filesize
-$filesize2sent=filesize($fp);
-
 /*
  *  WATERMARK
 */
@@ -134,15 +131,15 @@ if ($e2g['ewm'] != 0) {
     ob_start();
     header('Last-Modified: '.date('r'));
     header('Accept-Ranges: bytes');
-    header('Content-Length: '.$filesize2sent);
     header('Content-type: image/jpeg');
     header('Content-Disposition: inline; filename="'.$filename2send.'"');
     imagejpeg($im);
-    ob_end_flush();
     imagedestroy($im);
-
+    header('Content-Length: ' . ob_get_length());
+    ob_end_flush();
 } else {
-    header ('Location: '.$fp);
+    header('Content-type: image/jpeg');
+    header('Location: '.$fp);
     //readfile ('../../../'.$e2g['dir'].$path.$row['id'].$ext);
     exit();
 }

@@ -44,7 +44,7 @@ else {
 if ( !empty($customgetparams)) {
     $cl_cfg['customgetparams'] = !empty($customgetparams) ? $customgetparams : NULL;
 }
- 
+
 // WIDTH
 $cl_cfg['w'] = (!empty($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
 
@@ -86,7 +86,7 @@ $cl_cfg['gpn'] = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GE
 // ORDER BY
 /*
  * Options: order by SQL fields.
- */
+*/
 $orderby = (!empty($orderby)) ? $orderby : $e2g['orderby'];
 $cl_cfg['orderby'] = preg_replace('/[^_a-z]/i', '', $orderby);
 $cat_orderby = (!empty($cat_orderby)) ? $cat_orderby : $e2g['cat_orderby'];
@@ -109,7 +109,7 @@ $cl_cfg['tpl'] = (!empty($tpl)) ? str_replace('../', '' , $tpl) : $e2g['tpl'];
  * GALLERY'S DESCRIPTION OPTION
  * Options: 1 = On
  *          0 = Off
- */
+*/
 $cl_cfg['gal_desc'] = (!empty($gal_desc)) ? $gal_desc : 0;
 
 // DIR TEMPLATE
@@ -137,7 +137,7 @@ $cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
 
 /*
  * STAND ALONE SLIDESHOW PARAMETERS
- */
+*/
 
 // SLIDESHOW TYPE
 $cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
@@ -151,7 +151,7 @@ $cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background col
 /*
  * additional configuration options, if there is any.
  * this is empty, only as an holder.
- */
+*/
 $cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 
 /*
@@ -159,28 +159,28 @@ $cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
  * too tall/wide images while the &ss_w and &ss_h are limited.
  * the format is 'minfloatnumber-maxfloatnumber', eg: '1.0-2.0'
  * to disable this restriction, set &ss_allowedratio=`none`
- */
+*/
 $cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
-(0.75*$cl_cfg['ss_w']/$cl_cfg['ss_h']).'-'.(1.25*$cl_cfg['ss_w']/$cl_cfg['ss_h']);
+        (0.75*$cl_cfg['ss_w']/$cl_cfg['ss_h']).'-'.(1.25*$cl_cfg['ss_w']/$cl_cfg['ss_h']);
 /*
  * to set how many images the slide show should retrieve from the gallery ID.
  * more images mean longer page loading!
  * @options : int | 'none'
  * @default : (int)6
- */
+*/
 $cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 /*
  * set the slideshow's CSS path
- */
+*/
 $cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
 /*
  * set the slideshow's CSS path
- */
+*/
 $cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
 /*
  * set the slideshow's landing page.
  * @options: document ID.
- */
+*/
 $cl_cfg['landingpage'] = (!empty($_GET['lp']) ? $_GET['lp'] : (isset($landingpage) ? $landingpage : NULL)) ;
 
 // CRUMBS
@@ -192,6 +192,12 @@ $cl_cfg['crumbs_showCurrent'] = isset($crumbs_showCurrent) ? $crumbs_showCurrent
 //mbstring
 $cl_cfg['charset'] = $modx->config['modx_charset'];
 $cl_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_substr');
+
+/*
+ * plugin interception
+*/
+$cl_cfg['plugin'] = isset($plugin) ? $plugin : null;
+$cl_cfg['pluginindex'] = isset($pluginindex) ? $pluginindex : null;
 
 /*
  * EXECUTE SNIPPET
