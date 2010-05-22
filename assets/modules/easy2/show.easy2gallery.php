@@ -24,7 +24,7 @@ mysql_connect($database_server, $database_user, $database_password) or
 mysql_select_db(str_replace('`', '', $dbase));
 @mysql_query("{$database_connection_method} {$database_connection_charset}");
 
-require_once './config.easy2gallery.php';
+require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
 
 // get the image file ID
 $id = (int) $_GET['id'];

@@ -18,141 +18,161 @@ if(!defined('E2G_SNIPPET_URL')) {
     define('E2G_SNIPPET_URL', MODX_BASE_URL . 'assets/modules/easy2/');
 }
 
-if (file_exists( E2G_SNIPPET_PATH . 'config.easy2gallery.php' )) {
-    require E2G_SNIPPET_PATH . 'config.easy2gallery.php';
+if (file_exists( E2G_SNIPPET_PATH . 'includes/configs/config.easy2gallery.php' )) {
+    require E2G_SNIPPET_PATH . 'includes/configs/config.easy2gallery.php';
 } else {
     return 'Missing config file.';
 }
 
 // ROOT directory
-$cl_cfg['gdir'] = $e2g['dir'];
+$e2gsnip_cfg['gdir'] = $e2g['dir'];
 
 if ( !empty($fid) ) {
     // FILE ID
-    $cl_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : ( !empty($fid) ? $fid : '' );
+    $e2gsnip_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : ( !empty($fid) ? $fid : null );
 }
 elseif ( !empty($rgid) ) {
     // RANDOMIZED GALLERY ID
-    $cl_cfg['rgid'] = !empty($rgid) ? $rgid : 0;
+    $e2gsnip_cfg['rgid'] = !empty($rgid) ? $rgid : null;
 }
 else {
     // GALLERY ID
-    $cl_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
+    $e2gsnip_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
+    // to get the REAL snippet's gid call
+    $e2gsnip_cfg['static_gid'] = !empty($gid) ? $gid : 1 ;
+    // to get the REAL descendant of the gid
+    $e2gsnip_cfg['get_gid'] = !empty($_GET['gid']) ? $_GET['gid'] : null;
 }
+
+// ENCODING
+$e2gsnip_cfg['e2g_encode'] = (isset($e2g_encode)) ? $e2g_encode : $e2g['e2g_encode'];
 
 // CUSTOM PARAMETER $_GET FOR OTHER SNIPPETS
 if ( !empty($customgetparams)) {
-    $cl_cfg['customgetparams'] = !empty($customgetparams) ? $customgetparams : NULL;
+    $e2gsnip_cfg['customgetparams'] = !empty($customgetparams) ? $customgetparams : NULL;
 }
 
 // WIDTH
-$cl_cfg['w'] = (!empty($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
+$e2gsnip_cfg['w'] = (!empty($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
 
 // HEIGHT
-$cl_cfg['h'] = (!empty($h) && is_numeric($h)) ? (int) $h : $e2g['h'];
+$e2gsnip_cfg['h'] = (!empty($h) && is_numeric($h)) ? (int) $h : $e2g['h'];
 
 // JPEG QUALITY
-$cl_cfg['thq'] = (!empty($thq) && $thq<=100 && $thq>=0) ? (int) $thq : $e2g['thq'];
+$e2gsnip_cfg['thq'] = (!empty($thq) && $thq<=100 && $thq>=0) ? (int) $thq : $e2g['thq'];
 
 // NAME LENGTH
-$cl_cfg['name_len'] = (!empty($name_len) && is_numeric($name_len)) ? (int) $name_len : $e2g['name_len'];
+$e2gsnip_cfg['name_len'] = (!empty($name_len) && is_numeric($name_len)) ? (int) $name_len : $e2g['name_len'];
 
 // DIRECTORY NAME LENGTH
-$cl_cfg['cat_name_len'] = (!empty($cat_name_len) && is_numeric($cat_name_len)) ? (int) $cat_name_len : $e2g['cat_name_len'];
+$e2gsnip_cfg['cat_name_len'] = (!empty($cat_name_len) && is_numeric($cat_name_len)) ? (int) $cat_name_len : $e2g['cat_name_len'];
 
 // COLLS
-$cl_cfg['colls'] = (!empty($colls) && is_numeric($colls)) ? (int) $colls : $e2g['colls'];
+$e2gsnip_cfg['colls'] = (!empty($colls) && is_numeric($colls)) ? (int) $colls : $e2g['colls'];
 
-// NO TABLES
-//$cl_cfg['notables'] = $fid ? 1 : (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);
-$cl_cfg['notables'] = (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);
+// for compatibility of version upgrading
+if (isset($notables) && $notables==1) $grid = 'css';
+elseif (isset($notables) && $notables==0) $grid = 'table';
+
+// GRID -- previously using NO TABLES
+$e2gsnip_cfg['grid'] = (isset($grid) ? $grid : $e2g['grid']);
+
+// NO TABLES -- DEPRECATED after 1.4.0 Beta 4!
+//$e2gsnip_cfg['notables'] = $fid ? 1 : (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);
+//$e2gsnip_cfg['notables'] = (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);
 
 // LIMIT
-$cl_cfg['limit'] = (!empty($limit) && is_numeric($limit)) ? (int) $limit : $e2g['limit'];
+$e2gsnip_cfg['limit'] = (!empty($limit) && is_numeric($limit)) ? (int) $limit : $e2g['limit'];
 
 // SHOW ONLY: 'images' | 'folders' (under &gid parameter)
-$cl_cfg['showonly'] = (!empty($showonly)) ? $showonly : NULL ;
+$e2gsnip_cfg['showonly'] = (!empty($showonly)) ? $showonly : NULL ;
 
 // GLIB
-$cl_cfg['glib'] = (!empty($glib)) ? $glib : $e2g['glib'];
+$e2gsnip_cfg['glib'] = (!empty($glib)) ? $glib : $e2g['glib'];
 
 // COMMENTS
-$cl_cfg['ecm'] = (isset($ecm) && is_numeric($ecm)) ? $ecm : $e2g['ecm'];
+$e2gsnip_cfg['ecm'] = (isset($ecm) && is_numeric($ecm)) ? $ecm : $e2g['ecm'];
 
 // PAGE NUMBER
 //$gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;
-$cl_cfg['gpn'] = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : ((!empty($gpn) && is_numeric($gpn)) ? $gpn : 0);
+$e2gsnip_cfg['gpn'] = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : ((!empty($gpn) && is_numeric($gpn)) ? $gpn : 0);
 
 // ORDER BY
 /*
  * Options: order by SQL fields.
 */
 $orderby = (!empty($orderby)) ? $orderby : $e2g['orderby'];
-$cl_cfg['orderby'] = preg_replace('/[^_a-z]/i', '', $orderby);
+$e2gsnip_cfg['orderby'] = preg_replace('/[^_a-z]/i', '', $orderby);
 $cat_orderby = (!empty($cat_orderby)) ? $cat_orderby : $e2g['cat_orderby'];
-$cl_cfg['cat_orderby'] = preg_replace('/[^_a-z]/i', '', $cat_orderby);
+$e2gsnip_cfg['cat_orderby'] = preg_replace('/[^_a-z]/i', '', $cat_orderby);
 
 // ORDER
 $order = (!empty($order)) ? $order : $e2g['order'];
-$cl_cfg['order'] = preg_replace('/[^a-z]/i', '', $order);
+$e2gsnip_cfg['order'] = preg_replace('/[^a-z]/i', '', $order);
 $cat_order = (!empty($cat_order)) ? $cat_order : $e2g['cat_order'];
-$cl_cfg['cat_order'] = preg_replace('/[^a-z]/i', '', $cat_order);
+$e2gsnip_cfg['cat_order'] = preg_replace('/[^a-z]/i', '', $cat_order);
 
 // GALLERY CSS
-$cl_cfg['css'] = (!empty($css)) ? str_replace('../', '' , $css) : $e2g['css'];
+$e2gsnip_cfg['css'] = (!empty($css)) ? str_replace('../', '' , $css) : $e2g['css'];
 // GALLERY JS
-$cl_cfg['js'] = (!empty($js)) ? str_replace('../', '' , $js) : $e2g['js'];
+$e2gsnip_cfg['js'] = (!empty($js)) ? str_replace('../', '' , $js) : $e2g['js'];
 
 // GALLERY TEMPLATE
-$cl_cfg['tpl'] = (!empty($tpl)) ? str_replace('../', '' , $tpl) : $e2g['tpl'];
+$e2gsnip_cfg['tpl'] = (!empty($tpl)) ? str_replace('../', '' , $tpl) : $e2g['tpl'];
 /*
  * GALLERY'S DESCRIPTION OPTION
  * Options: 1 = On
  *          0 = Off
 */
-$cl_cfg['gal_desc'] = (!empty($gal_desc)) ? $gal_desc : 0;
+$e2gsnip_cfg['gal_desc'] = (!empty($gal_desc)) ? $gal_desc : 0;
 
 // DIR TEMPLATE
-$cl_cfg['dir_tpl'] = (!empty($dir_tpl)) ? str_replace('../', '', $dir_tpl) : $e2g['dir_tpl'];
+$e2gsnip_cfg['dir_tpl'] = (!empty($dir_tpl)) ? str_replace('../', '', $dir_tpl) : $e2g['dir_tpl'];
 
 // THUMB TEMPLATE
-$cl_cfg['thumb_tpl'] = (!empty($thumb_tpl)) ? str_replace('../', '' , $thumb_tpl) : $e2g['thumb_tpl'];
+$e2gsnip_cfg['thumb_tpl'] = (!empty($thumb_tpl)) ? str_replace('../', '' , $thumb_tpl) : $e2g['thumb_tpl'];
 
 // THUMB RAND TEMPLATE
-$cl_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_tpl) : $e2g['rand_tpl'];
+$e2gsnip_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_tpl) : $e2g['rand_tpl'];
 
 // LANDING PAGE TEMPLATE
-$cl_cfg['page_tpl'] = (!empty($page_tpl)) ? str_replace('../', '' , $page_tpl) : $e2g['page_tpl'];
+$e2gsnip_cfg['page_tpl'] = (!empty($page_tpl)) ? str_replace('../', '' , $page_tpl) : $e2g['page_tpl'];
+
+// CSS classes
+$e2gsnip_cfg['grid_class'] = (isset($grid_class) ? $grid_class : $e2g['grid_class']);
+$e2gsnip_cfg['e2g_currentcrumb_class'] = (isset($e2g_currentcrumb_class) ? $e2g_currentcrumb_class : $e2g['e2g_currentcrumb_class']);
+$e2gsnip_cfg['e2gback_class'] = (isset($e2gback_class) ? $e2gback_class : $e2g['e2gback_class']);
+$e2gsnip_cfg['e2gpnums_class'] = (isset($e2gpnums_class) ? $e2gpnums_class : $e2g['e2gpnums_class']);
 
 // THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
-$cl_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
+$e2gsnip_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
 
 // THUMB BACKGROUND COLOR
-$cl_cfg['thbg_red'] = isset($thbg_red) ? $thbg_red : $e2g['thbg_red'];
-$cl_cfg['thbg_green'] = isset($thbg_green) ? $thbg_green : $e2g['thbg_green'];
-$cl_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
+$e2gsnip_cfg['thbg_red'] = isset($thbg_red) ? $thbg_red : $e2g['thbg_red'];
+$e2gsnip_cfg['thbg_green'] = isset($thbg_green) ? $thbg_green : $e2g['thbg_green'];
+$e2gsnip_cfg['thbg_blue'] = isset($thbg_blue) ? $thbg_blue : $e2g['thbg_blue'];
 
 // JAVASCRIPT LIBRARY'S SLIDESHOW GROUP
-$cl_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
+$e2gsnip_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery'.$gid;
 
 /*
  * STAND ALONE SLIDESHOW PARAMETERS
 */
 
 // SLIDESHOW TYPE
-$cl_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
+$e2gsnip_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
 // SLIDESHOW PROCESSOR FILE. IF NOT EXIST, WILL USE DEFAULT.
-$cl_cfg['ss_indexfile'] = isset($ss_indexfile) ? $ss_indexfile : NULL;
+$e2gsnip_cfg['ss_indexfile'] = isset($ss_indexfile) ? $ss_indexfile : NULL;
 // SLIDESHOW'S BOX DIMENSION, NOT THUMBNAIL
-$cl_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
-$cl_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
-$cl_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color
+$e2gsnip_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
+$e2gsnip_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
+$e2gsnip_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color
 
 /*
  * additional configuration options, if there is any.
  * this is empty, only as an holder.
 */
-$cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
+$e2gsnip_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 
 /*
  * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
@@ -160,54 +180,55 @@ $cl_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
  * the format is 'minfloatnumber-maxfloatnumber', eg: '1.0-2.0'
  * to disable this restriction, set &ss_allowedratio=`none`
 */
-$cl_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
-        (0.75*$cl_cfg['ss_w']/$cl_cfg['ss_h']).'-'.(1.25*$cl_cfg['ss_w']/$cl_cfg['ss_h']);
+$e2gsnip_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
+        (0.75*$e2gsnip_cfg['ss_w']/$e2gsnip_cfg['ss_h']).'-'.(1.25*$e2gsnip_cfg['ss_w']/$e2gsnip_cfg['ss_h']);
 /*
  * to set how many images the slide show should retrieve from the gallery ID.
  * more images mean longer page loading!
  * @options : int | 'none'
  * @default : (int)6
 */
-$cl_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
+$e2gsnip_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
 /*
  * set the slideshow's CSS path
 */
-$cl_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
+$e2gsnip_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
 /*
  * set the slideshow's CSS path
 */
-$cl_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
+$e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
 /*
  * set the slideshow's landing page.
  * @options: document ID.
 */
-$cl_cfg['landingpage'] = (!empty($_GET['lp']) ? $_GET['lp'] : (isset($landingpage) ? $landingpage : NULL)) ;
+$e2gsnip_cfg['landingpage'] = (!empty($_GET['lp']) ? $_GET['lp'] : (isset($landingpage) ? $landingpage : NULL)) ;
 
 // CRUMBS
-$cl_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
-$cl_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
-$cl_cfg['crumbs_showAsLinks'] = isset($crumbs_showAsLinks) ? $crumbs_showAsLinks : 1;
-$cl_cfg['crumbs_showCurrent'] = isset($crumbs_showCurrent) ? $crumbs_showCurrent : 1;
+$e2gsnip_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
+$e2gsnip_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
+$e2gsnip_cfg['crumbs_showAsLinks'] = isset($crumbs_showAsLinks) ? $crumbs_showAsLinks : 1;
+$e2gsnip_cfg['crumbs_showCurrent'] = isset($crumbs_showCurrent) ? $crumbs_showCurrent : 1;
+$e2gsnip_cfg['crumbs_showPrevious'] = isset($crumbs_showPrevious) ? $crumbs_showPrevious : 0;
 
 //mbstring
-$cl_cfg['charset'] = $modx->config['modx_charset'];
-$cl_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_substr');
+$e2gsnip_cfg['charset'] = $modx->config['modx_charset'];
+$e2gsnip_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_substr');
 
 /*
  * plugin interception
 */
-$cl_cfg['plugin'] = isset($plugin) ? $plugin : null;
-$cl_cfg['pluginindex'] = isset($pluginindex) ? $pluginindex : null;
+$e2gsnip_cfg['plugin'] = isset($plugin) ? $plugin : null;
+$e2gsnip_cfg['pluginindex'] = isset($pluginindex) ? $pluginindex : null;
 
 /*
  * EXECUTE SNIPPET
 */
 if(!class_exists('e2g_snip')) {
-    include_once E2G_SNIPPET_PATH . "classes/e2g.snippet.class.php";
+    include_once E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
 }
 if (class_exists('e2g_snip')) {
-    $e2g = new e2g_snip($cl_cfg);
-    $output = $e2g->display($cl_cfg);
+    $e2g = new e2g_snip($e2gsnip_cfg);
+    $output = $e2g->display();
 } else {
     $output = "<h3>error: e2g_snip class not found</h3>";
 }

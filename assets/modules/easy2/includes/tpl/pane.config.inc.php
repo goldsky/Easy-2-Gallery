@@ -21,10 +21,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['debug']; ?>:</b></td>
+                        <td width="12%"><b><?php echo $lng['e2g_debug']; ?>:</b></td>
                         <td>
-                            <input type="radio" name="debug" value="0" <?php echo ($e2g['debug']=='0' ? 'checked="checked"' : '');?>> No
-                            <input type="radio" name="debug" value="1" <?php echo ($e2g['debug']=='1' ? 'checked="checked"' : '');?>> Yes
+                            <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug']=='0' ? 'checked="checked"' : '');?>> No
+                            <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug']=='1' ? 'checked="checked"' : '');?>> Yes
                         </td>
                     </tr>
                     <tr>
@@ -36,6 +36,18 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com1']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td width="12%"><b><?php echo $lng['e2g_encode']; ?>:</b></td>
+                        <td width="88%">
+                            <select name="e2g_encode">
+                                <option value="none"<?php echo ($e2g['e2g_encode']=='none'?' selected':''); ?>><?php echo $lng['none']; ?></option>
+                                <option value="UTF-8"<?php echo ($e2g['e2g_encode']=='UTF-8'?' selected':''); ?>><?php echo $lng['UTF-8']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com1a']; ?></td>
                     </tr>
                 </table>
             </div>
@@ -136,7 +148,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['glib']; ?>:</b></td>
                         <td><select name="glib">
-                                <?php require_once (MODX_BASE_PATH.'assets/modules/easy2/includes/config.libs.easy2gallery.php');
+                                <?php require_once (E2G_MODULE_PATH.'includes/libs.config.easy2gallery.php');
                                 foreach ($glibs as $k => $v) {
                                     echo '<option value="'.$k.'"'.(($e2g['glib']==$k)?' selected="selected"':'').'>'.$v['alias'].'</option>';
                                 }
@@ -148,10 +160,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo $lng['cfg_com10']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['notables']; ?>:</b></td>
-                        <td><input type="radio" name="notables" value="1" <?php echo ($e2g['notables']=='1' ? 'checked="checked"' : ''); ?>> CSS
-                            <input type="radio" name="notables" value="0" <?php echo ($e2g['notables']=='0' ? 'checked="checked"' : ''); ?>> Table <br>
+                        <td><b><?php echo $lng['grid']; ?>:</b></td>
+                        <td><input type="radio" name="grid" value="css" <?php echo ($e2g['grid']=='css' ? 'checked="checked"' : ''); ?>> CSS
+                            <input type="radio" name="grid" value="table" <?php echo ($e2g['grid']=='table' ? 'checked="checked"' : ''); ?>> Table <br>
                         </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com10a']; ?></td>
                     </tr>
                     <tr>
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['thumbcnt']; ?></b></td>
@@ -285,6 +300,38 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['cfg_com19']; ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['grid_class']; ?>:</b></td>
+                        <td><input name="grid_class" type="text" value="<?php echo $e2g['grid_class']; ?>" size="20"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['cfg_com10b']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['cfg_e2g_currentcrumb_class']; ?>:</b></td>
+                        <td><input name="e2g_currentcrumb_class" type="text" value="<?php echo $e2g['e2g_currentcrumb_class']; ?>" size="20"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['classname']; ?></td>
+                    </tr>
+                    <tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['cfg_e2gback_class']; ?>:</b></td>
+                        <td><input name="e2gback_class" type="text" value="<?php echo $e2g['e2gback_class']; ?>" size="20"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['classname']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['cfg_e2gpnums_class']; ?>:</b></td>
+                        <td><input name="e2gpnums_class" type="text" value="<?php echo $e2g['e2gpnums_class']; ?>" size="20"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['classname']; ?></td>
                     </tr>
                 </table>
 

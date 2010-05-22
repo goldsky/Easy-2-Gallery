@@ -1,15 +1,15 @@
 <?php
 header('content-type: text/html; charset=utf-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-$_t = $this->e2gmod_cl['_t']
-?>
+$_t = $this->e2gmod_cfg['_t']
+        ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>Easy 2 Gallery <?php echo E2G_VERSION; ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lng['charset']; ?>" />
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/e2g_mod.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/tpl/e2g_mod.css" />
         <script type="text/javascript" src="media/script/tabpane.js"></script>
         <script type="text/javascript">
             function confirmDelete() {
@@ -60,6 +60,34 @@ $_t = $this->e2gmod_cl['_t']
                 for (var i=0; i<document.forms["list"].elements.length; i++) {
                     var e=document.forms["list"].elements[i];
                     if (e.type == "checkbox") e.checked = check_var;
+                }
+            }
+            function submitform(i) {
+                if (i==1) {
+                    var index=document.forms["topmenu"].newparent.selectedIndex;
+                    if (document.forms["topmenu"].newparent.options[index].value != "") {
+                        window.location.href= '<?php echo $index; ?>&pid='+ document.forms["topmenu"].newparent.options[index].value;
+                    }
+                }
+                if (i=='1b') {
+                    document.forms["topmenu"].action=
+                    "<?php echo $index; ?>&pid=<?php echo $_POST['newparent']; ?>&page=openexplorer";
+                    document.forms["topmenu"].submit();
+                }
+                if (i==2) {
+                    document.forms["list"].action=
+                    "<?php echo $index.'&act=delete_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
+                    document.forms["list"].submit();
+                }
+                if (i==3) {
+                    document.forms["list"].action=
+                    "<?php echo $index.'&act=download_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
+                    document.forms["list"].submit();
+                }
+                if (i==4) {
+                    document.forms["list"].action=
+                    "<?php echo $index.'&act=move_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
+                    document.forms["list"].submit();
                 }
             }
             function selectAllComments (check_var) {
@@ -118,7 +146,7 @@ $_t = $this->e2gmod_cl['_t']
         </script>
     </head>
     <body>
-        <p><?php echo $err.$suc; ?>&nbsp;</p>
+        <p><?php echo $err.$suc; ?></p>
         <div class="sectionHeader">Easy 2 Gallery <?php echo E2G_VERSION; ?></div>
         <div class="sectionBody">
             <div class="tab-pane" id="easy2Pane">

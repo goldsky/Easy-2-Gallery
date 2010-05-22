@@ -1,0 +1,13 @@
+.starbg {
+    position: absolute;
+    display: block;
+    left: 6px;
+    bottom: 18px;
+    color: red;
+    height: 2em;
+    text-align: center;
+    background: url('starbg.png') repeat;
+}
+div.rating-cancel,div.star-rating {
+    margin-top: 3px;
+}

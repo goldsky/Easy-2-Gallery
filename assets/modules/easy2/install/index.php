@@ -260,7 +260,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // SAVE DIR
     if (empty($e2g)) {
-        require MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php';
+        require MODX_BASE_PATH.'assets/modules/easy2/includes/configs/config.easy2gallery.php';
     }
 
     $e2g['dir'] = $_SESSION['easy2dir'];
@@ -270,7 +270,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
     $c .= ");\r\n?>";
 
-    $f = fopen( MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php', 'w' );
+    $f = fopen( MODX_BASE_PATH.'assets/modules/easy2/includes/configs/config.easy2gallery.php', 'w' );
     fwrite($f, $c);
     fclose($f);
 
@@ -348,12 +348,12 @@ function chref ($href) {
 function restore ($path, $pid) {
     global $modx;
 
-    if (file_exists( E2G_MODULE_PATH . 'config.easy2gallery.php' )) {
-        require E2G_MODULE_PATH . 'config.easy2gallery.php';
+    if (file_exists( E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php' )) {
+        require E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
     } else {
-        require E2G_MODULE_PATH . 'default.config.easy2gallery.php';
+        require E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
     }
-//    if (!include MODX_BASE_PATH.'assets/modules/easy2/config.easy2gallery.php') die('355 config.easy2gallery.php IS missing.');
+
     $time_start = microtime(TRUE);
     /*
      * STORE variable arrays for synchronizing comparison

@@ -1,0 +1,22 @@
+#gallery_wrap {
+	position: relative;
+	width: 469px;
+	height: 452px;
+	padding: 84px 70px 177px 61px;
+	background: url(polaroid_back.png) top left no-repeat;
+}
+.panel {
+	margin-bottom: 10px;
+}
+div.panel-title {
+	border-bottom-color: white;
+}
+#polaroid_overlay {
+	background: url(polaroid_front.png) top left no-repeat;
+	position: absolute;
+	top: 82px;
+	left: 59px;
+	width: 474px;
+	height: 458px;
+	z-index: 2000;
+}

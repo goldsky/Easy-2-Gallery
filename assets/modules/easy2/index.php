@@ -13,7 +13,9 @@ header('Content-Type: text/html; charset=UTF-8');
 iconv_set_encoding("internal_encoding", "UTF-8");
 
 // Easy 2 Gallery version
-define('E2G_VERSION', '1.4.0 - Beta 4');
+if (!defined(E2G_VERSION) || E2G_VERSION !== '1.4.0 - RC 1') {
+    define('E2G_VERSION', '1.4.0 - RC 1');
+}
 
 // Easy 2 Gallery module path
 if(!defined('E2G_MODULE_PATH')) {
@@ -27,10 +29,10 @@ if(!defined('E2G_MODULE_URL')) {
 require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
 // LANGUAGE
-if (file_exists( E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php')) {
-    include E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.inc.php';
+if (file_exists( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.inc.php')) {
+    require_once E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.inc.php';
 } else {
-    include E2G_MODULE_PATH . 'langs/english.inc.php';
+    require_once E2G_MODULE_PATH . 'includes/langs/english.inc.php';
 }
 
 mysql_select_db(str_replace('`', '', $GLOBALS['dbase']));
@@ -41,16 +43,16 @@ if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
 if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
 // CONFIGURATIONS
-if (file_exists( E2G_MODULE_PATH . 'config.easy2gallery.php' )) {
-    require_once E2G_MODULE_PATH . 'config.easy2gallery.php';
+if (file_exists( E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php' )) {
+    require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
     foreach ($e2g as $ck => $cv) {
         $keyconf[$ck] = $ck;
         $valconf[$ck] = $cv;
     }
 }
 // the default config will replace blank value of config's.
-if (file_exists( E2G_MODULE_PATH . 'default.config.easy2gallery.php' )) {
-    require_once E2G_MODULE_PATH . 'default.config.easy2gallery.php';
+if (file_exists( E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php' )) {
+    require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
     foreach ($def_e2g as $dk => $dv) {
         if ($valconf[$dk]=='') {
             $e2g[$dk] = $dv;
@@ -73,22 +75,25 @@ if (!is_dir( MODX_BASE_PATH . $e2g['dir'])) {
     }
 }
 
+// ENCODING
+$e2gmod_cfg['e2g_encode'] = $e2g['e2g_encode'];
+
 // SET UP THE PATH
-$e2gmod_cl['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
-$e2gmod_cl['path'] = ( isset($path) ? $path : '' );
-$e2gmod_cl['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
+$e2gmod_cfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
+$e2gmod_cfg['path'] = ( isset($path) ? $path : '' );
+$e2gmod_cfg['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
 
 // SYSTEM VARS
-$e2gmod_cl['debug'] = ( isset($debug) ? $debug : 0 );
-$e2gmod_cl['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
-$e2gmod_cl['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
-$e2gmod_cl['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
-$e2gmod_cl['index'] = ( isset($index) ? $index : 'index.php?a='.$e2gmod_cl['_a'].'&id='.$e2gmod_cl['_i'] );
+$e2gmod_cfg['e2g_debug'] = $e2g['e2g_debug'];
+$e2gmod_cfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
+$e2gmod_cfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
+$e2gmod_cfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
+$e2gmod_cfg['index'] = ( isset($index) ? $index : 'index.php?a='.$e2gmod_cfg['_a'].'&id='.$e2gmod_cfg['_i'] );
 
 // ERROR REPORTING
-if ($e2gmod_cl['debug'] == 1) {
-    error_reporting(E_ALL);
-    $old_error_handler = set_error_handler("error_handler");
+if ($e2gmod_cfg['e2g_debug'] == 1) {
+//    error_reporting(E_ALL);
+//    $old_error_handler = set_error_handler("error_handler");
 }
 /*
  * To handle error
@@ -113,10 +118,10 @@ if (is_dir( E2G_MODULE_PATH . 'install')) {
 */
 
 if(!class_exists('e2g_mod')) {
-    include_once(E2G_MODULE_PATH . "classes/e2g.module.class.php");
+    include_once(E2G_MODULE_PATH . "includes/classes/e2g.module.class.php");
 }
 if (class_exists('e2g_mod')) {
-    $e2g_mod = new e2g_mod($e2gmod_cl, $e2g, $lng);
+    $e2g_mod = new e2g_mod($e2gmod_cfg, $e2g, $lng);
     $output = $e2g_mod;
 } else {
     $output = "<h3>error: e2g_mod class not found</h3>";

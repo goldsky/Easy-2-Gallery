@@ -14,7 +14,7 @@ if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
     die('<h2 style="color:red">ID Error!</h2>');
 }
 
-include './config.easy2gallery.php';
+include E2G_SNIPPET_PATH . 'includes/configs/config.easy2gallery.php';
 if ($e2g['ecm'] == 0) {
     die('<h2 style="color:red">Comments disabled!</h2>');
 }

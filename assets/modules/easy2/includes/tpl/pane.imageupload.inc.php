@@ -6,7 +6,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
     <script type="text/javascript">
         tpResources.addTabPage(document.getElementById("addForm"));
     </script>
-    <p><?php echo $lng['upload_dir'].': <b>'.utf8_encode($gdir).'</b>'; ?></p>
+    <p><?php echo $lng['upload_dir'].': <b>'.$gdir.'</b>'; ?></p>
     <p><?php echo $lng['valid_extensions']; ?> .jpeg, .jpg, .gif, .png</p>
     <div class="tab-pane" id="tabImageUploadPane">
         <script type="text/javascript">

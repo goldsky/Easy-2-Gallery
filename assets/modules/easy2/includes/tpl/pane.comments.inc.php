@@ -50,12 +50,12 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     <td valign="top" nowrap="nowrap">
                                         <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
-                                            <img src="<?php echo E2G_MODULE_URL ; ?>icons/comments.png" width="16" height="16"
+                                            <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"
                                                  alt="<?php echo $lng['comments']; ?>" title="<?php echo $lng['comments']; ?>" border=0>
                                         </a>
                                         <a href="<?php echo $index; ?>&page=edit_file&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
-                                            <img src="<?php echo E2G_MODULE_URL; ?>icons/picture_edit.png" width="16" height="16"
+                                            <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/picture_edit.png" width="16" height="16"
                                                  alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border=0>
                                         </a>
                                     </td>
@@ -80,7 +80,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                                         .'&u='.$l['author']
                                                         .'&e='.$l['email']
                                                    ; ?>" onclick="return ignoreIPAddress();">
-                                            <img src="<?php echo E2G_MODULE_URL ; ?>icons/delete.png" border="0"
+                                            <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/delete.png" border="0"
                                                  alt="<?php echo $lng['ignore']; ?>" title="<?php echo $lng['ignore']; ?>" />
                                         </a>
                                                 <?php } ?>
@@ -138,7 +138,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                         .'&ip='.$ign['ign_ip_address']
                                    ; ?>"
                                onclick="return unignoreIPAddress();">
-                                <img src="<?php echo E2G_MODULE_URL ; ?>icons/icon_accept.gif" border="0"
+                                <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/icon_accept.gif" border="0"
                                      alt="<?php echo $lng['unignore']; ?>" title="<?php echo $lng['unignore']; ?>" />
                             </a>
                         </td>
@@ -195,12 +195,12 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     <td valign="top" nowrap="nowrap">
                                         <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
-                                            <img src="<?php echo E2G_MODULE_URL ; ?>icons/comments.png" width="16" height="16"
+                                            <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"
                                                  alt="<?php echo $lng['comments']; ?>" title="<?php echo $lng['comments']; ?>" border=0>
                                         </a>
                                         <a href="<?php echo $index; ?>&page=edit_file&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
-                                            <img src="<?php echo E2G_MODULE_URL; ?>icons/picture_edit.png" width="16" height="16"
+                                            <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/picture_edit.png" width="16" height="16"
                                                  alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border=0>
                                         </a>
                                     </td>
@@ -224,7 +224,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                                         .'&ip='.$l['ip_address']
                                                    ; ?>"
                                            onclick="return unignoreIPAddress();">
-                                            <img src="<?php echo E2G_MODULE_URL ; ?>icons/icon_accept.gif" border="0"
+                                            <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/icon_accept.gif" border="0"
                                                  alt="<?php echo $lng['unignore']; ?>" title="<?php echo $lng['unignore']; ?>" />
                                         </a>
                                                 <?php } ?>
