@@ -273,7 +273,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     $e2g['dir'] = $_SESSION['easy2dir'];
     $c = "<?php\r\n\$e2g = array (\r\n";
     foreach($e2g as $k => $v) {
-        $c .= "'$k' => ".(is_numeric($v)?$v:"'$v'").",\r\n";
+        $c .= "        '$k' => ".(is_numeric($v)?$v:"'".addslashes($v)."'").",\r\n";
     }
     $c .= ");\r\n?>";
 
