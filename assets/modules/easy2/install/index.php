@@ -70,7 +70,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         if (mysql_query('CREATE TABLE IF NOT EXISTS '.$GLOBALS['table_prefix'].'easy2_dirs (
                         parent_id int(10) unsigned NOT NULL default \'0\',
                         cat_id int(10) unsigned NOT NULL auto_increment,
-                        cat_left int(10) unsigned NOT NULL default \'0\',
+                        cat_left int(10) NOT NULL default \'0\',
                         cat_right int(10) unsigned NOT NULL default \'0\',
                         cat_level int(10) unsigned NOT NULL default \'0\',
                         cat_name varchar(255) NOT NULL default \'\',
@@ -107,6 +107,13 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // last_modified
     if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_alias')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_alias varchar(255) default NULL AFTER cat_name');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_alias '.$lngi['created'];
+    }
+
+    // change field for 1.4.0 RC 1
+    // last_modified
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left')===FALSE) {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs CHANGE cat_left cat_left INT(10) default \'0\' NOT NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_alias '.$lngi['created'];
     }
 
