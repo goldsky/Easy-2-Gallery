@@ -1,7 +1,7 @@
 <?php
 
-$gid = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? (int) $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
-$show_group = isset($show_group) ? $show_group : 'Gallery'.$gid;
+$gid = $this->e2gsnip_cfg['gid'];
+$show_group = $this->e2gsnip_cfg['show_group'];
 
 $glibs = array(
         // first array will be the VALUE for &glib parameter of snippet call

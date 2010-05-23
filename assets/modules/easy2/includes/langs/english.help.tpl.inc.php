@@ -87,7 +87,7 @@ Default: assets/modules/easy2/templates/comments_row.htm
 <strong>[+easy2:last_modified+]</strong> - comment last modified date</p>
 <h3> Comments (page) </h3>
 <p>
-<strong>[+easy2:title+]</strong> - pagetitle (from langs/*.comments.php)<br />
+<strong>[+easy2:title+]</strong> - pagetitle (from includes/langs/*.comments.php)<br />
 <strong>[+easy2:body+]</strong> - comments<br />
 <strong>[+easy2:pages+]</strong> - pagination links<br />
-+ language specific settings langs/*.comments.php</p>
++ language specific settings includes/langs/*.comments.php</p>

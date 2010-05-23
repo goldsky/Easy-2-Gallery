@@ -137,6 +137,9 @@ class e2g_snip {
                 // get path from the $gid
                 $path = $this->_get_path($single_gid);
 
+                /*
+                 * limiting the CRUMBS paths.
+                 */
                 if ( ($static_gid !=1) && !empty($path) ) {
                     $static_path = $this->_get_path($static_gid);
                     if (!$crumbs_showPrevious) {
@@ -242,7 +245,7 @@ class e2g_snip {
 
                     // if path is more than one
                     if (count($path1) > 1) {
-                        unset($path1[1]); // unset the Easy 2 base path only
+                        unset($path1[1]); // unset the 'Easy 2' root path only
                         $path1 = implode('/', array_values($path1)).'/';
                     }
                     // if path is not many
@@ -283,7 +286,6 @@ class e2g_snip {
              * goldsky -- manage the pagination limit between dirs and files
              * (join the pagination AND the table grid).
             */
-
             $modulus_dir_count = $dir_count%$limit;
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
@@ -575,7 +577,6 @@ class e2g_snip {
                  * $resize_type == 'shrink'
                  * shrink to default dimensions
                 */
-
                 if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0], 2);
                 else $w = round($i[0] * $h / $i[1], 2);
 
@@ -614,7 +615,6 @@ class e2g_snip {
             /*
              * make directory of thumbnails
             */
-
             $dirs = explode('/', $path);
             $npath = $gdir.'_thumbnails';
             for ($c = 0; $c < count($dirs) - 1; $c++) {
@@ -1006,6 +1006,9 @@ class e2g_snip {
             }
         }
 
+        /*
+         * Storing the slideshow size ratio
+         */
         if ($ss_allowedratio != 'none') {
             // create min-max slideshow width/height ratio
             $ss_exratio = explode('-', $ss_allowedratio);
@@ -1019,7 +1022,9 @@ class e2g_snip {
         */
         $count = count($_ssfile['src']);
 
-        // added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
+        /*
+         * added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
+         */
         if ( isset($_GET['fid']) && isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
             $modx->sendRedirect($modx->makeUrl($landingpage).'&fid='.$_GET['fid'].'&lp='.$landingpage);
         }
@@ -1042,8 +1047,8 @@ class e2g_snip {
                 } else {
                     $path = '';
                 }
-//                $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
-                $l['src'] = $gdir.$path.$fetch['filename'];
+                $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
+//                $l['src'] = $gdir.$path.$fetch['filename'];
                 $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $l['name'] = $fetch['name'];
                 $l['description'] = $fetch['description'];
@@ -1219,8 +1224,8 @@ class e2g_snip {
                 } else {
                     return 'Plugin file '.$pluginindex.' does not exist.';
                 }
-            } elseif (file_exists(E2G_SNIPPET_PATH.'includes/plugins/'.$plugin.'/'.$plugin.'.php')) {
-                include E2G_SNIPPET_PATH.'includes/plugins/'.$plugin.'/'.$plugin.'.php';
+            } elseif (file_exists(E2G_SNIPPET_PATH.'plugins/'.$plugin.'/'.$plugin.'.php')) {
+                include E2G_SNIPPET_PATH.'plugins/'.$plugin.'/'.$plugin.'.php';
                 /*
                  * the result returns as a STRING
                  */

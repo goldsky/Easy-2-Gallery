@@ -148,7 +148,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['glib']; ?>:</b></td>
                         <td><select name="glib">
-                                <?php require_once (E2G_MODULE_PATH.'includes/libs.config.easy2gallery.php');
+                                <?php require_once (E2G_MODULE_PATH.'includes/configs/libs.config.easy2gallery.php');
                                 foreach ($glibs as $k => $v) {
                                     echo '<option value="'.$k.'"'.(($e2g['glib']==$k)?' selected="selected"':'').'>'.$v['alias'].'</option>';
                                 }

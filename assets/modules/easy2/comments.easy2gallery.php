@@ -14,7 +14,7 @@ if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
     die('<h2 style="color:red">ID Error!</h2>');
 }
 
-include E2G_SNIPPET_PATH . 'includes/configs/config.easy2gallery.php';
+require_once 'includes/configs/config.easy2gallery.php';
 if ($e2g['ecm'] == 0) {
     die('<h2 style="color:red">Comments disabled!</h2>');
 }
@@ -29,7 +29,7 @@ startCMSSession();
 mysql_connect($database_server, $database_user, $database_password)
         or die('<h2 style="color:red">MySQL connect error!</h2>');
 mysql_select_db(str_replace('`', '', $dbase));
-@mysql_query("{$database_connection_method} {$database_connection_charset}"); 
+@mysql_query("{$database_connection_method} {$database_connection_charset}");
 
 
 $id = (int) $_GET['id'];
@@ -37,10 +37,10 @@ $id = (int) $_GET['id'];
 $res = mysql_query('SELECT * FROM '.$table_prefix."system_settings");
 while ($row = mysql_fetch_assoc($res)) $settings[$row['setting_name']] = $row['setting_value'];
 
-if (file_exists('./langs/'.$settings['manager_language'].'.comments.php')) {
-    include './langs/'.$settings['manager_language'].'.comments.php';
+if (file_exists('includes/langs/'.$settings['manager_language'].'.comments.php')) {
+    include 'includes/langs/'.$settings['manager_language'].'.comments.php';
 } else {
-    include './langs/english.comments.php';
+    include 'includes/langs/english.comments.php';
 }
 
 $_P['charset']=$settings['modx_charset'];

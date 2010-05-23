@@ -13,7 +13,7 @@ header('Content-Type: text/html; charset=UTF-8');
 iconv_set_encoding("internal_encoding", "UTF-8");
 
 // Easy 2 Gallery version
-if (!defined(E2G_VERSION) || E2G_VERSION !== '1.4.0 - RC 1') {
+if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.0 - RC 1') {
     define('E2G_VERSION', '1.4.0 - RC 1');
 }
 
@@ -83,11 +83,20 @@ $e2gmod_cfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
 $e2gmod_cfg['path'] = ( isset($path) ? $path : '' );
 $e2gmod_cfg['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
 
-// SYSTEM VARS
+/*
+ * SYSTEM VARS
+ */
+// Easy 2 Gallery's debug parameter
 $e2gmod_cfg['e2g_debug'] = $e2g['e2g_debug'];
+// override MODx's debug variable
+$debug = 0;
+// MODx's manager theme
 $e2gmod_cfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
+// MODx's action ID
 $e2gmod_cfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
+// MODx's module ID
 $e2gmod_cfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
+// module's href
 $e2gmod_cfg['index'] = ( isset($index) ? $index : 'index.php?a='.$e2gmod_cfg['_a'].'&id='.$e2gmod_cfg['_i'] );
 
 // ERROR REPORTING

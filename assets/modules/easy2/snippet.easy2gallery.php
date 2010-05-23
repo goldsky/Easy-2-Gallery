@@ -224,7 +224,7 @@ $e2gsnip_cfg['pluginindex'] = isset($pluginindex) ? $pluginindex : null;
  * EXECUTE SNIPPET
 */
 if(!class_exists('e2g_snip')) {
-    include_once E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
+    include E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
 }
 if (class_exists('e2g_snip')) {
     $e2g = new e2g_snip($e2gsnip_cfg);
