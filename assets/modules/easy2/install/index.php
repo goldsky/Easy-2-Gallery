@@ -1,9 +1,9 @@
 <?php
 // SYSTEM VARS
-$debug = 0;
-$_t = $modx->config['manager_theme'];
-$_a = (int) $_GET['a'];
-$_i = (int) $_GET['id'];
+$debug = 0;                             // MODx's debug variable
+$_t = $modx->config['manager_theme'];   // MODx's manager theme
+$_a = (int) $_GET['a'];                 // MODx's action ID
+$_i = (int) $_GET['id'];                // MODx's module ID
 $index = 'index.php?a='.$_a.'&id='.$_i;
 
 if (file_exists('../assets/modules/easy2/install/langs/'.$modx->config['manager_language'].'.inc.php')) {
@@ -112,9 +112,11 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // change field for 1.4.0 RC 1
     // cat_left
-    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left')===FALSE) {
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left')!==FALSE
+            && check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left', 'Type')!= 'int(10)'
+            ) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs CHANGE cat_left cat_left INT(10) default \'0\' NOT NULL');
-        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_left '.$lngi['created'];
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_left '.$lngi['upgraded'];
     }
 
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
@@ -291,7 +293,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 <table cellspacing="0" cellpadding="0">
 <tr>
 <td width="50"><b>'.$lngi['path'].':</b></td>
-<td><input name="path" type="text" style="width:100%" value="assets/gallery/"></td>
+<td><input name="path" type="text" style="width:100%" value="'.$e2g['dir'].'"></td>
 </tr>
 </table>
 '.$lngi['comment1'].'
@@ -527,7 +529,7 @@ function delete_all ($path) {
  * goldsky -- use this for debuging with: die(is_validfile($filename, 1));
  *
 */
-function is_validfile ( $filename, $debug=0 ) {
+function is_validfile ( $filename, $e2g_debug=0 ) {
     $f = basename($filename);
     if (is_validfolder($filename)) {
         if ($debug==1) {
@@ -567,7 +569,7 @@ function is_validfile ( $filename, $debug=0 ) {
 /*
  * goldsky -- use this for debuging with: die(is_validfolder($foldername, 1));
 */
-function is_validfolder($foldername, $debug=0) {
+function is_validfolder($foldername, $e2g_debug=0) {
     $openfolder = @opendir($foldername);
     if (!$openfolder) {
         if ($debug==1) return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
@@ -713,12 +715,15 @@ function restore_all ($path, $pid) {
 }
 
 // goldsky -- function to do the database upgrading.
-function check_field($table,$checkingfield) {
-    $res = mysql_query('DESCRIBE '.$table);
-    while($row = mysql_fetch_array($res)) {
-        $field[$row[0]] = $row[0];
+function check_field($table,$checkingfield,$data=null) {
+    global $modx;
+
+    $metadata = $modx->db->getTableMetaData($table);
+    if (!$data){
+        if ($metadata[$checkingfield]) return TRUE;
+    } elseif ($data) {
+        return $metadata[$checkingfield][$data];
     }
-    if ($field[$checkingfield]) return TRUE;
     else return FALSE;
 }
 ?>
