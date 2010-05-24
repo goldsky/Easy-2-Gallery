@@ -8,8 +8,8 @@
 .e2g td {vertical-align:bottom;text-align:center;padding:7px;}
 .e2g a {color:#808080;text-decoration:none;}
 .e2gcom0, .e2gcom1 {font:10px Tahoma;float:right; height:13px; width:13px;}
-.e2gcom0 {background: url(../icons/bg_com0.gif) no-repeat top right;}
-.e2gcom1 {background: url(../icons/bg_com1.gif) no-repeat top right;}
+.e2gcom0 {background: url(icons/bg_com0.gif) no-repeat top right;}
+.e2gcom1 {background: url(icons/bg_com1.gif) no-repeat top right;}
 .e2gcom0 a {color:#808080;text-decoration:none;}
 .e2gcom1 a {color:#FF8040;text-decoration:none;}
 .e2gpnums {font:12px Verdana; color:gray; margin-top:20px;text-align:center;}

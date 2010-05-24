@@ -66,8 +66,10 @@ class e2g_snip {
         $cat_order = $this->e2gsnip_cfg['cat_order'];
         $gpn = $this->e2gsnip_cfg['gpn'];
         $limit = $this->e2gsnip_cfg['limit'];
+        
         $charset = $this->e2gsnip_cfg['charset'];
-        $cat_name_len = $this->e2gsnip_cfg['cat_name_len'];
+        $mbstring = $this->e2gsnip_cfg['mbstring'];
+        $title_len = $this->e2gsnip_cfg['cat_name_len'];
 //        $notables = $this->e2gsnip_cfg['notables']; // deprecated
         $grid = $this->e2gsnip_cfg['grid'];
         $grid_class = $this->e2gsnip_cfg['grid_class'];
@@ -797,9 +799,9 @@ class e2g_snip {
         $gdir = $this->e2gsnip_cfg['gdir'];
         $css = $this->e2gsnip_cfg['css'];
         $glib = $this->e2gsnip_cfg['glib'];
+        $mbstring = $this->e2gsnip_cfg['mbstring'];
         $charset = $this->e2gsnip_cfg['charset'];
         $name_len = $this->e2gsnip_cfg['name_len'];
-        $mbstring = $this->e2gsnip_cfg['mbstring'];
         $w = $this->e2gsnip_cfg['w'];
         $h = $this->e2gsnip_cfg['h'];
         $thq = $this->e2gsnip_cfg['thq'];

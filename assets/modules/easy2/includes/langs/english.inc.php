@@ -2,8 +2,8 @@
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 $paramhelpcontent = (isset($paramhelpcontent) ? $paramhelpcontent : '' );
-if (file_exists( E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.help.params.inc.php')) {
-    $easyhelpfile = file( E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.help.params.inc.php' );
+if (file_exists( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.help.params.inc.php')) {
+    $easyhelpfile = file( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.help.params.inc.php' );
 } else {
     $easyhelpfile = file_get_contents( E2G_MODULE_PATH . 'includes/langs/english.help.params.inc.php' );
 }
@@ -14,8 +14,8 @@ for ($i = 3; $i < $numLines; $i++) {
 }
 
 $tplhelpcontent = (isset($tplhelpcontent) ? $tplhelpcontent : '' );
-if (file_exists( E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.help.tpl.inc.php')) {
-    $tplhelpfile = file( E2G_MODULE_PATH . 'langs/'.$modx->config['manager_language'].'.help.tpl.inc.php' );
+if (file_exists( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.help.tpl.inc.php')) {
+    $tplhelpfile = file( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.help.tpl.inc.php' );
 } else {
     $tplhelpfile = file_get_contents( E2G_MODULE_PATH . 'includes/langs/english.help.tpl.inc.php' );
 }
@@ -125,7 +125,10 @@ $lng = array (
         'tofolder' => 'to folder',
         'copy' => 'Copy',
         'move' => 'Move',
+    
         'download' => 'Download',
+        'zip_select_none' => 'Please select any directory or file to be downloaded',
+
         'gotofolder' => 'Go to folder',
         'go' => 'Go',
         'refresh' => 'Update',

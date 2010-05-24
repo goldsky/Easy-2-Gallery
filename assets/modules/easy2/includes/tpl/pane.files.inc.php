@@ -6,5 +6,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
     <script type="text/javascript">
         tpResources.addTabPage(document.getElementById('imManager'));
     </script>
-    <?php echo $content; ?>
+    <?php 
+    if ($_GET['page']=='create_dir') include_once E2G_MODULE_PATH . 'includes/tpl/page.create_dir.inc.php';
+    elseif ($_GET['page']=='edit_dir') include_once E2G_MODULE_PATH . 'includes/tpl/page.edit_dir.inc.php';
+    elseif ($_GET['page']=='edit_file') include_once E2G_MODULE_PATH . 'includes/tpl/page.edit_file.inc.php';
+    elseif ($_GET['page']=='comments') include_once E2G_MODULE_PATH . 'includes/tpl/page.comments.inc.php';
+    // default page
+    else include_once E2G_MODULE_PATH . 'includes/tpl/page.default.inc.php';
+    ?>
+    <?php //echo $content; ?>
 </div>

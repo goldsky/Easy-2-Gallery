@@ -295,31 +295,29 @@ class e2g_mod {
 
 
 
-
             // DOWNLOAD FILES / FOLDERS
             case 'download_checked':
-                $_SESSION['easy2suc'][] = 'DOWNLOAD ALL, DUDE!';
-                include_once E2G_MODULE_PATH . 'includes/classes/pclzip.lib.php';
-                $zipname = $this->_get_dir_info($_GET['pid'], 'cat_name');
-                $archive = new PclZip(MODX_BASE_PATH.$gdir.str_replace(' ','',$zipname).'.zip');
-
                 $zipcontent = '';
-                if (!function_exists('dl_pclzip_cb_post_add')) {
-                    function dl_pclzip_cb_post_add($p_event, &$p_header) {
-                        if ($p_header['status'] == 'ok') {
-                            
-                        }
+                $_zipcontent = array();
+                if (!empty($_POST['dir']) || !empty($_POST['im'])) {
+                    foreach ($_POST['dir'] as $k => $v) {
+                        $_zipcontents[] = realpath(MODX_BASE_PATH.$v);
+                    }
+                    foreach ($_POST['im'] as $k => $v) {
+                        $_zipcontents[] = realpath(MODX_BASE_PATH.$v);
+                    }
+//                    $zipcontent = implode(',', $_zipcontent);
+                    $dirName = MODX_BASE_PATH.$gdir;
+                    $zipName = $dirName.$this->_get_dir_info($_GET['pid'], 'cat_name').'.zip';
+
+                    foreach ($_zipcontents as $_zipcontent) {
+                        $this->_create_zip($zipName, $_zipcontent);
                     }
                 }
-                $v_list = $archive->create('../file.txt',
-                        PCLZIP_CB_POST_ADD, "dl_pclzip_cb_post_add"
-                        );
-
-//die(__LINE__.' '.var_dump($v_list));
-                if ($v_list == 0) {
-                    $_SESSION['easy2err'][] = __LINE__.' : '.$archive->errorInfo(true);
+                else {
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['zip_select_none'];
                 }
-
+                
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
@@ -385,7 +383,7 @@ class e2g_mod {
                                 if (is_numeric($k)) {
                                     $ids = $tree->replace((int) $k, (int) $_POST['newparent']);
                                     // goldsky -- the same result with this:
-//                                    $ids = $tree->update((int) $k, $this->_basename_safe($v), (int) $_POST['newparent']);
+                                    // $ids = $tree->update((int) $k, $this->_basename_safe($v), (int) $_POST['newparent']);
                                     if (!$ids) {
                                         if (!empty($res['e'])) $_SESSION['easy2err'] = $res['e'];
                                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_move_err'].'
@@ -397,7 +395,7 @@ class e2g_mod {
                                         continue;
 //                                        exit();
                                     }
-//                                    if ($e2g_debug==1)
+                                    if ($e2g_debug==1)
                                         if (!empty($tree->reports)) {
                                             $_SESSION['easy2suc'][] = __LINE__ .' : '.__METHOD__;
                                             foreach ($tree->reports as $tree_report) $_SESSION['easy2suc'][] = __LINE__.' : '. $tree_report;
@@ -483,6 +481,7 @@ class e2g_mod {
                 // MOVING IMAGES
                 if (!empty($_POST['im']) && !empty($_POST['newparent'])) {
                     foreach ($_POST['im'] as $k => $v) {
+                        // update the database
                         if (is_numeric($k)) {
                             $files = array();
                             $files_res = mysql_query('SELECT id, dir_id FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int) $k);
@@ -505,8 +504,9 @@ class e2g_mod {
                                 $res['fdb'][1]++;
                             }
                         }
+                        // move the file
                         if (!empty($v)) {
-
+                            $v = str_replace('../', '', $this->_e2g_decode($v));
                             $oldpath['origin'] = str_replace('../', '', $v );
                             $oldpath['basename'] = $this->_basename_safe($v);
                             $oldpath['decoded'] = str_replace('../', '', $this->_e2g_decode($v) );
@@ -521,7 +521,6 @@ class e2g_mod {
                             $newpath['decoded'] = $this->_e2g_decode($newpath['origin']);
                             $newpath['chmod'] = chmod( MODX_BASE_PATH . $newpath['decoded'] , 0755 );
 
-                            $v = str_replace('../', '', $this->_e2g_decode($v));
                             $movefile =  @rename('../'.$oldpath['decoded'], '../' . $newpath['decoded'] ) ;
                             if ($movefile) {
                                 $res['ffp'][0]++;
@@ -532,7 +531,6 @@ class e2g_mod {
                             $oldpath = $newpath = array();
                             unset($oldpath,$newpath);
                         }
-                        $out .= $k .'=>'. $v.'<br>';
                     }
                 } // if (!empty($_POST['im']))
                 
@@ -792,7 +790,7 @@ class e2g_mod {
         /*
          * RESET MODULE INTERFACE CONTENT
         */
-        $content = '';
+//        $content = '';
 
         /*
          * PAGE ACTION
@@ -843,32 +841,34 @@ class e2g_mod {
                         exit();
                     }
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
-                $content .= '
-<p>'.$lng['create_dir'].'&nbsp; &nbsp; &nbsp;
-    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
-</p>
-<form name="list" action="" method="post">
-    <table cellspacing="0" cellpadding="2" class="aForm" >
-        <tr>
-            <td><b>'.$lng['create_dir'].' :</b></td>
-            <td><input name="name" type="text" size="30"></td>
-        </tr>
-        <tr>
-            <td><b>'.$lng['enter_new_alias'].' :</b></td>
-            <td><input name="alias" type="text" size="30"></td>
-        </tr>
-        <tr>
-            <td valign="top"><b>'.$lng['description'].' :</b></td>
-            <td><textarea name="description" style="width:500px"></textarea></td>
-        </tr>
-        <tr><td></td>
-            <td><input type="submit" value="'.$lng['save'].'">
-                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
-            </td>
-        </tr>
-    </table>
-</form>
-';
+                //the page content is rendered in ../tpl/page.create_dir.inc.php
+
+//                $content .= '
+//<p>'.$lng['create_dir'].'&nbsp; &nbsp; &nbsp;
+//    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+//</p>
+//<form name="list" action="" method="post">
+//    <table cellspacing="0" cellpadding="2" class="aForm" >
+//        <tr>
+//            <td><b>'.$lng['create_dir'].' :</b></td>
+//            <td><input name="name" type="text" size="30"></td>
+//        </tr>
+//        <tr>
+//            <td><b>'.$lng['enter_new_alias'].' :</b></td>
+//            <td><input name="alias" type="text" size="30"></td>
+//        </tr>
+//        <tr>
+//            <td valign="top"><b>'.$lng['description'].' :</b></td>
+//            <td><textarea name="description" style="width:500px"></textarea></td>
+//        </tr>
+//        <tr><td></td>
+//            <td><input type="submit" value="'.$lng['save'].'">
+//                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+//            </td>
+//        </tr>
+//    </table>
+//</form>
+//';
                 break;
             // EDIT DIRECTORY
             case 'edit_dir' :
@@ -921,41 +921,42 @@ class e2g_mod {
                     header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
+                //the page content is rendered in ../tpl/page.edit_dir.inc.php
 
-                $content .= '
-<p>'.$lng['editing'].' '.$lng['dir'].' <b>'.$row['cat_name'].'</b>
-    &nbsp; &nbsp; &nbsp;
-    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
-</p>
-<form name="list" action="" method="post">
-    <table cellspacing="0" cellpadding="2" class="aForm" >
-        ';
-                // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
-                if($row['cat_id']!='1') {
-                    $content .= '
-        <tr>
-            <td><b>'.$lng['enter_new_dirname'].' :</b></td>
-            <td><input name="newdirname" type="text" value="'.$row['cat_name'].'" size="30"></td>
-        </tr>
-        ';
-                }
-                $content .= '
-        <tr>
-            <td><b>'.$lng['enter_new_alias'].' :</b></td>
-            <td><input name="alias" type="text" value="'.$row['cat_alias'].'" size="30"></td>
-        </tr>
-        <tr>
-            <td valign="top"><b>'.$lng['description'].' :</b></td>
-            <td><textarea name="description" style="width:500px">'.$row['cat_description'].'</textarea></td>
-        </tr>
-        <tr><td></td>
-            <td><input type="submit" value="'.$lng['save'].'">
-                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
-            </td>
-        </tr>
-    </table>
-</form>
-';
+//                $content .= '
+//<p>'.$lng['editing'].' '.$lng['dir'].' <b>'.$row['cat_name'].'</b>
+//    &nbsp; &nbsp; &nbsp;
+//    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+//</p>
+//<form name="list" action="" method="post">
+//    <table cellspacing="0" cellpadding="2" class="aForm" >
+//        ';
+//                // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
+//                if($row['cat_id']!='1') {
+//                    $content .= '
+//        <tr>
+//            <td><b>'.$lng['enter_new_dirname'].' :</b></td>
+//            <td><input name="newdirname" type="text" value="'.$row['cat_name'].'" size="30"></td>
+//        </tr>
+//        ';
+//                }
+//                $content .= '
+//        <tr>
+//            <td><b>'.$lng['enter_new_alias'].' :</b></td>
+//            <td><input name="alias" type="text" value="'.$row['cat_alias'].'" size="30"></td>
+//        </tr>
+//        <tr>
+//            <td valign="top"><b>'.$lng['description'].' :</b></td>
+//            <td><textarea name="description" style="width:500px">'.$row['cat_description'].'</textarea></td>
+//        </tr>
+//        <tr><td></td>
+//            <td><input type="submit" value="'.$lng['save'].'">
+//                <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+//            </td>
+//        </tr>
+//    </table>
+//</form>
+//';
                 break;
             case 'edit_file':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
@@ -1008,48 +1009,49 @@ class e2g_mod {
                     }
                     exit();
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
+                //the page content is rendered in ../tpl/page.edit_file.inc.php
 
-                $content .= '
-<p>'.$lng['editing'].' '.$lng['file2'].' <b>'.$row['filename'].' <a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$lng['uim_preview'].'</a></b> ('.$row['comments'].' comments)
-    &nbsp; &nbsp; &nbsp;
-    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
-</p>
-
-<table cellspacing="0" cellpadding="0" width="100%">
-    <tr>
-        <td valign="top">
-            <form name="list" action="" method="post">
-                <table cellspacing="0" cellpadding="2" class="aForm">
-                    <tr>
-                        <td nowrap="nowrap"><b>'.ucfirst($lng['renamefile']).' :</b></td>
-                        <td><input name="newfilename" type="text" value="'.$filename.'" size="30" style="text-align:right;"> '.$ext.'</td>
-                    </tr>
-                    <tr>
-                        <td><b>'.$lng['name'].' :</b></td>
-                        <td><input name="name" type="text" value="'.$row['name'].'" size="30"></td>
-                    </tr>
-                    <tr>
-                        <td valign="top"><b>'.$lng['description'].' :</b></td>
-                        <td>
-                            <textarea name="description" style="width:500px">'.$row['description'].'</textarea>
-                        </td>
-                    </tr>
-                    <tr><td></td>
-                        <td><input type="submit" value="'.$lng['save'].'">
-                            <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
-                        </td>
-                    </tr>
-                </table>
-            </form>
-        </td>
-        <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
-            </table>
-        </th>
-    </tr>
-</table>
-';
+//                $content .= '
+//<p>'.$lng['editing'].' '.$lng['file2'].' <b>'.$row['filename'].' <a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$lng['uim_preview'].'</a></b> ('.$row['comments'].' comments)
+//    &nbsp; &nbsp; &nbsp;
+//    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+//</p>
+//
+//<table cellspacing="0" cellpadding="0" width="100%">
+//    <tr>
+//        <td valign="top">
+//            <form name="list" action="" method="post">
+//                <table cellspacing="0" cellpadding="2" class="aForm">
+//                    <tr>
+//                        <td nowrap="nowrap"><b>'.ucfirst($lng['renamefile']).' :</b></td>
+//                        <td><input name="newfilename" type="text" value="'.$filename.'" size="30" style="text-align:right;"> '.$ext.'</td>
+//                    </tr>
+//                    <tr>
+//                        <td><b>'.$lng['name'].' :</b></td>
+//                        <td><input name="name" type="text" value="'.$row['name'].'" size="30"></td>
+//                    </tr>
+//                    <tr>
+//                        <td valign="top"><b>'.$lng['description'].' :</b></td>
+//                        <td>
+//                            <textarea name="description" style="width:500px">'.$row['description'].'</textarea>
+//                        </td>
+//                    </tr>
+//                    <tr><td></td>
+//                        <td><input type="submit" value="'.$lng['save'].'">
+//                            <input type="button" value="'.$lng['cancel'].'" onclick="javascript:document.location.href=\''.$index.'&pid='.$parent_id.'\'">
+//                        </td>
+//                    </tr>
+//                </table>
+//            </form>
+//        </td>
+//        <th width="205" valign="top">
+//            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
+//                <tr><th class="imPreview" id="pElt"></th></tr>
+//            </table>
+//        </th>
+//    </tr>
+//</table>
+//';
                 break;
             // COMMENTS
             case 'comments':
@@ -1060,64 +1062,66 @@ class e2g_mod {
                 }
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                $content .= '
-<p>'.$lng['comments'].' '.$lng['file2'].': '.$gdir.' <b><a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
-    &nbsp; &nbsp; &nbsp;
-    <img src="' . E2G_MODULE_URL . 'includes/icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
-    <a href="'.$index.'&page=comments&file_id='.$_GET['file_id'].'&pid='.$parent_id.'">'.$lng['refresh'].'</a>
-    &nbsp; &nbsp; &nbsp;
-    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
-</p>
-<table cellspacing="0" cellpadding="0" width="100%">
-    <tr>
-        <td valign="top">
-            <form name="list" action="'.$index.'&act=delete_comments&file_id='.$_GET['file_id'].'" method="post">
-                <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
-                    <tr>
-                        <td width="20"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td align="center"><b>'.$lng['date'].'</b></td>
-                        <td align="center"><b>'.$lng['author'].'</b></td>
-                        <td align="center"><b>'.$lng['useremail'].'</b></td>
-                        <td align="center"><b>'.$lng['ipaddress'].'</b></td>
-                        <td align="center"><b>'.$lng['comments'].'</b></td>
-                    </tr>
-                    ';
-                $res = mysql_query(
-                        'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_comments '
-                        .'WHERE file_id='.(int)$_GET['file_id'].' ORDER BY id DESC'
-                );
-                while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                    $content .= '
-                    <tr'.$cl[$i%2].'>
-                        <td nowrap="nowrap"><input name="comment[]" value="'.$l['id'].'" type="checkbox" style="border:0;padding:0"></td>
-                        <td nowrap="nowrap">'.$l['date_added'].'</td>
-                        <td nowrap="nowrap">'.$l['author'].'</td>
-                        <td nowrap="nowrap"><a href="mailto:'.$l['email'].'">'.$l['email'].'</a></td>
-                        <td nowrap="nowrap">'.$l['ip_address']
-                            .' <a href="'.$index.'&act=ignore_ip&file_id='.$l['file_id'].'&comment_id='.$l['id'].'"
-                               onclick="return ignoreIPAddress();">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
-                                     alt="'.$lng['ignore'].'" title="'.$lng['ignore'].'" />
-                            </a>
-                        </td>
-                        <td valign="top" style="width:100%;">'.htmlspecialchars($l['comment']).'</td>
-                    </tr>
-                 ';
-                    $i++;
-                }
-                $content .= '
-                </table>
-                <input type="submit" value="'.$lng['delete'].'" name="delete" style="font-weight:bold;color:red" />
-            </form>
-        </td>
-        <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
-            </table>
-        </th>
-    </tr>
-</table>
-';
+                //the page content is rendered in ../tpl/page.comments.inc.php
+
+//                $content .= '
+//<p>'.$lng['comments'].' '.$lng['file2'].': '.$gdir.' <b><a href="javascript:imPreview(\''.$gdir.$row['filename'].'\');void(0);">'.$row['filename'].'</a></b> ('.$row['comments'].')
+//    &nbsp; &nbsp; &nbsp;
+//    <img src="' . E2G_MODULE_URL . 'includes/icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle">
+//    <a href="'.$index.'&page=comments&file_id='.$_GET['file_id'].'&pid='.$parent_id.'">'.$lng['refresh'].'</a>
+//    &nbsp; &nbsp; &nbsp;
+//    <a href="'.$index.'&pid='.$parent_id.'">'.$lng['back_to_fmanager'].'</a>
+//</p>
+//<table cellspacing="0" cellpadding="0" width="100%">
+//    <tr>
+//        <td valign="top">
+//            <form name="list" action="'.$index.'&act=delete_comments&file_id='.$_GET['file_id'].'" method="post">
+//                <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
+//                    <tr>
+//                        <td width="20"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
+//                        <td align="center"><b>'.$lng['date'].'</b></td>
+//                        <td align="center"><b>'.$lng['author'].'</b></td>
+//                        <td align="center"><b>'.$lng['useremail'].'</b></td>
+//                        <td align="center"><b>'.$lng['ipaddress'].'</b></td>
+//                        <td align="center"><b>'.$lng['comments'].'</b></td>
+//                    </tr>
+//                    ';
+//                $res = mysql_query(
+//                        'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_comments '
+//                        .'WHERE file_id='.(int)$_GET['file_id'].' ORDER BY id DESC'
+//                );
+//                while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+//                    $content .= '
+//                    <tr'.$cl[$i%2].'>
+//                        <td nowrap="nowrap"><input name="comment[]" value="'.$l['id'].'" type="checkbox" style="border:0;padding:0"></td>
+//                        <td nowrap="nowrap">'.$l['date_added'].'</td>
+//                        <td nowrap="nowrap">'.$l['author'].'</td>
+//                        <td nowrap="nowrap"><a href="mailto:'.$l['email'].'">'.$l['email'].'</a></td>
+//                        <td nowrap="nowrap">'.$l['ip_address']
+//                            .' <a href="'.$index.'&act=ignore_ip&file_id='.$l['file_id'].'&comment_id='.$l['id'].'"
+//                               onclick="return ignoreIPAddress();">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
+//                                     alt="'.$lng['ignore'].'" title="'.$lng['ignore'].'" />
+//                            </a>
+//                        </td>
+//                        <td valign="top" style="width:100%;">'.htmlspecialchars($l['comment']).'</td>
+//                    </tr>
+//                 ';
+//                    $i++;
+//                }
+//                $content .= '
+//                </table>
+//                <input type="submit" value="'.$lng['delete'].'" name="delete" style="font-weight:bold;color:red" />
+//            </form>
+//        </td>
+//        <th width="205" valign="top">
+//            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
+//                <tr><th class="imPreview" id="pElt"></th></tr>
+//            </table>
+//        </th>
+//    </tr>
+//</table>
+//';
                 break;
             case 'openexplorer':
                 if (isset($_POST['newparent'])) $parent_id=$_POST['newparent'];
@@ -1160,160 +1164,161 @@ class e2g_mod {
                         $_SESSION['easy2err'][] = __LINE__.' : '.$q;
                     }
                 }
+                //the page content is rendered in ../tpl/page.default.inc.php
 
-                // Dir list
-                $dirs = @glob('../'.$this->_e2g_decode($gdir).'*', GLOB_ONLYDIR);
-                if(is_array($dirs)) natsort($dirs);
-                $content = '
-<div id="e2g_topmenu">
-    <form name="topmenu" action="" method="post">
-        <ul class="actionButtons">
-            <li id="Button1">
-                <a href="'.$index.'&act=synchro">
-                    <img src="media/style/MODxCarbon/images/icons/refresh.png" /> '.$lng['synchro'].'
-                </a>
-            </li>
-            <li id="Button2">
-                <a href="'.$index.'&act=clean_cache">
-                    <img src="media/style/MODxCarbon/images/icons/trash.png" /> '.$lng['clean_cache'].'
-                </a>
-            </li>
-            <li id="Button3">
-                <a href="'.$index.'&page=create_dir&pid='.$parent_id.'">
-                    <img src="media/style/MODxCarbon/images/icons/folder_add.png" /> '.$lng['create_dir'].'
-                </a>
-            </li>
-            <li id="Button4">
-                <a href="'.$index.'&page=search_all&pid='.$parent_id.'">
-                    <img src="media/style/MODxCarbon/images/icons/preview.png" /> '.$lng['search'].'
-                </a>
-            </li>
-            <li id="Button5">
-                '.$lng['gotofolder'].':
-                <select name="newparent" onchange="submitform(1)">
-                    <--option value="">&nbsp;asdfadf</option-->';
-                $content .= $this->_getfolderoptions(0,1);
-                $content .= '
-                </select>
-            </li>
-        </ul>
-    </form>
-</div>
-<p>'.$lng['path'].': <a href="'.$index.'&page=edit_dir&dir_id='.$parent_id.'&pid='.$this->_get_dir_info($parent_id, 'parent_id').'">
-        <img src="' . E2G_MODULE_URL . 'includes/icons/folder_edit.png" width="16" height="16"
-             alt="'.$lng['edit'].'" title="'.$lng['edit'].'" align="absmiddle" border=0>
-    </a> <b>'.$path.'</b>
-</p>';
-                // Description of the current directory
-                $qdesc = 'SELECT cat_description '
-                        .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                        .'WHERE cat_id = '.$parent_id;
-                $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
-                $content .= '
-<table cellspacing="0" cellpadding="0">
-    <tr>
-        <td width="60" valign="top">'.$lng['description'].': </td>
-        <td>'.$resultdesc.'</td>
-    </tr>
-</table>
-<br />
-<table cellspacing="0" cellpadding="0" width="100%">
-    <tr>
-        <td valign="top">
-            <form name="list" action="" method="post">
-                <table width="100%" cellpadding="2" border="0" cellspacing="0" class="grid" style="margin-bottom:10px">
-                    <tr>
-                        <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td width="20"> </td>
-                        <td><b>'.$lng['name'].'</b></td>
-                        <td width="80"><b>'.$lng['modified'].'</b></td>
-                        <td width="40"><b>'.$lng['size'].'</b></td>
-                        <td width="60" align="right"><b>'.$lng['options'].'</b></td>
-                    </tr>
-                    ';
-                if ($dirs!=FALSE) {
-                    foreach ($dirs as $f) {
-                        $name = $this->_basename_safe($f);
-                        $name = $this->_e2g_encode($name);
-                        $time = filemtime($f);
-                        $cnt = $this->_count_files($f);
-                        if ($name == '_thumbnails') continue;
-                        if ( isset($mdirs[$name]) ) {
-                            if (($mdirs[$name]['cat_visible']==1)) {
-                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><b>'.$mdirs[$name]['name'].'</b></a> [id: '.$mdirs[$name]['id'].']';
-                            } else {
-                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><i>'.$mdirs[$name]['name'].'</i></a> [id: '.$mdirs[$name]['id'].'] <i>('.$lng['invisible'].')</i>';
-                            }
-                            $id = $mdirs[$name]['id'];
-                            unset($mdirs[$name]);
-                            $ext = '';
-                            // edit name
-                            $buttons = '<a href="'.$index.'&page=edit_dir&dir_id='.$id.'&name='.$name.'&pid='.$parent_id.'">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/folder_edit.png" width="16" height="16"
-                                    alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
-                                        </a>';
-                        } else {
-                            $n = '<a href="'.$index.'&pid='.$parent_id.'&path='.(!empty($cpath)?$cpath:'').$name.'" style="color:gray"><b>'.$name.'</b></a>';
-                            $id = null;
-                            $ext = '_error';
-                            if (empty($cpath)) {
-                                $buttons = '<a href="'.$index.'&act=add_dir&dir_path='.$gdir.$name.'&pid='.$parent_id.'">
-                                    <img src="' . E2G_MODULE_URL . 'includes/icons/folder_add.png" width="16" height="16"
-                                        alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
-                                            </a>';
-                            }
-                            else $buttons = '';
-                        }
-
-                        // print out the content
-                        $content .= '
-                    <tr'.$cl[$i%2].'>
-                        <td>
-                            <input name="dir['.(empty($id)?'d'.$i:$id).']" value="'.$gdir.$name.'"
-                                   type="checkbox" style="border:0;padding:0">
-                        </td>
-                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/folder'.$ext.'.png" width="16" height="16" border="0"></td>
-                        <td>'.$n.' ('.$cnt.')</td>
-                        <td>'.@date($e2g['mdate_format'], $time).'</td>
-                        <td>---</td>
-                        <td align="right" nowrap>
-                            '.$buttons.'
-                            <a href="'.$index.'&act=delete_dir&dir_path='.$gdir.$name.(empty($id)?'':'&dir_id='.$id).'"
-                               onclick="return confirmDeleteFolder();">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
-                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
-                            </a>
-                        </td>
-                    </tr>
-                    ';
-                        $i++;
-                    } // foreach ($dirs as $f)
-                    // Deleted dirs
-                    if (isset($mdirs) && count($mdirs) > 0) {
-                        foreach ($mdirs as $k => $v) {
-                            $content .= '
-                    <tr'.$cl[$i%2].'>
-                        <td><input name="dir['.$v['id'].']" value="" type="checkbox" style="border:0;padding:0"></td>
-                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/folder_delete.png" width="16" height="16" border="0"></td>
-                        <td><b style="color:red;"><u>'.$v['name'].'</u></b> ['.$v['id'].']</td>
-                        <td>---</td>
-                        <td>---</td>
-                        <td align="right">
-                            <a href="'.$index.'&act=delete_dir&dir_id='.$v['id'].'"
-                               onclick="return confirmDeleteFolder();">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
-                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
-                            </a>
-                        </td>
-                    </tr>
-                    ';
-                            $i++;
-                        }
-                    }
-                } // if ($dirs!=FALSE)
-
-                // File list
-                $mfiles = isset($mfiles) ? $mfiles : array();
+//                // Dir list
+//                $dirs = @glob('../'.$this->_e2g_decode($gdir).'*', GLOB_ONLYDIR);
+//                if(is_array($dirs)) natsort($dirs);
+//                $content = '
+//<div id="e2g_topmenu">
+//    <form name="topmenu" action="" method="post">
+//        <ul class="actionButtons">
+//            <li id="Button1">
+//                <a href="'.$index.'&act=synchro">
+//                    <img src="media/style/MODxCarbon/images/icons/refresh.png" /> '.$lng['synchro'].'
+//                </a>
+//            </li>
+//            <li id="Button2">
+//                <a href="'.$index.'&act=clean_cache">
+//                    <img src="media/style/MODxCarbon/images/icons/trash.png" /> '.$lng['clean_cache'].'
+//                </a>
+//            </li>
+//            <li id="Button3">
+//                <a href="'.$index.'&page=create_dir&pid='.$parent_id.'">
+//                    <img src="media/style/MODxCarbon/images/icons/folder_add.png" /> '.$lng['create_dir'].'
+//                </a>
+//            </li>
+//            <li id="Button4">
+//                <a href="'.$index.'&page=search_all&pid='.$parent_id.'">
+//                    <img src="media/style/MODxCarbon/images/icons/preview.png" /> '.$lng['search'].'
+//                </a>
+//            </li>
+//            <li id="Button5">
+//                '.$lng['gotofolder'].':
+//                <select name="newparent" onchange="submitform(1)">
+//                    <--option value="">&nbsp;asdfadf</option-->';
+//                $content .= $this->_getfolderoptions(0,1);
+//                $content .= '
+//                </select>
+//            </li>
+//        </ul>
+//    </form>
+//</div>
+//<p>'.$lng['path'].': <a href="'.$index.'&page=edit_dir&dir_id='.$parent_id.'&pid='.$this->_get_dir_info($parent_id, 'parent_id').'">
+//        <img src="' . E2G_MODULE_URL . 'includes/icons/folder_edit.png" width="16" height="16"
+//             alt="'.$lng['edit'].'" title="'.$lng['edit'].'" align="absmiddle" border=0>
+//    </a> <b>'.$path.'</b>
+//</p>';
+//                // Description of the current directory
+//                $qdesc = 'SELECT cat_description '
+//                        .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+//                        .'WHERE cat_id = '.$parent_id;
+//                $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
+//                $content .= '
+//<table cellspacing="0" cellpadding="0">
+//    <tr>
+//        <td width="60" valign="top">'.$lng['description'].': </td>
+//        <td>'.$resultdesc.'</td>
+//    </tr>
+//</table>
+//<br />
+//<table cellspacing="0" cellpadding="0" width="100%">
+//    <tr>
+//        <td valign="top">
+//            <form name="list" action="" method="post">
+//                <table width="100%" cellpadding="2" border="0" cellspacing="0" class="grid" style="margin-bottom:10px">
+//                    <tr>
+//                        <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
+//                        <td width="20"> </td>
+//                        <td><b>'.$lng['name'].'</b></td>
+//                        <td width="80"><b>'.$lng['modified'].'</b></td>
+//                        <td width="40"><b>'.$lng['size'].'</b></td>
+//                        <td width="60" align="right"><b>'.$lng['options'].'</b></td>
+//                    </tr>
+//                    ';
+//                if ($dirs!=FALSE) {
+//                    foreach ($dirs as $f) {
+//                        $name = $this->_basename_safe($f);
+//                        $name = $this->_e2g_encode($name);
+//                        $time = filemtime($f);
+//                        $cnt = $this->_count_files($f);
+//                        if ($name == '_thumbnails') continue;
+//                        if ( isset($mdirs[$name]) ) {
+//                            if (($mdirs[$name]['cat_visible']==1)) {
+//                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><b>'.$mdirs[$name]['name'].'</b></a> [id: '.$mdirs[$name]['id'].']';
+//                            } else {
+//                                $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><i>'.$mdirs[$name]['name'].'</i></a> [id: '.$mdirs[$name]['id'].'] <i>('.$lng['invisible'].')</i>';
+//                            }
+//                            $id = $mdirs[$name]['id'];
+//                            unset($mdirs[$name]);
+//                            $ext = '';
+//                            // edit name
+//                            $buttons = '<a href="'.$index.'&page=edit_dir&dir_id='.$id.'&name='.$name.'&pid='.$parent_id.'">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/folder_edit.png" width="16" height="16"
+//                                    alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
+//                                        </a>';
+//                        } else {
+//                            $n = '<a href="'.$index.'&pid='.$parent_id.'&path='.(!empty($cpath)?$cpath:'').$name.'" style="color:gray"><b>'.$name.'</b></a>';
+//                            $id = null;
+//                            $ext = '_error';
+//                            if (empty($cpath)) {
+//                                $buttons = '<a href="'.$index.'&act=add_dir&dir_path='.$gdir.$name.'&pid='.$parent_id.'">
+//                                    <img src="' . E2G_MODULE_URL . 'includes/icons/folder_add.png" width="16" height="16"
+//                                        alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
+//                                            </a>';
+//                            }
+//                            else $buttons = '';
+//                        }
+//
+//                        // print out the content
+//                        $content .= '
+//                    <tr'.$cl[$i%2].'>
+//                        <td>
+//                            <input name="dir['.(empty($id)?'d'.$i:$id).']" value="'.$gdir.$name.'"
+//                                   type="checkbox" style="border:0;padding:0">
+//                        </td>
+//                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/folder'.$ext.'.png" width="16" height="16" border="0"></td>
+//                        <td>'.$n.' ('.$cnt.')</td>
+//                        <td>'.@date($e2g['mdate_format'], $time).'</td>
+//                        <td>---</td>
+//                        <td align="right" nowrap>
+//                            '.$buttons.'
+//                            <a href="'.$index.'&act=delete_dir&dir_path='.$gdir.$name.(empty($id)?'':'&dir_id='.$id).'"
+//                               onclick="return confirmDeleteFolder();">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
+//                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
+//                            </a>
+//                        </td>
+//                    </tr>
+//                    ';
+//                        $i++;
+//                    } // foreach ($dirs as $f)
+//                    // Deleted dirs
+//                    if (isset($mdirs) && count($mdirs) > 0) {
+//                        foreach ($mdirs as $k => $v) {
+//                            $content .= '
+//                    <tr'.$cl[$i%2].'>
+//                        <td><input name="dir['.$v['id'].']" value="" type="checkbox" style="border:0;padding:0"></td>
+//                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/folder_delete.png" width="16" height="16" border="0"></td>
+//                        <td><b style="color:red;"><u>'.$v['name'].'</u></b> ['.$v['id'].']</td>
+//                        <td>---</td>
+//                        <td>---</td>
+//                        <td align="right">
+//                            <a href="'.$index.'&act=delete_dir&dir_id='.$v['id'].'"
+//                               onclick="return confirmDeleteFolder();">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
+//                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
+//                            </a>
+//                        </td>
+//                    </tr>
+//                    ';
+//                            $i++;
+//                        }
+//                    }
+//                } // if ($dirs!=FALSE)
+//
+//                // File list
+//                $mfiles = isset($mfiles) ? $mfiles : array();
 //                $excludefiles = array(
 //                        '../'.$this->_e2g_decode($gdir).'index.htm',
 //                        '../'.$this->_e2g_decode($gdir).'index.html',
@@ -1329,158 +1334,158 @@ class e2g_mod {
 //                    $files = array_diff($getdir, $excludefiles);
 //                    natsort($files);
 //                }
-
-                $files = @glob('../'.$this->_e2g_decode($gdir).'*.*');
-                if(is_array($files)) natsort($files);
-
-                if ($files!=FALSE)
-                    foreach ($files as $f) {
-                        if ($this->is_validfolder($f)) continue;
-                        if (!$this->is_validfile($f)) continue;
-                        $size = round(filesize($f)/1024);
-                        $time = filemtime($f);
-                        $name = $this->_basename_safe($f);
-                        $name = $this->_e2g_encode($name);
-                        $ext = 'picture';
-                        $id = $mfiles[$name]['id'];
-                        if (isset($mfiles[$name])) {
-                            if ($mfiles[$name]['status']==1) {
-                                $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
-                            } else {
-                                $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
-                            }
-                            unset($mfiles[$name]);
-                            $buttons = '
- <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
-     <img src="' . E2G_MODULE_URL . 'includes/icons/comments.png" width="16" height="16" alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
- </a>
- <a href="'.$index.'&page=edit_file&file_id='.$id.'&pid='.$parent_id.'">
-     <img src="' . E2G_MODULE_URL . 'includes/icons/picture_edit.png" width="16" height="16" alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
- </a>';
-                        } else {
-                            $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);" style="color:gray"><b>'.$name.'</b></a>';
-                            $id = null;
-                            $ext .= '_error';
-                            if (empty($cpath)) {
-                                $buttons = '<a href="'.$index.'&act=add_file&file_path='.$gdir.$name.'&pid='.$parent_id.'">
-                                    <img src="' . E2G_MODULE_URL . 'includes/icons/picture_add.png" width="16" height="16"
-                                        alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
-                                            </a>';
-                            }
-                            else $buttons = '';
-                        }
-                        $content .= '
-                    <tr'.$cl[$i%2].'>
-                        <td>
-                            <input name="im['.(empty($id)?'f'.$i:$id).']" value="'.$gdir.$name.'"
-                                   type="checkbox" style="border:0;padding:0">
-                        </td>
-                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/'.$ext.'.png" width="16" height="16"></td>
-                        <td>'.$n.'</td>
-                        <td>'.@date($e2g['mdate_format'], $time).'</td>
-                        <td>'.$size.'Kb</td>
-                        <td align="right" nowrap>'.$buttons.'
-                            <a href="'.$index.'&act=delete_file&file_path='.$gdir.$name.(empty($id)?'':'&file_id='.$id).'"
-                               onclick="return confirmDelete();">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
-                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
-                            </a>
-                        </td>
-                    </tr>
-                    ';
-                        $i++;
-                    }
-                // Deleted files
-                $mfiles = isset($mfiles) ? $mfiles : array();
-                $name = isset($name) ? $name : array();
-
-                if (isset($mfiles) && count($mfiles) > 0) {
-                    foreach ($mfiles as $k => $v) {
-                        $content .= '
-                    <tr'.$cl[$i%2].'>
-                        <td><input name="im['.$v['id'].']" value="" type="checkbox" style="border:0;padding:0"></td>
-                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/picture_delete.png" width="16" height="16" border="0"></td>
-                        <td><b style="color:red;"><u>'.$v['name'].'</u></b> ['.$v['id'].']</td>
-                        <td>---</td>
-                        <td>---</td>
-                        <td align="right" nowrap>
-                            <a href="'.$index.'&page=comments&file_id='.$v['id'].'&pid='.$parent_id.'">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/comments.png" width="16" height="16"
-                                     alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
-                            </a>
-                            <a href="'.$index.'&act=delete_file&file_id='.$v['id'].'"
-                               onclick="return confirmDeleteFolder();">
-                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
-                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
-                            </a>
-                        </td>
-                    </tr>
-                    ';
-                        $i++;
-                    }
-                }
-
-                $content .= '
-                </table>
-                <div id="e2g_bottommenu">
-                    <ul class="actionButtons">
-                        '.$lng['withselected'].':<br /><br />
-                        <li id="Button6">
-                            <a name="delete" href="javascript: submitform(2)" style="font-weight:bold;color:red">
-                                <img src="media/style/MODxCarbon/images/icons/delete.png" /> '.$lng['delete'].'
-                            </a>
-                        </li>
-                        <li id="Button7">
-                            <a name="download" href="javascript: submitform(3)">
-                                <img src="'.E2G_MODULE_URL.'includes/icons/page_white_compressed.png" /> '.$lng['download'].'
-                            </a>
-                        </li>
-                        <li id="Button8">
-                            <select name="listactions">
-                                <option value="move">'.$lng['move'].'</option>
-                                <option value="copy">'.$lng['copy'].'</option>
-                            </select>
-                            '.$lng['tofolder'].' :
-                            <select name="newparent">
-                                <option value="">&nbsp;</option>';
-
-                $content .= $this->_getfolderoptions(0);
-                                
-                $content .= '
-                            </select>
-                            and
-                            <select name="gotofolder">
-                                <option value="stayhere">stay here</option>
-                                <option value="gothere">go there</option>
-                            </select>
-                            <a name="move" href="javascript: submitform(4)">
-                                <img src="media/style/MODxCarbon/images/icons/sort.png" /> '.$lng['go'].'
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </form>
-        </td>
-        <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
-            </table>
-        </th>
-    </tr>
-</table>
-';
+//
+//                $files = @glob('../'.$this->_e2g_decode($gdir).'*.*');
+//                if(is_array($files)) natsort($files);
+//
+//                if ($files!=FALSE)
+//                    foreach ($files as $f) {
+//                        if ($this->is_validfolder($f)) continue;
+//                        if (!$this->is_validfile($f)) continue;
+//                        $size = round(filesize($f)/1024);
+//                        $time = filemtime($f);
+//                        $name = $this->_basename_safe($f);
+//                        $name = $this->_e2g_encode($name);
+//                        $ext = 'picture';
+//                        $id = $mfiles[$name]['id'];
+//                        if (isset($mfiles[$name])) {
+//                            if ($mfiles[$name]['status']==1) {
+//                                $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
+//                            } else {
+//                                $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
+//                            }
+//                            unset($mfiles[$name]);
+//                            $buttons = '
+// <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
+//     <img src="' . E2G_MODULE_URL . 'includes/icons/comments.png" width="16" height="16" alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
+// </a>
+// <a href="'.$index.'&page=edit_file&file_id='.$id.'&pid='.$parent_id.'">
+//     <img src="' . E2G_MODULE_URL . 'includes/icons/picture_edit.png" width="16" height="16" alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
+// </a>';
+//                        } else {
+//                            $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);" style="color:gray"><b>'.$name.'</b></a>';
+//                            $id = null;
+//                            $ext .= '_error';
+//                            if (empty($cpath)) {
+//                                $buttons = '<a href="'.$index.'&act=add_file&file_path='.$gdir.$name.'&pid='.$parent_id.'">
+//                                    <img src="' . E2G_MODULE_URL . 'includes/icons/picture_add.png" width="16" height="16"
+//                                        alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
+//                                            </a>';
+//                            }
+//                            else $buttons = '';
+//                        }
+//                        $content .= '
+//                    <tr'.$cl[$i%2].'>
+//                        <td>
+//                            <input name="im['.(empty($id)?'f'.$i:$id).']" value="'.$gdir.$name.'"
+//                                   type="checkbox" style="border:0;padding:0">
+//                        </td>
+//                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/'.$ext.'.png" width="16" height="16"></td>
+//                        <td>'.$n.'</td>
+//                        <td>'.@date($e2g['mdate_format'], $time).'</td>
+//                        <td>'.$size.'Kb</td>
+//                        <td align="right" nowrap>'.$buttons.'
+//                            <a href="'.$index.'&act=delete_file&file_path='.$gdir.$name.(empty($id)?'':'&file_id='.$id).'"
+//                               onclick="return confirmDelete();">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
+//                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
+//                            </a>
+//                        </td>
+//                    </tr>
+//                    ';
+//                        $i++;
+//                    }
+//                // Deleted files
+//                $mfiles = isset($mfiles) ? $mfiles : array();
+//                $name = isset($name) ? $name : array();
+//
+//                if (isset($mfiles) && count($mfiles) > 0) {
+//                    foreach ($mfiles as $k => $v) {
+//                        $content .= '
+//                    <tr'.$cl[$i%2].'>
+//                        <td><input name="im['.$v['id'].']" value="" type="checkbox" style="border:0;padding:0"></td>
+//                        <td><img src="' . E2G_MODULE_URL . 'includes/icons/picture_delete.png" width="16" height="16" border="0"></td>
+//                        <td><b style="color:red;"><u>'.$v['name'].'</u></b> ['.$v['id'].']</td>
+//                        <td>---</td>
+//                        <td>---</td>
+//                        <td align="right" nowrap>
+//                            <a href="'.$index.'&page=comments&file_id='.$v['id'].'&pid='.$parent_id.'">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/comments.png" width="16" height="16"
+//                                     alt="'.$lng['comments'].'" title="'.$lng['comments'].'" border=0>
+//                            </a>
+//                            <a href="'.$index.'&act=delete_file&file_id='.$v['id'].'"
+//                               onclick="return confirmDeleteFolder();">
+//                                <img src="' . E2G_MODULE_URL . 'includes/icons/delete.png" border="0"
+//                                     alt="'.$lng['delete'].'" title="'.$lng['delete'].'" />
+//                            </a>
+//                        </td>
+//                    </tr>
+//                    ';
+//                        $i++;
+//                    }
+//                }
+//
+//                $content .= '
+//                </table>
+//                <div id="e2g_bottommenu">
+//                    <ul class="actionButtons">
+//                        '.$lng['withselected'].':<br /><br />
+//                        <li id="Button6">
+//                            <a name="delete" href="javascript: submitform(2)" style="font-weight:bold;color:red">
+//                                <img src="media/style/MODxCarbon/images/icons/delete.png" /> '.$lng['delete'].'
+//                            </a>
+//                        </li>
+//                        <li id="Button7">
+//                            <a name="download" href="javascript: submitform(3)">
+//                                <img src="'.E2G_MODULE_URL.'includes/icons/page_white_compressed.png" /> '.$lng['download'].'
+//                            </a>
+//                        </li>
+//                        <li id="Button8">
+//                            <select name="listactions">
+//                                <option value="move">'.$lng['move'].'</option>
+//                                <option value="copy">'.$lng['copy'].'</option>
+//                            </select>
+//                            '.$lng['tofolder'].' :
+//                            <select name="newparent">
+//                                <option value="">&nbsp;</option>';
+//
+//                $content .= $this->_getfolderoptions(0);
+//
+//                $content .= '
+//                            </select>
+//                            and
+//                            <select name="gotofolder">
+//                                <option value="stayhere">stay here</option>
+//                                <option value="gothere">go there</option>
+//                            </select>
+//                            <a name="move" href="javascript: submitform(4)">
+//                                <img src="media/style/MODxCarbon/images/icons/sort.png" /> '.$lng['go'].'
+//                            </a>
+//                        </li>
+//                    </ul>
+//                </div>
+//            </form>
+//        </td>
+//        <th width="205" valign="top">
+//            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
+//                <tr><th class="imPreview" id="pElt"></th></tr>
+//            </table>
+//        </th>
+//    </tr>
+//</table>
+//';
         } // switch ($page)
-        $suc = $err = '';
-        if (count($_SESSION['easy2err']) > 0) {
-            $err = '<p class="warning" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2err']).'</p>';
-            $_SESSION['easy2err'] = array();
-        }
-        if (count($_SESSION['easy2suc']) > 0) {
-            $suc = '<p class="success" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2suc']).'</p>';
-            $_SESSION['easy2suc'] = array();
-        }
+//        $suc = $err = '';
+//        if (count($_SESSION['easy2err']) > 0) {
+//            $err = '<p class="warning" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2err']).'</p>';
+//            $_SESSION['easy2err'] = array();
+//        }
+//        if (count($_SESSION['easy2suc']) > 0) {
+//            $suc = '<p class="success" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2suc']).'</p>';
+//            $_SESSION['easy2suc'] = array();
+//        }
         /*
-         * MODULE's interface
+         * MODULE's pages
         */
         include_once E2G_MODULE_PATH . 'includes/tpl/pane.main.inc.php';
     }
@@ -1863,7 +1868,9 @@ class e2g_mod {
                             return FALSE;
                         }
                     }
-                } elseif ($this->is_validfile($f)) { // as a file in the current directory
+                }
+                // as a allowed file in the current directory
+                elseif ($this->is_validfile($f)) {
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
                         if ($cfg['resizeoldimg']==1) {
@@ -1900,7 +1907,7 @@ class e2g_mod {
                     }
                 }
                 /*
-                 * goldsky -- File/folder may exists, but NOT a valid folder, NOT a valid file,
+                 * goldsky -- File/folder may exists, but NOT a valid folder or a valid file,
                  * probably has an unallowed extension or strange characters.
                 */
                 else continue;
@@ -2086,6 +2093,16 @@ class e2g_mod {
         else continue;
     }
 
+    public function is_validext($filename) {
+        $ext = strtolower(end(@explode('.', $filename)));
+        $allowedext = array(
+                'jpg' => TRUE,
+                'jpeg' => TRUE,
+                'gif' => TRUE,
+                'png' => TRUE
+        );
+        return $allowedext[$ext];
+    }
     /*
      * goldsky
     */
@@ -2258,4 +2275,55 @@ class e2g_mod {
         return $dirinfo[$field];
     }
 
+    /*
+     * function _create_function
+     * To create Zip files from the list selection
+     */
+    private function _create_zip($zipName,$names) {
+         //http://www.php.net/manual/en/function.ziparchive-addemptydir.php#91221
+         $zip = new ZipArchive();
+
+         $zip->open($zipName, ZipArchive::CREATE);
+
+         if (is_dir($names)) {
+             $names = realpath($names);
+             if (substr($names, -1) != DIRECTORY_SEPARATOR) {
+                 $names.= DIRECTORY_SEPARATOR;
+             }
+
+             $dirStack = array($names);
+             //Find the index where the last dir starts
+             $cutFrom = strrpos(substr($names, 0, -1), DIRECTORY_SEPARATOR)+1;
+
+             while (!empty($dirStack)) {
+                 $currentDir = array_pop($dirStack);
+                 $filesToAdd = array();
+
+                 $dir = dir($currentDir);
+                 while (false !== ($node = $dir->read())) {
+                     if (($node == '..') || ($node == '.')) {
+                         continue;
+                     }
+                     if (is_dir($currentDir . $node)) {
+                         array_push($dirStack, $currentDir . $node . DIRECTORY_SEPARATOR);
+                     }
+                     if ($this->is_validfile($currentDir . $node)) {
+                         $filesToAdd[] = $node;
+                     }
+                 }
+
+                 $localDir = substr($currentDir, $cutFrom);
+                 $zip->addEmptyDir($localDir);
+
+                 foreach ($filesToAdd as $file) {
+                     $zip->addFile($currentDir . $file, $localDir . $file);
+                 }
+             }
+         }
+         elseif ($this->is_validfile($names)) {
+             $names = realpath($names);
+             $zip->addFile($names,$this->_basename_safe($names));
+         }
+         $zip->close();
+     }
 } // END OF class e2g_mod

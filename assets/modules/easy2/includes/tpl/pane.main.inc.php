@@ -2,7 +2,7 @@
 header('content-type: text/html; charset=utf-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cfg['_t']
-        ?>
+?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
@@ -146,6 +146,17 @@ $_t = $this->e2gmod_cfg['_t']
         </script>
     </head>
     <body>
+<?php
+        $suc = $err = '';
+        if (count($_SESSION['easy2err']) > 0) {
+            $err = '<p class="warning" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2err']).'</p>';
+            $_SESSION['easy2err'] = array();
+        }
+        if (count($_SESSION['easy2suc']) > 0) {
+            $suc = '<p class="success" style="padding-left: 10px;">'.implode('<br />', $_SESSION['easy2suc']).'</p>';
+            $_SESSION['easy2suc'] = array();
+        }
+?>
         <p><?php echo $err.$suc; ?></p>
         <div class="sectionHeader">Easy 2 Gallery <?php echo E2G_VERSION; ?></div>
         <div class="sectionBody">

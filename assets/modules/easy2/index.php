@@ -50,7 +50,7 @@ if (file_exists( E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php' ))
         $valconf[$ck] = $cv;
     }
 }
-// the default config will replace blank value of config's.
+// the default config will replace any blank value of config's.
 if (file_exists( E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php' )) {
     require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
     foreach ($def_e2g as $dk => $dv) {
