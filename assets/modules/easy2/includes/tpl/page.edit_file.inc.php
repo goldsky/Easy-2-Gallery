@@ -1,7 +1,7 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<p><?php echo $lng['editing']; ?> <?php echo $lng['file2']; ?> <b><?php echo $row['filename']; ?> <a href="javascript:imPreview('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $lng['uim_preview']; ?></a></b> (<?php echo $row['comments']; ?> comments)
+<p><?php echo $lng['editing']; ?> <?php echo $lng['file2']; ?> <b><?php echo $row['filename']; ?> <a href="javascript:imPreview4('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $lng['uim_preview']; ?></a></b> (<?php echo $row['comments']; ?> comments)
     &nbsp; &nbsp; &nbsp;
     <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['back_to_fmanager']; ?></a>
 </p>
@@ -35,7 +35,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         </td>
         <th width="205" valign="top">
             <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
+                <tr><th class="imPreview" id="pElt4"></th></tr>
             </table>
         </th>
     </tr>

@@ -206,7 +206,8 @@ class TTree {
                 . $this->left . ' = ' . $this->left . ' * (-1) '
                 . ' WHERE '
                 . $this->left . ' BETWEEN '
-                . $c[$this->left] . ' AND ' . $c[$this->right];
+                . $c[$this->left] . ' AND ' . $c[$this->right]
+                ;
 
         if (!mysql_query($update_between_c)) {
             $this->error = __LINE__.' : #'.mysql_errno().'<br />';
@@ -245,9 +246,8 @@ class TTree {
                     // set the RIGHT
                     . $this->right . ' = '
 //                    . ' IF (' . $this->right . ' - ' . $this->left . ' = 1, '
-//                    . $this->right . '+' . $razn . ', ' . $this->right . ') '
                     . ' IF (' . $this->right . ' < ' . $c[$this->left] . ', '             // goldsky
-                    . $this->right . '+' . $razn . ', ' . $this->right . ') '            // goldsky
+                    . $this->right . '+' . $razn . ', ' . $this->right . ') '
 
                     . ' WHERE ' . $this->left . ' > ' . $to[$this->left]
                     . ' AND ' . $this->left . ' < ' . $c[$this->left];
@@ -271,15 +271,13 @@ class TTree {
                     . $this->left . '-' . $razn . ', ' . $this->left . '), '
                     // set the RIGHT
                     . $this->right . ' = '
-//                    . ' IF (' . $this->right . ' < ' . $to[$this->right] . ', '
-                    . ' IF (' . $this->right . ' < ' . $to[$this->left] . ', '             // goldsky
+                    . ' IF (' . $this->right . ' < ' . $to[$this->right] . ', '
 //                    . $to[$this->right] . '-' . $razn . ', ' . $to[$this->right] . ') '
                     . $this->right . '-' . $razn . ', ' . $this->right . ') '            // goldsky
 
 //                    . ' WHERE (' . $this->left . ' > ' . $c[$this->left]
-                    . ' WHERE (' . $this->right . ' > ' . $c[$this->left]                // goldsky
-//                    . ' AND ' . $this->left . ' <= ' . $to[$this->left] . ')'
-                    . ' AND ' . $this->left . ' <= ' . $to[$this->right] . ')'           // goldsky
+                    . ' WHERE (' . $this->right . ' > ' . $c[$this->right]               // goldsky
+                    . ' AND ' . $this->left . ' <= ' . $to[$this->left] . ')'
 //                    . ' OR ' . $this->id . ' = ' . $c[$this->parent]
                     ;
 
@@ -293,7 +291,7 @@ class TTree {
             
         }
         // MOVING TO THE LEFT SIDE
-        else {
+        else { // $c[$this->left] > $to[$this->right]
             $querygroup = '3'; // goldsky -- for debugging only
 
             $query = 'UPDATE ' . $this->table . ' SET '
@@ -306,9 +304,11 @@ class TTree {
                     . ' IF (' . $this->right . ' < ' . $c[$this->left] . ', '
                     . $this->right . '+' . $razn . ', ' . $this->right . ') '
 
-//                    . ' WHERE ' . $this->left . ' >= ' . $to[$this->left]
-                    . ' WHERE ' . $this->right . ' >= ' . $to[$this->right]              // goldsky
-                    . ' AND ' . $this->left . ' < ' . $c[$this->left];
+                    . ' WHERE (' . $this->left . ' >= ' . $to[$this->left]
+                    . ' AND ' . $this->left . ' < ' . $c[$this->left]. ')'
+                    . ' OR (' . $this->right . ' >= ' . $to[$this->right]                // goldsky
+                    . ' AND ' . $this->right . ' < ' . $c[$this->right] . ')'            // goldsky
+                    ;
 
         // ******* SET MARGIN VALUE OF ALL OVER THE old parent's branches AS THE RENUMBERING CONTROL ******* //
             $razn2 = $to[$this->left] - $c[$this->left] + 1;
@@ -342,7 +342,7 @@ class TTree {
                 . $this->parent . ' = '
                 . ' IF (' . $this->id . '=' . $id . ', '
                 . $to[$this->id] . ', ' . $this->parent . ') '
-                . ' WHERE ' . $this->left . ' < 0'; // THE MOVING BRANCH'S SIGNATURE!
+                . ' WHERE ' . $this->left . ' < 0';                     // THE MOVING BRANCH'S SIGNATURE!
 
         if (mysql_query($update_final)) {
             $this->reports[]= __LINE__.' : $update_final = '.$update_final;

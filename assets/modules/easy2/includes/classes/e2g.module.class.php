@@ -290,11 +290,6 @@ class e2g_mod {
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
-
-
-
-
-
             // DOWNLOAD FILES / FOLDERS
             case 'download_checked':
                 $zipcontent = '';
@@ -308,16 +303,76 @@ class e2g_mod {
                     }
 //                    $zipcontent = implode(',', $_zipcontent);
                     $dirName = MODX_BASE_PATH.$gdir;
+                    $dirUrl = MODX_BASE_URL.$gdir;
                     $zipName = $dirName.$this->_get_dir_info($_GET['pid'], 'cat_name').'.zip';
 
                     foreach ($_zipcontents as $_zipcontent) {
-                        $this->_create_zip($zipName, $_zipcontent);
+                        //http://www.php.net/manual/en/function.ziparchive-addemptydir.php#91221
+                        $zip = new ZipArchive();
+
+                        $zip->open($zipName, ZipArchive::CREATE);
+
+                        if (is_dir($_zipcontent)) {
+                            $_zipcontent = realpath($_zipcontent);
+                            if (substr($_zipcontent, -1) != DIRECTORY_SEPARATOR) {
+                                $_zipcontent.= DIRECTORY_SEPARATOR;
+                            }
+
+                            $dirStack = array($_zipcontent);
+                            //Find the index where the last dir starts
+                            $cutFrom = strrpos(substr($_zipcontent, 0, -1), DIRECTORY_SEPARATOR)+1;
+
+                            while (!empty($dirStack)) {
+                                $currentDir = array_pop($dirStack);
+                                $filesToAdd = array();
+
+                                $dir = dir($currentDir);
+                                while (false !== ($node = $dir->read())) {
+                                    if (($node == '..') || ($node == '.')) {
+                                        continue;
+                                    }
+                                    if (is_dir($currentDir . $node)) {
+                                        array_push($dirStack, $currentDir . $node . DIRECTORY_SEPARATOR);
+                                    }
+                                    if ($this->is_validfile($currentDir . $node)) {
+                                        $filesToAdd[] = $node;
+                                    }
+                                }
+
+                                $localDir = substr($currentDir, $cutFrom);
+                                $zip->addEmptyDir($localDir);
+
+                                foreach ($filesToAdd as $file) {
+                                    $zip->addFile($currentDir . $file, $localDir . $file);
+                                }
+                            }
+                        }
+                        elseif ($this->is_validfile($_zipcontent)) {
+                            $_zipcontent = realpath($_zipcontent);
+                            $basename = end(@explode(DIRECTORY_SEPARATOR,$_zipcontent));
+                            $zip->addFile($_zipcontent,$basename);
+                        }
+                        $zip->close();
+                        $zipbasename = str_replace(' ','',(end(@explode('/',$zipName))));
+
+                        header('Content-Description: File Transfer');
+                        header('Content-Type: application/zip');
+                        header('Content-Disposition: attachment; filename='.$zipbasename);
+                        header('Content-Transfer-Encoding: binary');
+                        header('Expires: 0');
+                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                        header('Pragma: public');
+                        header('Content-Length: ' . filesize($zipName));
+                        ob_clean();
+                        flush();
+                        readfile($zipName);
+                        unlink($zipName);
+                        exit();
                     }
                 }
                 else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['zip_select_none'];
                 }
-                
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
@@ -417,7 +472,7 @@ class e2g_mod {
                                         $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'].' => '. MODX_BASE_PATH.$newpath['decoded'];
                                     } else $_SESSION['easy2suc'][] = __LINE__.' : chmod successfull => '. MODX_BASE_PATH.$newpath['decoded'];
 
-//                                    if ($e2g_debug==1)
+                                    if ($e2g_debug==1)
                                         $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_move_suc'].'
                                             from: <span style="color:blue;">'.$oldpath['origin'].'</span>
                                             to: <span style="color:blue;">'.$newpath['origin'].'</span>';
@@ -1005,6 +1060,7 @@ class e2g_mod {
                     }
                 }
                 //the page content is rendered in ../tpl/page.default.inc.php
+                
         } // switch ($page)
 
         /*
@@ -1053,25 +1109,30 @@ class e2g_mod {
         $fs = glob($oldpath.'/*');
         if ($fs!=FALSE) {
             foreach ($fs as $f) {
-//                if ($this->is_validfile($f)) {
-                // using original file check, because it will delete not only images.
                 if (is_file($f)) {
                     $res['file'][] = $f;
                     $res['f']++;
-                } elseif ($this->is_validfolder($f)) {
-                    $res['dir'][] = $f;
-                    $sres = $this->_move_all($f, $newpath);
-
+                }
+                elseif ($this->is_validfolder($f)) {
+                    // $res = result (file/dir/error)
+                    // $sres = result summary (file/dir/error)
                     $res['f'] += $sres['f'];
                     $res['d'] += $sres['d'];
                     $res['e'] = array_merge($res['e'], $sres['e']);
+                    
+                    $oldbasename = $this->_basename_safe($f);
+                    $fnewpath .= '/'.$oldbasename;
+
+                    $checkfnewpath[] = $fnewpath;
+                    $res['dir'][] = $f;
+                    $sres = $this->_move_all($f, $newpath.$fnewpath);
                 }
             }
         }
-//        die(__LINE__.' : '.__METHOD__.print_r($res));
-        if (count($res['e']) == 0 && @rename($oldpath, $newpath)) $res['d']++;
+        if (@rename($oldpath, $newpath)) $res['d']++;
         else $res['e'][] = __LINE__.' : '.$lng['couldnotmovedirectory'].': '.$oldpath;
-        
+
+        // only returns result calculation array
         return $res;
     }
 
@@ -1711,7 +1772,6 @@ class e2g_mod {
         $selectdir = 'SELECT parent_id, cat_id, cat_name, cat_level '
                 .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
                 .'WHERE parent_id='.$parentid.' '
-                .'ORDER BY cat_left ASC'
         ;
 
         $querydir = mysql_query($selectdir);
@@ -1797,56 +1857,4 @@ class e2g_mod {
         if (empty($dirinfo[$field])) return null;
         return $dirinfo[$field];
     }
-
-    /*
-     * function _create_function
-     * To create Zip files from the list selection
-     */
-    private function _create_zip($zipName,$names) {
-         //http://www.php.net/manual/en/function.ziparchive-addemptydir.php#91221
-         $zip = new ZipArchive();
-
-         $zip->open($zipName, ZipArchive::CREATE);
-
-         if (is_dir($names)) {
-             $names = realpath($names);
-             if (substr($names, -1) != DIRECTORY_SEPARATOR) {
-                 $names.= DIRECTORY_SEPARATOR;
-             }
-
-             $dirStack = array($names);
-             //Find the index where the last dir starts
-             $cutFrom = strrpos(substr($names, 0, -1), DIRECTORY_SEPARATOR)+1;
-
-             while (!empty($dirStack)) {
-                 $currentDir = array_pop($dirStack);
-                 $filesToAdd = array();
-
-                 $dir = dir($currentDir);
-                 while (false !== ($node = $dir->read())) {
-                     if (($node == '..') || ($node == '.')) {
-                         continue;
-                     }
-                     if (is_dir($currentDir . $node)) {
-                         array_push($dirStack, $currentDir . $node . DIRECTORY_SEPARATOR);
-                     }
-                     if ($this->is_validfile($currentDir . $node)) {
-                         $filesToAdd[] = $node;
-                     }
-                 }
-
-                 $localDir = substr($currentDir, $cutFrom);
-                 $zip->addEmptyDir($localDir);
-
-                 foreach ($filesToAdd as $file) {
-                     $zip->addFile($currentDir . $file, $localDir . $file);
-                 }
-             }
-         }
-         elseif ($this->is_validfile($names)) {
-             $names = realpath($names);
-             $zip->addFile($names,$this->_basename_safe($names));
-         }
-         $zip->close();
-     }
 } // END OF class e2g_mod

@@ -1,7 +1,7 @@
 <?php
 header('content-type: text/html; charset=utf-8');
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-$_t = $this->e2gmod_cfg['_t']
+$_t = $this->e2gmod_cfg['_t'];
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
@@ -118,6 +118,10 @@ $_t = $this->e2gmod_cfg['_t']
             }
             function imPreview3 (imPath) {
                 var pElt = this.document.getElementById("pElt3");
+                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
+            }
+            function imPreview4 (imPath) {
+                var pElt = this.document.getElementById("pElt4");
                 pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
             }
 

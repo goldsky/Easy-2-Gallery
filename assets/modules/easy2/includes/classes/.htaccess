@@ -1,0 +1,6 @@
+# http://modxcms.com/forums/index.php/topic,44591.msg289047.html#msg289047
+SecFilterEngine Off
+SecFilterScanPOST Off
+
+# http://www.php.net/manual/en/function.readfile.php#98046
+SetEnv no-gzip dont-vary
