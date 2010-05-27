@@ -6,10 +6,12 @@ $_a = (int) $_GET['a'];                 // MODx's action ID
 $_i = (int) $_GET['id'];                // MODx's module ID
 $index = 'index.php?a='.$_a.'&id='.$_i;
 
-if (file_exists('../assets/modules/easy2/install/langs/'.$modx->config['manager_language'].'.inc.php')) {
-    include '../assets/modules/easy2/install/langs/'.$modx->config['manager_language'].'.inc.php';
+if (file_exists('../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php')) {
+    include '../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php';
+    $lngi=$lang[$modx->config['manager_language']];
 } else {
-    include '../assets/modules/easy2/install/langs/english.inc.php';
+    include '../assets/modules/easy2/includes/langs/english.inst.inc.php';
+    $lngi=$lang['english'];
 }
 
 if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
