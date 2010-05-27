@@ -8,10 +8,10 @@ $index = 'index.php?a='.$_a.'&id='.$_i;
 
 if (file_exists('../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php')) {
     include '../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php';
-    $lngi=$lang[$modx->config['manager_language']];
+    $lngi=$e2g_lang[$modx->config['manager_language']];
 } else {
     include '../assets/modules/easy2/includes/langs/english.inst.inc.php';
-    $lngi=$lang['english'];
+    $lngi=$e2g_lang['english'];
 }
 
 if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
