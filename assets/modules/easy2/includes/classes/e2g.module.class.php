@@ -17,11 +17,13 @@ class e2g_mod {
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
+        set_time_limit(0);
+
         $this->e2gmod_cfg = $e2gmod_cfg;
 //        $this->e2g = $e2g;
 //        $this->lng = $lng;
         $this->_explore($e2g, $lng);
-        $this->_echo_memory_usage();
+        $this->_echo_memory_usage($lng);
     }
 
     private function _explore($e2g, $lng) {
@@ -61,13 +63,13 @@ class e2g_mod {
         switch ($act) {
             case 'synchro':
                 if($this->_synchro( MODX_BASE_PATH . $e2g['dir'],1,$e2g, $lng)) {
-                    $_SESSION['easy2suc'][] = $lng['synchro_suc'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['synchro_suc'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['synchro_err'];
                 }
                 $res = $this->_delete_all ( MODX_BASE_PATH . $e2g['dir'].'_thumbnails/');
                 if (empty($res['e'])) {
-                    $_SESSION['easy2suc'][] = $lng['cache_clean'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'];
                     $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
@@ -109,17 +111,17 @@ class e2g_mod {
                     if ( $extract == 0 ) {
                         $_SESSION['easy2err'][] = __LINE__.' Error : '.$zip->errorInfo(TRUE);
                     } else {
-                        $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $j.' '.$lng['files_uploaded'].'.';
                     }
                     @unlink($_FILES['zip']['tmp_name']);
                     if( $this->_synchro('../'.$e2g['dir'],1,$e2g, $lng ) ) {
-                        $_SESSION['easy2suc'][] = $lng['synchro_suc'];
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['synchro_suc'];
                     } else {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['synchro_err'];
                     }
                     $res = $this->_delete_all ('../'.$e2g['dir'].'_thumbnails/' );
                     if (empty($res['e'])) {
-                        $_SESSION['easy2suc'][] = $lng['cache_clean'];
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'];
                     } else {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'];
                         $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
@@ -153,6 +155,8 @@ class e2g_mod {
                             $existingname[$rowcheck['filename']] = $rowcheck['filename'];
                         }
                     }
+                    mysql_free_result($querycheck);
+
                     if (isset($existingname[$_FILES['img']['name'][$i]])) {
                         $filteredname = $this->_single_file($_FILES['img']['name'][$i]);
                     } else {
@@ -171,6 +175,7 @@ class e2g_mod {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['db_err'].': ' . mysql_error();
                         continue;
                     }
+
                     $inf = getimagesize($_FILES['img']['tmp_name'][$i]);
                     if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
                         $this->_resize_img ($_FILES['img']['tmp_name'][$i], $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
@@ -182,7 +187,7 @@ class e2g_mod {
                             or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                     $j++;
                 }
-                $_SESSION['easy2suc'][] = $j.' '.$lng['files_uploaded'].'.';
+                $_SESSION['easy2suc'][] = __LINE__.' : '. $j.' '.$lng['files_uploaded'].'.';
                 header ("Location: ".$index.'&pid='.$_GET['pid']);
                 exit();
             // Multiple deletion
@@ -209,6 +214,7 @@ class e2g_mod {
                                     'SELECT id FROM '.$modx->db->config['table_prefix'].'easy2_files '
                                     .'WHERE dir_id IN('.implode(',', $ids).')');
                             while ($l = mysql_fetch_row($files_res)) $files_id[] = $l[0];
+                            mysql_free_result($files_res);
 
                             if (count($files_id) > 0) {
                                 mysql_query(
@@ -240,10 +246,10 @@ class e2g_mod {
                     if ($res['dfp'][0] == 0 && $res['ddb'][0] == 0) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dirs_delete_err'];
                     } elseif ($res['dfp'][0] == $res['ddb'][0]) {
-                        $_SESSION['easy2suc'][] = $res['dfp'][0] . ' '.$lng['dirs_deleted'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['dfp'][0] . ' '.$lng['dirs_deleted'].'.';
                     } else {
-                        $_SESSION['easy2suc'][] = $res['ddb'][0] . ' '.$lng['dirs_deleted_fdb'].'.';
-                        $_SESSION['easy2suc'][] = $res['dfp'][0] . ' '.$lng['dirs_deleted_fhdd'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['ddb'][0] . ' '.$lng['dirs_deleted_fdb'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['dfp'][0] . ' '.$lng['dirs_deleted_fhdd'].'.';
                     }
                 }
                 // Delete images
@@ -253,6 +259,8 @@ class e2g_mod {
                             $files_id = array();
                             $files_res = mysql_query('SELECT id FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int) $k);
                             while ($l = mysql_fetch_row($files_res)) $files_id[] = $l[0];
+                            mysql_free_result($files_res);
+
                             if (count($files_id) > 0) {
                                 mysql_query(
                                         'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments '
@@ -280,13 +288,13 @@ class e2g_mod {
                 }
                 if (!empty($res['ffp']) || !empty($res['fdb'])) {
                     if ($res['ffp'][0] == $res['fdb'][0]) {
-                        $_SESSION['easy2suc'][] = $res['ffp'][0] . ' '.$lng['files_deleted'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['ffp'][0] . ' '.$lng['files_deleted'].'.';
                     } else {
-                        $_SESSION['easy2suc'][] = $res['fdb'][0] . ' '.$lng['files_deleted_fdb'].'.';
-                        $_SESSION['easy2suc'][] = $res['ffp'][0] . ' '.$lng['files_deleted_fhdd'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['fdb'][0] . ' '.$lng['files_deleted_fdb'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $res['ffp'][0] . ' '.$lng['files_deleted_fhdd'].'.';
                     }
                 }
-//                $_SESSION['easy2suc'][] = $out;
+//                $_SESSION['easy2suc'][] = __LINE__.' : '. $out;
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
@@ -306,6 +314,9 @@ class e2g_mod {
                     $dirUrl = MODX_BASE_URL.$gdir;
                     $zipName = $dirName.$this->_get_dir_info($_GET['pid'], 'cat_name').'.zip';
 
+                    // delete existing zip file if there is any.
+                    @unlink($zipName);
+                    
                     foreach ($_zipcontents as $_zipcontent) {
                         //http://www.php.net/manual/en/function.ziparchive-addemptydir.php#91221
                         $zip = new ZipArchive();
@@ -366,7 +377,7 @@ class e2g_mod {
                         ob_clean();
                         flush();
                         readfile($zipName);
-                        unlink($zipName);
+                        @unlink($zipName);
                         exit();
                     }
                 }
@@ -376,21 +387,7 @@ class e2g_mod {
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
-                
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-
-            // MOVE TO A NEW DIRECTORY
+             // MOVE TO A NEW DIRECTORY
             case 'move_checked':
                 $out = '';
                 // COUNTER
@@ -452,8 +449,8 @@ class e2g_mod {
                                     }
                                     if ($e2g_debug==1)
                                         if (!empty($tree->reports)) {
-                                            $_SESSION['easy2suc'][] = __LINE__ .' : '.__METHOD__;
-                                            foreach ($tree->reports as $tree_report) $_SESSION['easy2suc'][] = __LINE__.' : '. $tree_report;
+                                            $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__ .' : '.__METHOD__;
+                                            foreach ($tree->reports as $tree_report) $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' : '. $tree_report;
                                         }
                                     if (count($ids) > 0) {
                                         $res['ddb'][0] += count($ids);
@@ -470,10 +467,10 @@ class e2g_mod {
                                 } else {
                                     if (!$newpath['chmod']) {
                                         $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'].' => '. MODX_BASE_PATH.$newpath['decoded'];
-                                    } else $_SESSION['easy2suc'][] = __LINE__.' : chmod successfull => '. MODX_BASE_PATH.$newpath['decoded'];
+                                    } else $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' : chmod successfull => '. MODX_BASE_PATH.$newpath['decoded'];
 
                                     if ($e2g_debug==1)
-                                        $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_move_suc'].'
+                                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' : '. $lng['dir_move_suc'].'
                                             from: <span style="color:blue;">'.$oldpath['origin'].'</span>
                                             to: <span style="color:blue;">'.$newpath['origin'].'</span>';
 
@@ -495,43 +492,23 @@ class e2g_mod {
                     if ($res['dfp'][0] == 0 && $res['ddb'][0] == 0) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dirs_move_err'];
                     } elseif ($res['dfp'][0] == $res['ddb'][0]) {
-                        $_SESSION['easy2suc'][] = __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved'].'.';
                     } else {
-                        $_SESSION['easy2suc'][] = __LINE__.' '. $res['ddb'][0] . ' '.$lng['dirs_moved_fdb'].'.';
-                        $_SESSION['easy2suc'][] = __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved_fhdd'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['ddb'][0] . ' '.$lng['dirs_moved_fdb'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved_fhdd'].'.';
                     }
 
                         // ****************** list names ****************** //
                         if ( !empty($res['dir']) || !empty($res['file']) ) {
                             for ($i=0;$i<count($res['dir']);$i++) {
-                                $_SESSION['easy2suc'][] = __LINE__.' dir: '. $res['dir'][$i];
+                                $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' dir: '. $res['dir'][$i];
                             }
                             for ($i=0;$i<count($res['file']);$i++) {
-                                $_SESSION['easy2suc'][] = __LINE__.' file: '. $res['file'][$i];
+                                $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' file: '. $res['file'][$i];
                             }
                        }
                         // ****************** list names ****************** //
                 } // if (!empty($_POST['dir']))
-
-
-
-
-
-
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-// ********************************************************************************************************* //
-
-
 
                 // MOVING IMAGES
                 if (!empty($_POST['im']) && !empty($_POST['newparent'])) {
@@ -543,6 +520,7 @@ class e2g_mod {
                             while ($l = mysql_fetch_array($files_res)) {
                                 $files[$l['id']]['dir_id'] = $l['dir_id'];
                             }
+                            mysql_free_result($files_res);
 
                             if ( $_POST['newparent'] == $files[$k]['dir_id'] ) {
                                 $_SESSION['easy2err'][] = __LINE__.' : '. $lng['filetosamedirectory_err'];
@@ -558,6 +536,7 @@ class e2g_mod {
                             } else {
                                 $res['fdb'][1]++;
                             }
+                            mysql_free_result($updatefile);
                         }
                         // move the file
                         if (!empty($v)) {
@@ -627,6 +606,8 @@ class e2g_mod {
                     while ($l = mysql_fetch_row($res)) {
                         $files_id[] = $l[0];
                     }
+                    mysql_free_result($res);
+
                     if (count($files_id) > 0) {
                         mysql_query(
                                 'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments '
@@ -640,18 +621,18 @@ class e2g_mod {
                     $res = $this->_delete_all('../'.$dir_path.'/');
                 }
                 if (count($ids) > 0 && count($res['e']) == 0) {
-                    $_SESSION['easy2suc'][] = $lng['dir_delete'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_delete'];
                 } elseif (count($ids) > 0) {
-                    $_SESSION['easy2suc'][] = $lng['dir_delete_fdb'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_delete_fdb'];
                 } elseif (count($res['e']) == 0) {
-                    $_SESSION['easy2suc'][] = $lng['dir_delete_fhdd'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_delete_fhdd'];
                 } else {
                     if (!empty($res['e'])) $_SESSION['easy2err'] = $res['e'];
                     if (!empty($tree->error)) $_SESSION['easy2err'][] = __LINE__.' : '. $tree->error;
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_delete_err'];
                 }
                 if ($res['f'] > 0) {
-                    $_SESSION['easy2suc'][] = $res['f'] . ' '.$lng['files_deleted'].'.';
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $res['f'] . ' '.$lng['files_deleted'].'.';
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
@@ -671,14 +652,16 @@ class e2g_mod {
                     $f_res = @unlink('../'.$file_path);
                 }
                 if ($db_res && $f_res) {
-                    $_SESSION['easy2suc'][] = $lng['file_delete'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['file_delete'];
                 } elseif ($db_res) {
-                    $_SESSION['easy2suc'][] = $lng['file_delete_fdb'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['file_delete_fdb'];
                 } elseif ($f_res) {
-                    $_SESSION['easy2suc'][] = $lng['file_delete_fhdd'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['file_delete_fhdd'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_delete_err'].': '.$file_path;
                 }
+                mysql_free_result($db_res);
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // Delete comments
@@ -694,6 +677,7 @@ class e2g_mod {
                 mysql_query(
                         'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
                         .'SET comments=comments-'.count($cids).' WHERE id ='.(int)$_GET['file_id']);
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // Delete comments from comments manager
@@ -710,13 +694,14 @@ class e2g_mod {
                             'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments '
                             .'WHERE id ='.(int)$eachcid);
                 }
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // CACHE
             case 'clean_cache':
                 $res = $this->_delete_all ('../'.$this->_e2g_decode($gdir).'_thumbnails/');
                 if (empty($res['e'])) {
-                    $_SESSION['easy2suc'][] = $lng['cache_clean'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
                     $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
@@ -753,13 +738,28 @@ class e2g_mod {
                 $f = fopen(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php', 'w');
                 fwrite($f, $c);
                 fclose($f);
-                $_SESSION['easy2suc'][] = $lng['updated'];
+                $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
+                
                 header ('Location: '.$url);
+                exit();
+            // TRANSLATION
+            case 'save_lang':
+                ksort($_POST);
+                $c = "<?php\r\n\$e2g_lang['".$_GET['lang']."'] = array (\r\n";
+                foreach($_POST as $k => $v) {
+                    $c .= "        '$k' => '".htmlspecialchars($v,ENT_QUOTES)."',\r\n";
+                }
+                $c .= ");\r\n?>";
+                $f = fopen( E2G_MODULE_PATH . 'includes/langs/'.$_GET['langfile'] , 'w' );
+                fwrite($f, $c);
+                fclose($f);
+                $_SESSION['easy2suc'][] = __LINE__.' : '. 'Language file is updated.';
+                header ('Location: '.$index);
                 exit();
             // ADD DIRECTORY
             case 'add_dir':
                 if( $this->_add_all('../'.str_replace('../', '', $this->_e2g_decode($_GET['dir_path']).'/' ), $parent_id, $e2g, $lng) ) {
-                    $_SESSION['easy2suc'][] = $lng['dir_edded'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_edded'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_edd_err'];
                 }
@@ -782,13 +782,14 @@ class e2g_mod {
                             . "VALUES(".(int)$_GET['pid'].",'$n',$s,'','',NOW())";
                     if (mysql_query($q)) {
                         chmod($f, 0644) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
-                        $_SESSION['easy2suc'][] = $lng['file_added'];
+                        $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['file_added'];
                     } else {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'].'<br />'.mysql_error().'<br />'.$q;
                     }
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'];
                 }
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // IGNORE IP ADDRESS IN IMAGE COMMENTS
@@ -801,10 +802,11 @@ class e2g_mod {
                             .'SET STATUS=\'0\' '
                             .'WHERE ip_address=\''.$_GET['ip'].'\'';
                     mysql_query($update);
-                    $_SESSION['easy2suc'][] = $lng['ip_ignored_suc'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['ip_ignored_suc'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['ip_ignored_err'].'<br />'.mysql_error();
                 }
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // UNIGNORE IP ADDRESS IN IMAGE COMMENTS
@@ -816,10 +818,11 @@ class e2g_mod {
                             .'SET STATUS=\'1\' '
                             .'WHERE ip_address=\''.$_GET['ip'].'\'';
                     mysql_query($update);
-                    $_SESSION['easy2suc'][] = $lng['ip_unignored_suc'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['ip_unignored_suc'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['ip_unignored_err'].'<br />'.mysql_error();
                 }
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
             // Delete comments from comments manager
@@ -833,6 +836,7 @@ class e2g_mod {
                             'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip '
                             .'WHERE ign_ip_address =\''.$uignIPs.'\'') or die(__LINE__.' : '.mysql_error());
                 }
+
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
         } // switch ($act)
@@ -861,7 +865,7 @@ class e2g_mod {
                         $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
                         $mkdir = mkdir('../'.$this->_e2g_decode($gdir.$dirname));
                         if ($mkdir) {
-                            $_SESSION['easy2suc'][] = $lng['directory_created'].' : '.$gdir.$dirname;
+                            $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['directory_created'].' : '.$gdir.$dirname;
                             chmod('../'.$this->_e2g_decode($gdir.$dirname), 0755)
                                     or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
 
@@ -892,6 +896,7 @@ class e2g_mod {
                             $_SESSION['easy2err'][] = __LINE__.' : '. $lng['directory_create_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$dirname);
                         }
+                        
                         header ("Location: ".$index."&pid=".$parent_id);
                         exit();
                     }
@@ -902,11 +907,13 @@ class e2g_mod {
             case 'edit_dir' :
                 if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $id['id_err'];
+
                     header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     exit();
                 }
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs WHERE cat_id='.(int)$_GET['dir_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                mysql_free_result($res);
 
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // check names against bad characters
@@ -935,17 +942,20 @@ class e2g_mod {
                                 $q .= 'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                .', cat_tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
                                 .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                 .', last_modified=NOW() '
                                 .'WHERE cat_id='.(int)$_GET['dir_id'];
                             $qResult = mysql_query($q);
-                            if($qResult) $_SESSION['easy2suc'][] = $lng['updated'];
+                            if($qResult) $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
                             else {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['update_err'];
                                 $_SESSION['easy2err'][] = __LINE__.' : '. mysql_error();
                             }
+                            mysql_free_result($qResult);
                         }
                     }
+
                     header ('Location: '.$index.'&pid='.$parent_id);
                     exit();
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -955,11 +965,13 @@ class e2g_mod {
             case 'edit_file':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $id['id_err'];
+
                     header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     exit();
                 }
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                mysql_free_result($res);
 
                 $ext = substr($row['filename'], strrpos($row['filename'], '.'));
                 $filename = substr($row['filename'], 0, -(strlen($ext)));
@@ -968,6 +980,7 @@ class e2g_mod {
                     // check names against bad characters
                     if ($this->_has_bad_char($_POST['newfilename'])) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['badchars'].': '.$_POST['newfilename'];
+
                         header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     } else {
                         // check the CHMOD permission first
@@ -989,16 +1002,19 @@ class e2g_mod {
                                 $q .= 'filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
-                                    .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
-                                    .', last_modified=NOW() '
-                                    .'WHERE id='.(int)$_GET['file_id'];
+                                .', tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
+                                .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
+                                .', last_modified=NOW() '
+                                .'WHERE id='.(int)$_GET['file_id'];
                             $qResult = mysql_query($q);
-                            if($qResult) $_SESSION['easy2suc'][] = $lng['updated'];
+                            if($qResult) $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
                             else {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['update_err'];
                                 $_SESSION['easy2err'][] = __LINE__.' : '. mysql_error();
                             }
+                            mysql_free_result($qResult);
                         }
+
                         header ('Location: '.$index.'&pid='.$parent_id);
                     }
                     exit();
@@ -1010,19 +1026,23 @@ class e2g_mod {
             case 'comments':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $id['id_err'];
+
                     header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     exit();
                 }
                 $res = mysql_query('SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int)$_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
+                mysql_free_result($res);
                 //the page content is rendered in ../tpl/page.comments.inc.php
 
                 break;
             case 'openexplorer':
                 if (isset($_POST['newparent'])) $parent_id=$_POST['newparent'];
+
                 header ('Location: '.$index.'&pid='.$parent_id);
                 exit();
                 break;
+
             default:
                 if (empty($cpath)) {
                     // MySQL Dir list
@@ -1043,6 +1063,8 @@ class e2g_mod {
                     } else {
                         $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
                     }
+                    mysql_free_result($res);
+
                     // MySQL File list
                     $q = 'SELECT id,filename,status FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
                     $res = mysql_query($q);
@@ -1058,6 +1080,8 @@ class e2g_mod {
                         $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
                         $_SESSION['easy2err'][] = __LINE__.' : '.$q;
                     }
+                    mysql_free_result($res);
+
                 }
                 //the page content is rendered in ../tpl/page.default.inc.php
                 
@@ -1114,6 +1138,8 @@ class e2g_mod {
                     $res['f']++;
                 }
                 elseif ($this->is_validfolder($f)) {
+                    $res['dir'][] = $f;
+                    $res['d'] ++;
                     // $res = result (file/dir/error)
                     // $sres = result summary (file/dir/error)
                     $res['f'] += $sres['f'];
@@ -1122,9 +1148,6 @@ class e2g_mod {
                     
                     $oldbasename = $this->_basename_safe($f);
                     $fnewpath .= '/'.$oldbasename;
-
-                    $checkfnewpath[] = $fnewpath;
-                    $res['dir'][] = $f;
                     $sres = $this->_move_all($f, $newpath.$fnewpath);
                 }
             }
@@ -1132,7 +1155,7 @@ class e2g_mod {
         if (@rename($oldpath, $newpath)) $res['d']++;
         else $res['e'][] = __LINE__.' : '.$lng['couldnotmovedirectory'].': '.$oldpath;
 
-        // only returns result calculation array
+        // only returns the result calculation array
         return $res;
     }
 
@@ -1170,28 +1193,11 @@ class e2g_mod {
                 fclose($fh);
                 chmod($indexFile, 0644) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
         }
-                
-        // goldsky -- add some files exclusion
-//        $excludefiles = array(
-//                $path.'index.htm',
-//                $path.'index.html',
-//                $path.'Thumbs.db',
-//                $path.'index.php'
-//        );
-//        $fs = @array_diff(@glob($path.'*'), $excludefiles);
-//        if (is_array($fs)) natsort($fs);
-
-        // fixedmachine -- http://modxcms.com/forums/index.php/topic,48314.msg288405.html#msg288405
-//        $getdir = @glob($path.'*');
-//        if(is_array($getdir)){
-//            $fs = array_diff($getdir, $excludefiles);
-//            natsort($fs);
-//        }
-        
+                    
         $fs = @glob($path.'*');
         if (is_array($fs)) natsort($fs);
         // goldsky -- alter the maximum execution time
-        set_time_limit(0);
+//        set_time_limit(0);
         if ($fs!=FALSE)
             foreach ($fs as $f) {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
@@ -1286,6 +1292,7 @@ class e2g_mod {
         while ($l = mysql_fetch_row($res)) {
             $result[$l[0]] = $l[1];
         }
+        mysql_free_result($res);
         if (empty($result)) return null;
         if ($string) {
             $result = implode('/', array_keys($result)).'/';
@@ -1300,6 +1307,10 @@ class e2g_mod {
     */
     private function _count_files ($path) {
         $cnt = 0;
+        /*
+         * @todo : create more reliable process on file filtering
+         *         don't use array_diff
+         */
         $excludefiles = array(
                 $path.'/index.htm',
                 $path.'/index.html',
@@ -1357,7 +1368,7 @@ class e2g_mod {
     private function _synchro ($path, $pid, $cfg, $lng) {
         global $modx;
         // goldsky -- alter the maximum execution time
-        set_time_limit(0);
+//        set_time_limit(0);
         $time_start = microtime(TRUE);
         /*
          * STORE variable arrays for synchronizing comparison
@@ -1377,6 +1388,7 @@ class e2g_mod {
             $_SESSION['easy2err'][] = __LINE__.' : '.$res;
             return FALSE;
         }
+        mysql_free_result($res);
         // MySQL File list
         $res = mysql_query('SELECT id,filename FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id='.$pid);
         $mfiles = array();
@@ -1390,6 +1402,7 @@ class e2g_mod {
             $_SESSION['easy2err'][] = __LINE__.' : '.$res;
             return FALSE;
         }
+        mysql_free_result($res);
 
         /*
          * goldsky -- if there is no index.html inside folders, this will create it.
@@ -1407,22 +1420,6 @@ class e2g_mod {
             }
         }
 
-        // goldsky -- adding some files exclusion
-//        $excludefiles = array(
-//                $path.'index.htm',
-//                $path.'index.html',
-//                $path.'Thumbs.db',
-//                $path.'index.php'
-//        );
-//        $fs = @array_diff(@glob($path.'*'), $excludefiles); // goldsky -- DO NOT USE a slash here!
-//        if (is_array($fs)) natsort($fs);
-
-        // fixedmachine -- http://modxcms.com/forums/index.php/topic,48314.msg288405.html#msg288405
-//        $getdir = @glob($path.'*');
-//        if(is_array($getdir)){
-//            $fs = array_diff($getdir, $excludefiles);
-//            natsort($fs);
-//        }
         $fs = @glob($path.'*'); // goldsky -- DO NOT USE a slash here!
         if (is_array($fs)) natsort($fs);
         /*
@@ -1521,6 +1518,7 @@ class e2g_mod {
                 while ($l = mysql_fetch_row($res)) {
                     $files_id[] = $l[1];
                 }
+                mysql_free_result($res);
                 if (count($files_id) > 0) {
                     mysql_query('DELETE FROM '.$modx->db->config['table_prefix'].'easy2_comments WHERE file_id IN('.implode(',', $files_id).')');
                 }
@@ -1542,12 +1540,13 @@ class e2g_mod {
                 $_SESSION['easy2err'][] = __LINE__.' : '.$qfiles;
                 return FALSE;
             }
+            mysql_free_result($db_res);
         }
 
         $time_end = microtime(TRUE);
         $timetotal = $time_end - $time_start;
         if ( $e2g['e2g_debug']== 1 ) {
-            $_SESSION['easy2suc'][] = "Syncronized $path in $timetotal seconds\n";
+            $_SESSION['easy2suc'][] = __LINE__.' : '. "Syncronized $path in $timetotal seconds\n";
         }
         return TRUE;
     }
@@ -1564,6 +1563,7 @@ class e2g_mod {
         while ($rowcheck = @mysql_fetch_array($querycheck)) {
             $fetchrow[$rowcheck['filename']] = $rowcheck['filename'];
         }
+        mysql_free_result($querycheck);
         if ( isset( $fetchrow[$name]) ) {
             $ext = substr($name, strrpos($name, '.'));
             $filename = substr($name, 0, -(strlen($ext)));
@@ -1577,7 +1577,7 @@ class e2g_mod {
                 $newnumbersuffix = 1;
             }
             $newfilename = ( $prefixfilename!='' ? $prefixfilename.$notnumbersuffix : $filename ).'_'.$newnumbersuffix.$ext;
-            $_SESSION['easy2suc'][] = $name .' exists, file was renamed to be '.$newfilename;
+            $_SESSION['easy2suc'][] = __LINE__.' : '. $name .' exists, file was renamed to be '.$newfilename;
         }
 
         // recursive check
@@ -1587,6 +1587,7 @@ class e2g_mod {
         while ($rowcheck2 = @mysql_fetch_array($querycheck2)) {
             $fetchrow2[$rowcheck2['filename']] = $rowcheck2['filename'];
         }
+        mysql_free_result($querycheck2);
         if ( isset( $fetchrow2[$newfilename]) ) {
             $newfilename2 = $this->_single_file($newfilename);
             if (!$newfilename2) {
@@ -1616,9 +1617,9 @@ class e2g_mod {
      * Too much memory swallowed. Need a meter in here.
      * http://www.php.net/manual/en/function.memory-get-usage.php#93012
     */
-    private function _echo_memory_usage() {
+    private function _echo_memory_usage($lng) {
         $mem_usage = memory_get_usage(true);
-        echo '<span class="e2g_grayedHeader"><a>memory usage: ';
+        echo '<span class="e2g_grayedHeader"><a>'.$lng['memoryusage'].': ';
         if ($mem_usage < 1024)
             echo $mem_usage." bytes";
         elseif ($mem_usage < 1048576)
@@ -1790,7 +1791,8 @@ class e2g_mod {
             if ($e2g_debug==1)
                 $_SESSION['easy2err'][] = __LINE__.' : '.$selectdir;
         }
-//die(__LINE__.' : '.$selected);
+        mysql_free_result($querydir);
+        
         $output = (isset($output)?$output:'');
         foreach ($childrendirs as $childdir) {
             // DISPLAY
@@ -1831,6 +1833,7 @@ class e2g_mod {
                     $output .= $this->_getfolderoptions($childdir['cat_id'],$selected,$jsactions);
                 }
             }
+            mysql_free_result($querysub);
             /*********************************************************/
         } // foreach ($childrendirs as $childdir)
         return $output;
@@ -1854,6 +1857,7 @@ class e2g_mod {
         while ($l = mysql_fetch_array($res)) {
             $dirinfo[$field] = $l[$field];
         }
+        mysql_free_result($res);
         if (empty($dirinfo[$field])) return null;
         return $dirinfo[$field];
     }
