@@ -1,16 +1,13 @@
 <?php
-$_P = array (
+
+$e2g_lang['spanish'] = array (
         'title' => 'Comentarios',
         'add_comment' => 'Agregar Comentario',
         'username' => 'Nombre',
         'useremail' => 'Email',
         'usercomment' => 'Su comentario',
         'send_btn' => 'Enviar Comentario',
-        'body' => '',
-        'pages' => '',
-        'code' => 'Codigo'
-);
-$lng = array (
+        'code' => 'Codigo',
         'empty_name_comment' => 'Debe introducir nombre y comentario',
         'comment_added' => 'Comentario agregado',
         'comment_add_err' => 'Se ha detectado un error tratando de enviar su comentario.',

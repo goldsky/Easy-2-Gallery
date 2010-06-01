@@ -1,21 +1,17 @@
 <?php
-$_P = array (
-        'title' => 'Comments',
+$e2g_lang['english'] = array (
         'add_comment' => 'Add Comment',
-        'username' => 'Name',
-        'useremail' => 'Email',
-        'usercomment' => 'Your Comment',
-        'send_btn' => 'Post comment',
-        'body' => '',
-        'pages' => '',
-        'code' => 'Code'
-);
-$lng = array (
-        'empty_name_comment' => 'You must enter name and comment',
-        'comment_added' => 'Comment is added',
-        'comment_add_err' => 'There was an error while trying to post comment',
-        'pages' => 'Pages',
         'captcha_err' => 'Invalid captcha code',
-        'email_err' => 'Invalid email'
+        'code' => 'Code',
+        'comment_add_err' => 'There was an error while trying to post comment',
+        'comment_added' => 'Comment is added',
+        'email_err' => 'Invalid email',
+        'empty_name_comment' => 'You must enter name and comment',
+        'pages' => 'Pages',
+        'send_btn' => 'Post comment',
+        'title' => 'Comments',
+        'usercomment' => 'Your Comment',
+        'useremail' => 'Email',
+        'username' => 'Name',
 );
 ?>

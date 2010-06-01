@@ -1,6 +1,6 @@
 <?php
 
-$lng = array (
+$e2g_lang['spanish'] = array (
         'charset' => 'ISO-8859-1',
 //        'charset' => 'UTF-8',
         'create_dir' => 'Crear directorio',
@@ -16,8 +16,8 @@ $lng = array (
         'upload_btn' => 'Subir',
         'add_field_btn' => 'Subir mas',
         'remove_field_btn' => 'Remover',
-        'delete_confirm' => 'Esta seguro que desea borrar este archivo?\n\nClick en OK para confirmar.',
-        'delete_folder_confirm' => 'Esta seguro que desea borrar este directorio?\nTodos los directorios y archvios dentro del mismo tambien seran borrados.\n\nClick en OK para confirmar.',
+        'js_delete_confirm' => 'Esta seguro que desea borrar este archivo?\n\nClick en OK para confirmar.',
+        'js_delete_folder_confirm' => 'Esta seguro que desea borrar este directorio?\nTodos los directorios y archvios dentro del mismo tambien seran borrados.\n\nClick en OK para confirmar.',
         'enter_dirname' => 'Introduzca un nuevo nombre para el directorio.',
         'enter_new_dirname' => 'Renombrar directorio',
 
