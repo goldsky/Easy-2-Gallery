@@ -568,6 +568,14 @@ class e2g_mod {
                     }
                 } // if (!empty($_POST['im']))
                 
+                $res = $this->_delete_all ('../'.$e2g['dir'].'_thumbnails/' );
+                if (empty($res['e'])) {
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'];
+                } else {
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'];
+                    $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
+                }
+
                 if ( empty($_POST['dir']) && empty($_POST['im']) ) {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['pleaseselectobject'];
                     header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
