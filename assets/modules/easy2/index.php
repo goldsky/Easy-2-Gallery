@@ -31,8 +31,24 @@ require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 // LANGUAGE
 if (file_exists( E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.inc.php')) {
     require_once E2G_MODULE_PATH . 'includes/langs/'.$modx->config['manager_language'].'.inc.php';
+
+    // if there is a blank language parameter, english will fill it as the default.
+    foreach ($e2g_lang[$modx->config['manager_language']] as $olk => $olv) {
+        $olangkey[$olk] = $olk; // other languages
+        $olangval[$olk] = $olv;
+    }
+
+    include_once E2G_MODULE_PATH . 'includes/langs/english.inc.php';
+    foreach ($e2g_lang['english'] as $enk => $env) {
+        if ( !isset($olangkey[$enk]) ) {
+            $e2g_lang[$modx->config['manager_language']][$enk] = $env;
+        }
+    }
+
+    $lng = $e2g_lang[$modx->config['manager_language']];
 } else {
     require_once E2G_MODULE_PATH . 'includes/langs/english.inc.php';
+    $lng = $e2g_lang['english'];
 }
 
 mysql_select_db(str_replace('`', '', $GLOBALS['dbase']));
@@ -43,18 +59,34 @@ if (!isset( $_SESSION['easy2err'] ) ) $_SESSION['easy2err'] = array();
 if (!isset( $_SESSION['easy2suc'] ) ) $_SESSION['easy2suc'] = array();
 
 // CONFIGURATIONS
-if (file_exists( E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php' )) {
+if (!file_exists(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php')) {
+    // if config file has not been created, yet, this will create one
+    $createconfig = fopen(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php', 'w+');
+} else {
     require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
     foreach ($e2g as $ck => $cv) {
-        $keyconf[$ck] = $ck;
-        $valconf[$ck] = $cv;
+        $confkey[$ck] = $ck;
+        $confval[$ck] = $cv;
     }
 }
+
 // the default config will replace any blank value of config's.
 if (file_exists( E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php' )) {
     require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
+    // if config file is missing, this will create one
+    if (isset($createconfig)) {
+        $c = "<?php\r\n\$e2g = array (\r\n";
+        foreach($def_e2g as $dk => $dv) {
+            $c .= "        '$dk' => ".(is_numeric($dv)?$dv:"'".addslashes($dv)."'").",\r\n";
+        }
+        $c .= ");\r\n?>";
+        fwrite($createconfig, $c);
+        fclose($createconfig);
+        unset($createconfig);
+    }
+
     foreach ($def_e2g as $dk => $dv) {
-        if ($valconf[$dk]=='') {
+        if ( !isset($confkey[$dk]) && $dk!='captcha') {
             $e2g[$dk] = $dv;
         }
     }

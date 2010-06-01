@@ -14,7 +14,7 @@ if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
     die('<h2 style="color:red">ID Error!</h2>');
 }
 
-require_once 'includes/configs/config.easy2gallery.php';
+include 'includes/configs/config.easy2gallery.php';
 if ($e2g['ecm'] == 0) {
     die('<h2 style="color:red">Comments disabled!</h2>');
 }
@@ -29,7 +29,7 @@ startCMSSession();
 mysql_connect($database_server, $database_user, $database_password)
         or die('<h2 style="color:red">MySQL connect error!</h2>');
 mysql_select_db(str_replace('`', '', $dbase));
-@mysql_query("{$database_connection_method} {$database_connection_charset}");
+@mysql_query("{$database_connection_method} {$database_connection_charset}"); 
 
 
 $id = (int) $_GET['id'];
@@ -39,11 +39,24 @@ while ($row = mysql_fetch_assoc($res)) $settings[$row['setting_name']] = $row['s
 
 if (file_exists('includes/langs/'.$settings['manager_language'].'.comments.php')) {
     include 'includes/langs/'.$settings['manager_language'].'.comments.php';
+    $lng=$e2g_lang[$settings['manager_language']];
 } else {
     include 'includes/langs/english.comments.php';
+    $lng=$e2g_lang['english'];
 }
 
 $_P['charset']=$settings['modx_charset'];
+
+// output from language file
+$_P['title']=$lng['title'];
+$_P['add_comment']=$lng['add_comment'];
+$_P['username']=$lng['username'];
+$_P['useremail']=$lng['useremail'];
+$_P['usercomment']=$lng['usercomment'];
+$_P['send_btn']=$lng['send_btn'];
+$_P['body']='';
+$_P['pages']='';
+$_P['code']=$lng['code'];
 
 // INSERT THE COMMENT INTO DATABASE
 
