@@ -23,8 +23,12 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <td><input name="alias" type="text" value="<?php echo $row['cat_alias']; ?>" size="30"></td>
         </tr>
         <tr>
+            <td><b><?php echo $lng['tags']; ?> :</b></td>
+            <td><input name="tags" type="text" value="<?php echo $row['cat_tags']; ?>" size="95"></td>
+        </tr>
+        <tr>
             <td valign="top"><b><?php echo $lng['description']; ?> :</b></td>
-            <td><textarea name="description" style="width:500px"><?php echo $row['cat_description']; ?></textarea></td>
+            <td><textarea name="description" style="width:500px" cols="" rows=""><?php echo $row['cat_description']; ?></textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="<?php echo $lng['save']; ?>">

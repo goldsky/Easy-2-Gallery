@@ -11,24 +11,24 @@ if(is_array($dirs)) natsort($dirs);
         <ul class="actionButtons">
             <li id="Button1">
                 <a href="<?php echo $index; ?>&act=synchro">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/refresh.png" /> <?php echo $lng['synchro']; ?>
+                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/refresh.png" alt="" /> <?php echo $lng['synchro']; ?>
                 </a>
             </li>
             <li id="Button2">
                 <a href="<?php echo $index; ?>&act=clean_cache">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/trash.png" /> <?php echo $lng['clean_cache']; ?>
+                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/trash.png" alt="" /> <?php echo $lng['clean_cache']; ?>
                 </a>
             </li>
             <li id="Button3">
                 <a href="<?php echo $index; ?>&page=create_dir&pid=<?php echo $parent_id; ?>">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/folder_add.png" /> <?php echo $lng['create_dir']; ?>
+                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" /> <?php echo $lng['create_dir']; ?>
                 </a>
             </li>
-            <li id="Button4">
+            <!--li id="Button4">
                 <a href="<?php echo $index; ?>&page=search_all&pid=<?php echo $parent_id; ?>">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/preview.png" /> <?php echo $lng['search']; ?>
+                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/preview.png" alt="" /> <?php echo $lng['search']; ?>
                 </a>
-            </li>
+            </li-->
             <li id="Button5">
                 <?php echo $lng['gotofolder']; ?>:
                 <select name="newparent" onchange="submitform(1)">
@@ -38,23 +38,43 @@ if(is_array($dirs)) natsort($dirs);
         </ul>
     </form>
 </div>
-<p><?php echo $lng['path']; ?>: <a href="<?php echo $index; ?>&page=edit_dir&dir_id=<?php echo $parent_id; ?>&pid=<?php echo $this->_get_dir_info($parent_id, 'parent_id'); ?>">
-        <img src="<?php echo  E2G_MODULE_URL ; ?>includes/icons/folder_edit.png" width="16" height="16"
-             alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" align="absmiddle" border=0>
-    </a> <b><?php echo $path; ?></b>
-</p>
-
 <?php
 // Description of the current directory
-$qdesc = 'SELECT cat_description '
+$qdesc = 'SELECT * '
         .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
         .'WHERE cat_id = '.$parent_id;
-$resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
+$resultdesc = mysql_query($qdesc);
+while ($l = mysql_fetch_array($resultdesc)) {
+    $dirtitle[$parent_id] = $l['cat_alias'];
+    $dirtags[$parent_id] = $l['cat_tags'];
+    $dirdesc[$parent_id] = $l['cat_description'];
+}
 ?>
-<table cellspacing="0" cellpadding="0">
+<table cellspacing="2" cellpadding="0">
     <tr>
-        <td width="60" valign="top"><?php echo $lng['description']; ?>: </td>
-        <td><?php echo $resultdesc; ?></td>
+        <td valign="top"><b><?php echo $lng['path']; ?></b></td>
+        <td valign="top">:</td>
+        <td>
+            <a href="<?php echo $index; ?>&page=edit_dir&dir_id=<?php echo $parent_id; ?>&pid=<?php echo $this->_get_dir_info($parent_id, 'parent_id'); ?>">
+                <img src="<?php echo  E2G_MODULE_URL ; ?>includes/icons/folder_edit.png" width="16" height="16"
+                     alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" align="absmiddle" border=0>
+            </a> <b><?php echo $path; ?></b>
+        </td>
+    </tr>
+    <tr>
+        <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
+        <td valign="top">:</td>
+        <td><?php echo $dirtitle[$parent_id]; ?></td>
+    </tr>
+    <tr>
+        <td valign="top"><b><?php echo $lng['tags']; ?></b></td>
+        <td valign="top">:</td>
+        <td><?php echo $dirtags[$parent_id]; ?></td>
+    </tr>
+    <tr>
+        <td valign="top"><b><?php echo $lng['description']; ?></b></td>
+        <td valign="top">:</td>
+        <td><?php echo $dirdesc[$parent_id]; ?></td>
     </tr>
 </table>
 <br />
@@ -115,7 +135,7 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                             <input name="dir[<?php echo (empty($id)?'d'.$i:$id); ?>]" value="<?php echo $gdir.$name; ?>"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0"></td>
+                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
                         <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
                         <td>---</td>
@@ -138,7 +158,7 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                                 ?>
                     <tr<?php echo $cl[$i%2]; ?>>
                         <td><input name="dir[<?php echo $v['id']; ?>]" value="" type="checkbox" style="border:0;padding:0"></td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder_delete.png" width="16" height="16" border="0"></td>
+                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder_delete.png" width="16" height="16" border="0" alt="" /></td>
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td>---</td>
                         <td>---</td>
@@ -206,7 +226,7 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                             <input name="im[<?php echo (empty($id)?'f'.$i:$id) ;?>]" value="<?php echo $gdir.$name;?>"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16"></td>
+                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
                         <td><?php echo $n; ?></td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
                         <td><?php echo $size; ?>Kb</td>
@@ -230,7 +250,7 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                             ?>
                     <tr<?php echo $cl[$i%2]; ?>>
                         <td><input name="im[<?php echo $v['id']; ?>]" value="" type="checkbox" style="border:0;padding:0"></td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/picture_delete.png" width="16" height="16" border="0"></td>
+                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/picture_delete.png" width="16" height="16" border="0" alt="" /></td>
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td>---</td>
                         <td>---</td>
@@ -258,20 +278,20 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                         <?php echo $lng['withselected']; ?>:<br /><br />
                         <li id="Button6">
                             <a name="delete" href="javascript: submitform(2)" style="font-weight:bold;color:red">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" /> <?php echo $lng['delete']; ?>
+                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" alt="" /> <?php echo $lng['delete']; ?>
                             </a>
                         </li>
                         <li id="Button7">
                             <a name="download" href="javascript: submitform(3)">
-                                <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/page_white_compressed.png" /> <?php echo $lng['download']; ?>
+                                <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/page_white_compressed.png" alt="" /> <?php echo $lng['download']; ?>
                             </a>
                         </li>
                         <li id="Button8">
-                            <select name="listactions">
+                            <!--select name="listactions">
                                 <option value="move"><?php echo $lng['move']; ?></option>
                                 <option value="copy"><?php echo $lng['copy']; ?></option>
-                            </select>
-                            <?php echo $lng['tofolder']; ?> :
+                            </select-->
+                            <?php echo $lng['movetofolder']; ?> :
                             <select name="newparent">
                                 <option value="">&nbsp;</option>';
 
@@ -280,11 +300,11 @@ $resultdesc = mysql_result(mysql_query($qdesc),0 ,0);
                             </select>
                             and
                             <select name="gotofolder">
-                                <option value="stayhere">stay here</option>
                                 <option value="gothere">go there</option>
+                                <option value="stayhere">stay here</option>
                             </select>
                             <a name="move" href="javascript: submitform(4)">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/sort.png" /> <?php echo $lng['go']; ?>
+                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/sort.png" alt="" /> <?php echo $lng['go']; ?>
                             </a>
                         </li>
                     </ul>

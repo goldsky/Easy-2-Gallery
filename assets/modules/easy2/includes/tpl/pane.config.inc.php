@@ -23,8 +23,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td width="12%"><b><?php echo $lng['e2g_debug']; ?>:</b></td>
                         <td>
-                            <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug']=='0' ? 'checked="checked"' : '');?>> No
-                            <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug']=='1' ? 'checked="checked"' : '');?>> Yes
+                            <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug']=='0' ? 'checked="checked"' : '');?>> <?php echo $lng['no'];?>
+                            <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug']=='1' ? 'checked="checked"' : '');?>> <?php echo $lng['yes'];?>
                         </td>
                     </tr>
                     <tr>
@@ -35,7 +35,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td width="88%"><input name="dir" type="text" value="<?php echo $e2g['dir']; ?>"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com1']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com1']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td width="12%"><b><?php echo $lng['e2g_encode']; ?>:</b></td>
@@ -62,21 +62,21 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="maxw" type="text" value="<?php echo $e2g['maxw']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com2']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com2']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['h']; ?>:</b></td>
                         <td><input name="maxh" type="text" value="<?php echo $e2g['maxh']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com3']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com3']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thq']; ?>:</b></td>
                         <td><input name="maxthq" type="text" value="<?php echo $e2g['maxthq']; ?>" size="3"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com4']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com4']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td width="12%"><b><?php echo $lng['oldimgcfg']; ?>:</b></td>
@@ -161,8 +161,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['grid']; ?>:</b></td>
-                        <td><input type="radio" name="grid" value="css" <?php echo ($e2g['grid']=='css' ? 'checked="checked"' : ''); ?>> CSS
-                            <input type="radio" name="grid" value="table" <?php echo ($e2g['grid']=='table' ? 'checked="checked"' : ''); ?>> Table <br>
+                        <td><input type="radio" name="grid" value="css" <?php echo ($e2g['grid']=='css' ? 'checked="checked"' : ''); ?>> <?php echo $lng['css'] ;?>
+                            <input type="radio" name="grid" value="table" <?php echo ($e2g['grid']=='table' ? 'checked="checked"' : ''); ?>> <?php echo $lng['table'] ;?> <br>
                         </td>
                     </tr>
                     <tr>
@@ -292,14 +292,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="comments_tpl" type="text" value="<?php echo $e2g['comments_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com19']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com19']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments_row']; ?>:</b></td>
                         <td><input name="comments_row_tpl" type="text" value="<?php echo $e2g['comments_row_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cfg_com19']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cfg_com19']); ?></td>
                     </tr>
                     <tr>
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>
@@ -341,14 +341,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <script type="text/javascript">
                     tpResources2.addTabPage( document.getElementById( 'tabWatermarks') );
                 </script>
-
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr>
-                        <td colspan="2"><b>
+                        <td colspan="2">
                                 <input name="ewm" type="radio" value="1"<?php echo ($e2g['ewm']==1?' checked':''); ?> style="border:0">
-                                <?php echo $lng['on']; ?>
+                                <b><?php echo $lng['on']; ?></b>
                                 <input name="ewm" type="radio" value="0"<?php echo ($e2g['ewm']==0?' checked':''); ?> style="border:0">
-                                <?php echo $lng['off']; ?></b></td>
+                                <b><?php echo $lng['off']; ?></b>
+                        </td>
                     </tr>
                     <tr class="gridAltItem">
                         <td width="12%"><b><?php echo $lng['type']; ?>:</b></td>
@@ -372,7 +372,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><select size="1" name="wmpos1">
                                 <option value="1"<?php echo ($e2g['wmpos1']==1?' selected':''); ?>><?php echo $lng['pos1']; ?></option>
                                 <option value="2"<?php echo ($e2g['wmpos1']==2?' selected':''); ?>><?php echo $lng['pos2']; ?></option>
-                                <option value="3"<?php echo ($e2g['wmpos1']==3?' selected':''); ?>><?php echo $lng['pos3']; ?></option></select>
+                                <option value="3"<?php echo ($e2g['wmpos1']==3?' selected':''); ?>><?php echo $lng['pos3']; ?></option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -390,8 +391,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo $lng['cfg_com15']; ?></td>
                     </tr>
                 </table>
-
-
             </div>
             <div class="tab-page" id="tabComments">
                 <h2 class="tab"><?php echo $lng['comments']; ?></h2>
@@ -419,8 +418,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="captcha" type="checkbox"<?php echo ((isset($e2g['captcha']) && $e2g['captcha']==1)?' checked':''); ?> value="1" style="border:0"></td>
                     </tr>
                 </table>
-
-
             </div>
         </div>
     </form>

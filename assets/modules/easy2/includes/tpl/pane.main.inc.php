@@ -13,16 +13,16 @@ $_t = $this->e2gmod_cfg['_t'];
         <script type="text/javascript" src="media/script/tabpane.js"></script>
         <script type="text/javascript">
             function confirmDelete() {
-                return (confirm("<?php echo $lng['delete_confirm']; ?>"));
+                return (confirm("<?php echo $lng['js_delete_confirm']; ?>"));
             }
             function confirmDeleteFolder() {
-                return (confirm("<?php echo $lng['delete_folder_confirm']; ?>"));
+                return (confirm("<?php echo $lng['js_delete_folder_confirm']; ?>"));
             }
             function ignoreIPAddress() {
-                return (confirm("<?php echo $lng['ignore_ip_address_confirm']; ?>"));
+                return (confirm("<?php echo $lng['js_ignore_ip_address_confirm']; ?>"));
             }
             function unignoreIPAddress() {
-                return (confirm("<?php echo $lng['unignore_ip_address_confirm']; ?>"));
+                return (confirm("<?php echo $lng['js_unignore_ip_address_confirm']; ?>"));
             }
             function addField () {
                 var im = document.getElementById("imFields");
@@ -147,6 +147,16 @@ $_t = $this->e2gmod_cfg['_t'];
                     }
                 }
             }
+        </script>
+        <script type="text/javascript" src="<?php echo MODX_BASE_URL;?>assets/plugins/<?php echo $e2g['tinymcefolder'];?>/tiny_mce.js"></script>
+        <script type="text/javascript">
+        tinyMCE.init({
+            mode : "textareas",
+            theme : "advanced",
+            editor_selector : "mceAdvanced",
+            theme_advanced_toolbar_location : "top",
+            content_css : "<?php echo E2G_MODULE_URL; ?>includes/tpl/e2g_mod.css"
+        });
         </script>
     </head>
     <body>

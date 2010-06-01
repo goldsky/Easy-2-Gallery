@@ -16,7 +16,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description'];?> :</b></td>
-            <td><textarea name="description" style="width:500px"></textarea></td>
+            <td><textarea name="description" style="width:500px" cols="" rows=""></textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="<?php echo $lng['save'];?>" />
