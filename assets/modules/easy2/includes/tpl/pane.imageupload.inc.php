@@ -49,8 +49,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 tpResources2.addTabPage( document.getElementById( 'tabZip') );
             </script>
             <ul>
-                <li><?php echo $lng['char_limitation'];?></li>
-                <li><?php echo $lng['zip_foldername'];?></li>
+                <li><?php echo htmlspecialchars_decode($lng['char_limitation']);?></li>
+                <li><?php echo htmlspecialchars_decode($lng['zip_foldername']);?></li>
             </ul>
             <br />
             <form name="zipfile" action="<?php echo $index.'&act=uploadzip&pid='.$parent_id; ?>" 

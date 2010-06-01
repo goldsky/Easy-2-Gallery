@@ -3,6 +3,23 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/  
 
+********** 1.4.0-Release Candidate 1 **********
++ Many bug fixings
++ Folders is restructured
++ Many changes on variable names for new updates
+
+MODULE
++ Added move folders option
++ Download option
++ Added translation page
++ More options in config area
+
+SNIPPET
++ Added &tags parameter
++ Added &plugins for thumbnails
++ Restrictive descendant of specified gallery's call
++ Added permalink to the gallery template
+
 ********** 1.4.0-Beta 4 **********
 + UTF 8 Bug Fix
 + Filenaming bug fix

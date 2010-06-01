@@ -93,15 +93,17 @@ class e2g_snip {
         $crumbs_showPrevious = $this->e2gsnip_cfg['crumbs_showPrevious'];
 
         if ( isset($tags) ) {
-            $gid = isset($_GET['gid']) ? $_GET['gid'] : $this->_tags_ids('dir', $tags);
+            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tags)!=''? $this->_tags_ids('dir', $tags) : 1);
             $static_gid = $this->_tags_ids('dir', $tags);
         }
-//echo __LINE__.': $tags = '.$tags.'<br />';
+
         /*
          * CHECK THE REAL DECENDANT OF THE &gid CALL.
          * OTHERWISE, Restricted Access
          */
-        $this->_check_gid_decendant($gid, $static_gid);
+        if ( isset($gid) && isset($static_gid) ) $this->_check_gid_decendant($gid, $static_gid);
+
+        $this->_libs();
 
         /*
          * PATHS
@@ -109,11 +111,16 @@ class e2g_snip {
         // NOT the $e2g config
         $_e2g = array('content'=>'','pages'=>'','parent_id'=>0,'back'=>'');
 
+        if ($gal_desc!='1') $_e2g['desc_class']= 'style="display:none;"';
+
         // START the grid
         $_e2g['content'] = (($grid=='css') ? '<div class="'.$grid_class.'">':'<table class="'.$grid_class.'"><tr>') ;
 
         // count the directories WITHOUT limit!
-        if ($showonly=='images' || !isset($gid)) {
+        if ( $showonly=='images'
+                || !isset($gid)
+                || ( isset($tags) && ($gid!=$static_gid) ) // exclude further tagged dir descendant
+                ) {
             $dir_count = 0;
         } else {
             if ( isset($tags) && !isset($_GET['gid']) ) {
@@ -139,7 +146,6 @@ class e2g_snip {
                                     .')<>0 ';
             }
 
-//echo __LINE__.': $select_count = '.$select_count.'<hr />';
             $dir_count = mysql_result(mysql_query($select_count), 0 ,0);
             ########################################################################
             /*
@@ -207,13 +213,11 @@ class e2g_snip {
                 }
             }
 
-            $this->_libs();
 
             /*
-             * FOLDERS
+             * FOLDERS/DIRECTORIES/GALLERIES
              */
             if ( $showonly != 'images' ) {
-                // SUBDIRS & THUMBS FOR SUBDIRS
                 if ( isset($tags) && !isset($_GET['gid']) ) {
                     $query = 'SELECT * '
                             . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
@@ -251,13 +255,6 @@ class e2g_snip {
                 if (!$dirquery) die(__LINE__.' : '.mysql_error().'<br />'.$query);
                 $dir_num_rows += mysql_num_rows($dirquery);
 
-//echo __LINE__.': $dir_num_rows = '.$dir_num_rows.'<hr />';
-//echo __LINE__.': $dir_count = '.$dir_count.'<hr />';
-//echo __LINE__.': $gid = '.$gid.'<hr />';
-//echo __LINE__.': $static_gid = '.$static_gid.'<hr />';
-//echo __LINE__.': $query = '.$query.'<hr />';
-
-//                $_e2g['permalink'] = '<a href="#" name="'.$this->_get_dir_info($single_gid,'cat_id').'"></a>';
                 if ( isset($tags) && !isset($_GET['gid']) ) {
                     $_e2g['permalink'] = '<a href="#" name="'.$tags.'"></a>';
                 } else {
@@ -346,7 +343,7 @@ class e2g_snip {
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
 
-            if ( isset($tags) && !isset($_GET['gid']) ) {
+            if ( isset($tags) ) {
                 $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                             . 'WHERE tags LIKE \'%'.$tags.'%\' '
                             . 'AND status = 1 '
@@ -361,8 +358,6 @@ class e2g_snip {
                             ;
             }
 
-//echo __LINE__.': $file_thumb_offset = '.$file_thumb_offset.'<hr />';
-//echo __LINE__.': $dir_num_rows = '.$dir_num_rows.'<hr />';
             if ( $file_thumb_offset > 0 && $file_thumb_offset < $limit ) {
                 $filequery .= 'LIMIT '
                         . ( $dir_num_rows > 0 ?
@@ -378,6 +373,7 @@ class e2g_snip {
             else { // $file_thumb_offset == 0 --> No sub directory
                 $filequery .= 'LIMIT ' . ( $gpn * $limit) . ', ' . $limit ;
             }
+
             $file_query_result = mysql_query($filequery) or die(__LINE__.' : '.mysql_error().'<br />'.$filequery);
             $file_num_rows = mysql_num_rows($file_query_result);
 
@@ -1407,7 +1403,7 @@ class e2g_snip {
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_dir[] = $l['cat_id'];
             }
-            $tag_gids = implode(',',$tags_dir);
+            if (count($tags_dir)>1) $tag_gids = implode(',',$tags_dir);
             return $tag_gids;
         }
         if ($dirorfile=='file') {
@@ -1418,7 +1414,7 @@ class e2g_snip {
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_file[] = $l['id'];
             }
-            $tag_ids = implode(',',$tags_file);
+            if (count($tags_file)>1) $tag_ids = implode(',',$tags_file);
             return $tag_ids;
         }
     }
