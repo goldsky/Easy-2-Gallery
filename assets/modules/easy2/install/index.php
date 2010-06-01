@@ -351,7 +351,7 @@ $out = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/
 <script type="text/javascript">
  tpResources.addTabPage(document.getElementById("install"));
 </script>
-   '.$content.'</div>
+   '.htmlspecialchars_decode($content).'</div>
  </div>
 </div>
 </body>
