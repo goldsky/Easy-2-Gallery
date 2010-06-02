@@ -437,14 +437,21 @@ default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_limit&lt;/strong&gt; - to set how many images the slide show should retrieve from the gallery ID.&lt;br /&gt; More images mean longer page loading!&lt;br /&gt; Options&amp;nbsp;: int | &#039;none&#039;&lt;br /&gt; Default&amp;nbsp;: (int)6 &lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_css&lt;/strong&gt; - set the slideshow&#039;s CSS path. &lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_js&lt;/strong&gt; - set the slideshow&#039;s JS path. &lt;/p&gt;
-&lt;p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;hr /&gt;
-Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.&lt;/p&gt;
+&lt;p&gt;
+Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.
+&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt;
 Will show slideshow with all images under folder ID 2 and 4, with box
 dimension 600x200px, with image ratio allowance (width/height) is
 between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
-&lt;p&gt;Images height will be adjusted automatically.&lt;/p&gt;',
+&lt;p&gt;Images height will be adjusted automatically.&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;hr /&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;h2&gt;Create New Slideshow&lt;/h2&gt;
+&lt;p&gt;&lt;a target=&quot;_blank&quot; href=&quot;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&quot;&gt;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&lt;/a&gt;&lt;/p&gt;',
         'slideshowshelptitle' => 'Slideshows',
         'synchro' => 'Synchronize',
         'synchro_err' => 'There was an error while trying to synchronize',

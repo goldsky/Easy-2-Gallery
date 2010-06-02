@@ -19,6 +19,7 @@ SNIPPET
 + Added &plugins for thumbnails
 + Restrictive descendant of specified gallery's call
 + Added permalink to the gallery template
++ &landingpage option is now applied to the original gallery's thumbnail, too
 
 ********** 1.4.0-Beta 4 **********
 + UTF 8 Bug Fix
@@ -31,7 +32,7 @@ SNIPPET
 + Added &landingpage parameter, to be used as a single page template of slideshow's hyperlink.
 --+ inside the landing page, the snippet call is : [!easy2? &landingpage=`-its own pageID number-`!]
 --+ the landingpage template is 'page.htm'
---+ this still can use &css and &js parameter, if it's needed.
+--+ this still can be applied the &css and &js parameter, if it's needed.
 
 Available parameters for the slideshow:
 
