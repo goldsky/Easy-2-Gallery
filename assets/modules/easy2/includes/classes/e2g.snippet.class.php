@@ -34,7 +34,7 @@ class e2g_snip {
         $slideshow = $this->e2gsnip_cfg['slideshow'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
 
-        if ( !(isset($landingpage)) ) {
+        if ( $modx->documentIdentifier != $landingpage ) { // to avoid gallery's thumbnails display on the landingpage's page
             if ( !empty($fid) && !isset($slideshow) ) {
                 echo $this->_imagefile();
             }
@@ -63,14 +63,17 @@ class e2g_snip {
         $gid = $this->e2gsnip_cfg['gid'];
         $static_gid = $this->e2gsnip_cfg['static_gid'];
         $tags = $this->e2gsnip_cfg['tags'];
+        $orderby = $this->e2gsnip_cfg['orderby'];
+        $order = $this->e2gsnip_cfg['order'];
         $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
         $cat_order = $this->e2gsnip_cfg['cat_order'];
         $gpn = $this->e2gsnip_cfg['gpn'];
         $limit = $this->e2gsnip_cfg['limit'];
-        
+
         $charset = $this->e2gsnip_cfg['charset'];
         $mbstring = $this->e2gsnip_cfg['mbstring'];
         $title_len = $this->e2gsnip_cfg['cat_name_len'];
+
 //        $notables = $this->e2gsnip_cfg['notables']; // deprecated
         $grid = $this->e2gsnip_cfg['grid'];
         $grid_class = $this->e2gsnip_cfg['grid_class'];
@@ -78,11 +81,11 @@ class e2g_snip {
         $e2gback_class = $this->e2gsnip_cfg['e2gback_class'];
         $e2gpnums_class = $this->e2gsnip_cfg['e2gpnums_class'];
         $colls = $this->e2gsnip_cfg['colls'];
-        $orderby = $this->e2gsnip_cfg['orderby'];
-        $order = $this->e2gsnip_cfg['order'];
+
         $showonly = $this->e2gsnip_cfg['showonly'];
         $customgetparams = $this->e2gsnip_cfg['customgetparams'];
         $gal_desc = $this->e2gsnip_cfg['gal_desc'];
+        $landingpage = $this->e2gsnip_cfg['landingpage'];
         $plugins = $this->e2gsnip_cfg['plugins'];
         
         // CRUMBS
@@ -405,11 +408,17 @@ class e2g_snip {
                 $l['w'] = $this->e2gsnip_cfg['w'];
                 $l['h'] = $this->e2gsnip_cfg['h'];
 
+                if ( isset($landingpage) ) {
+                    $l['link'] = $modx->makeUrl($landingpage).'&lp='.$landingpage.'&'; // do not forget the '&' suffix
+                } else {
+                    $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
+                }
+
                 // whether configuration setting is set with or without table, the template will adjust it
-                $_e2g['content'] .= (($grid == 'css') ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>');
+                $_e2g['content'] .= (($grid == 'css') ?  $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ).'</td>');
                 $i++;
             } // while ($l = @mysql_fetch_array($file_query_result, MYSQL_ASSOC))
-        } // if( $dir_num_rows!=$limit )
+        } // if( $dir_num_rows!=$limit && $showonly!='folders' && !empty($gid) )
 
         ########################################################################
 
@@ -498,8 +507,14 @@ class e2g_snip {
             $l['w'] = $this->e2gsnip_cfg['w'];
             $l['h'] = $this->e2gsnip_cfg['h'];
 
+            if ( isset($landingpage) ) {
+                $l['link'] = $modx->makeUrl($landingpage).'&lp='.$landingpage.'&'; // do not forget the '&' suffix
+            } else {
+                $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
+            }
+
             // whether configuration setting is set with or without table, the template will adjust it
-            $_e2g['content'] .= (($grid == 'css') ?  $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_activate_libs($l) ).'</td>');
+            $_e2g['content'] .= (($grid == 'css') ?  $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ).'</td>');
             $i++;
         }
 
@@ -545,9 +560,9 @@ class e2g_snip {
         $l['h'] = $this->e2gsnip_cfg['h'];
 
         $this->_libs();
-        $this->_activate_libs($l);
+        $this->_thumb_libs($l);
 
-        $_e2g['content'] .= (($grid == 'css') ? $this->_filler($this->_random_tpl(), $this->_activate_libs($l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_activate_libs($l)).'</td>');
+        $_e2g['content'] .= (($grid == 'css') ? $this->_filler($this->_random_tpl(), $this->_thumb_libs($l)) : '<td>'.$this->_filler($this->_random_tpl(), $this->_thumb_libs($l)).'</td>');
 
         // END the grid
         $_e2g['content'] .= (($grid == 'css') ? '</div>':'</tr></table>');
@@ -826,6 +841,10 @@ class e2g_snip {
         return $result;
     }
 
+    /*
+     * function _libs()
+     * To insert included files into the page header
+     */
     private function _libs() {
         global $modx;
         $css = $this->e2gsnip_cfg['css'];
@@ -853,12 +872,17 @@ class e2g_snip {
         }
     }
 
-    private function _activate_libs($row) {
-        require E2G_SNIPPET_PATH.'includes/configs/libs.config.easy2gallery.php';
+    /*
+     * function _thumb_libs()
+     * To generate the display of each of thumbnail pieces from the Javascript libraries
+     */
+    private function _thumb_libs($row) {
+        require E2G_SNIPPET_PATH.'includes/configs/libs.config.easy2gallery.php'; // get the $glibs
         global $modx;
         $gdir = $this->e2gsnip_cfg['gdir'];
         $css = $this->e2gsnip_cfg['css'];
         $glib = $this->e2gsnip_cfg['glib'];
+        $landingpage = $this->e2gsnip_cfg['landingpage'];
         $mbstring = $this->e2gsnip_cfg['mbstring'];
         $charset = $this->e2gsnip_cfg['charset'];
         $name_len = $this->e2gsnip_cfg['name_len'];
@@ -887,8 +911,12 @@ class e2g_snip {
 
         $row['src'] = $this->_get_thumb($gdir, $path.$row['filename'], $w, $h, $thq);
 
-        // gallery activation
-        if ( $glibs[$glib] ) {
+        if (isset($landingpage)) {
+            $row['glibact']='';
+        }
+        // gallery's javascript library activation
+        elseif ( $glibs[$glib] ) {
+//        if ( $glibs[$glib] && !isset($landingpage) ) {
             $row['glibact'] = $glibs[$glib]['glibact'];
         }
 
@@ -919,6 +947,9 @@ class e2g_snip {
         return $row;
     }
 
+    /*
+     * CUSTOMIZABLE SLIDESHOW
+     */
     private function _slideshow() {
         global $modx;
         $slideshow = $this->e2gsnip_cfg['slideshow'];
@@ -1146,12 +1177,14 @@ class e2g_snip {
     private function _landingpage($fileid) {
         global $modx;
         $landingpage = $this->e2gsnip_cfg['landingpage'];
-        $gdir = $this->e2gsnip_cfg['gdir'];
         $plugins = $this->e2gsnip_cfg['plugins'];
+        $gdir = $this->e2gsnip_cfg['gdir'];
         $css = $this->e2gsnip_cfg['css'];
         $js = $this->e2gsnip_cfg['js'];
         $ss_css = $this->e2gsnip_cfg['ss_css'];
         $ss_js = $this->e2gsnip_cfg['ss_js'];
+
+        if ($modx->documentIdentifier != $landingpage) return;
 
         $modx->regClientCSS($css,'screen');
         if (!empty($js)) {

@@ -179,7 +179,7 @@ $e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
  * set the slideshow's landing page.
  * @options: document ID.
 */
-$e2gsnip_cfg['landingpage'] = (!empty($_GET['lp']) ? $_GET['lp'] : (isset($landingpage) ? $landingpage : NULL)) ;
+$e2gsnip_cfg['landingpage'] = (isset($landingpage) ? $landingpage : (!empty($_GET['lp']) ? $_GET['lp'] : NULL)) ;
 
 // CRUMBS
 $e2gsnip_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';

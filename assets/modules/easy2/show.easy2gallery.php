@@ -12,7 +12,7 @@
 
 error_reporting(0);
 
-if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
+if (empty($_GET['fid']) || !is_numeric($_GET['fid'])) {
     sh_err ('Error :-(');
 }
 
@@ -27,7 +27,7 @@ mysql_select_db(str_replace('`', '', $dbase));
 require_once 'includes/configs/config.easy2gallery.php';
 
 // get the image file ID
-$id = (int) $_GET['id'];
+$id = (int) $_GET['fid'];
 $res = mysql_query('SELECT * FROM '.$table_prefix.'easy2_files WHERE id='.$id);
 if (!$res) sh_err('MySQL query error');
 

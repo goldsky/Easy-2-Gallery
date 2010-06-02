@@ -24,6 +24,27 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             </script>
             <?php echo htmlspecialchars_decode($lng['tplhelpcontent'], ENT_QUOTES); ?>
         </div>
+        <div class="tab-page" id="tabHelpSlideshows">
+            <h2 class="tab"><?php echo $lng['slideshowshelptitle']; ?></h2>
+            <script type="text/javascript">
+                tpResources2.addTabPage( document.getElementById( 'tabHelpSlideshows' ) );
+            </script>
+            <?php echo htmlspecialchars_decode($lng['slideshowshelpcontent'], ENT_QUOTES); ?>
+        </div>
+        <div class="tab-page" id="tabHelpPlugins">
+            <h2 class="tab"><?php echo $lng['pluginshelptitle']; ?></h2>
+            <script type="text/javascript">
+                tpResources2.addTabPage( document.getElementById( 'tabHelpPlugins' ) );
+            </script>
+            <?php echo htmlspecialchars_decode($lng['pluginshelpcontent'], ENT_QUOTES); ?>
+        </div>
+        <div class="tab-page" id="tabHelpAdvance">
+            <h2 class="tab"><?php echo $lng['advancehelptitle']; ?></h2>
+            <script type="text/javascript">
+                tpResources2.addTabPage( document.getElementById( 'tabHelpAdvance' ) );
+            </script>
+            <?php echo htmlspecialchars_decode($lng['advancehelpcontent'], ENT_QUOTES); ?>
+        </div>
         <div class="tab-page" id="tabHelpTranslation">
             <h2 class="tab"><?php echo ucfirst($lng['translation']); ?></h2>
             <script type="text/javascript">
