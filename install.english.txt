@@ -1,15 +1,19 @@
 Installation
 
 1. Unpack archive in root folder of you modx installation
-2. Create new module, name it anything (Eg: Easy 2 Gallery), paste 
+2. If this is your fresh installation: create a new folder 'gallery', the default path is assets/images/gallery.
+   You can change this from the default.config.easy2gallery.php (fresh installation) from this value:
+   
+   'dir' => 'assets/images/gallery/',
+   
+   If this is an upgrade, this module will use the existing config.easy2gallery.php values.
+3. Create new module, name it anything (Eg: Easy 2 Gallery), paste 
       include(MODX_BASE_PATH.'assets/modules/easy2/index.php');
   , click save.
 
-3. Refresh modx manager, then open the module tab.
-4. Install following instructions.
-5. If install is successful, remove install folder, manually or by clicking delete button. module won't work if this folder exists.
-
-
+4. Refresh modx manager, then open the module tab.
+5. Install following instructions.
+6. If install is successful, remove install folder, manually or by clicking delete button. module won't work if this folder exists.
 
 Upgrade
 
