@@ -18,7 +18,12 @@ $e2g_lang['english'] = array (
 &lt;/p&gt;
 &lt;hr /&gt;
 &lt;/blockquote&gt;
-&lt;p&gt;The pagination hyperlink will be like:&lt;br /&gt;http://your-website/index.php?id=4&lt;strong&gt;&amp;amp;param1&lt;/strong&gt;=string&lt;strong&gt;&amp;amp;param2&lt;/strong&gt;=string&amp;amp;gid=2&amp;amp;gpn=1&lt;/p&gt;',
+&lt;p&gt;The pagination hyperlink will be like:&lt;br /&gt;http://your-website/index.php?id=4&lt;strong&gt;&amp;amp;param1&lt;/strong&gt;=string&lt;strong&gt;&amp;amp;param2&lt;/strong&gt;=string&amp;amp;gid=2&amp;amp;gpn=1&lt;/p&gt;
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;
+&lt;h2&gt;Increase the upload limit&lt;/h2&gt;
+&lt;p&gt;PHP only allows 2MB maximum on the file uploading.&lt;br /&gt;This can be increased by putting the .htaccess file into the &lt;b&gt;[modx-root]/manager/&lt;/b&gt; with this content:&lt;/p&gt;
+&lt;b&gt;php_value upload_max_filesize 16M&lt;/b&gt;
+&lt;p&gt;Or whatever size you need.&lt;/p&gt;',
         'advancehelptitle' => 'Advance',
         'allcomments' => 'All Comments',
         'archive' => 'Archive zip',
@@ -112,6 +117,7 @@ $e2g_lang['english'] = array (
         'dirs_moved' => 'folders moved',
         'dirs_moved_fdb' => 'folders updated in DB',
         'dirs_moved_fhdd' => 'folders moved in HD',
+        'dirs_uploaded' => 'directories uploaded',
         'download' => 'Download',
         'dpath_err' => 'path or id of folder is undefined',
         'e2g_debug' => 'Debug option',
@@ -136,7 +142,6 @@ $e2g_lang['english'] = array (
         'files_deleted' => 'files deleted',
         'files_deleted_fdb' => 'files removed from DB',
         'files_deleted_fhdd' => 'files removed from HD',
-        'dirs_uploaded' => 'directories uploaded',
         'files_uploaded' => 'files uploaded',
         'filetosamedirectory_err' => 'Could not move file into the same folder',
         'fpath_err' => 'path or id of image is undefined',
