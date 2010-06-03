@@ -1,6 +1,7 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 header('Content-Type: text/html; charset=UTF-8');
+//setlocale(LC_ALL, 'en_US.UTF8');
 /**
  * EASY 2 GALLERY
  * Gallery Module Class for Easy 2 Gallery Module for MODx Evolution
@@ -26,6 +27,12 @@ class e2g_mod {
         $this->_echo_memory_usage($lng);
     }
 
+    /**
+     * The main file explorer function
+     * @param array $e2g The values from the config file
+     * @param array $lng The language string from the language file
+     * @return string The module's pages.
+     */
     private function _explore($e2g, $lng) {
         global $modx;
         $e2g['mdate_format'] = 'd-m-y H:i';
@@ -79,40 +86,19 @@ class e2g_mod {
             // UPLOADING IMAGES
             case 'uploadzip':
                 if($_FILES['zip']['error']==0 && $_FILES['zip']['size']>0) {
-                    include_once E2G_MODULE_PATH . 'includes/classes/pclzip.lib.php';
-                    $zip = new PclZip($_FILES['zip']['tmp_name']);
-                    if (($list = $zip->listContent()) == 0) {
-                        $_SESSION['easy2err'][] = __LINE__.' Error : '.$zip->errorInfo(TRUE);
-                    } else {
-                        $j=sizeof($list);
+//                    move_uploaded_file( $_FILES['zip']['tmp_name'],
+//                            '../'.$this->_e2g_decode($gdir.$_FILES['zip']['name']));
+//
+//                    $zip_file = MODX_BASE_PATH.$this->_e2g_decode($gdir.$_FILES['zip']['name']);
+
+                    if( !$err=$this->_unzip( realpath( $_FILES['zip']['tmp_name'] )
+                            , realpath( MODX_BASE_PATH.$this->_e2g_decode( $gdir ) )
+                            , $lng) ) {
+                        $_SESSION['easy2err'][] = __LINE__. ' <span class="warning"><b>'.$lng['upload_err']
+                            .($err===0? 'Missing zip library (php_zip.dll / zip.so)':'').'</b></span><br /><br />';
                     }
 
-                    /*
-                     * PclZip PCLZIP_CB_PRE_EXTRACT to convert filenames while extracting the content.
-                    */
-                    if (!function_exists('zipPreExtractCallBack')) {
-                        function zipPreExtractCallBack($p_event, &$p_header) {
-                            $info = pathinfo($p_header['filename']);
-                            // limit the unzipped images
-                            if ($info['extension'] == 'jpeg' || $info['extension'] == 'jpg' || $info['extension'] == 'gif' || $info['extension'] == 'png') {
-                                $get_host_iconv_encode = iconv_get_encoding("internal_encoding");
-                                $get_file_mb_encode = mb_detect_encoding( $info['basename'] );
-                                $p_header['filename'] = iconv( $get_host_iconv_encode , $get_file_mb_encode.'//TRANSLIT//IGNORE' , $p_header['filename'] );
-                                return 1;
-                            }
-                            // other file extension will not be unzipped
-                            else return 0;
-                        }
-                    }
-                    $extract = $zip->extract(PCLZIP_OPT_PATH, '../'.$this->_e2g_decode($gdir)
-                            , PCLZIP_CB_PRE_EXTRACT, 'zipPreExtractCallBack'
-                    );
-
-                    if ( $extract == 0 ) {
-                        $_SESSION['easy2err'][] = __LINE__.' Error : '.$zip->errorInfo(TRUE);
-                    } else {
-                        $_SESSION['easy2suc'][] = __LINE__.' : '. $j.' '.$lng['files_uploaded'].'.';
-                    }
+                    @unlink( '../'.$this->_e2g_decode($gdir.$_FILES['zip']['name']) );
                     @unlink($_FILES['zip']['tmp_name']);
                     if( $this->_synchro('../'.$e2g['dir'],1,$e2g, $lng ) ) {
                         $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['synchro_suc'];
@@ -127,7 +113,7 @@ class e2g_mod {
                         $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
                     }
                 } else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['upload_err'].' ' . $_FILES['img']['name'];
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['upload_err'].': ' . $this->_file_upload_error_message($_FILES['zip']['error']);
                 }
                 header ("Location: ".$index.'&pid='.$_GET['pid']);
                 exit();
@@ -1101,8 +1087,7 @@ class e2g_mod {
         include_once E2G_MODULE_PATH . 'includes/tpl/pane.main.inc.php';
     }
 
-    /*
-     * private function _delete_all()
+    /**
      * To delete all files/folders that have been selected with the checkbox
      * @param string $path file's/folder's path
     */
@@ -1131,7 +1116,7 @@ class e2g_mod {
         return $res;
     }
 
-    /*
+    /**
      * move all content to a new parent
      */
     private function _move_all ($oldpath, $newpath) {
@@ -1167,8 +1152,7 @@ class e2g_mod {
         return $res;
     }
 
-    /*
-     * private function _add_all()
+    /**
      * To add all files from the upload form
      * @param string $path file's/folder's path
      * @param int $pid current parent ID
@@ -1243,8 +1227,7 @@ class e2g_mod {
         return TRUE;
     }
 
-    /*
-     * private function _resize_img()
+    /**
      * To resize image by configuration settings
      * @param string $f   :file's/folder's name
      * @param int    $inf :getimagesize($f);
@@ -1280,12 +1263,11 @@ class e2g_mod {
         return TRUE;
     }
 
-    /*
-     * private function _path_to()
+    /**
      * To add all file from the upload form
      * @param int $id gets ID
      * @param string $string current parent ID
-     * This returns ID. The folder's name is retrieved in the line 76.
+     * @return int This returns ID. The folder's name is retrieved in the line 76.
     */
     private function _path_to ($id, $string = FALSE) {
         global $modx;
@@ -1308,8 +1290,7 @@ class e2g_mod {
         return $result;
     }
 
-    /*
-     * private function _count_files()
+    /**
      * To calculate the directory content
      * @param string $path folder's/dir's path
     */
@@ -1334,8 +1315,7 @@ class e2g_mod {
         return $cnt;
     }
 
-    /*
-     * private function _add_file()
+    /**
      * To add all file from the upload form
      * @param string $f filename
      * @param int $pid current parent ID
@@ -1366,8 +1346,7 @@ class e2g_mod {
         return TRUE;
     }
 
-    /*
-     * private function _synchro()
+    /**
      * To synchronize between physical gallery contents and database
      * @param string $path path to file or folder
      * @param int $pid current parent ID
@@ -1559,8 +1538,8 @@ class e2g_mod {
         return TRUE;
     }
 
-    /*
-     * to check the existance of filename/folder in the file system.
+    /**
+     * to check the existance of filename/folder in the file system.<br />
      * if exists, this will add numbering into the uploaded files.
     */
     private function _single_file($name) {
@@ -1606,8 +1585,8 @@ class e2g_mod {
         return $newfilename;
     }
 
-    /*
-     * to check the valid characters in names
+    /**
+     * to check the valid characters in names.<br />
      * TRUE means BAD!
     */
     private function _has_bad_char($characters) {
@@ -1621,9 +1600,9 @@ class e2g_mod {
         }
     }
 
-    /*
+    /**
      * Too much memory swallowed. Need a meter in here.
-     * http://www.php.net/manual/en/function.memory-get-usage.php#93012
+     * @link http://www.php.net/manual/en/function.memory-get-usage.php#93012
     */
     private function _echo_memory_usage($lng) {
         $mem_usage = memory_get_usage(true);
@@ -1637,9 +1616,10 @@ class e2g_mod {
         echo "</a></span>";
     }
 
-    /*
-     * goldsky
-     *
+    /**
+     * To check the specified resource is a valid file.<br />
+     * It will be checked against the folder validation first.
+     * @author goldsky <goldsky@modx-id.com>
     */
     public function is_validfile ($filename) {
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
@@ -1676,7 +1656,7 @@ class e2g_mod {
             else {
                 if ($e2g_debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
                 else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '.$filename;
+                    $_SESSION['easy2err'][] = __LINE__.' : '.$filename .' does not exist.';
                     return FALSE;
                 }
             }
@@ -1686,6 +1666,11 @@ class e2g_mod {
         else continue;
     }
 
+    /**
+     * To check the specified resource has a valid file extenstion.
+     * @author goldsky <goldsky@modx-id.com>
+     * @todo need a rework to make it more extendable
+    */
     public function is_validext($filename) {
         $ext = strtolower(end(@explode('.', $filename)));
         $allowedext = array(
@@ -1696,8 +1681,10 @@ class e2g_mod {
         );
         return $allowedext[$ext];
     }
-    /*
-     * goldsky
+
+    /**
+     * To check the specified resource is a valid folder, although it has a DOT in it.
+     * @author goldsky <goldsky@modx-id.com>
     */
     public function is_validfolder($foldername) {
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
@@ -1728,9 +1715,10 @@ class e2g_mod {
         if ($e2g_debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
         else return TRUE;
     }
-    /*
+
+    /**
      * Replace the basename function with this to grab non-unicode character.
-     * http://drupal.org/node/278425#comment-2571500
+     * @link http://drupal.org/node/278425#comment-2571500
      */
     private function _basename_safe($path) {
         $path = rtrim($path,'/');
@@ -1743,10 +1731,19 @@ class e2g_mod {
         return $encodinghtml;
     }
 
-    /*
-     * UTF encoding work around
+    /**
+     * Unicode character encoding work around.<br />
+     * For human reading.<br />
+     * The value is set from the module's config page.
+     *
+     * @link http://a4esl.org/c/charset.html
+     * @param string $text the string to be encoded
+     * @return string returns the encoding
      */
     private function _e2g_encode($text) {
+//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+        
         $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
 
         if ($e2g_encode == 'none') {
@@ -1757,8 +1754,14 @@ class e2g_mod {
         }
     }
 
-    /*
-     * UTF decoding work around
+    /**
+     * Unicode character decoding work around.<br />
+     * For file system reading.<br />
+     * The value is set from the module's config page.
+     *
+     * @link http://a4esl.org/c/charset.html
+     * @param string $text the string to be decoded
+     * @return string returns the decoding
      */
     private function _e2g_decode($text) {
         $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
@@ -1771,8 +1774,9 @@ class e2g_mod {
         }
     }
 
-    /*
+    /**
      * get folders structure for select options.
+     * @author goldsky
     */
     private function _getfolderoptions($parentid, $selected=0, $jsactions=null ) {
         global $modx;
@@ -1847,7 +1851,7 @@ class e2g_mod {
         return $output;
     }
 
-    /*
+    /**
      * function get_dir_info
      * function to get directory's information
      * @param int $dirid = gallery's ID
@@ -1869,4 +1873,110 @@ class e2g_mod {
         if (empty($dirinfo[$field])) return null;
         return $dirinfo[$field];
     }
+
+    /**
+     * @author Schoschie (nh t ngin dott de)
+     * @link http://www.php.net/manual/en/features.file-upload.errors.php#90522
+     * @param int $error_code
+     * @return string The error message
+     */
+    private function _file_upload_error_message($error_code) {
+        switch ($error_code) {
+            case UPLOAD_ERR_INI_SIZE:
+                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
+            case UPLOAD_ERR_FORM_SIZE:
+                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
+            case UPLOAD_ERR_PARTIAL:
+                return 'The uploaded file was only partially uploaded';
+            case UPLOAD_ERR_NO_FILE:
+                return 'No file was uploaded';
+            case UPLOAD_ERR_NO_TMP_DIR:
+                return 'Missing a temporary folder';
+            case UPLOAD_ERR_CANT_WRITE:
+                return 'Failed to write file to disk';
+            case UPLOAD_ERR_EXTENSION:
+                return 'File upload stopped by extension';
+            default:
+                return 'Unknown upload error';
+        }
+    }
+
+
+    /**
+     * This function was taken from the MODx's files.dynamic.php<br />
+     * Modified for Easy 2 Gallery purposes: Unicode friendly, success/error reports.
+     * @param string $file filename
+     * @param string $path starting path
+     * @return bool true/false
+     * @author patrick_allaert - php user notes
+     * @author Raymond (modx)
+     * @see manager/actions/files.dynamic.php
+     */
+	private function _unzip($file, $path, $lng) {
+        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+        
+		// added by Raymond
+		$r = substr($path,strlen($path)-1,1);
+		if ($r!='\\'||$r!='/') $path .='/';
+		if (!extension_loaded('zip')) {
+		   if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
+				if(!@dl('php_zip.dll')) return 0;
+		   } else {
+				if(!@dl('zip.so')) return 0;
+		   }
+		}
+		// end mod
+		$zip = zip_open($file);
+		if (is_resource($zip)) {
+            ob_start();
+
+            $file_count = 0;
+            $dir_count = 0;
+
+			$old_umask = umask(0);
+			while ($zip_entry = zip_read($zip)) {
+				if (zip_entry_filesize($zip_entry) > 0) {
+					// str_replace must be used under windows to convert "/" into "\"
+					$complete_path = $path.str_replace('/','\\',dirname(zip_entry_name($zip_entry)));
+					$complete_name = $path.str_replace ('/','\\', zip_entry_name($zip_entry) );
+
+                    // using Unicode conversion class.
+                    $mb_detect_encoding = mb_detect_encoding($zip_entry, "auto");
+                    $complete_path = UTF8::convert_from( $complete_path, $mb_detect_encoding );
+                    $complete_name = UTF8::convert_from( $complete_name, $mb_detect_encoding );
+
+					if(!file_exists($complete_path)) {
+						$tmp = '';
+						foreach(explode('\\',$complete_path) AS $k) {
+							$tmp .= $k.'\\';
+							if(!file_exists($tmp)) {
+								@mkdir($tmp, 0777);
+                                $dir_count++;
+							}
+						}
+					}
+					if (zip_entry_open($zip, $zip_entry, 'r')) {
+						$fd = fopen($complete_name, 'w');
+//                        $fd = fopen($this->_e2g_encode($complete_name), 'w');
+						fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+						fclose($fd);
+						zip_entry_close($zip_entry);
+                        $file_count++;
+					}
+				}
+			}
+			umask($old_umask);
+			zip_close($zip);
+            $_SESSION['easy2suc'][] = __LINE__.' : '. $dir_count.' '.$lng['dirs_uploaded'].'.';
+            $_SESSION['easy2suc'][] = __LINE__.' : '. $file_count.' '.$lng['files_uploaded'].'.';
+
+            ob_end_clean();
+			return true;
+		} else {
+            $_SESSION['easy2err'][] = __LINE__.' Error : unable to open the zip file <b>'.$zip_dir . $zip_name['original'].'</b>';
+        }
+		zip_close($zip);
+	}
+
 } // END OF class e2g_mod

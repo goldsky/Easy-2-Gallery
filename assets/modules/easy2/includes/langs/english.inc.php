@@ -136,6 +136,7 @@ $e2g_lang['english'] = array (
         'files_deleted' => 'files deleted',
         'files_deleted_fdb' => 'files removed from DB',
         'files_deleted_fhdd' => 'files removed from HD',
+        'dirs_uploaded' => 'directories uploaded',
         'files_uploaded' => 'files uploaded',
         'filetosamedirectory_err' => 'Could not move file into the same folder',
         'fpath_err' => 'path or id of image is undefined',
