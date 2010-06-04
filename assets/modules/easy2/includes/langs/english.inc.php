@@ -583,9 +583,6 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'wmpos2' => 'Vertical position',
         'wmt' => 'text/path',
         'yes' => 'yes',
-        'zip_foldername' => 'Zip&#039;s name will be used as the new folder name.&lt;br /&gt;
-            Make sure there is no other same folder&#039;s name inside current directory, or the uploading will overwrite the existing folder.&lt;br /&gt;
-            This name will also be used as the URL (web address).',
         'zip_select_none' => 'Please select any directory or file to be downloaded',
 );
 ?>
