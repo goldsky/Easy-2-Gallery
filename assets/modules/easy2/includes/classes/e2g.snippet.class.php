@@ -87,7 +87,7 @@ class e2g_snip {
         $gal_desc = $this->e2gsnip_cfg['gal_desc'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
         $plugins = $this->e2gsnip_cfg['plugins'];
-        
+
         // CRUMBS
         $crumbs_separator = $this->e2gsnip_cfg['crumbs_separator'];
         $crumbs_showHome = $this->e2gsnip_cfg['crumbs_showHome'];
@@ -133,7 +133,7 @@ class e2g_snip {
             } else {
                 $select_count = 'SELECT COUNT(DISTINCT d.cat_id) '
                         . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
-                        . 'WHERE d.cat_tags IN ('.$gid.') '
+                        . 'WHERE d.parent_id IN ('.$gid.') '
                         . 'AND d.cat_visible = 1 '
                         // ddim -- wrapping children folders
                         . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
