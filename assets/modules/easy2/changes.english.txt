@@ -5,7 +5,7 @@
 
 ********** 1.4.0-Release Candidate 1 **********
 + Many bug fixings
-+ Folders is restructured
++ Folders are restructured
 + Many changes on variable names for new updates
 + Using assets/images/gallery for its default folder of the fresh installation.
   But still use the old path (assets/gallery) if this is an upgrade.
@@ -18,8 +18,8 @@ MODULE
 
 SNIPPET
 + Added &tags parameter
-+ Added &plugins for thumbnails
-+ Restrictive descendant of specified gallery's call
++ Added &plugins for thumbnails, gallery, and landingpage
++ Restrictive descendant of specified gallery's call: restrict the address bar, and crumbs
 + Added permalink to the gallery template
 + &landingpage option is now applied to the original gallery's thumbnail, too
 
