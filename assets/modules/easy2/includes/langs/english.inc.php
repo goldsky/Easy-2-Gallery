@@ -342,7 +342,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;and landingpage (for the image in the landing page).&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;If the snippet calls more than one target, the pipe symbol ( | ) is used as delimiter of each of target.&lt;/p&gt;
-&lt;p&gt;The target call is followed by plugin&#039;s name after double colon, which are separated by comma if there are more than one plugins applied.&lt;/p&gt;
+&lt;p&gt;The target call is followed by plugin&#039;s name after a colon, which are separated by comma if there are more than one plugin applied.&lt;/p&gt;
 &lt;p&gt;The plugin&#039;s name is followed by a path to a customized index file after an @ (ampersand) sign, if there is any.&lt;/p&gt;',
         'pluginshelptitle' => 'Plugins',
         'pos1' => 'left',

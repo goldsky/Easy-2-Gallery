@@ -9,8 +9,8 @@ header('Content-Type: text/html; charset=UTF-8');
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-if (defined(E2G_SNIPPET_PATH)) require_once E2G_SNIPPET_PATH . 'includes/utf8/utf8.php';
-if (defined(E2G_MODULE_PATH)) require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
+require_once MODX_BASE_PATH . 'assets/modules/easy2/includes/utf8/utf8.php';
+
 class e2g_pub {
     public $e2gpub_cfg = array();
     private $_e2g = array();

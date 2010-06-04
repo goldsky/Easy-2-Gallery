@@ -373,25 +373,6 @@ class TTree {
         // get the parent's data
         $cat = mysql_fetch_array($result, MYSQL_ASSOC);
 
-        // ************** SET MARGIN VALUE OF THE deleted branches AS THE RENUMBERING CONTROL ************** //
-        $razn = $cat[$this->right] - $cat[$this->left] + 1;
-        $this->reports[]= __LINE__.' : $razn = '.$razn;
-
-        // ************************** REINDEX THE cat_left AND cat_right VALUES **************************** //
-        $update = 'UPDATE ' . $this->table . ' SET '
-                . $this->left . ' = '
-                . ' IF (' . $this->left . ' > ' . $cat[$this->right] . ' , '
-                . $this->left . ' - ' . $razn . ', ' . $this->left . '), '
-                . $this->right . ' = '
-                . ' IF (' . $this->right . ' > ' . $cat[$this->right] . ' , '
-                . $this->right . ' - ' . $razn . ', ' . $this->right  . ') '
-                . ' WHERE ' . $this->right . ' > ' . $cat[$this->right];
-
-        if (!mysql_query($update)) {
-            $this->error = '#'.mysql_errno().' '.mysql_error();
-            return false;
-        }
-
         // Список вложенний
         // List of nested ???
         $query = 'SELECT ' . $this->id . ' FROM ' . $this->table
@@ -414,6 +395,45 @@ class TTree {
             return false;
         }
     } // function delete ($id)
+
+    /**
+     *
+     * @return bool true/false on successful execution
+     */
+    function reindex () {
+        $query = 'SELECT * FROM ' . $this->table;
+        $result = mysql_query($query);
+
+        if (mysql_error()) {
+            $this->error = '#'.mysql_errno().' '.mysql_error();
+            return false;
+        } elseif (mysql_num_rows($result) == 0) {
+            $this->error = 'Catalog not found!';
+            return false;
+        }
+
+        // get the parent's data
+        $cat = mysql_fetch_array($result, MYSQL_ASSOC);
+
+        // ************** SET MARGIN VALUE OF THE deleted branches AS THE RENUMBERING CONTROL ************** //
+        $razn = $cat[$this->right] - $cat[$this->left] + 1;
+        $this->reports[]= __LINE__.' : $razn = '.$razn;
+
+        // ************************** REINDEX THE cat_left AND cat_right VALUES **************************** //
+        $update = 'UPDATE ' . $this->table . ' SET '
+                . $this->left . ' = '
+                . ' IF (' . $this->left . ' > ' . $cat[$this->right] . ' , '
+                . $this->left . ' - ' . $razn . ', ' . $this->left . '), '
+                . $this->right . ' = '
+                . ' IF (' . $this->right . ' > ' . $cat[$this->right] . ' , '
+                . $this->right . ' - ' . $razn . ', ' . $this->right  . ') '
+                . ' WHERE ' . $this->right . ' > ' . $cat[$this->right];
+
+        if (!mysql_query($update)) {
+            $this->error = '#'.mysql_errno().' '.mysql_error();
+            return false;
+        }
+    }
 
     // удаление дерева
     // Removal of the tree
