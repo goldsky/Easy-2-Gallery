@@ -550,7 +550,7 @@ function delete_all ($path) {
 function is_validfile ( $filename, $e2g_debug=0 ) {
     $f = basename($filename);
     if (is_validfolder($filename)) {
-        if ($debug==1) {
+        if ($e2g['e2g_debug']==1) {
             return '<b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
         }
         else return FALSE;
@@ -565,20 +565,20 @@ function is_validfile ( $filename, $e2g_debug=0 ) {
                     'image/png' => TRUE
             );
             if ( $allowedext[$size["mime"]] && $fp ) {
-                if ($debug==1) {
+                if ($e2g['e2g_debug']==1) {
                     $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is a valid image file: '.$size["mime"].' - '.$size[3];
                 }
                 else return TRUE;
             } else {
-                if ($debug==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
+                if ($e2g['e2g_debug']==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
                 else return FALSE;
             }
         }
         else {
-            if ($debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
+            if ($e2g['e2g_debug']==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
             else return FALSE;
         }
-        if ($debug==1) return $fileinfo;
+        if ($e2g['e2g_debug']==1) return $fileinfo;
         else return TRUE;
     }
     else continue;
@@ -590,10 +590,10 @@ function is_validfile ( $filename, $e2g_debug=0 ) {
 function is_validfolder($foldername, $e2g_debug=0) {
     $openfolder = @opendir($foldername);
     if (!$openfolder) {
-        if ($debug==1) return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
+        if ($e2g['e2g_debug']==1) return '<b style="color:red;">'.$foldername.'</b> is NOT a valid folder.';
         else return FALSE;
     } else {
-        if ($debug==1) {
+        if ($e2g['e2g_debug']==1) {
             echo '<h2>' . $foldername . '</h2>';
             echo '<ul>';
             $file = array();
@@ -610,13 +610,12 @@ function is_validfolder($foldername, $e2g_debug=0) {
         }
         closedir ( $openfolder );
     }
-    if ($debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
+    if ($e2g['e2g_debug']==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
     else return TRUE;
 }
 
 
-/*
- * function restore_all()
+/**
  * To LOOP restore file's and folder's name of previous version's installation
  * @param string $path path to file or folder
  * @param int $pid current parent ID
