@@ -126,7 +126,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // cat_tags
     if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_tags')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_tags varchar(255) default NULL AFTER cat_alias');
-        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_alias '.$lngi['created'];
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_tags '.$lngi['created'];
     }
 
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
@@ -732,13 +732,22 @@ function restore_all ($path, $pid) {
     return TRUE;
 }
 
-// goldsky -- function to do the database upgrading.
+/**
+ *
+ * @global mixed $modx
+ * @param string $table             the table name
+ * @param string $checkingfield     the field name
+ * @param string $data              the field's data
+ * @return bool|string If this only check the field, it uses bool type.<br />
+ * If this check the datatype, it will return the datatype information.
+ * @author goldsky
+ */
 function check_field($table,$checkingfield,$data=null) {
     global $modx;
 
     $metadata = $modx->db->getTableMetaData($table);
-    if (!$data){
-        if ($metadata[$checkingfield]) return TRUE;
+    if ($metadata[$checkingfield]) {
+        return TRUE;
     } elseif ($data) {
         return $metadata[$checkingfield][$data];
     }
