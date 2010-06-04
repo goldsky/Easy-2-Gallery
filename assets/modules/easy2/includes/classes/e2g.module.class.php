@@ -1939,7 +1939,7 @@ class e2g_mod {
 				if (zip_entry_filesize($zip_entry) > 0) {
 					// str_replace must be used under windows to convert "/" into "\"
 					$complete_path = $path.str_replace('/','\\',dirname(zip_entry_name($zip_entry)));
-					$complete_name = $path.str_replace ('/','\\', zip_entry_name($zip_entry) );
+					$complete_name = $path.str_replace('/','\\', zip_entry_name($zip_entry) );
 
                     // using Unicode conversion class.
                     $mb_detect_encoding = mb_detect_encoding($zip_entry, "auto");
