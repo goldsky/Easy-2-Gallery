@@ -11,7 +11,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             tpResources2 = new WebFXTabPane(document.getElementById('tabCommentsMgrPane'));
         </script>
         <div class="tab-page" id="tabAllComments">
-            <h2 class="tab"><?php echo $lng['allcomments']; ?></h2>
+            <h2 class="tab"><?php echo $lng['comments_all_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabAllComments') );
             </script>
@@ -26,7 +26,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ipaddress']; ?></b></td>
+                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['comments']; ?></b></td>
                                 </tr>
                                 <?php
@@ -107,7 +107,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             </table>
         </div>
         <div class="tab-page" id="tabIgnoredIP">
-            <h2 class="tab"><?php echo $lng['ignored_ip']; ?></h2>
+            <h2 class="tab"><?php echo $lng['ip_ignored_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabIgnoredIP') );
             </script>
@@ -117,9 +117,9 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <th width="20"><input type="checkbox" onclick="selectAllIgnoreIPs(this.checked); void(0);" style="border:0;"></th>
                         <th><?php echo $lng['options']; ?></th>
                         <th><?php echo $lng['date']; ?></th>
-                        <th><?php echo $lng['ipaddress']; ?></th>
+                        <th><?php echo $lng['ip_address']; ?></th>
                         <th><?php echo $lng['author']; ?></th>
-                        <th><?php echo $lng['useremail']; ?></th>
+                        <th><?php echo $lng['email']; ?></th>
                     </tr>
                     <?php
                     $ign_ip_res = mysql_query(
@@ -156,7 +156,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             </form>
         </div>
         <div class="tab-page" id="tabHiddenComments">
-            <h2 class="tab"><?php echo $lng['hiddencomments']; ?></h2>
+            <h2 class="tab"><?php echo $lng['comments_hidden_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHiddenComments') );
             </script>
@@ -171,7 +171,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ipaddress']; ?></b></td>
+                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['comments']; ?></b></td>
                                 </tr>
                                 <?php

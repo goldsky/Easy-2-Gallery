@@ -2,9 +2,9 @@
 
 $e2g_lang['russian-UTF8'] = array (
 'title' => 'Комментарии',
-'add_comment' => 'Добавить комментарий',
-'username' => 'Имя',
-'useremail' => 'Email',
+'comment_add' => 'Добавить комментарий',
+'name' => 'Имя',
+'email' => 'Email',
 'usercomment' => 'Комментарий',
 'send_btn' => 'Отправить',
 'code' => 'Код',

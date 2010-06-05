@@ -1,9 +1,9 @@
 <?php
 $e2g_lang['nederlands'] = array (
 'title' => 'Reacties',
-'add_comment' => 'Voeg reactie toe',
-'username' => 'Naam',
-'useremail' => 'Email',
+'comment_add' => 'Voeg reactie toe',
+'name' => 'Naam',
+'email' => 'Email',
 'usercomment' => 'Jouw reactie',
 'send_btn' => 'Plaats reactie',
 'code' => 'Code',

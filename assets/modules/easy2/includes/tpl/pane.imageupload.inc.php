@@ -2,12 +2,12 @@
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <div class="tab-page" id="addForm">
-    <h2 class="tab"><?php echo $lng['upload']; ?></h2>
+    <h2 class="tab"><?php echo $lng['upload_image']; ?></h2>
     <script type="text/javascript">
         tpResources.addTabPage(document.getElementById("addForm"));
     </script>
     <p><?php echo $lng['upload_dir'].': <b>'.$gdir.'</b>'; ?></p>
-    <p><?php echo $lng['valid_extensions']; ?> .jpeg, .jpg, .gif, .png</p>
+    <p><?php echo $lng['extension_valid']; ?>: .jpeg, .jpg, .gif, .png</p>
     <div class="tab-pane" id="tabImageUploadPane">
         <script type="text/javascript">
             tpResources2 = new WebFXTabPane(document.getElementById('tabImageUploadPane'));
@@ -39,8 +39,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </table>
                     </div>
                 </div>
-                <input type="submit" value="<?php echo $lng['upload_btn'];?>" name="upload_btn">
-                <input type="button" value="<?php echo $lng['add_field_btn'];?>" onclick="javascript:addField(); void(0);">
+                <input type="submit" value="<?php echo $lng['upload'];?>" name="upload_btn">
+                <input type="button" value="<?php echo $lng['btn_field_add'];?>" onclick="javascript:addField(); void(0);">
             </form>
         </div>
         <div class="tab-page" id="tabZip">
@@ -58,7 +58,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td><b><?php echo $lng['archive'];?>:</b></td>
                         <td>&nbsp;&nbsp;&nbsp;&nbsp;<input name="zip" type="file" size="77" ></td>
-                        <td><input type="submit" value="<?php echo $lng['upload_btn']; ?>"></td>
+                        <td><input type="submit" value="<?php echo $lng['upload']; ?>"></td>
                     </tr>
                 </table>
             </form>

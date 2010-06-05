@@ -2,9 +2,9 @@
 
 $e2g_lang['polish-utf8'] = array (
         'title' => 'Komentarze',
-        'add_comment' => 'Dodaj komentarz',
-        'username' => 'Podpis',
-        'useremail' => 'Email',
+        'comment_add' => 'Dodaj komentarz',
+        'name' => 'Podpis',
+        'email' => 'Email',
         'usercomment' => 'Komentarz',
         'send_btn' => 'Wyślij komentarz',
         'code' => 'Kod',

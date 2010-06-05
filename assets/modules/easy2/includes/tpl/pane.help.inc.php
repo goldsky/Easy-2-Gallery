@@ -11,39 +11,39 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             tpResources2 = new WebFXTabPane( document.getElementById( 'tabHelpPane' ) );
         </script>
         <div class="tab-page" id="tabHelpParameters">
-            <h2 class="tab"><?php echo $lng['paramhelptitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_params_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpParameters' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['paramhelpcontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_params_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpTemplates">
-            <h2 class="tab"><?php echo $lng['tplhelptitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_tpl_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpTemplates' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['tplhelpcontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_tpl_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpSlideshows">
-            <h2 class="tab"><?php echo $lng['slideshowshelptitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_slideshow_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpSlideshows' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['slideshowshelpcontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_slideshow_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpPlugins">
-            <h2 class="tab"><?php echo $lng['pluginshelptitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_plugins_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpPlugins' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['pluginshelpcontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_plugins_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpAdvance">
-            <h2 class="tab"><?php echo $lng['advancehelptitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_advance_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpAdvance' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['advancehelpcontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_advance_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpTranslation">
             <h2 class="tab"><?php echo ucfirst($lng['translation']); ?></h2>
@@ -98,11 +98,11 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <p>&nbsp;</p>
         </div>
         <div class="tab-page" id="tabHelpInfo">
-            <h2 class="tab"><?php echo $lng['moreinfotitle']; ?></h2>
+            <h2 class="tab"><?php echo $lng['help_moreinfo_title']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpInfo' ) );
             </script>
-            <?php echo htmlspecialchars_decode($lng['moreinfocontent'], ENT_QUOTES); ?>
+            <?php echo htmlspecialchars_decode($lng['help_moreinfo_content'], ENT_QUOTES); ?>
         </div>
     </div>
 </div>

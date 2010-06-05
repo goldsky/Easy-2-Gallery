@@ -21,7 +21,7 @@ if(is_array($dirs)) natsort($dirs);
             </li>
             <li id="Button3">
                 <a href="<?php echo $index; ?>&page=create_dir&pid=<?php echo $parent_id; ?>">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" /> <?php echo $lng['create_dir']; ?>
+                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" /> <?php echo $lng['dir_create']; ?>
                 </a>
             </li>
             <!--li id="Button4">

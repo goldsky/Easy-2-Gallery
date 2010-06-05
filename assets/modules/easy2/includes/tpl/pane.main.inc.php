@@ -28,7 +28,7 @@ $_t = $this->e2gmod_cfg['_t'];
                 var im = document.getElementById("imFields");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove_field_btn']; ?></b></a>'+fi.innerHTML;
+                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?></b></a>'+fi.innerHTML;
                 im.appendChild(di);
                 return TRUE;
             }

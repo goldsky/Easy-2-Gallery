@@ -3,7 +3,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 ?>
 <p><?php echo $lng['editing']; ?> <?php echo $lng['dir']; ?> <b><?php echo $row['cat_name']; ?></b>
     &nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['back_to_fmanager']; ?></a>
+    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['Back']; ?></a>
 </p>
 <form name="list" action="" method="post">
     <table cellspacing="0" cellpadding="2" class="aForm" >

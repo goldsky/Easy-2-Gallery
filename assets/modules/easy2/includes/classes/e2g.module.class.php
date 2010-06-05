@@ -92,10 +92,10 @@ class e2g_mod {
 //                    $zip_file = MODX_BASE_PATH.$this->_e2g_decode($gdir.$_FILES['zip']['name']);
 
                     if( !$err=$this->_unzip( realpath( $_FILES['zip']['tmp_name'] )
-                            , realpath( MODX_BASE_PATH.$this->_e2g_decode( $gdir ) )
-                            , $lng) ) {
+                    , realpath( MODX_BASE_PATH.$this->_e2g_decode( $gdir ) )
+                    , $lng) ) {
                         $_SESSION['easy2err'][] = __LINE__. ' <span class="warning"><b>'.$lng['upload_err']
-                            .($err===0? 'Missing zip library (php_zip.dll / zip.so)':'').'</b></span><br /><br />';
+                                .($err===0? 'Missing zip library (php_zip.dll / zip.so)':'').'</b></span><br /><br />';
                     }
 
                     @unlink( '../'.$this->_e2g_decode($gdir.$_FILES['zip']['name']) );
@@ -295,14 +295,14 @@ class e2g_mod {
                     foreach ($_POST['im'] as $k => $v) {
                         $_zipcontents[] = realpath(MODX_BASE_PATH.$v);
                     }
-//                    $zipcontent = implode(',', $_zipcontent);
+
                     $dirName = MODX_BASE_PATH.$gdir;
                     $dirUrl = MODX_BASE_URL.$gdir;
                     $zipName = $dirName.$this->_get_dir_info($_GET['pid'], 'cat_name').'.zip';
 
                     // delete existing zip file if there is any.
                     @unlink($zipName);
-                    
+
                     foreach ($_zipcontents as $_zipcontent) {
                         //http://www.php.net/manual/en/function.ziparchive-addemptydir.php#91221
                         $zip = new ZipArchive();
@@ -351,21 +351,20 @@ class e2g_mod {
                         }
                         $zip->close();
                         $zipbasename = str_replace(' ','',(end(@explode('/',$zipName))));
-
-                        header('Content-Description: File Transfer');
-                        header('Content-Type: application/zip');
-                        header('Content-Disposition: attachment; filename='.$zipbasename);
-                        header('Content-Transfer-Encoding: binary');
-                        header('Expires: 0');
-                        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-                        header('Pragma: public');
-                        header('Content-Length: ' . filesize($zipName));
-                        ob_clean();
-                        flush();
-                        readfile($zipName);
-                        @unlink($zipName);
-                        exit();
                     }
+                    header('Content-Description: File Transfer');
+                    header('Content-Type: application/zip');
+                    header('Content-Disposition: attachment; filename='.$zipbasename);
+                    header('Content-Transfer-Encoding: binary');
+                    header('Expires: 0');
+                    header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
+                    header('Pragma: public');
+                    header('Content-Length: ' . filesize($zipName));
+                    ob_clean();
+                    flush();
+                    readfile($zipName);
+                    @unlink($zipName);
+                    exit();
                 }
                 else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['zip_select_none'];
@@ -373,7 +372,7 @@ class e2g_mod {
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
-             // MOVE TO A NEW DIRECTORY
+            // MOVE TO A NEW DIRECTORY
             case 'move_checked':
                 $out = '';
                 // COUNTER
@@ -407,7 +406,7 @@ class e2g_mod {
                             $newpath['basename'] = $this->_basename_safe($newpath['origin']);
                             $newpath['decoded'] = $this->_e2g_decode($newpath['origin']);
                             $newpath['chmod'] = chmod( MODX_BASE_PATH . $newpath['decoded'] , 0755 );
-                            
+
                             // CHECK THE OLD FOLDER'S PERMISSION FIRST
                             if (!$oldpath['chmod']) {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'].' oldpath '.$oldpath['origin'];
@@ -478,22 +477,22 @@ class e2g_mod {
                     if ($res['dfp'][0] == 0 && $res['ddb'][0] == 0) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dirs_move_err'];
                     } elseif ($res['dfp'][0] == $res['ddb'][0]) {
-                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : ' . $res['dfp'][0] . ' '.$lng['dirs_moved'].'.';
                     } else {
-                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['ddb'][0] . ' '.$lng['dirs_moved_fdb'].'.';
-                        $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' '. $res['dfp'][0] . ' '.$lng['dirs_moved_fhdd'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : ' . $res['ddb'][0] . ' '.$lng['dirs_moved_fdb'].'.';
+                        $_SESSION['easy2suc'][] = __LINE__.' : ' . $res['dfp'][0] . ' '.$lng['dirs_moved_fhdd'].'.';
                     }
 
-                        // ****************** list names ****************** //
-                        if ( !empty($res['dir']) || !empty($res['file']) ) {
-                            for ($i=0;$i<count($res['dir']);$i++) {
-                                $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' dir: '. $res['dir'][$i];
-                            }
-                            for ($i=0;$i<count($res['file']);$i++) {
-                                $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' file: '. $res['file'][$i];
-                            }
-                       }
-                        // ****************** list names ****************** //
+                    // ****************** list names ****************** //
+                    if ( !empty($res['dir']) || !empty($res['file']) ) {
+                        for ($i=0;$i<count($res['dir']);$i++) {
+                            $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' dir: '. $res['dir'][$i];
+                        }
+                        for ($i=0;$i<count($res['file']);$i++) {
+                            $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' file: '. $res['file'][$i];
+                        }
+                    }
+                    // ****************** list names ****************** //
                 } // if (!empty($_POST['dir']))
 
                 // MOVING IMAGES
@@ -502,14 +501,38 @@ class e2g_mod {
                         // update the database
                         if (is_numeric($k)) {
                             $files = array();
-                            $files_res = mysql_query('SELECT id, dir_id FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE id='.(int) $k);
+                            $files_res = mysql_query(
+                                    'SELECT id, dir_id '
+                                    .'FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                                    .'WHERE id='.(int) $k
+                                    );
                             while ($l = mysql_fetch_array($files_res)) {
                                 $files[$l['id']]['dir_id'] = $l['dir_id'];
                             }
                             mysql_free_result($files_res);
 
+                            // reject moving to the same new parent
                             if ( $_POST['newparent'] == $files[$k]['dir_id'] ) {
-                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['filetosamedirectory_err'];
+                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_to_same_dir_err'];
+                                continue;
+                            }
+
+                            // reject overwrite
+                            $files_check_s = 'SELECT A.id ai, B.filename bf '
+                                    .'FROM '.$modx->db->config['table_prefix'].'easy2_files A, '
+                                    .$modx->db->config['table_prefix'].'easy2_files B '
+                                    .'WHERE A.filename=B.filename '
+                                    .'AND A.id='.(int) $k .' '
+                                    .'AND B.dir_id='.(int) $_POST['newparent']
+                                    ;
+                            $files_check_q = mysql_query($files_check_s);
+                            while ($f = mysql_fetch_array($files_check_q)) {
+                                $files_check[$f['ai']]['filename'] = $f['bf'];
+                            }
+                            mysql_free_result($files_check_q);
+                            if ( isset( $files_check[$k]['filename'] ) ) {
+                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_move_err']
+                                .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
                                 continue;
                             }
 
@@ -527,33 +550,39 @@ class e2g_mod {
                         // move the file
                         if (!empty($v)) {
                             $v = str_replace('../', '', $this->_e2g_decode($v));
-                            $oldpath['origin'] = str_replace('../', '', $v );
-                            $oldpath['basename'] = $this->_basename_safe($v);
-                            $oldpath['decoded'] = str_replace('../', '', $this->_e2g_decode($v) );
-                            $oldpath['chmod'] = chmod( MODX_BASE_PATH . $oldpath['decoded'] , 0755 );
+                            $oldfile['origin'] = str_replace('../', '', $v );
+                            $oldfile['basename'] = $this->_basename_safe($v);
+                            $oldfile['decoded'] = str_replace('../', '', $this->_e2g_decode($v) );
+                            $oldfile['chmod'] = chmod( MODX_BASE_PATH . $oldfile['decoded'] , 0755 );
 
                             $newparent = $this->_path_to($_POST['newparent']);
                             unset ($newparent[1]);
                             $newdir = $this->e2gmod_cfg['gdir'];
                             if (!empty($newparent)) $newdir .= implode( '/', $newparent ) .'/' ;
-                            $newpath['origin'] = $newdir.$this->_basename_safe($v);
-                            $newpath['basename'] = $this->_basename_safe($newpath['origin']);
-                            $newpath['decoded'] = $this->_e2g_decode($newpath['origin']);
-                            $newpath['chmod'] = chmod( MODX_BASE_PATH . $newpath['decoded'] , 0755 );
+                            $newfile['origin'] = $newdir.$this->_basename_safe($v);
+                            $newfile['basename'] = $this->_basename_safe($newfile['origin']);
+                            $newfile['decoded'] = $this->_e2g_decode($newfile['origin']);
+                            $newfile['chmod'] = chmod( MODX_BASE_PATH . $newfile['decoded'] , 0755 );
 
-                            $movefile =  @rename('../'.$oldpath['decoded'], '../' . $newpath['decoded'] ) ;
-                            if ($movefile) {
-                                $res['ffp'][0]++;
+                            if (is_file('../' . $newfile['decoded'])) {
+                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_move_err']
+                                .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
+                                continue;
                             } else {
-                                $res['ffp'][1]++;
+                                $movefile =  @rename('../'.$oldfile['decoded'], '../' . $newfile['decoded'] ) ;
+                                if ($movefile) {
+                                    $res['ffp'][0]++;
+                                } else {
+                                    $res['ffp'][1]++;
+                                }
                             }
 
-                            $oldpath = $newpath = array();
-                            unset($oldpath,$newpath);
+                            $oldfile = $newfile = array();
+                            unset($oldfile,$newfile);
                         }
                     }
                 } // if (!empty($_POST['im']))
-                
+
                 $res = $this->_delete_all ('../'.$e2g['dir'].'_thumbnails/' );
                 if (empty($res['e'])) {
                     $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'];
@@ -563,16 +592,16 @@ class e2g_mod {
                 }
 
                 if ( empty($_POST['dir']) && empty($_POST['im']) ) {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['pleaseselectobject'];
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['select_dirfile'];
                     header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 }
                 elseif ($_POST['newparent']=='') {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['pleaseselectparent'];
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['select_newdir'];
                     header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 }
                 /*
                  * REDIRECT PAGE TO THE SELECTED OPTION
-                 */
+                */
                 elseif ( (isset($_POST['dir']) || isset($_POST['im']))
                         && !empty($_POST['newparent'])
                         && ($_POST['gotofolder']=='gothere')
@@ -733,7 +762,7 @@ class e2g_mod {
                 fwrite($f, $c);
                 fclose($f);
                 $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
-                
+
                 header ('Location: '.$url);
                 exit();
             // TRANSLATION
@@ -778,10 +807,10 @@ class e2g_mod {
                         chmod($f, 0644) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                         $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['file_added'];
                     } else {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'].'<br />'.mysql_error().'<br />'.$q;
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_add_err'].'<br />'.mysql_error().'<br />'.$q;
                     }
                 } else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'];
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_add_err'];
                 }
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -854,7 +883,7 @@ class e2g_mod {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // check names against bad characters
                     if ($this->_has_bad_char($_POST['name'])) {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['badchars'];
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['char_bad'];
                     } else {
                         $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
                         $mkdir = mkdir('../'.$this->_e2g_decode($gdir.$dirname));
@@ -890,7 +919,7 @@ class e2g_mod {
                             $_SESSION['easy2err'][] = __LINE__.' : '. $lng['directory_create_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$dirname);
                         }
-                        
+
                         header ("Location: ".$index."&pid=".$parent_id);
                         exit();
                     }
@@ -912,13 +941,13 @@ class e2g_mod {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // check names against bad characters
                     if ($this->_has_bad_char($_POST['newdirname'])) {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['badchars'];
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['char_bad'];
                     } else {
                         // check the CHMOD permission first
                         $chmodolddir = chmod('../'.$this->_e2g_decode($gdir.$row['cat_name']), 0755);
                         $renamedir = rename('../'.$this->_e2g_decode($gdir.$row['cat_name']), '../'.$this->_e2g_decode($gdir.$_POST['newdirname']));
                         $chmodnewdir = chmod('../'.$this->_e2g_decode($gdir.$_POST['newdirname']), 0755);
-                        
+
                         if (!$chmodolddir) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.'../'.$this->_e2g_decode($gdir.$row['cat_name']);
@@ -929,17 +958,17 @@ class e2g_mod {
                         }
                         else {
                             if (!$chmodnewdir) {
-                            $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
+                                $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             }
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs SET ';
                             if( $row['cat_id']!='1' && $_POST['newdirname'] != $row['cat_name'] ) {
                                 $q .= 'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
-                                .', cat_tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
-                                .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
-                                .', last_modified=NOW() '
-                                .'WHERE cat_id='.(int)$_GET['dir_id'];
+                                    .', cat_tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
+                                    .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
+                                    .', last_modified=NOW() '
+                                    .'WHERE cat_id='.(int)$_GET['dir_id'];
                             $qResult = mysql_query($q);
                             if($qResult) $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
                             else {
@@ -973,7 +1002,7 @@ class e2g_mod {
                 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     // check names against bad characters
                     if ($this->_has_bad_char($_POST['newfilename'])) {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['badchars'].': '.$_POST['newfilename'];
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['char_bad'].': '.$_POST['newfilename'];
 
                         header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     } else {
@@ -996,10 +1025,10 @@ class e2g_mod {
                                 $q .= 'filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
-                                .', tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
-                                .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
-                                .', last_modified=NOW() '
-                                .'WHERE id='.(int)$_GET['file_id'];
+                                    .', tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
+                                    .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
+                                    .', last_modified=NOW() '
+                                    .'WHERE id='.(int)$_GET['file_id'];
                             $qResult = mysql_query($q);
                             if($qResult) $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['updated'];
                             else {
@@ -1044,7 +1073,7 @@ class e2g_mod {
                             .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
                             .'WHERE parent_id = '.$parent_id.' '
                             .'ORDER BY cat_name ASC'
-                            ;
+                    ;
                     $res = mysql_query($q);
                     $mdirs = array();
                     if ($res) {
@@ -1077,8 +1106,8 @@ class e2g_mod {
                     mysql_free_result($res);
 
                 }
-                //the page content is rendered in ../tpl/page.default.inc.php
-                
+            //the page content is rendered in ../tpl/page.default.inc.php
+
         } // switch ($page)
 
         /*
@@ -1090,7 +1119,7 @@ class e2g_mod {
     /**
      * To delete all files/folders that have been selected with the checkbox
      * @param string $path file's/folder's path
-    */
+     */
     private function _delete_all ($path) {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
         if (!$this->is_validfolder($path)) return $res;
@@ -1101,7 +1130,7 @@ class e2g_mod {
                 // using original file check, because it will delete not only images.
                 if (is_file($f)) {
                     if(@unlink($f)) $res['f']++;
-                    else $res['e'][] = __LINE__.' : '.$lng['couldnotdeletefile'].': '.$f;
+                    else $res['e'][] = __LINE__.' : '.$lng['file_del_err'].': '.$f;
                 } elseif ($this->is_validfolder($f)) {
                     $sres = $this->_delete_all($f.'/');
 
@@ -1112,7 +1141,7 @@ class e2g_mod {
             }
         }
         if (count($res['e']) == 0 && @rmdir($path)) $res['d']++;
-        else $res['e'][] = __LINE__.' : '.$lng['couldnotdeletedirectory'].': '.$path;
+        else $res['e'][] = __LINE__.' : '.$lng['dir_del_err'].': '.$path;
         return $res;
     }
 
@@ -1138,7 +1167,7 @@ class e2g_mod {
                     $res['f'] += $sres['f'];
                     $res['d'] += $sres['d'];
                     $res['e'] = array_merge($res['e'], $sres['e']);
-                    
+
                     $oldbasename = $this->_basename_safe($f);
                     $fnewpath .= '/'.$oldbasename;
                     $sres = $this->_move_all($f, $newpath.$fnewpath);
@@ -1146,7 +1175,7 @@ class e2g_mod {
             }
         }
         if (@rename($oldpath, $newpath)) $res['d']++;
-        else $res['e'][] = __LINE__.' : '.$lng['couldnotmovedirectory'].': '.$oldpath;
+        else $res['e'][] = __LINE__.' : '.$lng['dir_move_err'].': '.$oldpath;
 
         // only returns the result calculation array
         return $res;
@@ -1157,7 +1186,7 @@ class e2g_mod {
      * @param string $path file's/folder's path
      * @param int $pid current parent ID
      * $param string $cfg module's configuration
-    */
+     */
     private function _add_all ($path, $pid, $cfg, $lng) {
         global $modx;
         require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
@@ -1177,15 +1206,15 @@ class e2g_mod {
          * goldsky -- if there is no index.html inside folders, this will create it.
         */
         if (!file_exists($path.'/index.html')) {
-                // goldsky -- adds a cover file
-                $indexFile = $path."/index.html";
-                $fh = fopen($indexFile, 'w') or die(__LINE__.' : '."can't open file");
-                $stringData = $lng['indexfile'];
-                fwrite($fh, $stringData);
-                fclose($fh);
-                chmod($indexFile, 0644) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
+            // goldsky -- adds a cover file
+            $indexFile = $path."/index.html";
+            $fh = fopen($indexFile, 'w') or die(__LINE__.' : '."can't open file");
+            $stringData = $lng['indexfile'];
+            fwrite($fh, $stringData);
+            fclose($fh);
+            chmod($indexFile, 0644) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
         }
-                    
+
         $fs = @glob($path.'*');
         if (is_array($fs)) natsort($fs);
         // goldsky -- alter the maximum execution time
@@ -1216,7 +1245,7 @@ class e2g_mod {
                             . '(dir_id,filename,size,name,description,date_added) '
                             . "VALUES($id,'$n',$s,'','',NOW())";
                     if (!mysql_query($q)) {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'].' "'.$n.'"';
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_add_err'].' "'.$n.'"';
                         continue;
                     }
                 }
@@ -1234,7 +1263,7 @@ class e2g_mod {
      * @param int    $w   :width
      * @param int    $h   :height
      * @param int    $thq :thumbnail quality
-    */
+     */
     private function _resize_img ($f, $inf, $w, $h, $thq) {
         global $modx;
         // OPEN
@@ -1268,7 +1297,7 @@ class e2g_mod {
      * @param int $id gets ID
      * @param string $string current parent ID
      * @return int This returns ID. The folder's name is retrieved in the line 76.
-    */
+     */
     private function _path_to ($id, $string = FALSE) {
         global $modx;
         $result = array();
@@ -1293,13 +1322,13 @@ class e2g_mod {
     /**
      * To calculate the directory content
      * @param string $path folder's/dir's path
-    */
+     */
     private function _count_files ($path) {
         $cnt = 0;
         /*
          * @todo : create more reliable process on file filtering
          *         don't use array_diff
-         */
+        */
         $excludefiles = array(
                 $path.'/index.htm',
                 $path.'/index.html',
@@ -1320,7 +1349,7 @@ class e2g_mod {
      * @param string $f filename
      * @param int $pid current parent ID
      * $param string $cfg module's configuration
-    */
+     */
     private function _add_file ($f, $pid, $cfg, $lng) {
         global $modx;
         $inf = getimagesize($f);
@@ -1336,11 +1365,11 @@ class e2g_mod {
                     . '(dir_id,filename,size,name,description,date_added) '
                     . "VALUES(".$pid.",'$n',$s,'','',NOW())";
             if (!mysql_query($q)) {
-                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'].'<br/>'.mysql_error();
+                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_add_err'].'<br/>'.mysql_error();
                 return FALSE;
             }
         } else {
-            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['add_file_err'];
+            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_add_err'];
             return FALSE;
         }
         return TRUE;
@@ -1351,7 +1380,7 @@ class e2g_mod {
      * @param string $path path to file or folder
      * @param int $pid current parent ID
      * @param string $cfg module's configuration
-    */
+     */
     private function _synchro ($path, $pid, $cfg, $lng) {
         global $modx;
         // goldsky -- alter the maximum execution time
@@ -1453,9 +1482,9 @@ class e2g_mod {
                                 $s = filesize($f);
                                 $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
                                         . 'SET size=\''.$s.'\', date_added=NOW() '
-                                        ;
+                                ;
                                 if (!mysql_query($q)) {
-                                    $_SESSION['easy2err'][] = __LINE__.' : '.$lng['rez_file_err'];
+                                    $_SESSION['easy2err'][] = __LINE__.' : '.$lng['resize_err'];
                                     $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
                                     $_SESSION['easy2err'][] = __LINE__.' : '.$q;
                                     return FALSE;
@@ -1541,7 +1570,7 @@ class e2g_mod {
     /**
      * to check the existance of filename/folder in the file system.<br />
      * if exists, this will add numbering into the uploaded files.
-    */
+     */
     private function _single_file($name) {
         global $modx;
         $selectcheck = 'SELECT filename FROM '.$modx->db->config['table_prefix'].'easy2_files '
@@ -1588,7 +1617,7 @@ class e2g_mod {
     /**
      * to check the valid characters in names.<br />
      * TRUE means BAD!
-    */
+     */
     private function _has_bad_char($characters) {
         $bad_chars = array (
                 "U+0000", "/", "\\", ":", "*", "?", "'", "\"", "<", ">", "|", ";"
@@ -1603,10 +1632,10 @@ class e2g_mod {
     /**
      * Too much memory swallowed. Need a meter in here.
      * @link http://www.php.net/manual/en/function.memory-get-usage.php#93012
-    */
+     */
     private function _echo_memory_usage($lng) {
         $mem_usage = memory_get_usage(true);
-        echo '<span class="e2g_grayedHeader"><a>'.$lng['memoryusage'].': ';
+        echo '<span class="e2g_grayedHeader"><a>'.$lng['memory_usage'].': ';
         if ($mem_usage < 1024)
             echo $mem_usage." bytes";
         elseif ($mem_usage < 1048576)
@@ -1620,7 +1649,7 @@ class e2g_mod {
      * To check the specified resource is a valid file.<br />
      * It will be checked against the folder validation first.
      * @author goldsky <goldsky@modx-id.com>
-    */
+     */
     public function is_validfile ($filename) {
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
         $f = $this->_basename_safe($filename);
@@ -1670,7 +1699,7 @@ class e2g_mod {
      * To check the specified resource has a valid file extenstion.
      * @author goldsky <goldsky@modx-id.com>
      * @todo need a rework to make it more extendable
-    */
+     */
     public function is_validext($filename) {
         $ext = strtolower(end(@explode('.', $filename)));
         $allowedext = array(
@@ -1685,7 +1714,7 @@ class e2g_mod {
     /**
      * To check the specified resource is a valid folder, although it has a DOT in it.
      * @author goldsky <goldsky@modx-id.com>
-    */
+     */
     public function is_validfolder($foldername) {
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
         $openfolder = @opendir($foldername);
@@ -1743,7 +1772,7 @@ class e2g_mod {
     private function _e2g_encode($text) {
 //        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
 //        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-        
+
         $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
 
         if ($e2g_encode == 'none') {
@@ -1777,11 +1806,11 @@ class e2g_mod {
     /**
      * get folders structure for select options.
      * @author goldsky
-    */
+     */
     private function _getfolderoptions($parentid, $selected=0, $jsactions=null ) {
         global $modx;
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
-        
+
         $selectdir = 'SELECT parent_id, cat_id, cat_name, cat_level '
                 .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
                 .'WHERE parent_id='.$parentid.' '
@@ -1804,16 +1833,16 @@ class e2g_mod {
                 $_SESSION['easy2err'][] = __LINE__.' : '.$selectdir;
         }
         mysql_free_result($querydir);
-        
+
         $output = (isset($output)?$output:'');
         foreach ($childrendirs as $childdir) {
             // DISPLAY
             $output .= '
                             <option value="'.$childdir['cat_id'].'"'
-            . ( ( $childdir['cat_id']==1 ) ?  ' style="background-color:#ddd;"' : '' )
-            . ( isset($jsactions) ? ' '.$jsactions : '' )
-            . ( ( $childdir['cat_id'] == $_GET['pid'] && $selected!=0 ) ? ' selected="selected"': '' )
-            .'>';
+                    . ( ( $childdir['cat_id']==1 ) ?  ' style="background-color:#ddd;"' : '' )
+                    . ( isset($jsactions) ? ' '.$jsactions : '' )
+                    . ( ( $childdir['cat_id'] == $_GET['pid'] && $selected!=0 ) ? ' selected="selected"': '' )
+                    .'>';
 
             // **************** ONLY START MARGIN **************** //
             for ($k=1; $k<$childdir['cat_level'] ; $k++) {
@@ -1834,7 +1863,7 @@ class e2g_mod {
                     .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
                     .'WHERE parent_id='.$childdir['cat_id'].' '
                     .'ORDER BY cat_name ASC'
-                    ;
+            ;
             $querysub = mysql_query($selectsub);
             if (!$querysub) {
                 $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
@@ -1855,14 +1884,14 @@ class e2g_mod {
      * function get_dir_info
      * function to get directory's information
      * @param int $dirid = gallery's ID
-    */
+     */
     private function _get_dir_info($dirid,$field) {
         global $modx;
 
         $dirinfo = array();
 
         $q = 'SELECT '.$field.' FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-            . 'WHERE cat_id='.$dirid.' '
+                . 'WHERE cat_id='.$dirid.' '
         ;
 
         if (!($res = mysql_query($q))) return ('Wrong field.');
@@ -1903,80 +1932,165 @@ class e2g_mod {
 
 
     /**
-     * This function was taken from the MODx's files.dynamic.php<br />
+     * Originally, this function was taken from the MODx's files.dynamic.php<br />
      * Modified for Easy 2 Gallery purposes: Unicode friendly, success/error reports.
      * @param string $file filename
      * @param string $path starting path
      * @return bool true/false
      * @author patrick_allaert - php user notes
      * @author Raymond (modx)
-     * @see manager/actions/files.dynamic.php
+     * @see manager/actions/files.dynamic.php, line 302, function unzip
      */
-	private function _unzip($file, $path, $lng) {
+//	private function _unzip($file, $path, $lng) {
+//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+//
+//		// added by Raymond
+//		$r = substr($path,strlen($path)-1,1);
+//		if ($r!='\\'||$r!='/') $path .='/';
+//		if (!extension_loaded('zip')) {
+//		   if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
+//				if(!@dl('php_zip.dll')) return 0;
+//		   } else {
+//				if(!@dl('zip.so')) return 0;
+//		   }
+//		}
+//		// end mod
+//		$zip = zip_open($file);
+//		if (is_resource($zip)) {
+//            ob_start();
+//
+//            $file_count = 0;
+//            $dir_count = 0;
+//
+//			$old_umask = umask(0);
+//			while ($zip_entry = zip_read($zip)) {
+//				if (zip_entry_filesize($zip_entry) > 0) {
+//					// str_replace must be used under windows to convert "/" into "\"
+//					$complete_path = $path.str_replace('/','\\',dirname(zip_entry_name($zip_entry)));
+//					$complete_name = $path.str_replace('/','\\', zip_entry_name($zip_entry) );
+//
+//                    // using Unicode conversion class.
+//                    $mb_detect_encoding = mb_detect_encoding($zip_entry, "auto");
+//                    $complete_path = UTF8::convert_from( $complete_path, $mb_detect_encoding );
+//                    $complete_name = UTF8::convert_from( $complete_name, $mb_detect_encoding );
+//
+//					if(!file_exists($complete_path)) {
+//						$tmp = '';
+//						foreach(explode('\\',$complete_path) AS $k) {
+//							$tmp .= $k.'\\';
+//							if(!file_exists($tmp)) {
+//								@mkdir($tmp, 0777);
+//                                $dir_count++;
+//							}
+//						}
+//					}
+//					if (zip_entry_open($zip, $zip_entry, 'r')) {
+//						$fd = fopen($complete_name, 'w');
+////                        $fd = fopen($this->_e2g_encode($complete_name), 'w');
+//						fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
+//						fclose($fd);
+//						zip_entry_close($zip_entry);
+//                        $file_count++;
+//					}
+//				}
+//			}
+//			umask($old_umask);
+//			zip_close($zip);
+//            $_SESSION['easy2suc'][] = __LINE__.' : '. $dir_count.' '.$lng['dirs_uploaded'].'.';
+//            $_SESSION['easy2suc'][] = __LINE__.' : '. $file_count.' '.$lng['files_uploaded'].'.';
+//
+//            ob_end_clean();
+//			return true;
+//		} else {
+//            $_SESSION['easy2err'][] = __LINE__.' Error : unable to open the zip file <b>'.$zip_dir . $zip_name['original'].'</b>';
+//        }
+//		zip_close($zip);
+//	}
+
+    /**
+     *
+     * Unzip for Easy 2 Gallery : Unicode friendly, success/error reports.
+     * @param string $file filename
+     * @param string $path starting path
+     * @return bool true/false
+     * @author goldsky (goldsky@modx-id.com)
+     * @author Raymond (modx)
+     */
+    private function _unzip($file, $path, $lng) {
         include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
         include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-        
-		// added by Raymond
-		$r = substr($path,strlen($path)-1,1);
-		if ($r!='\\'||$r!='/') $path .='/';
-		if (!extension_loaded('zip')) {
-		   if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
-				if(!@dl('php_zip.dll')) return 0;
-		   } else {
-				if(!@dl('zip.so')) return 0;
-		   }
-		}
-		// end mod
-		$zip = zip_open($file);
-		if (is_resource($zip)) {
-            ob_start();
+        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
 
+        // added by Raymond
+        $r = substr($path,strlen($path)-1,1);
+        if ($r!='\\'||$r!='/') $path .='/';
+
+        if (!extension_loaded('zip')) {
+            if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
+                if(!@dl('php_zip.dll')) return 0;
+            } else {
+                if(!@dl('zip.so')) return 0;
+            }
+        }
+        // end mod
+
+        $zip = new ZipArchive;
+        $zip_open = $zip->open($file);
+        if ( $zip_open === TRUE ) {
             $file_count = 0;
             $dir_count = 0;
 
-			$old_umask = umask(0);
-			while ($zip_entry = zip_read($zip)) {
-				if (zip_entry_filesize($zip_entry) > 0) {
-					// str_replace must be used under windows to convert "/" into "\"
-					$complete_path = $path.str_replace('/','\\',dirname(zip_entry_name($zip_entry)));
-					$complete_name = $path.str_replace('/','\\', zip_entry_name($zip_entry) );
+            if ( $zip->numFiles > 0) {
+                for($i = 0; $i < $zip->numFiles; $i++) {
+                    ob_start();
 
-                    // using Unicode conversion class.
-                    $mb_detect_encoding = mb_detect_encoding($zip_entry, "auto");
-                    $complete_path = UTF8::convert_from( $complete_path, $mb_detect_encoding );
-                    $complete_name = UTF8::convert_from( $complete_name, $mb_detect_encoding );
+                    $zip_entry_name = $zip->getNameIndex($i);
+                    $zip_content = $zip->getFromIndex($i);
 
-					if(!file_exists($complete_path)) {
-						$tmp = '';
-						foreach(explode('\\',$complete_path) AS $k) {
-							$tmp .= $k.'\\';
-							if(!file_exists($tmp)) {
-								@mkdir($tmp, 0777);
-                                $dir_count++;
-							}
-						}
-					}
-					if (zip_entry_open($zip, $zip_entry, 'r')) {
-						$fd = fopen($complete_name, 'w');
-//                        $fd = fopen($this->_e2g_encode($complete_name), 'w');
-						fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
-						fclose($fd);
-						zip_entry_close($zip_entry);
-                        $file_count++;
-					}
-				}
-			}
-			umask($old_umask);
-			zip_close($zip);
+                    /**
+                     * using Unicode conversion class.
+                     * @todo Need more work work on i18n stuff
+                     */
+                    $mb_detect_encoding = mb_detect_encoding($zip_open);
+                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+
+                    $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
+                    if ($r == '/') {
+                        // creates directory
+                        if(!is_dir( $path . $zip_entry_name )) {
+                            @mkdir( $path . $zip_entry_name, 0777);
+                            $dir_count++;
+                            if ($e2g_debug)
+                                $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dirs_uploaded'] .' '. $path . $zip_entry_name;
+                        }
+                    }
+                    else {
+                        // creates/copy the file
+                        $fd = fopen( $path . $zip_entry_name, 'w');
+                        if ($fd) {
+                            fwrite($fd, $zip_content );
+                            fclose($fd);
+                            @chmod( $path . $zip_entry_name, 0644);
+                            $file_count++;
+                            if ($e2g_debug)
+                                $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['files_uploaded'] .' '. $path . $zip_entry_name;
+                        } else {
+                            $_SESSION['easy2err'][] = __LINE__.' Error : '. $lng['zip_create_err'] .' <b>'. $path . $zip_entry_name.'</b>';
+                        }
+                    }
+                    ob_end_clean();
+                } // for($i = 0; $i < $zip->numFiles; $i++)
+            } // if ( $zip->numFiles > 0)
+
+            $zip->close();
             $_SESSION['easy2suc'][] = __LINE__.' : '. $dir_count.' '.$lng['dirs_uploaded'].'.';
             $_SESSION['easy2suc'][] = __LINE__.' : '. $file_count.' '.$lng['files_uploaded'].'.';
 
-            ob_end_clean();
-			return true;
-		} else {
-            $_SESSION['easy2err'][] = __LINE__.' Error : unable to open the zip file <b>'.$zip_dir . $zip_name['original'].'</b>';
+            return true;
+        } else {
+            $_SESSION['easy2err'][] = __LINE__.' Error : '. $lng['zip_open_err'] .' <b>'. $path . $file.'</b>';
         }
-		zip_close($zip);
-	}
+    }
 
 } // END OF class e2g_mod

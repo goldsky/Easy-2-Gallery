@@ -2,9 +2,9 @@
 
 $e2g_lang['spanish'] = array (
         'title' => 'Comentarios',
-        'add_comment' => 'Agregar Comentario',
-        'username' => 'Nombre',
-        'useremail' => 'Email',
+        'comment_add' => 'Agregar Comentario',
+        'name' => 'Nombre',
+        'email' => 'Email',
         'usercomment' => 'Su comentario',
         'send_btn' => 'Enviar Comentario',
         'code' => 'Codigo',

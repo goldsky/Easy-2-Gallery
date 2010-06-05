@@ -1,9 +1,9 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<p><?php echo $lng['editing']; ?> <?php echo $lng['file2']; ?> <b><?php echo $row['filename']; ?> <a href="javascript:imPreview4('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $lng['uim_preview']; ?></a></b> (<?php echo $row['comments'].' '. strtolower($lng['comments']); ?>)
+<p><?php echo $lng['editing']; ?> <?php echo $lng['files']; ?> <b><?php echo $row['filename']; ?> <a href="javascript:imPreview4('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $lng['uim_preview']; ?></a></b> (<?php echo $row['comments'].' '. strtolower($lng['comments']); ?>)
     &nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['back_to_fmanager']; ?></a>
+    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['Back']; ?></a>
 </p>
 
 <table cellspacing="0" cellpadding="0" width="100%">
@@ -12,7 +12,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <form name="list" action="" method="post">
                 <table cellspacing="0" cellpadding="2" class="aForm">
                     <tr>
-                        <td nowrap="nowrap"><b><?php echo ucfirst($lng['renamefile']); ?> :</b></td>
+                        <td nowrap="nowrap"><b><?php echo ucfirst($lng['file_rename']); ?> :</b></td>
                         <td><input name="newfilename" type="text" value="<?php echo $filename; ?>" size="30" style="text-align:right;"> <?php echo $ext; ?></td>
                     </tr>
                     <tr>
