@@ -257,7 +257,6 @@ else {
             // this slideshow heavily dependent on any image existence.
             return;
         } else {
-            
             // ------------- open slideshow wrapper ------------- //
             $ss_display .= '
 <div id="myGallery">';
@@ -269,11 +268,16 @@ else {
     <div class="imageElement">
         <h3>'.$_ssfile['title'][$i].'</h3>
         <p>'.$_ssfile['description'][$i].'</p>
-        <a href="[~[*id*]~]?fid='.$_ssfile['id'][$i].'" title="open image" class="open"></a>
+        <a href="'
+                // making flexible FURL or not
+                . $modx->makeUrl($modx->documentIdentifier
+                        , $modx->documentAliases
+                        , 'fid='.$_ssfile['id'][$i])
+                .'" title="open image" class="open"></a>
         <img src="'.$_ssfile['resizedimg'][$i].'" class="full" alt="" />
         <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
-
+//die(__LINE__.': '.$_ssfile['resizedimg'][$i]);
                 // if there is a image number limitation
                 $j++;
                 if ($j==$ss_limit) break;
@@ -367,7 +371,12 @@ else {
         <div class="imageElement">
             <h3>'.$_ssfile['title'][$k][$i].'</h3>
             <p>'.$_ssfile['description'][$k][$i].'</p>
-            <a href="[~[*id*]~]?fid='.$_ssfile['id'][$k][$i].'" title="open image" class="open"></a>
+            <a href="'
+                // making flexible FURL or not
+                . $modx->makeUrl($modx->documentIdentifier
+                        , $modx->documentAliases
+                        , 'fid='.$_ssfile['id'][$k][$i])
+                .'" title="open image" class="open"></a>
             <img src="'.$_ssfile['resizedimg'][$k][$i].'" class="full" alt="" />
             <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
         </div>';
