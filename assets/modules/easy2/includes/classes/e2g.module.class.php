@@ -10,7 +10,7 @@ header('Content-Type: text/html; charset=UTF-8');
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
+//require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
 class e2g_mod {
     private $e2gmod_cfg;
@@ -1770,9 +1770,6 @@ class e2g_mod {
      * @return string returns the encoding
      */
     private function _e2g_encode($text) {
-//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-
         $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
 
         if ($e2g_encode == 'none') {
@@ -1780,6 +1777,14 @@ class e2g_mod {
         }
         if ($e2g_encode == 'UTF-8') {
             return utf8_encode($text);
+        }
+        if ($e2g_encode == 'UTF-8 (Rin)') {
+            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+            /*
+             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
+             */
+            return UTF8::convert_from($text,mb_detect_encoding($text));
         }
     }
 
@@ -1800,6 +1805,18 @@ class e2g_mod {
         }
         if ($e2g_encode == 'UTF-8') {
             return utf8_decode($text);
+        }
+        if ($e2g_encode == 'UTF-8 (Rin)') {
+            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+            /*
+             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
+             */
+            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+            if($mb_detect_encoding != 'ASCII' || $mb_detect_encoding != 'UTF-8')
+                return UTF8::convert_from( $text, "ASCII" );
+            else
+                return UTF8::convert_from( $text, mb_detect_encoding($text) );
         }
     }
 
@@ -2018,13 +2035,17 @@ class e2g_mod {
      * @author Raymond (modx)
      */
     private function _unzip($file, $path, $lng) {
-        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+        if ($e2g_encode == 'UTF-8 (Rin)') {
+            include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
+            include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
+        }
+        
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
 
         // added by Raymond
         $r = substr($path,strlen($path)-1,1);
-        if ($r!='\\'||$r!='/') $path .='/';
+//        $r = UTF8::substr($path,UTF8::strlen($path)-1,1);
+        if ($r!='\\' && $r!='/') $path .='/';
 
         if (!extension_loaded('zip')) {
             if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
@@ -2048,14 +2069,29 @@ class e2g_mod {
                     $zip_entry_name = $zip->getNameIndex($i);
                     $zip_content = $zip->getFromIndex($i);
 
-                    /**
-                     * using Unicode conversion class.
-                     * @todo Need more work work on i18n stuff
-                     */
-                    $mb_detect_encoding = mb_detect_encoding($zip_open);
-                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+                    if ($e2g_encode == 'none' || $e2g_encode == 'UTF-8') {
+                        $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
+                    }
+                    if ($e2g_encode == 'UTF-8') {
+                        $zip_entry_name = utf8_decode($zip->getNameIndex($i));
+                    }
+                    if ($e2g_encode == 'UTF-8 (Rin)') {
+                        /**
+                         * using Unicode conversion class.
+                         * @todo Need more work work on i18n stuff
+                         */
+                        $mb_detect_encoding = mb_detect_encoding($zip_open);
 
-                    $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
+                        // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+                        if($mb_detect_encoding == 'ASCII' || $mb_detect_encoding == 'UTF-8') {
+                            $zip_entry_name = UTF8::convert_from( $zip_entry_name, "ASCII" );
+                        } else {
+                            $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+                        }
+                        $r = UTF8::substr($zip_entry_name,UTF8::strlen($zip_entry_name)-1,1);
+                    }
+
+                    // DETECT the directory entry
                     if ($r == '/') {
                         // creates directory
                         if(!is_dir( $path . $zip_entry_name )) {

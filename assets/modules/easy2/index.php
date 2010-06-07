@@ -10,7 +10,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
  */
 
 header('Content-Type: text/html; charset=UTF-8');
-iconv_set_encoding("internal_encoding", "UTF-8");
+//iconv_set_encoding("internal_encoding", "UTF-8");
 
 // Easy 2 Gallery version
 if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.0 - RC 1') {

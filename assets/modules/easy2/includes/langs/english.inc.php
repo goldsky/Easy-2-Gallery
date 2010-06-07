@@ -1,7 +1,6 @@
 <?php
 $e2g_lang['english'] = array (
         'Back' => 'Back',
-        'UTF-8' => 'UTF-8',
         '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
         'add_to_db' => 'Add to DB',
         'archive' => 'Archive zip',

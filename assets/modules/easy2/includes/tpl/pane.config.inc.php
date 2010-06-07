@@ -42,7 +42,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td width="88%">
                             <select name="e2g_encode">
                                 <option value="none"<?php echo ($e2g['e2g_encode']=='none'?' selected':''); ?>><?php echo $lng['none']; ?></option>
-                                <option value="UTF-8"<?php echo ($e2g['e2g_encode']=='UTF-8'?' selected':''); ?>><?php echo $lng['UTF-8']; ?></option>
+                                <option value="UTF-8"<?php echo ($e2g['e2g_encode']=='UTF-8'?' selected':''); ?>><?php echo 'UTF-8 (PHP)'; ?></option>
+                                <option value="UTF-8 (Rin)"<?php echo ($e2g['e2g_encode']=='UTF-8 (Rin)'?' selected':''); ?>><?php echo 'UTF-8 (Rin)'; ?></option>
                             </select>
                         </td>
                     </tr>
