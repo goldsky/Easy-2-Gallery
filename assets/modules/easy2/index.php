@@ -95,10 +95,10 @@ if (file_exists( E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery
 }
 
 // CHECKING THE _thumbnails FOLDER
-if (!is_dir( MODX_BASE_PATH . $e2g['dir'])) {
+if (!is_dir( MODX_BASE_PATH . $e2g['dir']) && !is_file(E2G_MODULE_PATH . 'install/index.php') ) {
     echo '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
     exit;
-} elseif (!is_dir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
+} elseif (!is_dir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) && !is_file(E2G_MODULE_PATH . 'install/index.php') ) {
     if (mkdir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
         @chmod( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails', 0755 );
     } else {

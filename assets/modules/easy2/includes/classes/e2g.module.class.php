@@ -2043,8 +2043,11 @@ class e2g_mod {
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
 
         // added by Raymond
+
         $r = substr($path,strlen($path)-1,1);
-//        $r = UTF8::substr($path,UTF8::strlen($path)-1,1);
+        if ($e2g_encode == 'UTF-8 (Rin)') {
+            $r = UTF8::substr($path,UTF8::strlen($path)-1,1);
+        }
         if ($r!='\\' && $r!='/') $path .='/';
 
         if (!extension_loaded('zip')) {
@@ -2069,6 +2072,9 @@ class e2g_mod {
                     $zip_entry_name = $zip->getNameIndex($i);
                     $zip_content = $zip->getFromIndex($i);
 
+                    /*
+                     * ENCODING OPTIONS TO GET FILENAMES AND END SLASH
+                     */
                     if ($e2g_encode == 'none' || $e2g_encode == 'UTF-8') {
                         $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
                     }

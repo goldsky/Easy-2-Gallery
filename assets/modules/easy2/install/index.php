@@ -46,7 +46,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
 
     $_SESSION['easy2dir'] = substr($npath, 3).'/';
-    $_SESSION['easy2suc'][] = $lngi['dir_created'];
+    $_SESSION['easy2suc'][] = $lngi['dir_created'].': '.$_POST['path'];
 
     // CHECK/CREATE TABLES
     // mysql_list_fields()
