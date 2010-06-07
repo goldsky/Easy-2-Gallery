@@ -108,7 +108,7 @@ if (!is_dir( MODX_BASE_PATH . $e2g['dir']) ) {
     if (mkdir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
         @chmod( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails', 0755 );
     } else {
-        echo '<b style="color:red">' . $lng['_thumb_err'] . '</b>';
+        $_SESSION['easy2err'][] = '<b style="color:red">' . $lng['_thumb_err'] . '</b>';
         exit;
     }
 }
