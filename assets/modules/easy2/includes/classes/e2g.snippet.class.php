@@ -29,10 +29,24 @@ class e2g_snip {
         */
         global $modx;
         $fid = $this->e2gsnip_cfg['fid'];
+        $static_fid = $this->e2gsnip_cfg['static_fid'];
         $rgid = $this->e2gsnip_cfg['rgid'];
         $gid = $this->e2gsnip_cfg['gid']; // default
+        $static_gid = $this->e2gsnip_cfg['static_gid'];
+        $tags = $this->e2gsnip_cfg['tags'];
         $slideshow = $this->e2gsnip_cfg['slideshow'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
+
+        if ( isset($tags) ) {
+            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tags)!=''? $this->_tags_ids('dir', $tags) : 1);
+            $static_gid = $this->_tags_ids('dir', $tags);
+        }
+        /*
+         * CHECK THE REAL DECENDANT OF THE &gid CALL, and real &fid CALL.
+         * OTHERWISE, Restricted Access
+         */
+        if ( !empty($gid) && !empty($static_gid) ) $this->_check_gid_decendant($gid, $static_gid);
+        if ( !empty($fid) && !empty($static_fid) ) $this->_check_fid_decendant($fid, $static_fid);
 
         if ( $modx->documentIdentifier != $landingpage ) { // to avoid gallery's thumbnails display on the landingpage's page
             if ( !empty($fid) && !isset($slideshow) ) {
@@ -86,7 +100,7 @@ class e2g_snip {
         $customgetparams = $this->e2gsnip_cfg['customgetparams'];
         $gal_desc = $this->e2gsnip_cfg['gal_desc'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
-        $plugins = $this->e2gsnip_cfg['plugins'];
+        $plugin = $this->e2gsnip_cfg['plugin'];
 
         // CRUMBS
         $crumbs_separator = $this->e2gsnip_cfg['crumbs_separator'];
@@ -94,17 +108,6 @@ class e2g_snip {
         $crumbs_showAsLinks = $this->e2gsnip_cfg['crumbs_showAsLinks'];
         $crumbs_showCurrent = $this->e2gsnip_cfg['crumbs_showCurrent'];
         $crumbs_showPrevious = $this->e2gsnip_cfg['crumbs_showPrevious'];
-
-        if ( isset($tags) ) {
-            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tags)!=''? $this->_tags_ids('dir', $tags) : 1);
-            $static_gid = $this->_tags_ids('dir', $tags);
-        }
-
-        /*
-         * CHECK THE REAL DECENDANT OF THE &gid CALL.
-         * OTHERWISE, Restricted Access
-         */
-        if ( isset($gid) && isset($static_gid) ) $this->_check_gid_decendant($gid, $static_gid);
 
         $this->_libs();
 
@@ -200,7 +203,13 @@ class e2g_snip {
                             if ($cnt==count($path) && !$crumbs_showCurrent) {
                                 continue;
                             }
-                            if ($cnt!=count($path)) $crumbs .= $crumbs_separator.($crumbs_showAsLinks ? '<a href="[~[*id*]~]&gid='.$k.'">'.$v.'</a>' : $v);
+                            if ($cnt!=count($path)) $crumbs .= $crumbs_separator.($crumbs_showAsLinks ?
+                                    '<a href="'
+                                    // making flexible FURL or not
+                                    . $modx->makeUrl($modx->documentIdentifier
+                                            , $modx->aliases
+                                            , 'gid='.$k.'#'.$k)
+                                    .'">'.$v.'</a>' : $v);
                             else $crumbs .= $crumbs_separator.'<span class="'.$e2g_currentCrumb.'">'.$v.'</span>';
                         }
                         $crumbs = substr_replace($crumbs,'',0,strlen($crumbs_separator));
@@ -215,7 +224,6 @@ class e2g_snip {
                     }
                 }
             }
-
 
             /*
              * FOLDERS/DIRECTORIES/GALLERIES
@@ -315,16 +323,22 @@ class e2g_snip {
                     elseif (strlen($l['title']) > $title_len) $l['title'] = substr($l['title'], 0, $title_len-1).'...';
 
                     /*
-                     * insert plugins for each gallery
+                     * insert plugin for each gallery
                      */
-                    if (isset($plugins) && preg_match('/gallery:/', $plugins))
-                        $l['galleryplugin'] = $this->_plugin('gallery',$plugins,$l);
+                    if (isset($plugin) && preg_match('/gallery:/', $plugin))
+                        $l['galleryplugin'] = $this->_plugin('gallery',$plugin,$l);
 
                     $l['w'] = $this->e2gsnip_cfg['w'];
                     $l['h'] = $this->e2gsnip_cfg['h'];
                     $thq = $this->e2gsnip_cfg['thq'];
 
                     $l['src'] = $this->_get_thumb( $gdir, $path1.$l1['filename'], $l['w'], $l['h'], $thq );
+
+                    // making flexible FURL or not
+                    $l['link'] =  $modx->makeUrl($modx->documentIdentifier
+                                                , $modx->documentAliases
+                                                , 'gid='
+                                                );
 
                     // fill up the dir list with content
                     $_e2g['content'] .= (($grid == 'css') ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>');
@@ -400,16 +414,20 @@ class e2g_snip {
                 }
 
                 /*
-                 * insert plugins for each thumb
+                 * insert plugin for each thumb
                  */
-                if (isset($plugins) && preg_match('/thumb:/', $plugins))
-                    $l['thumbplugin'] = $this->_plugin('thumb',$plugins,$l);
+                if (isset($plugin) && preg_match('/thumb:/', $plugin))
+                    $l['thumbplugin'] = $this->_plugin('thumb',$plugin,$l);
                 
                 $l['w'] = $this->e2gsnip_cfg['w'];
                 $l['h'] = $this->e2gsnip_cfg['h'];
 
                 if ( isset($landingpage) ) {
-                    $l['link'] = $modx->makeUrl($landingpage).'&lp='.$landingpage.'&'; // do not forget the '&' suffix
+                    $l['link'] = $modx->makeUrl(
+                            $landingpage
+                            , ''
+                            , 'lp='.$landingpage.'&' // do not forget the '&' suffix
+                            );
                 } else {
                     $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
                 }
@@ -429,7 +447,12 @@ class e2g_snip {
          * BACK BUTTON
         */
         if ($_e2g['parent_id'] > 0) {
-            $_e2g['back'] = '<p class="'.$e2gback_class.'">&laquo; <a href="[~[*id*]~]&gid='.$_e2g['parent_id'].'">'.$_e2g['parent_name'].'</a></p>';
+            $_e2g['back'] = '<p class="'.$e2gback_class.'">&laquo; <a href="'
+                            // making flexible FURL or not
+                            . $modx->makeUrl($modx->documentIdentifier
+                            , $modx->documentAliases
+                            , 'gid='.$_e2g['parent_id'].'#'.$_e2g['parent_id'])
+            .'">'.$_e2g['parent_name'].'</a></p>';
         }
 
         /*
@@ -462,10 +485,20 @@ class e2g_snip {
             while ($i*$limit < $total_count) {
                 if ( isset($tags) && !isset($_GET['gid']) ) {
                     if ($i == $gpn) $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
-                    else $_e2g['pages'] .= '<a href="[~[*id*]~]'.$customgetparams.'&tags='.$tags.'&gpn='.$i.'#'.$tags.'">'.($i+1).'</a> ';
+                    else $_e2g['pages'] .= '<a href="'
+                        // making flexible FURL or not
+                        . $modx->makeUrl($modx->documentIdentifier
+                                , $modx->documentAliases
+                                , 'tags='.$tags.'&gpn='.$i.$customgetparams.'#'.$tags)
+                                .'">'.($i+1).'</a> ';
                 } else {
                     if ($i == $gpn) $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
-                    else $_e2g['pages'] .= '<a href="[~[*id*]~]'.$customgetparams.'&gid='.$gid.'&gpn='.$i.'#'.$gid.'">'.($i+1).'</a> ';
+                    else $_e2g['pages'] .= '<a href="'
+                        // making flexible FURL or not
+                        . $modx->makeUrl($modx->documentIdentifier
+                                , $modx->documentAliases
+                                , 'gid='.$gid.'&gpn='.$i.$customgetparams.'#'.$gid)
+                            .'">'.($i+1).'</a> ';
                 }
                 $i++;
             }
@@ -508,7 +541,10 @@ class e2g_snip {
             $l['h'] = $this->e2gsnip_cfg['h'];
 
             if ( isset($landingpage) ) {
-                $l['link'] = $modx->makeUrl($landingpage).'&lp='.$landingpage.'&'; // do not forget the '&' suffix
+                $l['link'] = $modx->makeUrl(
+                        $landingpage
+                        , $modx->documentAliases
+                        , 'lp='.$landingpage.'&'); // do not forget the '&' suffix
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -975,7 +1011,7 @@ class e2g_snip {
         $ss_css = $this->e2gsnip_cfg['ss_css'];
         $ss_js = $this->e2gsnip_cfg['ss_js'];
 
-//        $_ssfile = array();
+        $_ssfile = array();
         if (!empty($gid) && $modx->documentIdentifier!=$landingpage ) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
@@ -1116,7 +1152,12 @@ class e2g_snip {
          * added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
          */
         if ( isset($_GET['fid']) && isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
-            $modx->sendRedirect($modx->makeUrl($landingpage).'&fid='.$_GET['fid'].'&lp='.$landingpage);
+            // making flexible FURL or not
+            $modx->sendRedirect($modx->makeUrl(
+                            $landingpage
+                            , $modx->aliases
+                            , 'fid='.$_GET['fid']).'&lp='.$landingpage
+                            );
         }
         elseif ( isset($_GET['fid']) && !isset($landingpage) ) {
             $modx->regClientCSS($css,'screen');
@@ -1176,15 +1217,16 @@ class e2g_snip {
     */
     private function _landingpage($fileid) {
         global $modx;
+        
         $landingpage = $this->e2gsnip_cfg['landingpage'];
-        $plugins = $this->e2gsnip_cfg['plugins'];
+        if ($modx->documentIdentifier != $landingpage) return;
+
+        $plugin = $this->e2gsnip_cfg['plugin'];
         $gdir = $this->e2gsnip_cfg['gdir'];
         $css = $this->e2gsnip_cfg['css'];
         $js = $this->e2gsnip_cfg['js'];
         $ss_css = $this->e2gsnip_cfg['ss_css'];
         $ss_js = $this->e2gsnip_cfg['ss_js'];
-
-        if ($modx->documentIdentifier != $landingpage) return;
 
         $modx->regClientCSS($css,'screen');
         if (!empty($js)) {
@@ -1221,10 +1263,10 @@ class e2g_snip {
             }
 
             /*
-             * insert plugins for THE IMAGE
+             * insert plugin for THE IMAGE
              */
-            if (isset($plugins) && preg_match('/landingpage:/', $plugins))
-                $l['landingpageplugin'] = $this->_plugin('landingpage',$plugins,$fetch);
+            if (isset($plugin) && preg_match('/landingpage:/', $plugin))
+                $l['landingpageplugin'] = $this->_plugin('landingpage',$plugin,$fetch);
         }
         return $this->_filler( $this->_page_tpl(), $l );
     }
@@ -1305,23 +1347,23 @@ class e2g_snip {
     }
 
     /*
-     * plugins interception for thumbnails
+     * plugin interception for thumbnails
     */
-    private function _plugin($target, $plugins, $row) {
+    private function _plugin($target, $plugin, $row) {
         global $modx;
         // clear up
         $p_errs = array();
         if (isset($plugin_display)) unset($plugin_display);
 
-        if (!isset($plugins)) {
+        if (!isset($plugin)) {
             return 'Please make a plugin selection.';
         } else {
             $badchars = array('`',' ');
-            $plugins = str_replace($badchars, '', trim($plugins));
-            // get the plugins target: thumb:starrating,watermark | gallery:... | landingpage:...
+            $plugin = str_replace($badchars, '', trim($plugin));
+            // get the plugin target: thumb:starrating,watermark | gallery:... | landingpage:...
             $xpldplugins = array();
-            $xpldplugins = @explode('|', trim($plugins));
-            // get the plugins' settings: starrating,watermark
+            $xpldplugins = @explode('|', trim($plugin));
+            // get the plugin' settings: starrating,watermark
             $p_category = array();
 
             foreach ($xpldplugins as $p_category) {
@@ -1366,7 +1408,7 @@ class e2g_snip {
             }
             
             return $plugin_display;
-        } // if (isset($plugins))
+        } // if (isset($plugin))
     }
 
     /*
@@ -1400,7 +1442,6 @@ class e2g_snip {
      */
     private function _check_gid_decendant($id,$static_id) {
         global $modx;
-
         $s = 'SELECT A.cat_id '
             . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs A, '
             . $modx->db->config['table_prefix'].'easy2_dirs B '
@@ -1411,14 +1452,34 @@ class e2g_snip {
         while ($l = mysql_fetch_array($q, MYSQL_ASSOC)) {
             $check[$l['cat_id']] = $l['cat_id'];
         }
-
         $xpld_get_gids = explode(',', $id);
         foreach ($xpld_get_gids as $_id) {
             if ( !$check[$_id] && ($static_id!=1) ) {
                 return $modx->sendUnauthorizedPage();
             } elseif (!$check[$_id] && ($static_id==1)) {
                 return $modx->sendErrorPage();
-            }
+            } else return true;
+        }
+    }
+
+    /*
+     * CHECK THE REAL DESCENDANT OF fid ROOT
+     */
+    private function _check_fid_decendant($id,$static_id) {
+        global $modx;
+        $s = 'SELECT id '
+            . 'FROM '.$modx->db->config['table_prefix'].'easy2_files '
+            . 'WHERE id IN ('.$static_id.') '
+        ;
+        $q = mysql_query($s) or die(__LINE__.' : '.mysql_error().'<br />'.$s);
+        while ($l = mysql_fetch_array($q, MYSQL_ASSOC)) {
+            $check[$l['id']] = $l['id'];
+        }
+        $xpld_get_fids = explode(',', $id);
+        foreach ($xpld_get_fids as $_id) {
+            if (!$check[$_id]) {
+                return $modx->sendErrorPage();
+            } else return true;
         }
     }
 

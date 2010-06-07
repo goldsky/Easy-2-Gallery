@@ -750,7 +750,7 @@ class e2g_mod {
                     if(mkdir($npath)) {
                         chmod($npath, 0755) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                     } else {
-                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['directory_create_err'].' "'.$npath."'";
+                        $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_create_err'].' "'.$npath."'";
                     }
                 }
                 $c = "<?php\r\n\$e2g = array (\r\n";
@@ -782,9 +782,9 @@ class e2g_mod {
             // ADD DIRECTORY
             case 'add_dir':
                 if( $this->_add_all('../'.str_replace('../', '', $this->_e2g_decode($_GET['dir_path']).'/' ), $parent_id, $e2g, $lng) ) {
-                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_edded'];
+                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_added'];
                 } else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_edd_err'];
+                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_add_err'];
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
@@ -888,7 +888,7 @@ class e2g_mod {
                         $dirname = htmlspecialchars($_POST['name'], ENT_QUOTES);
                         $mkdir = mkdir('../'.$this->_e2g_decode($gdir.$dirname));
                         if ($mkdir) {
-                            $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['directory_created'].' : '.$gdir.$dirname;
+                            $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['dir_created'].' : '.$gdir.$dirname;
                             chmod('../'.$this->_e2g_decode($gdir.$dirname), 0755)
                                     or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
 
@@ -916,7 +916,7 @@ class e2g_mod {
                                 $tree->delete($id);
                             }
                         } else {
-                            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['directory_create_err'];
+                            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_create_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$dirname);
                         }
 
@@ -1141,7 +1141,7 @@ class e2g_mod {
             }
         }
         if (count($res['e']) == 0 && @rmdir($path)) $res['d']++;
-        else $res['e'][] = __LINE__.' : '.$lng['dir_del_err'].': '.$path;
+        else $res['e'][] = __LINE__.' : '.$lng['dir_delete_err'].': '.$path;
         return $res;
     }
 

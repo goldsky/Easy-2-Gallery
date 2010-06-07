@@ -6,6 +6,7 @@ $e2gsnip_cfg['gdir'] = $e2g['dir'];
 if ( !empty($fid) ) {
     // FILE ID
     $e2gsnip_cfg['fid'] = (!empty($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : ( !empty($fid) ? $fid : null );
+    $e2gsnip_cfg['static_fid'] = ( !empty($fid) ? $fid : null );
 }
 elseif ( !empty($rgid) ) {
     // RANDOMIZED GALLERY ID
@@ -195,4 +196,5 @@ $e2gsnip_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_s
 /*
  * plugins interception
 */
-$e2gsnip_cfg['plugins'] = isset($plugins) ? $plugins : null;
+if (isset($plugins)) $plugin=$plugins; // compatibility
+$e2gsnip_cfg['plugin'] = isset($plugin) ? $plugin : null;
