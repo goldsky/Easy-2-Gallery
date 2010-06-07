@@ -33,13 +33,13 @@ class e2g_snip {
         $rgid = $this->e2gsnip_cfg['rgid'];
         $gid = $this->e2gsnip_cfg['gid']; // default
         $static_gid = $this->e2gsnip_cfg['static_gid'];
-        $tags = $this->e2gsnip_cfg['tags'];
+        $tag = $this->e2gsnip_cfg['tag'];
         $slideshow = $this->e2gsnip_cfg['slideshow'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
 
-        if ( isset($tags) ) {
-            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tags)!=''? $this->_tags_ids('dir', $tags) : 1);
-            $static_gid = $this->_tags_ids('dir', $tags);
+        if ( isset($tag) ) {
+            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tag)!=''? $this->_tags_ids('dir', $tag) : 1);
+            $static_gid = $this->_tags_ids('dir', $tag);
         }
         /*
          * CHECK THE REAL DECENDANT OF THE &gid CALL, and real &fid CALL.
@@ -76,7 +76,7 @@ class e2g_snip {
         $gdir = $this->e2gsnip_cfg['gdir'];
         $gid = $this->e2gsnip_cfg['gid'];
         $static_gid = $this->e2gsnip_cfg['static_gid'];
-        $tags = $this->e2gsnip_cfg['tags'];
+        $tag = $this->e2gsnip_cfg['tag'];
         $orderby = $this->e2gsnip_cfg['orderby'];
         $order = $this->e2gsnip_cfg['order'];
         $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
@@ -125,14 +125,14 @@ class e2g_snip {
         // count the directories WITHOUT limit!
         if ( $showonly=='images'
                 || !isset($gid)
-                || ( isset($tags) && ($gid!=$static_gid) ) // exclude further tagged dir descendant
+                || ( isset($tag) && ($gid!=$static_gid) ) // exclude further tagged dir descendant
                 ) {
             $dir_count = 0;
         } else {
-            if ( isset($tags) && !isset($_GET['gid']) ) {
+            if ( isset($tag) && !isset($_GET['gid']) ) {
                 $select_count = 'SELECT COUNT(DISTINCT cat_id) '
                         . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                        . 'WHERE cat_tags LIKE \'%'.$tags.'%\'';
+                        . 'WHERE cat_tag LIKE \'%'.$tag.'%\'';
             } else {
                 $select_count = 'SELECT COUNT(DISTINCT d.cat_id) '
                         . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
@@ -169,7 +169,7 @@ class e2g_snip {
                 /*
                  * limiting the CRUMBS paths.
                  */
-                if ( ($static_gid !=1) && !empty($path) && !isset($tags) ) {
+                if ( ($static_gid !=1) && !empty($path) && !isset($tag) ) {
                     $static_path = $this->_get_path($static_gid);
                     if (!$crumbs_showPrevious) {
                         $path = array_slice($path, (count($static_path)-2),null,true);
@@ -185,7 +185,7 @@ class e2g_snip {
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
                 */
-                if ($multiple_gids_count==1 && !isset($tags)) {
+                if ($multiple_gids_count==1 && !isset($tag)) {
                     // if path more the one
                     if (count($path) > 1) {
                         end($path);
@@ -229,10 +229,10 @@ class e2g_snip {
              * FOLDERS/DIRECTORIES/GALLERIES
              */
             if ( $showonly != 'images' ) {
-                if ( isset($tags) && !isset($_GET['gid']) ) {
+                if ( isset($tag) && !isset($_GET['gid']) ) {
                     $query = 'SELECT * '
                             . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                            . 'WHERE cat_tags LIKE \'%'.$tags.'%\' '
+                            . 'WHERE cat_tag LIKE \'%'.$tag.'%\' '
                             . 'AND cat_visible = 1 '
                             . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' '
                             . 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit
@@ -266,8 +266,8 @@ class e2g_snip {
                 if (!$dirquery) die(__LINE__.' : '.mysql_error().'<br />'.$query);
                 $dir_num_rows += mysql_num_rows($dirquery);
 
-                if ( isset($tags) && !isset($_GET['gid']) ) {
-                    $_e2g['permalink'] = '<a href="#" name="'.$tags.'"></a>';
+                if ( isset($tag) && !isset($_GET['gid']) ) {
+                    $_e2g['permalink'] = '<a href="#" name="'.$tag.'"></a>';
                 } else {
                     $_e2g['permalink'] = '<a href="#" name="'.$gid.'"></a>';
                 }
@@ -286,10 +286,10 @@ class e2g_snip {
                 $i = 0;
                 while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
                     $l['permalink'] = $l['cat_id'];
-                    if ( isset($tags) && !isset($_GET['gid']) ) {
-                        $l['cat_tags'] = '&tags='.$tags;
+                    if ( isset($tag) && !isset($_GET['gid']) ) {
+                        $l['cat_tag'] = '&tag='.$tag;
                     } else {
-                        $l['cat_tags'] = '';
+                        $l['cat_tag'] = '';
                     }
 
                     // search image for subdir
@@ -360,9 +360,9 @@ class e2g_snip {
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
 
-            if ( isset($tags) ) {
+            if ( isset($tag) ) {
                 $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                            . 'WHERE tags LIKE \'%'.$tags.'%\' '
+                            . 'WHERE tag LIKE \'%'.$tag.'%\' '
                             . 'AND status = 1 '
                             . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                             ;
@@ -467,8 +467,8 @@ class e2g_snip {
         if ($showonly=='folders') {
             $file_count = 0;
         } elseif ( !empty($gid) ) {
-            if ( isset($tags) && !isset($_GET['gid']) ) {
-                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE tags LIKE \'%'.$tags.'%\' ';
+            if ( isset($tag) && !isset($_GET['gid']) ) {
+                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE tag LIKE \'%'.$tag.'%\' ';
             } else {
                 $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id IN ('.$gid.') ';
             }
@@ -483,13 +483,13 @@ class e2g_snip {
             $_e2g['pages'] = '<div class="'.$e2gpnums_class.'">';
             $i = 0;
             while ($i*$limit < $total_count) {
-                if ( isset($tags) && !isset($_GET['gid']) ) {
+                if ( isset($tag) && !isset($_GET['gid']) ) {
                     if ($i == $gpn) $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
                     else $_e2g['pages'] .= '<a href="'
                         // making flexible FURL or not
                         . $modx->makeUrl($modx->documentIdentifier
                                 , $modx->documentAliases
-                                , 'tags='.$tags.'&gpn='.$i.$customgetparams.'#'.$tags)
+                                , 'tag='.$tag.'&gpn='.$i.$customgetparams.'#'.$tag)
                                 .'">'.($i+1).'</a> ';
                 } else {
                     if ($i == $gpn) $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
@@ -1485,15 +1485,15 @@ class e2g_snip {
     }
 
     /*
-     * GET IDs OF &tags parameter
+     * GET IDs OF &tag parameter
      */
-    private function _tags_ids($dirorfile, $tags) {
+    private function _tags_ids($dirorfile, $tag) {
         global $modx;
 
         if ($dirorfile=='dir') {
             $s = 'SELECT cat_id '
                 . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                . 'WHERE cat_tags LIKE \'%'.$tags.'%\' ';
+                . 'WHERE cat_tag LIKE \'%'.$tag.'%\' ';
             $tags_query = mysql_query($s) or die(__LINE__.': '.mysql_error().'<br />'.$s);
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_dir[] = $l['cat_id'];
@@ -1504,7 +1504,7 @@ class e2g_snip {
         if ($dirorfile=='file') {
             $s = 'SELECT id '
                 . 'FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                . 'WHERE (tags LIKE \'%'.$tags.'%\' ';
+                . 'WHERE (tag LIKE \'%'.$tag.'%\' ';
             $tags_query = mysql_query($s) or die(__LINE__.': '.mysql_error().'<br />'.$s);
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_file[] = $l['id'];

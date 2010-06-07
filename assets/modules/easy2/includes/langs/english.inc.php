@@ -153,12 +153,12 @@ $e2g_lang['english'] = array (
 default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;fid &lt;/strong&gt;- id of image for spesific image display&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;rgid &lt;/strong&gt;- gallery id for random thumbnail output&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;tags&lt;/strong&gt; - image&#039;s/folder&#039;s tags (this parameter will ignore the &amp;amp;gid parameter, but can accompanied by &amp;amp;showonly). Options: word/string.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;tag&lt;/strong&gt; - image&#039;s/folder&#039;s tag (this parameter will ignore the &amp;amp;gid parameter, but can accompanied by &amp;amp;showonly). Options: word/string.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;showonly&lt;/strong&gt; - images | folders, to show only those spesific type&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?fid=`2,3`!]&lt;/strong&gt;&lt;br /&gt;Will show images ID# 2 &lt;strong&gt;and &lt;/strong&gt;3&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?gid=`20,57` &amp;amp;showonly=`images`!]&lt;/strong&gt;&lt;br /&gt;Will show &lt;strong&gt;only &lt;/strong&gt;images from folder ID 20 &lt;strong&gt;and &lt;/strong&gt;57 (excluding directory&#039;s thumbnails).&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?rgid=`102,138`!]&lt;/strong&gt;&lt;br /&gt;Will show random image from folder ID 102 &lt;strong&gt;and &lt;/strong&gt;138, inside &lt;strong&gt;one &lt;/strong&gt;thumbnail.&lt;/p&gt;
-&lt;p&gt;Example call: &lt;strong&gt;[!easy2?tags=`dogs, puppies` &amp;amp;showonly=`images`!]&lt;/strong&gt;&lt;br /&gt;Will show all images (only) which have dogs OR puppies tag.&lt;/p&gt;
+&lt;p&gt;Example call: &lt;strong&gt;[!easy2?tag=`dogs, puppies` &amp;amp;showonly=`images`!]&lt;/strong&gt;&lt;br /&gt;Will show all images (only) which have dogs OR puppies tag.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;If you want to apply changes to added images you should clean cache.&lt;/strong&gt;&lt;/p&gt;
 &lt;h2&gt;Thumbnail&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt; Folder _thumbnails in root of gallery.&lt;/strong&gt;&lt;/p&gt;
@@ -537,7 +537,7 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'synchro_err' => 'There was an error while trying to synchronize',
         'synchro_suc' => 'Gallery synchronized',
         'table' => 'table',
-        'tags' => 'Tags',
+        'tag' => 'Tag',
         'text' => 'text',
         'thbg_rgb' => 'Thumbnail background color',
         'thbg_rgb_cfg_desc' => 'White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.',

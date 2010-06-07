@@ -17,8 +17,8 @@ MODULE
 + More options in config area
 
 SNIPPET
-+ Added &tags parameter
-+ Added &plugins for thumbnails, gallery, and landingpage
++ Added &tag parameter
++ Added &plugin for thumbnails, gallery, and landingpage
 + Restrictive descendant of specified gallery's call: restrict the address bar, and crumbs
 + Added permalink to the gallery template
 + &landingpage option is now applied to the original gallery's thumbnail, too

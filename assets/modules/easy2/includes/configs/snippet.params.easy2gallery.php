@@ -21,7 +21,8 @@ else {
     $e2gsnip_cfg['get_gid'] = !empty($_GET['gid']) ? $_GET['gid'] : null;
 }
 // TAGS
-$e2gsnip_cfg['tags'] = !empty($_GET['tags']) ? $_GET['tags'] : ( !empty($tags) ? $tags : null );
+if (isset($tags)) $tag=$tags; // compatibility
+$e2gsnip_cfg['tag'] = !empty($_GET['tag']) ? $_GET['tag'] : ( !empty($tag) ? $tag : null );
 
 // ENCODING
 $e2gsnip_cfg['e2g_encode'] = (isset($e2g_encode)) ? $e2g_encode : $e2g['e2g_encode'];

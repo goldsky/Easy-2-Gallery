@@ -46,7 +46,7 @@ $qdesc = 'SELECT * '
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
     $dirtitle[$parent_id] = $l['cat_alias'];
-    $dirtags[$parent_id] = $l['cat_tags'];
+    $dirtag[$parent_id] = $l['cat_tag'];
     $dirdesc[$parent_id] = $l['cat_description'];
 }
 ?>
@@ -67,9 +67,9 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td><?php echo $dirtitle[$parent_id]; ?></td>
     </tr>
     <tr>
-        <td valign="top"><b><?php echo $lng['tags']; ?></b></td>
+        <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dirtags[$parent_id]; ?></td>
+        <td><?php echo $dirtag[$parent_id]; ?></td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['description']; ?></b></td>

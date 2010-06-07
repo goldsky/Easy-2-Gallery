@@ -965,7 +965,7 @@ class e2g_mod {
                                 $q .= 'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
-                                    .', cat_tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
+                                    .', cat_tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                     .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '
                                     .'WHERE cat_id='.(int)$_GET['dir_id'];
@@ -1025,7 +1025,7 @@ class e2g_mod {
                                 $q .= 'filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
-                                    .', tags = \''.htmlspecialchars(trim($_POST['tags']), ENT_QUOTES).'\''
+                                    .', tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                     .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '
                                     .'WHERE id='.(int)$_GET['file_id'];
