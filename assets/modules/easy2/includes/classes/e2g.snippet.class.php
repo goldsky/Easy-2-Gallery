@@ -517,6 +517,7 @@ class e2g_snip {
 //        $notables = $this->e2gsnip_cfg['notables']; // deprecated
         $grid = $this->e2gsnip_cfg['grid'];
         $grid_class = $this->e2gsnip_cfg['grid_class'];
+        $landingpage = $this->e2gsnip_cfg['landingpage'];
 
         $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
