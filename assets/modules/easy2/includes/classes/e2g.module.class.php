@@ -2089,11 +2089,14 @@ class e2g_mod {
                         $mb_detect_encoding = mb_detect_encoding($zip_open);
 
                         // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-                        if($mb_detect_encoding == 'ASCII' || $mb_detect_encoding == 'UTF-8') {
-                            $zip_entry_name = UTF8::convert_from( $zip_entry_name, "ASCII" );
-                        } else {
-                            $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
-                        }
+						if($mb_detect_encoding != 'ASCII' && $mb_detect_encoding != 'UTF-8'){
+							if(!$mb_detect_encoding){
+								$zip_entry_name = UTF8::convert_from( $zip_entry_name, "ASCII" );
+							}
+							else {
+								$zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+							}
+						}
                         $r = UTF8::substr($zip_entry_name,UTF8::strlen($zip_entry_name)-1,1);
                     }
 
