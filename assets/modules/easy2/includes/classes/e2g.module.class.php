@@ -1651,14 +1651,7 @@ class e2g_mod extends e2g_pub {
      * @link http://drupal.org/node/278425#comment-2571500
      */
     private function _basename_safe($path) {
-        $path = rtrim($path,'/');
-        $path = explode('/',$path);
-
-        // encoding
-        $endpath = end($path);
-//        $encodinghtml= htmlspecialchars($this->_e2g_encode($endpath), ENT_QUOTES);
-        $encodinghtml= htmlspecialchars($endpath, ENT_QUOTES);
-        return $encodinghtml;
+        return parent::basename_safe($path);
     }
     
     /**

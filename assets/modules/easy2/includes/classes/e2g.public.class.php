@@ -140,8 +140,8 @@ class e2g_pub { // public/protected class
      */
     protected function is_validfile ($filename) {
         $e2g_debug = $this->e2gpub_cfg['e2g_debug'];
-        $f = $this->_basename_safe($filename);
-        $f = $this->_e2g_encode($f);
+        $f = $this->basename_safe($filename);
+        $f = $this->e2g_encode($f);
         if ($this->is_validfolder($filename)) {
             if ($e2g_debug==1) {
                 $_SESSION['easy2err'][] = __LINE__.' : <b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
@@ -217,4 +217,18 @@ class e2g_pub { // public/protected class
         else return TRUE;
     }
 
+    /**
+     * Replace the basename function with this to grab non-unicode character.
+     * @link http://drupal.org/node/278425#comment-2571500
+     */
+    protected function basename_safe($path) {
+        $path = rtrim($path,'/');
+        $path = explode('/',$path);
+
+        // encoding
+        $endpath = end($path);
+//        $encodinghtml= htmlspecialchars($this->e2g_encode($endpath), ENT_QUOTES);
+        $encodinghtml= htmlspecialchars($endpath, ENT_QUOTES);
+        return $encodinghtml;
+    }
 }
