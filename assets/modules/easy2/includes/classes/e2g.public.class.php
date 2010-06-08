@@ -25,7 +25,6 @@ class e2g_pub { // public/protected class
         $this->_e2g = $_e2g;
     }
 
-
     /**
      * Unicode character encoding work around.<br />
      * For human reading.<br />
@@ -44,12 +43,15 @@ class e2g_pub { // public/protected class
         if ($e2g_encode == 'UTF-8') {
             return utf8_encode($text);
         }
+        /**
+         * Using the class from <br />
+         * http://forum.dklab.ru/viewtopic.php?p=91015#91015
+         */
         if ($e2g_encode == 'UTF-8 (Rin)') {
             require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
             require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-            /*
-             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-             */
+
+            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
             return UTF8::convert_from($text,mb_detect_encoding($text));
         }
     }
@@ -72,19 +74,25 @@ class e2g_pub { // public/protected class
         if ($e2g_encode == 'UTF-8') {
             return utf8_decode($text);
         }
+        /**
+         * Using the class from <br />
+         * http://forum.dklab.ru/viewtopic.php?p=91015#91015
+         */
         if ($e2g_encode == 'UTF-8 (Rin)') {
             require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
             require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-            /*
-             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-             */
+            
             // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            if($mb_detect_encoding != 'ASCII' || $mb_detect_encoding != 'UTF-8')
-                return UTF8::convert_from( $text, "ASCII" );
-            else
-                return UTF8::convert_from( $text, mb_detect_encoding($text) );
-        }
-    }
+            if($mb_detect_encoding != 'ASCII' && $mb_detect_encoding != 'UTF-8'){
+                if(!$mb_detect_encoding){
+                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, "ASCII" );
+                }
+                else {
+                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+                }
+            }
+        } // if ($e2g_encode == 'UTF-8 (Rin)')
+    } // protected function e2g_decode($text)
 
     /**
      * function get_dir_info
