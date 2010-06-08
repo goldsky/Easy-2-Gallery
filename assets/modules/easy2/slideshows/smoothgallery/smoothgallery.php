@@ -329,7 +329,7 @@ else {
                     $query = mysql_query($select) or die('319 '.$select.mysql_error());
                     $countimg[$k] = mysql_num_rows($query);
                     // for an empty folder
-//                    if ($countimg[$k]==0) continue;
+                    if ($countimg[$k]==0) continue;
 
                     while ($fetch = mysql_fetch_array($query)) {
                         $path = $this->_get_path($fetch['dir_id']);
@@ -345,8 +345,8 @@ else {
                         $_ssfile['filename'][$k][] = $fetch['filename'];
                         $_ssfile['title'][$k][] = $fetch['name'];
                         $_ssfile['description'][$k][] = $fetch['description'];
-                        $_ssfile['thumbsrc'][$k][] = $this->_get_thumb($e2gsnip_cfg, $gdir, $path.$fetch['filename'], $w, $h, $thq);
-                        $_ssfile['resizedimg'][$k][] = $this->_get_thumb($e2gsnip_cfg, $gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                        $_ssfile['thumbsrc'][$k][] = $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq);
+                        $_ssfile['resizedimg'][$k][] = $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
                     }
                 }
             }
@@ -378,7 +378,7 @@ else {
                         , 'fid='.$_ssfile['id'][$k][$i])
                 .'" title="open image" class="open"></a>
             <img src="'.$_ssfile['resizedimg'][$k][$i].'" class="full" alt="" />
-            <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" />
+            <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" alt="" />
         </div>';
                 // if there is a image number limitation
                 $j++;

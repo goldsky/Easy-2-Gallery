@@ -41,6 +41,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
                                     $cp = $this->_path_to($l['dir_id']);
                                     unset ($cp[1]);
+                                    $cdir='';
                                     if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
                                     ?>
                                 <tr <?php echo $cl[$i%2]; ?> >

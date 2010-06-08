@@ -9,9 +9,9 @@ header('Content-Type: text/html; charset=UTF-8');
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-require_once E2G_SNIPPET_PATH . 'includes/utf8/utf8.php';
+//require_once E2G_SNIPPET_PATH . 'includes/utf8/utf8.php';
 
-class e2g_snip {
+class e2g_snip extends e2g_pub {
     public $e2gsnip_cfg = array();
     private $_e2g = array();
 
@@ -20,6 +20,10 @@ class e2g_snip {
         $this->_e2g = $_e2g;
     }
 
+    /**
+     * The main function.
+     * @global <type> $modx
+     */
     public function display() {
         /*
          * 1. '&gid' : full gallery directory (directory - &gid - default)
@@ -67,9 +71,9 @@ class e2g_snip {
         }
     }
 
-    /*
+    /**
      * full gallery execution
-    */
+     */
     private function _gallery() {
         global $modx;
 
@@ -507,8 +511,8 @@ class e2g_snip {
         return $this->_filler($this->_gal_tpl(), $_e2g);
     }
 
-    /*
-     * $fid is set
+    /**
+     * Gallery for &fid parameter
     */
     private function _imagefile() {
         global $modx;
@@ -560,8 +564,8 @@ class e2g_snip {
         return $this->_filler($this->_gal_tpl(), $_e2g);
     }
 
-    /*
-     * RANDOM IMAGE
+    /**
+     * RANDOM IMAGE : 
      * To create a random image
      * @param string $orderby == 'random'
      * @param int $limit == 1
@@ -606,9 +610,8 @@ class e2g_snip {
         return $this->_filler($this->_gal_tpl(), $_e2g );
     }
 
-    /*
-     * function get_thumb
-     * function to get and create thumbnails
+    /**
+     * To get and create thumbnails
      * @param int $gdir = from $_GET['gid']
      * @param string $path = directory path of each of thumbnail
      * @param int $w = thumbnail width
@@ -769,9 +772,8 @@ class e2g_snip {
         return $urlencoding;
     }
 
-    /*
-     * function get_path
-     * function to get image's path
+    /**
+     * To get image's path
      * @param int $id = image's ID
     */
     private function _get_path ($id) {
@@ -796,29 +798,16 @@ class e2g_snip {
         return $result;
     }
 
-    /*
+    /**
      * function get_dir_info
      * function to get directory's information
      * @param int $dirid = gallery's ID
-    */
+     */
     private function _get_dir_info($dirid,$field) {
-        global $modx;
-
-        $dirinfo = array();
-
-        $q = 'SELECT '.$field.' FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-            . 'WHERE cat_id='.$dirid.' '
-        ;
-
-        if (!($res = mysql_query($q))) return ('Wrong field.');
-        while ($l = mysql_fetch_array($res)) {
-            $dirinfo[$field] = $l[$field];
-        }
-        if (empty($dirinfo[$field])) return null;
-        return $dirinfo[$field];
+        return parent::get_dir_info($dirid, $field);
     }
 
-    /*
+    /**
      * function filler
      * Gallery's TEMPLATE function
      * @param string $tpl = gallery's template (@FILE or chunk)
@@ -837,7 +826,7 @@ class e2g_snip {
         return $tpl;
     }
 
-    /*
+    /**
      * function get_folder_img
      * To get thumbnail for each folder
      * @param int $gid folder's ID
@@ -878,8 +867,7 @@ class e2g_snip {
         return $result;
     }
 
-    /*
-     * function _libs()
+    /**
      * To insert included files into the page header
      */
     private function _libs() {
@@ -909,8 +897,7 @@ class e2g_snip {
         }
     }
 
-    /*
-     * function _thumb_libs()
+    /**
      * To generate the display of each of thumbnail pieces from the Javascript libraries
      */
     private function _thumb_libs($row) {
@@ -984,7 +971,7 @@ class e2g_snip {
         return $row;
     }
 
-    /*
+    /**
      * CUSTOMIZABLE SLIDESHOW
      */
     private function _slideshow() {
@@ -1212,8 +1199,7 @@ class e2g_snip {
         return $ss_display;
     }
 
-    /*
-     * function landingpage
+    /**
      * a whole page to show the image, including informations within it.
     */
     private function _landingpage($fileid) {
@@ -1272,7 +1258,9 @@ class e2g_snip {
         return $this->_filler( $this->_page_tpl(), $l );
     }
 
-    // DIRECTORY TEMPLATE
+    /**
+     * DIRECTORY TEMPLATE
+     */
     private function _dir_tpl() {
         global $modx;
         $dir_tpl = $this->e2gsnip_cfg['dir_tpl'];
@@ -1287,7 +1275,9 @@ class e2g_snip {
         }
     }
 
-    // THUMBNAIL TEMPLATE
+    /**
+     * THUMBNAIL TEMPLATE
+     */
     private function _thumb_tpl() {
         global $modx;
         $thumb_tpl = $this->e2gsnip_cfg['thumb_tpl'];
@@ -1302,7 +1292,9 @@ class e2g_snip {
         }
     }
 
-    // GALLERY TEMPLATE
+    /**
+     * GALLERY TEMPLATE
+     */
     private function _gal_tpl() {
         global $modx;
         $tpl = $this->e2gsnip_cfg['tpl'];
@@ -1317,7 +1309,9 @@ class e2g_snip {
         }
     }
 
-    // RANDOM TEMPLATE
+    /**
+     * RANDOM TEMPLATE
+     */
     private function _random_tpl() {
         global $modx;
         $rand_tpl = $this->e2gsnip_cfg['rand_tpl'];
@@ -1332,7 +1326,9 @@ class e2g_snip {
         }
     }
 
-    // RANDOM TEMPLATE
+    /**
+     * RANDOM TEMPLATE
+     */
     private function _page_tpl() {
         global $modx;
         $page_tpl = $this->e2gsnip_cfg['page_tpl'];
@@ -1347,8 +1343,8 @@ class e2g_snip {
         }
     }
 
-    /*
-     * plugin interception for thumbnails
+    /**
+     * plugin implementation
     */
     private function _plugin($target, $plugin, $row) {
         global $modx;
@@ -1412,33 +1408,33 @@ class e2g_snip {
         } // if (isset($plugin))
     }
 
-    /*
-     * UTF encoding work around
+    /**
+     * Unicode character encoding work around.<br />
+     * For human reading.<br />
+     * The value is set from the module's config page.
+     *
+     * @link http://a4esl.org/c/charset.html
+     * @param string $text the string to be encoded
+     * @return string returns the encoding
      */
     private function _e2g_encode($text) {
-        $e2g_encode = $this->e2gsnip_cfg['e2g_encode'];
-        if ($e2g_encode == 'none') {
-            return $text;
-        }
-        if ($e2g_encode == 'UTF-8') {
-            return utf8_encode($text);
-        }
+        return parent::e2g_encode($text);
     }
 
-    /*
-     * UTF decoding work around
+    /**
+     * Unicode character decoding work around.<br />
+     * For file system reading.<br />
+     * The value is set from the module's config page.
+     *
+     * @link http://a4esl.org/c/charset.html
+     * @param string $text the string to be decoded
+     * @return string returns the decoding
      */
     private function _e2g_decode($text) {
-        $e2g_encode = $this->e2gsnip_cfg['e2g_encode'];
-        if ($e2g_encode == 'none') {
-            return $text;
-        }
-        if ($e2g_encode == 'UTF-8') {
-            return utf8_decode($text);
-        }
+        return parent::e2g_decode($text);
     }
 
-    /*
+    /**
      * CHECK THE REAL DESCENDANT OF gid ROOT
      */
     private function _check_gid_decendant($id,$static_id) {
@@ -1463,7 +1459,7 @@ class e2g_snip {
         }
     }
 
-    /*
+    /**
      * CHECK THE REAL DESCENDANT OF fid ROOT
      */
     private function _check_fid_decendant($id,$static_id) {
@@ -1484,8 +1480,12 @@ class e2g_snip {
         }
     }
 
-    /*
+    /**
      * GET IDs OF &tag parameter
+     * @global <type> $modx
+     * @param string $dirorfile dir|file
+     * @param string $tag from &tag parameter
+     * @return string number of &tag's decendants' IDs
      */
     private function _tags_ids($dirorfile, $tag) {
         global $modx;

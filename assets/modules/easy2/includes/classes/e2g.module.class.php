@@ -12,19 +12,18 @@ header('Content-Type: text/html; charset=UTF-8');
  */
 //require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
-class e2g_mod {
+class e2g_mod extends e2g_pub {
     private $e2gmod_cfg;
     public $e2g;
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
-        set_time_limit(0);
+//        set_time_limit(0);
 
         $this->e2gmod_cfg = $e2gmod_cfg;
 //        $this->e2g = $e2g;
 //        $this->lng = $lng;
-        $this->_explore($e2g, $lng);
-        $this->_echo_memory_usage($lng);
+//        $this->_explore($e2g, $lng);
     }
 
     /**
@@ -33,7 +32,7 @@ class e2g_mod {
      * @param array $lng The language string from the language file
      * @return string The module's pages.
      */
-    private function _explore($e2g, $lng) {
+    public function explore($e2g, $lng) {
         global $modx;
         $e2g['mdate_format'] = 'd-m-y H:i';
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
@@ -1114,6 +1113,8 @@ class e2g_mod {
          * MODULE's pages
         */
         include_once E2G_MODULE_PATH . 'includes/tpl/pane.main.inc.php';
+
+        $this->_echo_memory_usage($lng);
     }
 
     /**
@@ -1770,22 +1771,7 @@ class e2g_mod {
      * @return string returns the encoding
      */
     private function _e2g_encode($text) {
-        $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
-
-        if ($e2g_encode == 'none') {
-            return $text;
-        }
-        if ($e2g_encode == 'UTF-8') {
-            return utf8_encode($text);
-        }
-        if ($e2g_encode == 'UTF-8 (Rin)') {
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-            /*
-             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-             */
-            return UTF8::convert_from($text,mb_detect_encoding($text));
-        }
+        return parent::e2g_encode($text);
     }
 
     /**
@@ -1798,26 +1784,7 @@ class e2g_mod {
      * @return string returns the decoding
      */
     private function _e2g_decode($text) {
-        $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
-
-        if ($e2g_encode == 'none') {
-            return $text;
-        }
-        if ($e2g_encode == 'UTF-8') {
-            return utf8_decode($text);
-        }
-        if ($e2g_encode == 'UTF-8 (Rin)') {
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-            /*
-             * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-             */
-            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            if($mb_detect_encoding != 'ASCII' || $mb_detect_encoding != 'UTF-8')
-                return UTF8::convert_from( $text, "ASCII" );
-            else
-                return UTF8::convert_from( $text, mb_detect_encoding($text) );
-        }
+        return parent::e2g_decode($text);
     }
 
     /**
@@ -1903,21 +1870,7 @@ class e2g_mod {
      * @param int $dirid = gallery's ID
      */
     private function _get_dir_info($dirid,$field) {
-        global $modx;
-
-        $dirinfo = array();
-
-        $q = 'SELECT '.$field.' FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
-                . 'WHERE cat_id='.$dirid.' '
-        ;
-
-        if (!($res = mysql_query($q))) return ('Wrong field.');
-        while ($l = mysql_fetch_array($res)) {
-            $dirinfo[$field] = $l[$field];
-        }
-        mysql_free_result($res);
-        if (empty($dirinfo[$field])) return null;
-        return $dirinfo[$field];
+        return parent::get_dir_info($dirid, $field);
     }
 
     /**
@@ -1947,100 +1900,23 @@ class e2g_mod {
         }
     }
 
-
     /**
-     * Originally, this function was taken from the MODx's files.dynamic.php<br />
-     * Modified for Easy 2 Gallery purposes: Unicode friendly, success/error reports.
-     * @param string $file filename
-     * @param string $path starting path
-     * @return bool true/false
-     * @author patrick_allaert - php user notes
-     * @author Raymond (modx)
-     * @see manager/actions/files.dynamic.php, line 302, function unzip
-     */
-//	private function _unzip($file, $path, $lng) {
-//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-//        include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-//
-//		// added by Raymond
-//		$r = substr($path,strlen($path)-1,1);
-//		if ($r!='\\'||$r!='/') $path .='/';
-//		if (!extension_loaded('zip')) {
-//		   if (strtoupper(substr(PHP_OS, 0,3) == 'WIN')) {
-//				if(!@dl('php_zip.dll')) return 0;
-//		   } else {
-//				if(!@dl('zip.so')) return 0;
-//		   }
-//		}
-//		// end mod
-//		$zip = zip_open($file);
-//		if (is_resource($zip)) {
-//            ob_start();
-//
-//            $file_count = 0;
-//            $dir_count = 0;
-//
-//			$old_umask = umask(0);
-//			while ($zip_entry = zip_read($zip)) {
-//				if (zip_entry_filesize($zip_entry) > 0) {
-//					// str_replace must be used under windows to convert "/" into "\"
-//					$complete_path = $path.str_replace('/','\\',dirname(zip_entry_name($zip_entry)));
-//					$complete_name = $path.str_replace('/','\\', zip_entry_name($zip_entry) );
-//
-//                    // using Unicode conversion class.
-//                    $mb_detect_encoding = mb_detect_encoding($zip_entry, "auto");
-//                    $complete_path = UTF8::convert_from( $complete_path, $mb_detect_encoding );
-//                    $complete_name = UTF8::convert_from( $complete_name, $mb_detect_encoding );
-//
-//					if(!file_exists($complete_path)) {
-//						$tmp = '';
-//						foreach(explode('\\',$complete_path) AS $k) {
-//							$tmp .= $k.'\\';
-//							if(!file_exists($tmp)) {
-//								@mkdir($tmp, 0777);
-//                                $dir_count++;
-//							}
-//						}
-//					}
-//					if (zip_entry_open($zip, $zip_entry, 'r')) {
-//						$fd = fopen($complete_name, 'w');
-////                        $fd = fopen($this->_e2g_encode($complete_name), 'w');
-//						fwrite($fd, zip_entry_read($zip_entry, zip_entry_filesize($zip_entry)));
-//						fclose($fd);
-//						zip_entry_close($zip_entry);
-//                        $file_count++;
-//					}
-//				}
-//			}
-//			umask($old_umask);
-//			zip_close($zip);
-//            $_SESSION['easy2suc'][] = __LINE__.' : '. $dir_count.' '.$lng['dirs_uploaded'].'.';
-//            $_SESSION['easy2suc'][] = __LINE__.' : '. $file_count.' '.$lng['files_uploaded'].'.';
-//
-//            ob_end_clean();
-//			return true;
-//		} else {
-//            $_SESSION['easy2err'][] = __LINE__.' Error : unable to open the zip file <b>'.$zip_dir . $zip_name['original'].'</b>';
-//        }
-//		zip_close($zip);
-//	}
-
-    /**
-     *
-     * Unzip for Easy 2 Gallery : Unicode friendly, success/error reports.
-     * @param string $file filename
-     * @param string $path starting path
-     * @return bool true/false
-     * @author goldsky (goldsky@modx-id.com)
-     * @author Raymond (modx)
-     */
+    *
+    * Unzip for Easy 2 Gallery : Unicode friendly, success/error reports.
+    * @param string $file filename
+    * @param string $path starting path
+    * @return bool true/false
+    * @author goldsky (goldsky@modx-id.com)
+    * @author Raymond (modx)
+    */
     private function _unzip($file, $path, $lng) {
+        $e2g_encode = $this->e2gmod_cfg['e2g_encode'];
+        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
+        
         if ($e2g_encode == 'UTF-8 (Rin)') {
             include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
             include_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
         }
-        
-        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
 
         // added by Raymond
 
@@ -2075,11 +1951,12 @@ class e2g_mod {
                     /*
                      * ENCODING OPTIONS TO GET FILENAMES AND END SLASH
                      */
-                    if ($e2g_encode == 'none' || $e2g_encode == 'UTF-8') {
+                    if ($e2g_encode == 'none') {
                         $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
                     }
                     if ($e2g_encode == 'UTF-8') {
-                        $zip_entry_name = utf8_decode($zip->getNameIndex($i));
+                        $zip_entry_name = utf8_decode($zip_entry_name);
+                        $r = substr($zip_entry_name,strlen($zip_entry_name)-1,1);
                     }
                     if ($e2g_encode == 'UTF-8 (Rin)') {
                         /**
@@ -2121,7 +1998,7 @@ class e2g_mod {
                             if ($e2g_debug)
                                 $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['files_uploaded'] .' '. $path . $zip_entry_name;
                         } else {
-                            $_SESSION['easy2err'][] = __LINE__.' Error : '. $lng['zip_create_err'] .' <b>'. $path . $zip_entry_name.'</b>';
+                            $_SESSION['easy2err'][] = __LINE__.': '. ucfirst($lng['zip_create_err']) .' <b>'. $path . $zip_entry_name.'</b>';
                         }
                     }
                     ob_end_clean();

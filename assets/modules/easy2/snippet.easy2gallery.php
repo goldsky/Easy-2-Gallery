@@ -32,12 +32,15 @@ if (file_exists( E2G_SNIPPET_PATH . 'includes/configs/snippet.params.easy2galler
 
 /*
  * EXECUTE SNIPPET
-*/
+*/if(!class_exists('e2g_pub')) {
+    include E2G_SNIPPET_PATH . "includes/classes/e2g.public.class.php";
+}
 if(!class_exists('e2g_snip')) {
     include E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
 }
-if (class_exists('e2g_snip')) {
+if (class_exists('e2g_pub') && class_exists('e2g_snip')) {
     $e2g = new e2g_snip($e2gsnip_cfg);
+    $e2g->e2gpub_cfg = $e2gsnip_cfg;
     $output = $e2g->display();
 } else {
     $output = "<h3>error: e2g_snip class not found</h3>";

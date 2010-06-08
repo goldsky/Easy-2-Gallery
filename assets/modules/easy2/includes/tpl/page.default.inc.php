@@ -39,15 +39,16 @@ if(is_array($dirs)) natsort($dirs);
     </form>
 </div>
 <?php
+$dir=array();
 // Description of the current directory
 $qdesc = 'SELECT * '
         .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
         .'WHERE cat_id = '.$parent_id;
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
-    $dirtitle[$parent_id] = $l['cat_alias'];
-    $dirtag[$parent_id] = $l['cat_tag'];
-    $dirdesc[$parent_id] = $l['cat_description'];
+    $dir[$parent_id]['title'] = $l['cat_alias'];
+    $dir[$parent_id]['tag'] = $l['cat_tag'];
+    $dir[$parent_id]['desc'] = $l['cat_description'];
 }
 ?>
 <table cellspacing="2" cellpadding="0">
@@ -64,17 +65,17 @@ while ($l = mysql_fetch_array($resultdesc)) {
     <tr>
         <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dirtitle[$parent_id]; ?></td>
+        <td><?php echo $dir[$parent_id]['title']; ?></td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dirtag[$parent_id]; ?></td>
+        <td><?php echo $dir[$parent_id]['tag']; ?></td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['description']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dirdesc[$parent_id]; ?></td>
+        <td><?php echo $dir[$parent_id]['desc']; ?></td>
     </tr>
 </table>
 <br />

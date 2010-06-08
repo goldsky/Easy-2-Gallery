@@ -164,14 +164,20 @@ if (is_dir( E2G_MODULE_PATH . 'install')) {
  * EXECUTE MODULE
 */
 
+if(!class_exists('e2g_pub')) {
+    include_once(E2G_MODULE_PATH . "includes/classes/e2g.public.class.php");
+}
 if(!class_exists('e2g_mod')) {
     include_once(E2G_MODULE_PATH . "includes/classes/e2g.module.class.php");
 }
-if (class_exists('e2g_mod')) {
+if (class_exists('e2g_pub') && class_exists('e2g_mod')) {
     $e2g_mod = new e2g_mod($e2gmod_cfg, $e2g, $lng);
-    $output = $e2g_mod;
+    $e2g_mod->e2gpub_cfg = $e2gmod_cfg;
+    $e2g_mod->e2gpub_e2g = $e2g;
+    $e2g_mod->e2gpub_lng = $lng;
+    $output = $e2g_mod->explore($e2g, $lng);
 } else {
-    $output = "<h3>error: e2g_mod class not found</h3>";
+    $output = "<h3>error: required class not found</h3>";
 }
 
 return $output;
