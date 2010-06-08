@@ -1,7 +1,18 @@
 <?php
 
+$e2gsnip_cfg = array();
+
 // ROOT directory
 $e2gsnip_cfg['gdir'] = $e2g['dir'];
+
+// sanitize $_GET
+if (isset($_GET)) {
+    foreach ($_GET as $v) {
+        if (!is_numeric($v)) {
+            $v = filter_var($v, FILTER_SANITIZE_STRING);
+        }
+    }
+}
 
 if ( !empty($fid) ) {
     // FILE ID
