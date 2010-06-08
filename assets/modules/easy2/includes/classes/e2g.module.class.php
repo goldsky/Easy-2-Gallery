@@ -330,7 +330,7 @@ class e2g_mod extends e2g_pub {
                                     if (is_dir($currentDir . $node)) {
                                         array_push($dirStack, $currentDir . $node . DIRECTORY_SEPARATOR);
                                     }
-                                    if ($this->is_validfile($currentDir . $node)) {
+                                    if ($this->_is_validfile($currentDir . $node)) {
                                         $filesToAdd[] = $node;
                                     }
                                 }
@@ -343,7 +343,7 @@ class e2g_mod extends e2g_pub {
                                 }
                             }
                         }
-                        elseif ($this->is_validfile($_zipcontent)) {
+                        elseif ($this->_is_validfile($_zipcontent)) {
                             $_zipcontent = realpath($_zipcontent);
                             $basename = end(@explode(DIRECTORY_SEPARATOR,$_zipcontent));
                             $zip->addFile($_zipcontent,$basename);
@@ -744,7 +744,7 @@ class e2g_mod extends e2g_pub {
                 $npath = '..';
                 foreach ($dirs as $dir) {
                     $npath .= '/'.$dir;
-                    if ( $this->is_validfolder($npath) || empty($dir)) continue;
+                    if ( $this->_is_validfolder($npath) || empty($dir)) continue;
 
                     if(mkdir($npath)) {
                         chmod($npath, 0755) or $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
@@ -1123,16 +1123,16 @@ class e2g_mod extends e2g_pub {
      */
     private function _delete_all ($path) {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
-        if (!$this->is_validfolder($path)) return $res;
+        if (!$this->_is_validfolder($path)) return $res;
         $fs = glob($path.'*');
         if ($fs!=FALSE) {
             foreach ($fs as $f) {
-//                if ($this->is_validfile($f)) {
+//                if ($this->_is_validfile($f)) {
                 // using original file check, because it will delete not only images.
                 if (is_file($f)) {
                     if(@unlink($f)) $res['f']++;
                     else $res['e'][] = __LINE__.' : '.$lng['file_del_err'].': '.$f;
-                } elseif ($this->is_validfolder($f)) {
+                } elseif ($this->_is_validfolder($f)) {
                     $sres = $this->_delete_all($f.'/');
 
                     $res['f'] += $sres['f'];
@@ -1151,7 +1151,7 @@ class e2g_mod extends e2g_pub {
      */
     private function _move_all ($oldpath, $newpath) {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
-        if (!$this->is_validfolder($oldpath)) return $res;
+        if (!$this->_is_validfolder($oldpath)) return $res;
 
         $fs = glob($oldpath.'/*');
         if ($fs!=FALSE) {
@@ -1160,7 +1160,7 @@ class e2g_mod extends e2g_pub {
                     $res['file'][] = $f;
                     $res['f']++;
                 }
-                elseif ($this->is_validfolder($f)) {
+                elseif ($this->_is_validfolder($f)) {
                     $res['dir'][] = $f;
                     $res['d'] ++;
                     // $res = result (file/dir/error)
@@ -1199,7 +1199,7 @@ class e2g_mod extends e2g_pub {
             $_SESSION['easy2err'][] = __LINE__.' : '. $tree->error;
             return FALSE;
         }
-        if (!$this->is_validfolder($path)) {
+        if (!$this->_is_validfolder($path)) {
             $_SESSION['easy2err'][] = __LINE__.' : '.$path;
             return FALSE;
         }
@@ -1225,14 +1225,14 @@ class e2g_mod extends e2g_pub {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
 
-                if ($this->is_validfolder($f)) {
+                if ($this->_is_validfolder($f)) {
                     // goldsky -- if the path is a dir, go deeper as $path==$f
                     if (!$this->_add_all ($f.'/', $id, $cfg, $lng)) {
                         $_SESSION['easy2err'][] = __LINE__.' : '.$f;
                         return FALSE;
                     }
                 }
-                elseif ($this->is_validfile($f)) {
+                elseif ($this->_is_validfile($f)) {
                     $inf = getimagesize($f);
                     if ($inf[2] > 3) continue;
                     // RESIZE
@@ -1449,7 +1449,7 @@ class e2g_mod extends e2g_pub {
 
                 $name = $this->_basename_safe($f);
                 $name = $this->_e2g_encode($name);
-                if ($this->is_validfolder($f)) { // as a folder/directory
+                if ($this->_is_validfolder($f)) { // as a folder/directory
                     if ($name == '_thumbnails') continue;
                     if (isset($mdirs[$name])) {
                         if (!$this->_synchro($f.'/', $mdirs[$name]['id'], $cfg, $lng)) {
@@ -1468,7 +1468,7 @@ class e2g_mod extends e2g_pub {
                     }
                 }
                 // as a allowed file in the current directory
-                elseif ($this->is_validfile($f)) {
+                elseif ($this->_is_validfile($f)) {
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
                         if ($cfg['resizeoldimg']==1) {
@@ -1647,106 +1647,6 @@ class e2g_mod extends e2g_pub {
     }
 
     /**
-     * To check the specified resource is a valid file.<br />
-     * It will be checked against the folder validation first.
-     * @author goldsky <goldsky@modx-id.com>
-     */
-    public function is_validfile ($filename) {
-        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
-        $f = $this->_basename_safe($filename);
-        $f = $this->_e2g_encode($f);
-        if ($this->is_validfolder($filename)) {
-            if ($e2g_debug==1) {
-                $_SESSION['easy2err'][] = __LINE__.' : <b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
-            }
-            return FALSE;
-        }
-        elseif ( $f != '' && !$this->is_validfolder($filename) ) {
-            if (file_exists($filename)) {
-                $size = getimagesize($filename);
-                $fp = fopen($filename, "rb");
-                $allowedext = array(
-                        'image/jpeg' => TRUE,
-                        'image/gif' => TRUE,
-                        'image/png' => TRUE
-                );
-                if ( $allowedext[$size["mime"]] && $fp ) {
-                    if ($e2g_debug==1) {
-                        $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is a valid image file: '.$size["mime"].' - '.$size[3];
-                    }
-                    else return TRUE;
-                } else {
-                    if ($e2g_debug==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
-                    else {
-//                        $_SESSION['easy2err'][] = __LINE__.' : '.$filename;
-                        return FALSE;
-                    }
-                }
-            }
-            else {
-                if ($e2g_debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
-                else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '.$filename .' does not exist.';
-                    return FALSE;
-                }
-            }
-            if ($e2g_debug==1) return $fileinfo;
-            else return TRUE;
-        }
-        else continue;
-    }
-
-    /**
-     * To check the specified resource has a valid file extenstion.
-     * @author goldsky <goldsky@modx-id.com>
-     * @todo need a rework to make it more extendable
-     */
-    public function is_validext($filename) {
-        $ext = strtolower(end(@explode('.', $filename)));
-        $allowedext = array(
-                'jpg' => TRUE,
-                'jpeg' => TRUE,
-                'gif' => TRUE,
-                'png' => TRUE
-        );
-        return $allowedext[$ext];
-    }
-
-    /**
-     * To check the specified resource is a valid folder, although it has a DOT in it.
-     * @author goldsky <goldsky@modx-id.com>
-     */
-    public function is_validfolder($foldername) {
-        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
-        $openfolder = @opendir($foldername);
-        if (!$openfolder) {
-            if ($e2g_debug==1) {
-                $_SESSION['easy2err'][] = __LINE__.' : <b style="color:red;">'.$foldername.'</b> is NOT a valid folder, probably a file.';
-            }
-            return FALSE;
-        } else {
-            if ($e2g_debug==1) {
-                echo '<h2>' . $foldername . '</h2>';
-                echo '<ul>';
-                $file = array();
-                while ( ( FALSE !== ( $file = readdir ( $openfolder ) ) ) ) {
-                    if ( $file != "." && $file != ".." ) {
-                        if (filetype($file)=='dir') {
-                            echo '<li>dir: <b style="color:green;">'.$file.'</b></li>';
-                        }
-                        else echo "<li> $file </li>";
-                        clearstatcache();
-                    }
-                }
-                echo '</ul>';
-            }
-            closedir ( $openfolder );
-        }
-        if ($e2g_debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
-        else return TRUE;
-    }
-
-    /**
      * Replace the basename function with this to grab non-unicode character.
      * @link http://drupal.org/node/278425#comment-2571500
      */
@@ -1759,6 +1659,23 @@ class e2g_mod extends e2g_pub {
 //        $encodinghtml= htmlspecialchars($this->_e2g_encode($endpath), ENT_QUOTES);
         $encodinghtml= htmlspecialchars($endpath, ENT_QUOTES);
         return $encodinghtml;
+    }
+    
+    /**
+     * To check the specified resource is a valid file.<br />
+     * It will be checked against the folder validation first.
+     * @author goldsky <goldsky@modx-id.com>
+     */
+    private function _is_validfile ($filename) {
+        return parent::is_validfile($filename);
+    }
+
+    /**
+     * To check the specified resource is a valid folder, although it has a DOT in it.
+     * @author goldsky <goldsky@modx-id.com>
+     */
+    private function _is_validfolder($foldername) {
+        return parent::is_validfolder($foldername);
     }
 
     /**

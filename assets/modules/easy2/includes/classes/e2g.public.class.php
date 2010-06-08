@@ -116,4 +116,105 @@ class e2g_pub { // public/protected class
         if (empty($dirinfo[$field])) return null;
         return $dirinfo[$field];
     }
+
+    /**
+     * To check the specified resource has a valid file extenstion.
+     * @author goldsky <goldsky@modx-id.com>
+     * @todo need a rework to make it more extendable
+     */
+    protected function is_validext($filename) {
+        $ext = strtolower(end(@explode('.', $filename)));
+        $allowedext = array(
+                'jpg' => TRUE,
+                'jpeg' => TRUE,
+                'gif' => TRUE,
+                'png' => TRUE
+        );
+        return $allowedext[$ext];
+    }
+
+    /**
+     * To check the specified resource is a valid file.<br />
+     * It will be checked against the folder validation first.
+     * @author goldsky <goldsky@modx-id.com>
+     */
+    protected function is_validfile ($filename) {
+        $e2g_debug = $this->e2gpub_cfg['e2g_debug'];
+        $f = $this->_basename_safe($filename);
+        $f = $this->_e2g_encode($f);
+        if ($this->is_validfolder($filename)) {
+            if ($e2g_debug==1) {
+                $_SESSION['easy2err'][] = __LINE__.' : <b style="color:red;">'.$filename.'</b> is not a file, it\'s a valid folder.';
+            }
+            return FALSE;
+        }
+        elseif ( $f != '' && !$this->is_validfolder($filename) ) {
+            if (file_exists($filename)) {
+                $size = getimagesize($filename);
+                $fp = fopen($filename, "rb");
+                $allowedext = array(
+                        'image/jpeg' => TRUE,
+                        'image/gif' => TRUE,
+                        'image/png' => TRUE
+                );
+                if ( $allowedext[$size["mime"]] && $fp ) {
+                    if ($e2g_debug==1) {
+                        $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is a valid image file: '.$size["mime"].' - '.$size[3];
+                    }
+                    else return TRUE;
+                } else {
+                    if ($e2g_debug==1) $fileinfo = 'Filename <b style="color:red;">'.$f.'</b> is an invalid image file: '.$size[2].' - '.$size[3];
+                    else {
+//                        $_SESSION['easy2err'][] = __LINE__.' : '.$filename;
+                        return FALSE;
+                    }
+                }
+            }
+            else {
+                if ($e2g_debug==1) $fileinfo .= 'Filename <b style="color:red;">'.$f.'</b> is NOT exists.<br />';
+                else {
+                    $_SESSION['easy2err'][] = __LINE__.' : '.$filename .' does not exist.';
+                    return FALSE;
+                }
+            }
+            if ($e2g_debug==1) return $fileinfo;
+            else return TRUE;
+        }
+        else continue;
+    }
+
+    /**
+     * To check the specified resource is a valid folder, although it has a DOT in it.
+     * @author goldsky <goldsky@modx-id.com>
+     */
+    protected function is_validfolder($foldername) {
+        $e2g_debug = $this->e2gpub_cfg['e2g_debug'];
+        $openfolder = @opendir($foldername);
+        if (!$openfolder) {
+            if ($e2g_debug==1) {
+                $_SESSION['easy2err'][] = __LINE__.' : <b style="color:red;">'.$foldername.'</b> is NOT a valid folder, probably a file.';
+            }
+            return FALSE;
+        } else {
+            if ($e2g_debug==1) {
+                echo '<h2>' . $foldername . '</h2>';
+                echo '<ul>';
+                $file = array();
+                while ( ( FALSE !== ( $file = readdir ( $openfolder ) ) ) ) {
+                    if ( $file != "." && $file != ".." ) {
+                        if (filetype($file)=='dir') {
+                            echo '<li>dir: <b style="color:green;">'.$file.'</b></li>';
+                        }
+                        else echo "<li> $file </li>";
+                        clearstatcache();
+                    }
+                }
+                echo '</ul>';
+            }
+            closedir ( $openfolder );
+        }
+        if ($e2g_debug==1) return '<br /><b style="color:red;">'.$foldername.'</b> is a valid folder.';
+        else return TRUE;
+    }
+
 }
