@@ -251,7 +251,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['gallery']; ?>:</b></td>
@@ -287,6 +287,20 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_lp_path_cfg_desc']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['tpl_lp_css']; ?>:</b></td>
+                        <td><input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['tpl_lp_cmt']; ?>:</b></td>
+                        <td><input name="page_comments_tpl" type="text" value="<?php echo $e2g['page_comments_tpl']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments']; ?>:</b></td>
@@ -410,6 +424,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td width="12%"><b><?php echo $lng['ecl']; ?>:</b></td>
                         <td><input name="ecl" type="text" value="<?php echo $e2g['ecl']; ?>" size="3"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td width="12%"><b><?php echo $lng['ecl_page']; ?>:</b></td>
+                        <td><input name="ecl_page" type="text" value="<?php echo $e2g['ecl_page']; ?>" size="3"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>

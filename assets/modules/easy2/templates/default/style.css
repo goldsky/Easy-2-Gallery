@@ -50,13 +50,12 @@ div.e2g {display:block}
 
 /* landing page */
 div.image {
-    padding: 6px 10px 6px 6px;
-    background-color: white;
+    width: auto;
 }
 .image img {
     border: 1px solid gray;
-    padding: 4px;
-    margin: -3px;
+    padding: 6px;
+    background-color: white;
 }
 div.imagetitle {
     margin-top: 10px;

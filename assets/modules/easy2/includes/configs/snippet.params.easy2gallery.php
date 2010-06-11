@@ -34,6 +34,7 @@ else {
 // TAGS
 if (isset($tags)) $tag=$tags; // compatibility
 $e2gsnip_cfg['tag'] = !empty($_GET['tag']) ? $_GET['tag'] : ( !empty($tag) ? $tag : null );
+$e2gsnip_cfg['static_tag'] = !empty($tag) ? $tag : null;
 
 // ENCODING
 $e2gsnip_cfg['e2g_encode'] = (isset($e2g_encode)) ? $e2g_encode : $e2g['e2g_encode'];
@@ -83,6 +84,12 @@ $e2gsnip_cfg['glib'] = (!empty($glib)) ? $glib : $e2g['glib'];
 
 // COMMENTS
 $e2gsnip_cfg['ecm'] = (isset($ecm) && is_numeric($ecm)) ? $ecm : $e2g['ecm'];
+// COMMENT LIMIT
+$e2gsnip_cfg['ecl'] = (isset($ecl) && is_numeric($ecl)) ? $ecl : $e2g['ecl'];
+// COMMENT LIMIT on landingpage
+$e2gsnip_cfg['ecl_page'] = (isset($ecl_page) && is_numeric($ecl_page)) ? $ecl_page : $e2g['ecl_page'];
+// COMMENT's CAPTCHA
+$e2gsnip_cfg['captcha'] = (isset($captcha) && is_numeric($captcha)) ? $captcha : $e2g['captcha'];
 
 // PAGE NUMBER
 //$gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;
@@ -128,6 +135,14 @@ $e2gsnip_cfg['rand_tpl'] = (!empty($rand_tpl)) ? str_replace('../', '' , $rand_t
 
 // LANDING PAGE TEMPLATE
 $e2gsnip_cfg['page_tpl'] = (!empty($page_tpl)) ? str_replace('../', '' , $page_tpl) : $e2g['page_tpl'];
+// LANDING PAGE TEMPLATE
+$e2gsnip_cfg['page_tpl_css'] = (!empty($page_tpl_css)) ? str_replace('../', '' , $page_tpl_css) : $e2g['page_tpl_css'];
+
+// COMMENT ROW TEMPLATE
+$e2gsnip_cfg['comments_row_tpl'] = (!empty($comments_row_tpl)) ? str_replace('../', '' , $comments_row_tpl) : E2G_SNIPPET_PATH.$e2g['comments_row_tpl'];
+
+// COMMENT TEMPLATE
+$e2gsnip_cfg['page_comments_tpl'] = (!empty($page_comments_tpl)) ? str_replace('../', '' , $page_comments_tpl) : $e2g['page_comments_tpl'];
 
 // CSS classes
 $e2gsnip_cfg['grid_class'] = (isset($grid_class) ? $grid_class : $e2g['grid_class']);

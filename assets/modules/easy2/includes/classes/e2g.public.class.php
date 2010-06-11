@@ -48,11 +48,16 @@ class e2g_pub { // public/protected class
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
         if ($e2g_encode == 'UTF-8 (Rin)') {
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-
+            /**
+             * using Unicode conversion class.
+             * @todo Need more work work on i18n stuff
+             */
+            include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
+            include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
             // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            return UTF8::convert_from($text,mb_detect_encoding($text));
+            $converted_text = UTF8::convert_to($text,mb_detect_encoding($text));
+            if ($converted_text!=false) $text=$converted_text;
+            return $text;
         }
     }
 
@@ -79,18 +84,27 @@ class e2g_pub { // public/protected class
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
         if ($e2g_encode == 'UTF-8 (Rin)') {
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/UTF8.php';
-            require_once E2G_MODULE_PATH.'includes/UTF8-2.1.0/ReflectionTypehint.php';
-            
+            /**
+             * using Unicode conversion class.
+             * @todo Need more work work on i18n stuff
+             */
+            include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
+            include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
+            $mb_detect_encoding = mb_detect_encoding($text);
             // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            if($mb_detect_encoding != 'ASCII' && $mb_detect_encoding != 'UTF-8'){
+            if($mb_detect_encoding != 'ASCII' || $mb_detect_encoding != 'UTF-8'){
                 if(!$mb_detect_encoding){
-                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, "ASCII" );
+                    $converted_text = UTF8::convert_from( $text, "ASCII" );
+                    if ($converted_text!=false) $text=$converted_text;
+                    return $text;
                 }
                 else {
-                    $zip_entry_name = UTF8::convert_from( $zip_entry_name, $mb_detect_encoding );
+                    $converted_text = UTF8::convert_from( $text, $mb_detect_encoding );
+                    if ($converted_text!=false) $text=$converted_text;
+                    return $text;
                 }
             }
+            else return $text;
         } // if ($e2g_encode == 'UTF-8 (Rin)')
     } // protected function e2g_decode($text)
 

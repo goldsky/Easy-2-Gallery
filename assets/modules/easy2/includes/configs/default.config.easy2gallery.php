@@ -30,6 +30,8 @@ $def_e2g = array (
         'thumb_tpl' => 'assets/modules/easy2/templates/default/thumbnail.htm',
         'rand_tpl' => 'assets/modules/easy2/templates/default/random_thumbnail.htm',
         'page_tpl' => 'assets/modules/easy2/templates/default/page.htm',
+        'page_tpl_css' => 'assets/modules/easy2/templates/default/page.css',
+        'page_comments_tpl' => 'assets/modules/easy2/templates/default/page_comments.htm',
         'comments_tpl' => 'templates/default/comments.htm',
         'comments_row_tpl' => 'templates/default/comments_row.htm',
         'grid_class' => 'e2g',
@@ -43,6 +45,7 @@ $def_e2g = array (
         'wmpos2' => 3,
         'ecm' => 1,
         'ecl' => 7,
+        'ecl_page' => 7,
         'captcha' => 1,
 );
 ?>

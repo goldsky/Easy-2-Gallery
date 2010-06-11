@@ -54,8 +54,8 @@ $_P['name']=$lng['name'];
 $_P['email']=$lng['email'];
 $_P['usercomment']=$lng['usercomment'];
 $_P['send_btn']=$lng['send_btn'];
-$_P['body']='';
-$_P['pages']='';
+$_P['comment_body']='';
+$_P['comment_pages']='';
 $_P['code']=$lng['code'];
 
 // INSERT THE COMMENT INTO DATABASE
@@ -67,10 +67,10 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
     if(check_email_address($e) == FALSE) {
-        $_P['body'] .= '<h2>'.$lng['email_err'].'</h2>';
+        $_P['comment_body'] .= '<h2>'.$lng['email_err'].'</h2>';
     }
     elseif(!empty($e2g['captcha']) && ((trim($_POST['vericode'])=='') || (isset($_SESSION['veriword']) && $_SESSION['veriword'] != $_POST['vericode']))) {
-        $_P['body'] .= '<h2>'.$lng['captcha_err'].'</h2>';
+        $_P['comment_body'] .= '<h2>'.$lng['captcha_err'].'</h2>';
     }
 
     elseif (!empty($n) && !empty($c)) {
@@ -78,14 +78,14 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
         . "VALUES($id,'$n','$e','$ip','$c', NOW())")) {
 
             mysql_query('UPDATE '.$table_prefix.'easy2_files SET comments=comments+1 WHERE id='.$id);
-            $_P['body'] .= '<h3>'.$lng['comment_added'].'</h3>';
+            $_P['comment_body'] .= '<h3>'.$lng['comment_added'].'</h3>';
 
         } else {
-            $_P['body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
+            $_P['comment_body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
         }
     }
     else {
-        $_P['body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
+        $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
     }
 }
 
@@ -106,7 +106,7 @@ while($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
     if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
     else $l['name_w_mail'] = $l['author'];
 
-    $_P['body'] .= filler($row_tpl, $l);
+    $_P['comment_body'] .= filler($row_tpl, $l);
     $i++;
 }
 
@@ -114,14 +114,14 @@ while($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
 $res = mysql_query('SELECT COUNT(*) FROM '.$table_prefix.'easy2_comments WHERE file_id = '.$id);
 list($cnt) = mysql_fetch_row($res);
 if ($cnt > $e2g['ecl']) {
-    $_P['pages'] = '<p class="pnums">'.$lng['pages'].':';
+    $_P['comment_pages'] = '<p class="pnums">'.$lng['pages'].':';
     $i = 0;
     while ($i*$e2g['ecl'] < $cnt) {
-        if ($i == $cpn) $_P['pages'] .= '<b>'.($i+1).'</b> ';
-        else $_P['pages'] .= '<a href="?id='.$id.'&cpn='.$i.'">'.($i+1).'</a> ';
+        if ($i == $cpn) $_P['comment_pages'] .= '<b>'.($i+1).'</b> ';
+        else $_P['comment_pages'] .= '<a href="?id='.$id.'&cpn='.$i.'">'.($i+1).'</a> ';
         $i++;
     }
-    $_P['pages'] .= '</p>';
+    $_P['comment_pages'] .= '</p>';
 }
 
 mysql_close();
