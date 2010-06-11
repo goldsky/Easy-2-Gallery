@@ -1443,7 +1443,7 @@ class e2g_snip extends e2g_pub {
                             // making flexible FURL or not
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
-                            , 'lp='.$landingpage.'&fid='.$fileid.'#lpcmtnm'.$l['id'])
+                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$cpn.'#lpcmtnm'.$l['id'])
                             .'">'.$l['author'].'</a> ';
             if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
             else $l['name_w_mail'] = $l['author'];
