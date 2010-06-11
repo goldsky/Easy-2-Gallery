@@ -7,4 +7,4 @@ textarea {width:100%}
 .pnums a:hover {background:#B3EC6C;border:1px solid #83D71C;color:white;text-decoration:none}
 .pnums a, .pnums b {padding:2px 4px;}
 .captcha_cell {vertical-align:top;}
-.captcha_cell img {position:absolute;}
+.captcha_cell img {position:relative;}
