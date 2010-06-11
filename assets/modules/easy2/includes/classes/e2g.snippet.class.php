@@ -551,7 +551,7 @@ class e2g_snip extends e2g_pub {
                 // using &tag parameter
                 if ( isset($tag) && !isset($_GET['gid']) ) {
                     // ALSO to separate the different multiple snippet call on the same page
-                    if ( $i == $gpn && ($tag==$static_tag) ) {
+                    if ( ( $i == $gpn || $tag!=$static_tag ) && ( $i == 0 || $tag==$static_tag ) ) {
                         $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
                     }
                     else {
@@ -566,7 +566,7 @@ class e2g_snip extends e2g_pub {
                 // using &gid parameter
                 else {
                     // ALSO to separate the different multiple snippet call on the same page
-                    if ( $i == $gpn && ($_GET['gid']==$static_gid || $i == 0) ) {
+                    if ( ( $i == $gpn || $_GET['gid']!=$gid ) && ( $i == 0 || $_GET['gid']==$static_gid ) ) {
                         $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
                     }
                     else {
