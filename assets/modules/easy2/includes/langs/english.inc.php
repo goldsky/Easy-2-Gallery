@@ -552,6 +552,7 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'tpl_css_path_cfg_desc' => 'Path to CSS file',
         'tpl_lp' => 'Landing page tpl',
         'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
+        'tpl_lp_cmt_row' => 'Landingpage&#039;s comment row tpl',
         'tpl_lp_cmt_path_cfg_desc' => 'Chunk name or path to landingpage&#039;s comment tpl file',
         'tpl_lp_css' => 'Landing page CSS',
         'tpl_lp_path_cfg_desc' => 'chunk name or path to template file of a single landing page',

@@ -141,8 +141,11 @@ $e2gsnip_cfg['page_tpl_css'] = (!empty($page_tpl_css)) ? str_replace('../', '' ,
 // COMMENT ROW TEMPLATE
 $e2gsnip_cfg['comments_row_tpl'] = (!empty($comments_row_tpl)) ? str_replace('../', '' , $comments_row_tpl) : E2G_SNIPPET_PATH.$e2g['comments_row_tpl'];
 
-// COMMENT TEMPLATE
+// LANDINGPAGE'S COMMENT TEMPLATE
 $e2gsnip_cfg['page_comments_tpl'] = (!empty($page_comments_tpl)) ? str_replace('../', '' , $page_comments_tpl) : $e2g['page_comments_tpl'];
+
+// LANDINGPAGE'S COMMENT ROW TEMPLATE
+$e2gsnip_cfg['page_comments_row_tpl'] = (!empty($page_comments_row_tpl)) ? str_replace('../', '' , $page_comments_row_tpl) : $e2g['page_comments_row_tpl'];
 
 // CSS classes
 $e2gsnip_cfg['grid_class'] = (isset($grid_class) ? $grid_class : $e2g['grid_class']);

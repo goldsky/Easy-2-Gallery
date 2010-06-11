@@ -1,4 +1,5 @@
 div.e2com_container,div.row0,div.row1 {margin:0 0 10px 0; padding:2px; border:1px solid #E4E4E4;}
+div.image img{max-width: 600px;}
 textarea {width:100%}
 .row0 {color:#FFFFFF;}
 .row1 {background:#F7F7F7;color:#535353;}

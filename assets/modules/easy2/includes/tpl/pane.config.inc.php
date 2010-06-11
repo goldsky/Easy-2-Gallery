@@ -248,7 +248,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="20%"><b><?php echo $lng['css']; ?>:</b></td>
+                        <td width="25%"><b><?php echo $lng['css']; ?>:</b></td>
                         <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
                     </tr>
                     <tr>
@@ -283,6 +283,20 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
+                        <td><b><?php echo $lng['comments']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;comments_tpl=</span> <input name="comments_tpl" type="text" value="<?php echo $e2g['comments_tpl']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['comments_row']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;comments_row_tpl=</span> <input name="comments_row_tpl" type="text" value="<?php echo $e2g['comments_row_tpl']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
+                    </tr
+                    <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp']; ?>:</b></td>
                         <td><span style="color:green;">&amp;page_tpl=</span> <input name="page_tpl" type="text" value="<?php echo $e2g['page_tpl']; ?>" size="70"></td>
                     </tr>
@@ -304,18 +318,11 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['comments']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;comments_tpl=</span> <input name="comments_tpl" type="text" value="<?php echo $e2g['comments_tpl']; ?>" size="70"></td>
+                        <td><b><?php echo $lng['tpl_lp_cmt_row']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;page_comments_row_tpl=</span> <input name="page_comments_row_tpl" type="text" value="<?php echo $e2g['page_comments_row_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
-                    </tr>
-                    <tr class="gridAltItem">
-                        <td><b><?php echo $lng['comments_row']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;comments_row_tpl=</span> <input name="comments_row_tpl" type="text" value="<?php echo $e2g['comments_row_tpl']; ?>" size="70"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
+                        <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
                     </tr>
                     <tr>
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>

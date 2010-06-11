@@ -1438,10 +1438,17 @@ class e2g_snip extends e2g_pub {
 
             $l['i'] = $i%2;
 
+            $l['permalink'] = '<a href="#" name="'.$l['id'].'"></a> ';
+            $l['name_w_permalink'] = '<a href="'
+                            // making flexible FURL or not
+                            . $modx->makeUrl($modx->documentIdentifier
+                            , $modx->aliases
+                            , 'lp='.$landingpage.'&fid='.$fileid.'#'.$l['id'])
+                            .'">'.$l['author'].'</a> ';
             if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
             else $l['name_w_mail'] = $l['author'];
 
-            $_P['comment_body'] .= $this->_filler($this->_comment_row_tpl(), $l);
+            $_P['comment_body'] .= $this->_filler($this->_page_comment_row_tpl(), $l);
             $i++;
         }
 
@@ -1459,7 +1466,7 @@ class e2g_snip extends e2g_pub {
                             // making flexible FURL or not
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
-                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$i)
+                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$i.'#'.$landingpage.$fileid.$i)
                             .'">'.($i+1).'</a> ';
                 $i++;
             }
@@ -1604,6 +1611,23 @@ class e2g_snip extends e2g_pub {
             return $tpl;
         } else {
             echo 'Comments template '.$page_comments_tpl.' not found!';
+        }
+    }
+
+    /**
+     * COMMENT ROW TEMPLATE
+     */
+    private function _page_comment_row_tpl() {
+        global $modx;
+        $page_comments_row_tpl = $this->e2gsnip_cfg['page_comments_row_tpl'];
+        if (file_exists($page_comments_row_tpl)) {
+            $row_tpl = file_get_contents($page_comments_row_tpl);
+            return $row_tpl;
+        } elseif (!empty($modx->chunkCache[$page_comments_row_tpl])) {
+            $row_tpl = $modx->chunkCache[$page_comments_row_tpl];
+            return $row_tpl;
+        } else {
+            echo 'Page\'s comments row template '.$page_comments_row_tpl.' not found!';
         }
     }
 
