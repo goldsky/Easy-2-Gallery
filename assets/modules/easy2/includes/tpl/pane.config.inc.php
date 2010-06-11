@@ -31,14 +31,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo $lng['e2g_debug_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['path']; ?>:</b></td>
+                        <td><b><?php echo $lng['path']; ?>:</b></td>
                         <td width="88%"><input name="dir" type="text" value="<?php echo $e2g['dir']; ?>"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['dir_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['e2g_encode']; ?>:</b></td>
+                        <td><b><?php echo $lng['e2g_encode']; ?>:</b></td>
                         <td width="88%">
                             <select name="e2g_encode">
                                 <option value="none"<?php echo ($e2g['e2g_encode']=='none'?' selected':''); ?>><?php echo $lng['none']; ?></option>
@@ -59,7 +59,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td width="15%"><b><?php echo $lng['w']; ?>:</b></td>
                         <td><input name="maxw" type="text" value="<?php echo $e2g['maxw']; ?>" size="4"></td>
                     </tr>
                     <tr>
@@ -80,7 +80,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['img_old_resize']; ?>:</b></td>
+                        <td><b><?php echo $lng['img_old_resize']; ?>:</b></td>
                         <td>
                             <input type="radio" name="resizeoldimg" value="0" <?php echo ($e2g['resizeoldimg']=='0' ? 'checked="checked"' : '');?>> No
                             <input type="radio" name="resizeoldimg" value="1" <?php echo ($e2g['resizeoldimg']=='1' ? 'checked="checked"' : '');?>> Yes
@@ -98,22 +98,22 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['w']; ?>:</b></td>
-                        <td><input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4"></td>
+                        <td width="20%"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['w_thumb_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['h']; ?>:</b></td>
-                        <td><input name="h" type="text" value="<?php echo $e2g['h']; ?>" size="4"></td>
+                        <td><span style="color:green;">&amp;h=</span> <input name="h" type="text" value="<?php echo $e2g['h']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['h_thumb_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['resize_type']; ?>:</b></td>
-                        <td>
+                        <td><span style="color:green;">&amp;resize_type=</span>
                             <select name="resize_type">
                                 <option value="inner"<?php echo ($e2g['resize_type']=='inner'?' selected':''); ?>><?php echo $lng['inner']; ?></option>
                                 <option value="shrink"<?php echo ($e2g['resize_type']=='shrink'?' selected':''); ?>><?php echo $lng['shrink']; ?></option>
@@ -129,9 +129,9 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
                         <td>
-                            R: <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3">
-                            G: <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3">
-                            B: <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3">
+                            R: <span style="color:green;">&amp;thbg_red=</span> <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3">
+                            G: <span style="color:green;">&amp;thbg_green=</span> <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3">
+                            B: <span style="color:green;">&amp;thbg_blue=</span> <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3">
                         </td>
                     </tr>
                     <tr>
@@ -141,14 +141,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thq']; ?>:</b></td>
-                        <td><input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
+                        <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['thq_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['glib']; ?>:</b></td>
-                        <td><select name="glib">
+                        <td><span style="color:green;">&amp;glib=</span> <select name="glib">
                                 <?php require_once (E2G_MODULE_PATH.'includes/configs/libs.config.easy2gallery.php');
                                 foreach ($glibs as $k => $v) {
                                     echo '<option value="'.$k.'"'.(($e2g['glib']==$k)?' selected="selected"':'').'>'.$v['alias'].'</option>';
@@ -162,7 +162,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['grid']; ?>:</b></td>
-                        <td><input type="radio" name="grid" value="css" <?php echo ($e2g['grid']=='css' ? 'checked="checked"' : ''); ?>> <?php echo $lng['css'] ;?>
+                        <td><span style="color:green;">&amp;grid=</span> <input type="radio" name="grid" value="css" <?php echo ($e2g['grid']=='css' ? 'checked="checked"' : ''); ?>> <?php echo $lng['css'] ;?>
                             <input type="radio" name="grid" value="table" <?php echo ($e2g['grid']=='table' ? 'checked="checked"' : ''); ?>> <?php echo $lng['table'] ;?> <br>
                         </td>
                     </tr>
@@ -173,44 +173,45 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['settings_display']; ?></b></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['name_len']; ?>:</b></td>
-                        <td><input name="name_len" type="text" value="<?php echo $e2g['name_len']; ?>" size="4"></td>
+                        <td><b><?php echo $lng['name_len']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;name_len=</span> <input name="name_len" type="text" value="<?php echo $e2g['name_len']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['name_len_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cat_name_len']; ?>:</b></td>
-                        <td><input name="cat_name_len" type="text" value="<?php echo $e2g['cat_name_len']; ?>" size="4"></td>
+                        <td><span style="color:green;">&amp;cat_name_len=</span> <input name="cat_name_len" type="text" value="<?php echo $e2g['cat_name_len']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['cat_name_len_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['colls']; ?>:</b></td>
-                        <td><input name="colls" type="text" value="<?php echo $e2g['colls']; ?>" size="4"></td>
+                        <td><span style="color:green;">&amp;colls=</span> <input name="colls" type="text" value="<?php echo $e2g['colls']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['colls_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['limit']; ?>:</b></td>
-                        <td><input name="limit" type="text" value="<?php echo $e2g['limit']; ?>" size="4"></td>
+                        <td><span style="color:green;">&amp;limit=</span> <input name="limit" type="text" value="<?php echo $e2g['limit']; ?>" size="4"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['limit_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['order']; ?>:</b></td>
-                        <td>
+                        <td><span style="color:green;">&amp;orderby=</span>
                             <select size="1" name="orderby">
                                 <option value="date_added"<?php echo ($e2g['orderby']=='date_added'?' selected':''); ?>><?php echo $lng['date_added']; ?></option>
                                 <option value="last_modified"<?php echo ($e2g['orderby']=='last_modified'?' selected':''); ?>><?php echo $lng['last_modified']; ?></option>
                                 <option value="comments"<?php echo ($e2g['orderby']=='comments'?' selected':''); ?>><?php echo $lng['comments_cnt']; ?></option>
                                 <option value="filename"<?php echo ($e2g['orderby']=='filename'?' selected':''); ?>><?php echo $lng['filename']; ?></option>
-                                <option value="name"<?php echo ($e2g['orderby']=='name'?' selected':''); ?>><?php echo $lng['name']; ?></option>
+                                <option value="name"<?php echo ($e2g['orderby']=='name'?' selected':''); ?>><?php echo strtolower($lng['name']); ?></option>
                                 <option value="random"<?php echo ($e2g['orderby']=='random'?' selected':''); ?>><?php echo $lng['random']; ?></option>
                             </select>
+                            <span style="color:green;">&amp;order=</span>
                             <select size="1" name="order">
                                 <option value="ASC"<?php echo ($e2g['order']=='ASC'?' selected':''); ?>><?php echo $lng['asc']; ?></option>
                                 <option value="DESC"<?php echo ($e2g['order']=='DESC'?' selected':''); ?>><?php echo $lng['desc']; ?></option>
@@ -222,12 +223,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['order2']; ?>:</b></td>
-                        <td>
+                        <td><span style="color:green;">&amp;cat_orderby=</span>
                             <select size="1" name="cat_orderby">
                                 <option value="cat_id"<?php echo ($e2g['cat_orderby']=='cat_id'?' selected':''); ?>><?php echo $lng['date_added']; ?></option>
-                                <option value="cat_name"<?php echo ($e2g['cat_orderby']=='cat_name'?' selected':''); ?>><?php echo $lng['name']; ?></option>
+                                <option value="cat_name"<?php echo ($e2g['cat_orderby']=='cat_name'?' selected':''); ?>><?php echo strtolower($lng['name']); ?></option>
                                 <option value="random"<?php echo ($e2g['cat_orderby']=='random'?' selected':''); ?>><?php echo $lng['random']; ?></option>
                             </select>
+                            <span style="color:green;">&amp;cat_order=</span>
                             <select size="1" name="cat_order">
                                 <option value="ASC"<?php echo ($e2g['cat_order']=='ASC'?' selected':''); ?>><?php echo $lng['asc']; ?></option>
                                 <option value="DESC"<?php echo ($e2g['cat_order']=='DESC'?' selected':''); ?>><?php echo $lng['desc']; ?></option>
@@ -244,74 +246,73 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <script type="text/javascript">
                     tpResources2.addTabPage( document.getElementById( 'tabTemplatesSettings') );
                 </script>
-
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['css']; ?>:</b></td>
-                        <td><input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
+                        <td width="20%"><b><?php echo $lng['css']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['gallery']; ?>:</b></td>
-                        <td><input name="tpl" type="text" value="<?php echo $e2g['tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;tpl=</span> <input name="tpl" type="text" value="<?php echo $e2g['tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['dir']; ?>:</b></td>
-                        <td><input name="dir_tpl" type="text" value="<?php echo $e2g['dir_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;dir_tpl=</span> <input name="dir_tpl" type="text" value="<?php echo $e2g['dir_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thumb']; ?>:</b></td>
-                        <td><input name="thumb_tpl" type="text" value="<?php echo $e2g['thumb_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;thumb_tpl=</span> <input name="thumb_tpl" type="text" value="<?php echo $e2g['thumb_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thumb']; ?> RAND:</b></td>
-                        <td><input name="rand_tpl" type="text" value="<?php echo $e2g['rand_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;rand_tpl=</span> <input name="rand_tpl" type="text" value="<?php echo $e2g['rand_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp']; ?>:</b></td>
-                        <td><input name="page_tpl" type="text" value="<?php echo $e2g['page_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;page_tpl=</span> <input name="page_tpl" type="text" value="<?php echo $e2g['page_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_lp_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_css']; ?>:</b></td>
-                        <td><input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_cmt']; ?>:</b></td>
-                        <td><input name="page_comments_tpl" type="text" value="<?php echo $e2g['page_comments_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;page_comments_tpl=</span> <input name="page_comments_tpl" type="text" value="<?php echo $e2g['page_comments_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments']; ?>:</b></td>
-                        <td><input name="comments_tpl" type="text" value="<?php echo $e2g['comments_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;comments_tpl=</span> <input name="comments_tpl" type="text" value="<?php echo $e2g['comments_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments_row']; ?>:</b></td>
-                        <td><input name="comments_row_tpl" type="text" value="<?php echo $e2g['comments_row_tpl']; ?>" size="70"></td>
+                        <td><span style="color:green;">&amp;comments_row_tpl=</span> <input name="comments_row_tpl" type="text" value="<?php echo $e2g['comments_row_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_comments_cfg_desc']); ?></td>
@@ -321,14 +322,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['grid_class']; ?>:</b></td>
-                        <td><input name="grid_class" type="text" value="<?php echo $e2g['grid_class']; ?>" size="20"></td>
+                        <td><span style="color:green;">&amp;grid_class=</span> <input name="grid_class" type="text" value="<?php echo $e2g['grid_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['grid_class_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cfg_e2g_currentcrumb_class']; ?>:</b></td>
-                        <td><input name="e2g_currentcrumb_class" type="text" value="<?php echo $e2g['e2g_currentcrumb_class']; ?>" size="20"></td>
+                        <td><span style="color:green;">&amp;e2g_currentcrumb_class=</span> <input name="e2g_currentcrumb_class" type="text" value="<?php echo $e2g['e2g_currentcrumb_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>
@@ -336,14 +337,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cfg_e2gback_class']; ?>:</b></td>
-                        <td><input name="e2gback_class" type="text" value="<?php echo $e2g['e2gback_class']; ?>" size="20"></td>
+                        <td><span style="color:green;">&amp;e2gback_class=</span> <input name="e2gback_class" type="text" value="<?php echo $e2g['e2gback_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cfg_e2gpnums_class']; ?>:</b></td>
-                        <td><input name="e2gpnums_class" type="text" value="<?php echo $e2g['e2gpnums_class']; ?>" size="20"></td>
+                        <td><span style="color:green;">&amp;e2gpnums_class=</span> <input name="e2gpnums_class" type="text" value="<?php echo $e2g['e2gpnums_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>
@@ -359,17 +360,18 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr>
                         <td colspan="2">
-                                <input name="ewm" type="radio" value="1"<?php echo ($e2g['ewm']==1?' checked':''); ?> style="border:0">
-                                <b><?php echo $lng['on']; ?></b>
                                 <input name="ewm" type="radio" value="0"<?php echo ($e2g['ewm']==0?' checked':''); ?> style="border:0">
                                 <b><?php echo $lng['off']; ?></b>
+                                <input name="ewm" type="radio" value="1"<?php echo ($e2g['ewm']==1?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['on']; ?></b>
                         </td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['type']; ?>:</b></td>
+                        <td width="20%"><b><?php echo $lng['type']; ?>:</b></td>
                         <td><select size="1" name="wmtype">
                                 <option value="text"<?php echo ($e2g['wmtype']=='text'?' selected':''); ?>><?php echo $lng['text']; ?></option>
-                                <option value="image"<?php echo ($e2g['wmtype']=='image'?' selected':''); ?>><?php echo $lng['image']; ?></option></select>
+                                <option value="image"<?php echo ($e2g['wmtype']=='image'?' selected':''); ?>><?php echo $lng['image']; ?></option>
+                            </select>
                         </td>
                     </tr>
                     <tr>
@@ -415,29 +417,31 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr>
-                        <td colspan="2"><b>
-                                <input name="ecm" type="radio" value="1"<?php echo ($e2g['ecm']==1?' checked':''); ?> style="border:0">
-                                <?php echo $lng['on']; ?>
+                        <td colspan="2"><span style="color:green;">&amp;ecm= 0 | 1</span>
                                 <input name="ecm" type="radio" value="0"<?php echo ($e2g['ecm']==0?' checked':''); ?> style="border:0">
-                                <?php echo $lng['off']; ?></b></td>
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="ecm" type="radio" value="1"<?php echo ($e2g['ecm']==1?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['on']; ?></b>
+                        </td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['ecl']; ?>:</b></td>
-                        <td><input name="ecl" type="text" value="<?php echo $e2g['ecl']; ?>" size="3"></td>
+                        <td width="25%"><b><?php echo $lng['ecl']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ecl=</span> <input name="ecl" type="text" value="<?php echo $e2g['ecl']; ?>" size="3"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['ecl_page']; ?>:</b></td>
-                        <td><input name="ecl_page" type="text" value="<?php echo $e2g['ecl_page']; ?>" size="3"></td>
+                        <td><b><?php echo $lng['ecl_page']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ecl_page=</span> <input name="ecl_page" type="text" value="<?php echo $e2g['ecl_page']; ?>" size="3"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['captcha']; ?>:</b></td>
-                        <td><input name="captcha" type="checkbox"<?php echo ((isset($e2g['captcha']) && $e2g['captcha']==1)?' checked':''); ?> value="1" style="border:0"></td>
+                        <td><span style="color:green;">&amp;captcha= 0 | 1</span>
+                            <input name="captcha" type="checkbox"<?php echo ((isset($e2g['captcha']) && $e2g['captcha']==1)?' checked':''); ?> value="1" style="border:0"></td>
                     </tr>
                 </table>
             </div>
