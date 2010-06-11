@@ -297,7 +297,9 @@ else {
     if ($ss_config=='galleryset') {
         $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
         $cat_order = $this->e2gsnip_cfg['cat_order'];
-
+        $_ssfile = array();
+        unset($_ssfile);
+        
         if (!empty($gid)) {
 
             // ************** select directories ************** //
@@ -330,7 +332,7 @@ else {
                     $countimg[$k] = mysql_num_rows($query);
                     // for an empty folder
                     if ($countimg[$k]==0) continue;
-
+                    
                     while ($fetch = mysql_fetch_array($query)) {
                         $path = $this->_get_path($fetch['dir_id']);
                         if (count($path) > 1) {
