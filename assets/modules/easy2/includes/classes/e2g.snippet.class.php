@@ -1438,12 +1438,12 @@ class e2g_snip extends e2g_pub {
 
             $l['i'] = $i%2;
 
-            $l['permalink'] = '<a href="#" name="'.$l['id'].'"></a> ';
+            $l['name_permalink'] = '<a href="#" name="lpcmtnm'.$l['id'].'"></a> ';
             $l['name_w_permalink'] = '<a href="'
                             // making flexible FURL or not
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
-                            , 'lp='.$landingpage.'&fid='.$fileid.'#'.$l['id'])
+                            , 'lp='.$landingpage.'&fid='.$fileid.'#lpcmtnm'.$l['id'])
                             .'">'.$l['author'].'</a> ';
             if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
             else $l['name_w_mail'] = $l['author'];
@@ -1451,6 +1451,7 @@ class e2g_snip extends e2g_pub {
             $_P['comment_body'] .= $this->_filler($this->_page_comment_row_tpl(), $l);
             $i++;
         }
+        $_P['pages_permalink'] = '<a href="#" name="lpcmtpg'.$cpn.'"></a>';
 
         // COUNT PAGES
         $commentCountQuery = 'SELECT COUNT(*) FROM '.$modx->db->config['table_prefix'].'easy2_comments WHERE file_id = '.$fileid;
@@ -1466,7 +1467,7 @@ class e2g_snip extends e2g_pub {
                             // making flexible FURL or not
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
-                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$i.'#'.$landingpage.$fileid.$i)
+                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$i.'#lpcmtpg'.$i)
                             .'">'.($i+1).'</a> ';
                 $i++;
             }
