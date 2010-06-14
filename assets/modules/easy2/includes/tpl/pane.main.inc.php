@@ -28,7 +28,7 @@ $_t = $this->e2gmod_cfg['_t'];
                 var im = document.getElementById("imFields");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?></b></a>'+fi.innerHTML;
+                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo ucfirst($lng['remove']); ?></b></a>'+fi.innerHTML;
                 im.appendChild(di);
                 return TRUE;
             }
@@ -75,18 +75,34 @@ $_t = $this->e2gmod_cfg['_t'];
                     document.forms["topmenu"].submit();
                 }
                 if (i==2) {
+                    var index=document.forms["topmenu"].opentag.selectedIndex;
+                    if (document.forms["topmenu"].opentag.options[index].value != "") {
+                        window.location.href= '<?php echo $index; ?>&page=tag&tag='+ document.forms["topmenu"].opentag.options[index].value;
+                    }
+                }
+                if (i==3) {
                     document.forms["list"].action=
                     "<?php echo $index.'&act=delete_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
                     document.forms["list"].submit();
                 }
-                if (i==3) {
+                if (i==4) {
                     document.forms["list"].action=
                     "<?php echo $index.'&act=download_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
                     document.forms["list"].submit();
                 }
-                if (i==4) {
+                if (i==5) {
                     document.forms["list"].action=
                     "<?php echo $index.'&act=move_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
+                    document.forms["list"].submit();
+                }
+                if (i==6) {
+                    document.forms["list"].action=
+                    "<?php echo $index.'&act=tag_add_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
+                    document.forms["list"].submit();
+                }
+                if (i==7) {
+                    document.forms["list"].action=
+                    "<?php echo $index.'&act=tag_remove_checked&pid='.$parent_id.(!empty($cpath)?'&path='.$cpath:'');?>";
                     document.forms["list"].submit();
                 }
             }

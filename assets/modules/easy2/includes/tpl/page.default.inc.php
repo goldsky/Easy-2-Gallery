@@ -5,45 +5,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 $dirs = @glob('../'.$this->_e2g_decode($gdir).'*', GLOB_ONLYDIR);
 if(is_array($dirs)) natsort($dirs);
 
-?>
-<div id="e2g_topmenu">
-    <form name="topmenu" action="" method="post">
-        <ul class="actionButtons">
-            <li id="Button1">
-                <a href="<?php echo $index; ?>&act=synchro">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/refresh.png" alt="" /> <?php echo $lng['synchro']; ?>
-                </a>
-            </li>
-            <li id="Button2">
-                <a href="<?php echo $index; ?>&act=clean_cache">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/trash.png" alt="" /> <?php echo $lng['clean_cache']; ?>
-                </a>
-            </li>
-            <li id="Button3">
-                <a href="<?php echo $index; ?>&page=create_dir&pid=<?php echo $parent_id; ?>">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" /> <?php echo $lng['dir_create']; ?>
-                </a>
-            </li>
-            <!--li id="Button4">
-                <a href="<?php echo $index; ?>&page=search_all&pid=<?php echo $parent_id; ?>">
-                    <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/preview.png" alt="" /> <?php echo $lng['search']; ?>
-                </a>
-            </li-->
-            <li id="Button5">
-                <?php echo $lng['gotofolder']; ?>:
-                <select name="newparent" onchange="submitform(1)">
-                    <?php echo $this->_getfolderoptions(0,1); ?>
-                </select>
-            </li>
-        </ul>
-    </form>
-</div>
-<?php
+include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
+
 $dir=array();
 // Description of the current directory
 $qdesc = 'SELECT * '
         .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
         .'WHERE cat_id = '.$parent_id;
+
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
     $dir[$parent_id]['title'] = $l['cat_alias'];
@@ -68,9 +37,18 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td><?php echo $dir[$parent_id]['title']; ?></td>
     </tr>
     <tr>
-        <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
+        <td valign="top"><b><?php echo ucfirst($lng['tag']); ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dir[$parent_id]['tag']; ?></td>
+        <td>
+            <?php
+                $multiple_tags = @explode(',', $dir[$parent_id]['tag']);
+                $count_tags = count($multiple_tags);
+                for ($c=0;$c<$count_tags;$c++) {
+                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                    if ($c<($count_tags-1)) echo ', ';
+                }
+            ?>
+        </td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['description']; ?></b></td>
@@ -88,16 +66,23 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
                         <td width="20"> </td>
                         <td><b><?php echo $lng['name']; ?></b></td>
+                        <td><b><?php echo ucfirst($lng['tag']); ?></b></td>
                         <td width="80"><b><?php echo $lng['modified']; ?></b></td>
                         <td width="40"><b><?php echo $lng['size']; ?></b></td>
                         <td width="60" align="right"><b><?php echo $lng['options']; ?></b></td>
                     </tr>
 
                     <?php
+
+            /******************************************************************/
+            /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+            /******************************************************************/
+                    
                     if ($dirs!=FALSE) {
                         foreach ($dirs as $f) {
                             $name = $this->_basename_safe($f);
                             $name = $this->_e2g_encode($name);
+                            $tag = $mdirs[$name]['cat_tag'];
                             $time = filemtime($f);
                             $cnt = $this->_count_files($f);
                             if ($name == '_thumbnails') continue;
@@ -108,13 +93,13 @@ while ($l = mysql_fetch_array($resultdesc)) {
                                     $n = '<a href="'.$index.'&pid='.$mdirs[$name]['id'].'"><i>'.$mdirs[$name]['name'].'</i></a> [id: '.$mdirs[$name]['id'].'] <i>('.$lng['invisible'].')</i>';
                                 }
                                 $id = $mdirs[$name]['id'];
-                                unset($mdirs[$name]);
                                 $ext = '';
                                 // edit name
                                 $buttons = '<a href="'.$index.'&page=edit_dir&dir_id='.$id.'&name='.$name.'&pid='.$parent_id.'">
                                 <img src="' . E2G_MODULE_URL . 'includes/icons/folder_edit.png" width="16" height="16"
                                     alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
                                         </a>';
+                                unset($mdirs[$name]);
                             } else {
                                 $n = '<a href="'.$index.'&pid='.$parent_id.'&path='.(!empty($cpath)?$cpath:'').$name.'" style="color:gray"><b>'.$name.'</b></a>';
                                 $id = null;
@@ -138,6 +123,16 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         </td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
                         <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
+                        <td>
+                            <?php
+                                $multiple_tags = @explode(',', $tag);
+                                $count_tags = count($multiple_tags);
+                                for ($c=0;$c<$count_tags;$c++) {
+                                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                                    if ($c<($count_tags-1)) echo ', ';
+                                }
+                            ?>
+                        </td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
                         <td>---</td>
                         <td align="right" nowrap>
@@ -163,6 +158,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td>---</td>
                         <td>---</td>
+                        <td>---</td>
                         <td align="right">
                             <a href="<?php echo $index; ?>&act=delete_dir&dir_id=<?php echo $v['id']; ?>"
                                onclick="return confirmDeleteFolder();">
@@ -178,7 +174,10 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     } // if ($dirs!=FALSE)
 
 
-                    // File list
+            /******************************************************************/
+            /************* FILE content for the current directory *************/
+            /******************************************************************/
+                    
                     $mfiles = isset($mfiles) ? $mfiles : array();
 
                     $files = @glob('../'.$this->_e2g_decode($gdir).'*.*');
@@ -192,14 +191,17 @@ while ($l = mysql_fetch_array($resultdesc)) {
                             $time = filemtime($f);
                             $name = $this->_basename_safe($f);
                             $name = $this->_e2g_encode($name);
+                            $tag = $mfiles[$name]['tag'];
+
                             $ext = 'picture';
-                            $id = $mfiles[$name]['id'];
                             if (isset($mfiles[$name])) {
                                 if ($mfiles[$name]['status']==1) {
                                     $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
                                 } else {
                                     $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
                                 }
+                                $tag = $mfiles[$name]['tag'];
+                                $id = $mfiles[$name]['id'];
                                 unset($mfiles[$name]);
                                 $buttons = '
  <a href="'.$index.'&page=comments&file_id='.$id.'&pid='.$parent_id.'">
@@ -229,6 +231,16 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         </td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
                         <td><?php echo $n; ?></td>
+                        <td>
+                            <?php
+                                $multiple_tags = @explode(',', $tag);
+                                $count_tags = count($multiple_tags);
+                                for ($c=0;$c<$count_tags;$c++) {
+                                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                                    if ($c<($count_tags-1)) echo ', ';
+                                }
+                            ?>
+                        </td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
                         <td><?php echo $size; ?>Kb</td>
                         <td align="right" nowrap><?php echo $buttons; ?>
@@ -255,6 +267,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td>---</td>
                         <td>---</td>
+                        <td>---</td>
                         <td align="right" nowrap>
                             <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $v['id']; ?>&pid=<?php echo $parent_id; ?>">
                                 <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"
@@ -274,42 +287,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                     ?>
                 </table>
-                <div id="e2g_bottommenu">
-                    <ul class="actionButtons">
-                        <?php echo $lng['withselected']; ?>:<br /><br />
-                        <li id="Button6">
-                            <a name="delete" href="javascript: submitform(2)" style="font-weight:bold;color:red">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" alt="" /> <?php echo $lng['delete']; ?>
-                            </a>
-                        </li>
-                        <li id="Button7">
-                            <a name="download" href="javascript: submitform(3)">
-                                <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/page_white_compressed.png" alt="" /> <?php echo $lng['download']; ?>
-                            </a>
-                        </li>
-                        <li id="Button8">
-                            <!--select name="listactions">
-                                <option value="move"><?php echo $lng['move']; ?></option>
-                                <option value="copy"><?php echo $lng['copy']; ?></option>
-                            </select-->
-                            <?php echo $lng['movetofolder']; ?> :
-                            <select name="newparent">
-                                <option value="">&nbsp;</option>';
-
-                                <?php echo $this->_getfolderoptions(0); ?>
-
-                            </select>
-                            and
-                            <select name="gotofolder">
-                                <option value="gothere">go there</option>
-                                <option value="stayhere">stay here</option>
-                            </select>
-                            <a name="move" href="javascript: submitform(4)">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/sort.png" alt="" /> <?php echo $lng['go']; ?>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
+               <?php include_once E2G_MODULE_PATH . 'includes/tpl/menu.bottom.inc.php'; ?>
             </form>
         </td>
         <th width="205" valign="top">

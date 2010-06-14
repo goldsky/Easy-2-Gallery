@@ -386,7 +386,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['watermark_textpath']; ?>:</b></td>
-                        <td><input name="wmt" type="text" value="<?php echo $e2g['wmt']; ?>"></td>
+                        <td><input size="50" name="wmt" type="text" value="<?php echo $e2g['wmt']; ?>"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['watermark_text_path_cfg_desc']; ?></td>

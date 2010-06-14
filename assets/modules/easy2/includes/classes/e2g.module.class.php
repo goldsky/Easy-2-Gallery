@@ -73,15 +73,10 @@ class e2g_mod extends e2g_pub {
                 } else {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['synchro_err'];
                 }
-                $res = $this->_delete_all ( MODX_BASE_PATH . $e2g['dir'].'_thumbnails/');
-                if (empty($res['e'])) {
-                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'];
-                } else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'];
-                    $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
-                }
+                $this->_clean_cache($e2g['dir'], $lng);
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+
             // UPLOADING IMAGES
             case 'uploadzip':
                 if($_FILES['zip']['error']==0 && $_FILES['zip']['size']>0) {
@@ -116,6 +111,7 @@ class e2g_mod extends e2g_pub {
                 }
                 header ("Location: ".$index.'&pid='.$_GET['pid']);
                 exit();
+
             case 'upload':
                 $j = 0;
                 for ($i = 0; $i < count($_FILES['img']['tmp_name']); $i++) {
@@ -175,6 +171,7 @@ class e2g_mod extends e2g_pub {
                 $_SESSION['easy2suc'][] = __LINE__.' : '. $j.' '.$lng['files_uploaded'].'.';
                 header ("Location: ".$index.'&pid='.$_GET['pid']);
                 exit();
+
             // Multiple deletion
             case 'delete_checked':
                 $out = '';
@@ -609,6 +606,7 @@ class e2g_mod extends e2g_pub {
                 }
                 else header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+
             // Delete Directory
             case 'delete_dir':
                 if (empty($_GET['dir_id']) && empty($_GET['dir_path'])) {
@@ -658,6 +656,7 @@ class e2g_mod extends e2g_pub {
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // Delete file
             case 'delete_file':
                 if (empty($_GET['file_id']) && empty($_GET['file_path'])) {
@@ -686,6 +685,7 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // Delete comments
             case 'delete_comments':
                 $cids = array();
@@ -702,6 +702,7 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // Delete comments from comments manager
             case 'delete_allcomments':
                 foreach ($_POST['allcomment'] as $eachcid) {
@@ -719,17 +720,13 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // CACHE
             case 'clean_cache':
-                $res = $this->_delete_all ('../'.$this->_e2g_decode($gdir).'_thumbnails/');
-                if (empty($res['e'])) {
-                    $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
-                } else {
-                    $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
-                    $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
-                }
+                $this->_clean_cache($this->_e2g_decode($gdir), $lng);
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // CONFIG
             case 'save_config':
                 if (!empty($_POST['clean_cache'])) {
@@ -764,6 +761,7 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.$url);
                 exit();
+                
             // TRANSLATION
             case 'save_lang':
                 ksort($_POST);
@@ -778,6 +776,7 @@ class e2g_mod extends e2g_pub {
                 $_SESSION['easy2suc'][] = __LINE__.' : '. 'Language file is updated.';
                 header ('Location: '.$index);
                 exit();
+                
             // ADD DIRECTORY
             case 'add_dir':
                 if( $this->_add_all('../'.str_replace('../', '', $this->_e2g_decode($_GET['dir_path']).'/' ), $parent_id, $e2g, $lng) ) {
@@ -787,6 +786,7 @@ class e2g_mod extends e2g_pub {
                 }
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // ADD IMAGE
             case 'add_file':
                 $f = '../'.str_replace('../', '', $this->_e2g_decode($_GET['file_path']));
@@ -814,7 +814,8 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
-            // IGNORE IP ADDRESS IN IMAGE COMMENTS
+                
+            // Ignore ip address in image comments
             case 'ignore_ip':
                 $insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_ignoredip '
                         . '(ign_date, ign_ip_address, ign_username, ign_email) '
@@ -831,7 +832,8 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
-            // UNIGNORE IP ADDRESS IN IMAGE COMMENTS
+                
+            // Unignore ip address in image comments
             case 'unignore_ip':
                 $delete = 'DELETE FROM '.$modx->db->config['table_prefix'].'easy2_ignoredip '
                         . 'WHERE ign_ip_address =\''.$_GET['ip'].'\'';
@@ -847,6 +849,7 @@ class e2g_mod extends e2g_pub {
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
+                
             // Delete comments from comments manager
             case 'unignored_all_ip':
                 foreach ($_POST['unignored_ip'] as $uignIPs) {
@@ -859,6 +862,288 @@ class e2g_mod extends e2g_pub {
                             .'WHERE ign_ip_address =\''.$uignIPs.'\'') or die(__LINE__.' : '.mysql_error());
                 }
 
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+
+            // Add tag to the selected objects
+            case 'tag_add_checked':
+                if (empty($_POST['tag_input'])) {
+                    $_SESSION['easy2err'][] = __LINE__.' : '.$lng['tag_err_novalue'];
+                    header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                    exit();
+                }
+
+                if (empty($_POST['dir']) && empty($_POST['im'])) {
+                    $_SESSION['easy2err'][] = __LINE__.': '.$lng['select_dirfile'];
+                    header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                    exit();
+                }
+
+                // store the multiple tag input as an array
+                $xpld_tag_inputs = explode(',', $_POST['tag_input']);
+                for ($c=0;$c<count($xpld_tag_inputs);$c++) {
+                    $xpld_tag_inputs[$c] = trim($xpld_tag_inputs[$c]);
+                }
+
+                // Folders
+                if (!empty($_POST['dir'])) {
+                    foreach ($_POST['dir'] as $k => $v) {
+                        if (!empty($v)) {
+                            // check the existing value first
+                            $select_dir_tag = 'SELECT cat_tag FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                    .'WHERE cat_id='.$k
+                                    ;
+                            $query_dir_tag= mysql_query($select_dir_tag);
+                            if ($query_dir_tag) {
+                                while ($l = mysql_fetch_array($query_dir_tag)) {
+                                    $dir_tags = $l['cat_tag'];
+                                }
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$select_dir_tag;
+                            }
+
+                            $xpld_dir_tags = array();
+                            $xpld_dir_tags = explode(',',$dir_tags);
+
+                            for ($c=0;$c<count($xpld_dir_tags);$c++) {
+                                $xpld_dir_tags[$c] = trim($xpld_dir_tags[$c]);
+                            }
+
+                            $new_tags = $int_tags = array();
+                            $int_tags = array_intersect($xpld_dir_tags, $xpld_tag_inputs);
+                            $new_tags = array_unique(array_merge($xpld_dir_tags, $xpld_tag_inputs ));
+
+                            // clean ups
+                            foreach ($new_tags as $tag_k => $tag_v) {
+                                if (empty($new_tags[$tag_k])) unset($new_tags[$tag_k]);
+                            }
+                            sort($new_tags, SORT_LOCALE_STRING);
+
+                            if (count($int_tags)>0) {
+                                $impld_int_tag = @implode(', ', $int_tags);
+                                $_SESSION['easy2err'][] = __LINE__.': '.$lng['tag_err_exist'].': '.$impld_int_tag.' ('.$this->_basename_safe($v).')';
+                            }
+
+                            // store the new value of file's tag
+                            if (count($new_tags)>0) {
+                                $new_tags = implode(', ', $new_tags);
+                                $update_dir_tag = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                        .'SET cat_tag=\''.$new_tags.'\' '
+                                        .', last_modified=NOW() '
+                                        .'WHERE cat_id='.$k
+                                        ;
+                                $query_new_tag = mysql_query($update_dir_tag);
+                                if ($update_dir_tag) {
+                                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
+                                } else {
+                                    $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                    $_SESSION['easy2err'][] = __LINE__.': '.$update_dir_tag;
+                                }
+                            }
+                        } // if (!empty($v))
+                    }
+                }
+
+                // Files
+                if (!empty($_POST['im'])) {
+                    foreach ($_POST['im'] as $k => $v) {
+                        if (!empty($v)) {
+                            // check the existing value first
+                            $select_file_tag = 'SELECT tag FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                                    .'WHERE id='.$k
+                                    ;
+                            $query_file_tag= mysql_query($select_file_tag);
+                            if ($query_file_tag) {
+                                while ($l = mysql_fetch_array($query_file_tag)) {
+                                    $file_tags = $l['tag'];
+                                }
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$select_file_tag;
+                            }
+
+                            $xpld_file_tags = array();
+                            $xpld_file_tags = explode(',',$file_tags);
+
+                            for ($c=0;$c<count($xpld_file_tags);$c++) {
+                                $xpld_file_tags[$c] = trim($xpld_file_tags[$c]);
+                            }
+
+                            $new_tags = $int_tags = array();
+                            $int_tags = array_intersect($xpld_file_tags, $xpld_tag_inputs);
+                            $new_tags = array_unique(array_merge($xpld_file_tags, $xpld_tag_inputs ));
+
+                            // clean ups
+                            foreach ($new_tags as $tag_k => $tag_v) {
+                                if (empty($new_tags[$tag_k])) unset($new_tags[$tag_k]);
+                            }
+                            sort($new_tags, SORT_LOCALE_STRING);
+
+                            if (count($int_tags)>0) {
+                                $int_tags = implode(', ', $int_tags);
+                                $_SESSION['easy2err'][] = __LINE__.': '.$lng['tag_err_exist'].': '.$int_tags.' ('.$this->_basename_safe($v).')';
+                            }
+
+                            // store the new value of file's tag
+                            if (count($new_tags)>0) {
+                                $new_tags = implode(', ', $new_tags);
+                                $update_file_tag = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                        .'SET tag=\''.$new_tags.'\' '
+                                        .', last_modified=NOW() '
+                                        .'WHERE id='.$k
+                                        ;
+                                $query_new_tag = mysql_query($update_file_tag);
+                                if ($query_new_tag) {
+                                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
+                                } else {
+                                    $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                    $_SESSION['easy2err'][] = __LINE__.': '.$update_file_tag;
+                                }
+                            }
+                        } // if (!empty($v))
+                    } // foreach ($_POST['im'] as $k => $v)
+                } // if (!empty($_POST['im']))
+
+                header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+
+            // Remove tag from the selected objects
+            case 'tag_remove_checked':
+                if (empty($_POST['tag_input'])) {
+                    $_SESSION['easy2err'][] = __LINE__.' : '.$lng['tag_err_novalue'];
+                    header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                    exit();
+                }
+
+                if (empty($_POST['dir']) && empty($_POST['im'])) {
+                    $_SESSION['easy2err'][] = __LINE__.': '.$lng['select_dirfile'];
+                    header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                    exit();
+                }
+
+                // store the multiple tag input as an array
+                $xpld_tag_inputs = explode(',', $_POST['tag_input']);
+                for ($c=0;$c<count($xpld_tag_inputs);$c++) {
+                    $xpld_tag_inputs[$c] = trim($xpld_tag_inputs[$c]);
+                }
+
+                // Folders
+                if (!empty($_POST['dir'])) {
+                    foreach ($_POST['dir'] as $k => $v) {
+                        if (!empty($v)) {
+                            // check the existing value first
+                            $select_dir_tag = 'SELECT cat_tag FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                    .'WHERE cat_id='.$k
+                                    ;
+                            $query_dir_tag= mysql_query($select_dir_tag);
+                            if ($query_dir_tag) {
+                                while ($l = mysql_fetch_array($query_dir_tag)) {
+                                    $dir_tags = $l['cat_tag'];
+                                }
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$select_dir_tag;
+                            }
+
+                            $xpld_dir_tags = array();
+                            $xpld_dir_tags = explode(',',$dir_tags);
+
+                            for ($c=0;$c<count($xpld_dir_tags);$c++) {
+                                $xpld_dir_tags[$c] = trim($xpld_dir_tags[$c]);
+                            }
+
+                            $new_tags = $int_tags = array();
+                            $int_tags = array_diff($xpld_tag_inputs, $xpld_dir_tags);
+                            $new_tags = array_unique(array_diff($xpld_dir_tags, $xpld_tag_inputs ));
+
+                            // clean ups
+                            foreach ($new_tags as $tag_k => $tag_v) {
+                                if (empty($new_tags[$tag_k])) unset($new_tags[$tag_k]);
+                            }
+                            sort($new_tags, SORT_LOCALE_STRING);
+
+                            if (count($int_tags)>0) {
+                                $int_tags = @implode(', ', $int_tags);
+                                $_SESSION['easy2err'][] = __LINE__.': '.$lng['tag_err_noexist'].': '.$int_tags.' ('.$this->_basename_safe($v).')';
+                            }
+
+                            // store the new value of file's tag
+                            $new_tags = implode(', ', $new_tags);
+                            $update_dir_tag = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
+                                    .'SET cat_tag=\''.$new_tags.'\' '
+                                    .', last_modified=NOW() '
+                                    .'WHERE cat_id='.$k
+                                    ;
+                            $query_new_tag = mysql_query($update_dir_tag);
+                            if ($update_dir_tag) {
+                                $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$update_dir_tag;
+                            }
+                        } // if (!empty($v))
+                    }
+                }
+
+                // Files
+                if (!empty($_POST['im'])) {
+                    foreach ($_POST['im'] as $k => $v) {
+                        if (!empty($v)) {
+                            // check the existing value first
+                            $select_file_tag = 'SELECT tag FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                                    .'WHERE id='.$k
+                                    ;
+                            $query_file_tag= mysql_query($select_file_tag);
+                            if ($query_file_tag) {
+                                while ($l = mysql_fetch_array($query_file_tag)) {
+                                    $file_tags = $l['tag'];
+                                }
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$select_file_tag;
+                            }
+
+                            $xpld_file_tags = array();
+                            $xpld_file_tags = explode(',',$file_tags);
+
+                            for ($c=0;$c<count($xpld_file_tags);$c++) {
+                                $xpld_file_tags[$c] = trim($xpld_file_tags[$c]);
+                            }
+
+                            $new_tags = $int_tags = array();
+                            $int_tags = array_diff($xpld_tag_inputs, $xpld_file_tags);
+                            $new_tags = array_unique(array_diff($xpld_file_tags, $xpld_tag_inputs ));
+
+                            // clean ups
+                            foreach ($new_tags as $tag_k => $tag_v) {
+                                if (empty($new_tags[$tag_k])) unset($new_tags[$tag_k]);
+                            }
+                            sort($new_tags, SORT_LOCALE_STRING);
+                            if (count($int_tags)>0) {
+                                $int_tags = implode(', ', $int_tags);
+                                $_SESSION['easy2err'][] = __LINE__.': '.$lng['tag_err_noexist'].': '.$int_tags.' ('.$this->_basename_safe($v).')';
+                            }
+
+                            // store the new value of file's tag
+                            $new_tags = implode(', ', $new_tags);
+                            $update_file_tag = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                    .'SET tag=\''.$new_tags.'\' '
+                                    .', last_modified=NOW() '
+                                    .'WHERE id='.$k
+                                    ;
+                            $query_new_tag = mysql_query($update_file_tag);
+                            if ($query_new_tag) {
+                                $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
+                            } else {
+                                $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
+                                $_SESSION['easy2err'][] = __LINE__.': '.$update_file_tag;
+                            }
+                        } // if (!empty($v))
+                    } // foreach ($_POST['im'] as $k => $v)
+                } // if (!empty($_POST['im']))
+
+                $this->_clean_cache($gdir, $lng);
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
         } // switch ($act)
@@ -906,6 +1191,7 @@ class e2g_mod extends e2g_pub {
                                 $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
                                         .'SET '
                                         .'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                        .', cat_tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                         .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                         .', last_modified=NOW() '
                                         .'WHERE cat_id='.$id;
@@ -925,6 +1211,7 @@ class e2g_mod extends e2g_pub {
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 //the page content is rendered in ../tpl/page.create_dir.inc.php
                 break;
+
             // EDIT DIRECTORY
             case 'edit_dir' :
                 if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
@@ -982,8 +1269,8 @@ class e2g_mod extends e2g_pub {
                     exit();
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 //the page content is rendered in ../tpl/page.edit_dir.inc.php
-
                 break;
+
             case 'edit_file':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
                     $_SESSION['easy2err'][] = __LINE__.' : '. $id['id_err'];
@@ -1042,8 +1329,8 @@ class e2g_mod extends e2g_pub {
                     exit();
                 } // if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 //the page content is rendered in ../tpl/page.edit_file.inc.php
-
                 break;
+
             // COMMENTS
             case 'comments':
                 if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
@@ -1056,8 +1343,8 @@ class e2g_mod extends e2g_pub {
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
                 mysql_free_result($res);
                 //the page content is rendered in ../tpl/page.comments.inc.php
-
                 break;
+
             case 'openexplorer':
                 if (isset($_POST['newparent'])) $parent_id=$_POST['newparent'];
 
@@ -1065,10 +1352,66 @@ class e2g_mod extends e2g_pub {
                 exit();
                 break;
 
+            case 'tag':
+                // display list by tag
+                if (isset($_GET['tag'])) {
+                    $_get_tag = trim($_GET['tag']);
+
+            /******************************************************************/
+            /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+            /******************************************************************/
+                    $q = 'SELECT parent_id,cat_id,cat_name,cat_tag,cat_visible,last_modified FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                            .'WHERE cat_tag LIKE \'%'.$_get_tag.'%\' '
+                            .'ORDER BY cat_name ASC';
+                    $res = mysql_query($q);
+                    $mdirs = array();
+                    if ($res) {
+                        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                            // goldsky -- store the array to be connected between db <--> fs
+                            $mdirs[$l['cat_name']]['parent_id'] = $l['parent_id'];
+                            $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
+                            $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
+                            $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
+                            $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
+                            $mdirs[$l['cat_name']]['last_modified'] = $l['last_modified'];
+                        }
+                    } else {
+                        $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
+                    }
+                    mysql_free_result($res);
+
+            /******************************************************************/
+            /************* FILE content for the current directory *************/
+            /******************************************************************/
+                    $q = 'SELECT id,dir_id,filename,tag,last_modified,status FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                            .'WHERE tag LIKE \'%'.$_get_tag.'%\' ';
+                    $res = mysql_query($q);
+                    $mfiles = array();
+                    if ($res) {
+                        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                            // goldsky -- store the array to be connected between db <--> fs
+                            $mfiles[$l['filename']]['id'] = $l['id'];
+                            $mfiles[$l['filename']]['dir_id'] = $l['dir_id'];
+                            $mfiles[$l['filename']]['name'] = $l['filename'];
+                            $mfiles[$l['filename']]['tag'] = $l['tag'];
+                            $mfiles[$l['filename']]['last_modified'] = $l['last_modified'];
+                            $mfiles[$l['filename']]['status'] = $l['status'];
+                        }
+                    } else {
+                        $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
+                        $_SESSION['easy2err'][] = __LINE__.' : '.$q;
+                    }
+                    mysql_free_result($res);
+
+                }
+                //the page content is rendered in ../tpl/page.default.inc.php
+                break;
+
             default:
+                // display list by ROOT id
                 if (empty($cpath)) {
                     // MySQL Dir list
-                    $q = 'SELECT cat_id,cat_name,cat_visible '
+                    $q = 'SELECT cat_id,cat_name,cat_tag, cat_visible '
                             .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
                             .'WHERE parent_id = '.$parent_id.' '
                             .'ORDER BY cat_name ASC'
@@ -1080,6 +1423,7 @@ class e2g_mod extends e2g_pub {
                             // goldsky -- store the array to be connected between db <--> fs
                             $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
+                            $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
                             $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
                         }
                     } else {
@@ -1088,7 +1432,7 @@ class e2g_mod extends e2g_pub {
                     mysql_free_result($res);
 
                     // MySQL File list
-                    $q = 'SELECT id,filename,status FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
+                    $q = 'SELECT id,filename,tag,status FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
                     $res = mysql_query($q);
                     $mfiles = array();
                     if ($res) {
@@ -1096,6 +1440,7 @@ class e2g_mod extends e2g_pub {
                             // goldsky -- store the array to be connected between db <--> fs
                             $mfiles[$l['filename']]['id'] = $l['id'];
                             $mfiles[$l['filename']]['name'] = $l['filename'];
+                            $mfiles[$l['filename']]['tag'] = $l['tag'];
                             $mfiles[$l['filename']]['status'] = $l['status'];
                         }
                     } else {
@@ -1701,7 +2046,7 @@ class e2g_mod extends e2g_pub {
      * get folders structure for select options.
      * @author goldsky
      */
-    private function _getfolderoptions($parentid, $selected=0, $jsactions=null ) {
+    private function _get_folder_options($parentid, $selected=0, $jsactions=null ) {
         global $modx;
         $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
 
@@ -1765,12 +2110,70 @@ class e2g_mod extends e2g_pub {
             } else {
                 $numsub = @mysql_num_rows($querysub);
                 if ($numsub > 0) {
-                    $output .= $this->_getfolderoptions($childdir['cat_id'],$selected,$jsactions);
+                    $output .= $this->_get_folder_options($childdir['cat_id'],$selected,$jsactions);
                 }
             }
             mysql_free_result($querysub);
             /*********************************************************/
         } // foreach ($childrendirs as $childdir)
+        return $output;
+    }
+
+    /**
+     * To return an options selection for tag
+     * @global mixed $modx
+     * @return string option selection
+     */
+    private function _get_tag_options($_get_tag) {
+        global $modx;
+        $e2g_debug = $this->e2gmod_cfg['e2g_debug'];
+
+        // Directory
+        $select_dir_tags = 'SELECT DISTINCT cat_tag FROM '.$modx->db->config['table_prefix'].'easy2_dirs ';
+        $query_dir_tags = mysql_query($select_dir_tags);
+        $num_dir_tags = mysql_num_rows($query_dir_tags);
+
+        if ($query_dir_tags)
+            while ($l = mysql_fetch_array($query_dir_tags)) {
+                if ($l['cat_tag']=='' || $l['cat_tag']==null) continue;
+                $tag_options[] = $l['cat_tag'];
+        } else {
+            $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
+            if ($e2g_debug==1)
+                $_SESSION['easy2err'][] = __LINE__.' : '.$select_dir_tags;
+        }
+
+        // File
+        $select_file_tags = 'SELECT DISTINCT tag FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+        $query_file_tags = mysql_query($select_file_tags);
+        $num_file_tags = mysql_num_rows($query_file_tags);
+
+        if ($query_file_tags)
+            while ($l = mysql_fetch_array($query_file_tags)) {
+                if ($l['tag']=='' || $l['tag']==null) continue;
+                $tag_options[] = $l['tag'];
+        } else {
+            $_SESSION['easy2err'][] = __LINE__.' MySQL ERROR: '.mysql_error();
+            if ($e2g_debug==1)
+                $_SESSION['easy2err'][] = __LINE__.' : '.$select_file_tags;
+        }
+
+        $single_tag_options=array();
+        for ($i=0;$i<count($tag_options);$i++) {
+            $xpld_tag_options = @explode(',', $tag_options[$i]);
+            foreach ($xpld_tag_options as $xpld_tag) {
+                $xpld_tag = trim($xpld_tag);
+                // recursive check of existing value
+                if (!in_array($xpld_tag, $single_tag_options)) $single_tag_options[] = $xpld_tag;
+            }
+        }
+        sort($single_tag_options);
+        for ($i=0;$i<count($single_tag_options);$i++) {
+            $output .= '<option value="'.$single_tag_options[$i].'"'
+                       . ( $_get_tag==$single_tag_options[$i] ? ' selected="selected"' : '' )
+                       .'>'.$single_tag_options[$i].'</option>
+                    ';
+        }
         return $output;
     }
 
@@ -1923,6 +2326,20 @@ class e2g_mod extends e2g_pub {
         } else {
             $_SESSION['easy2err'][] = __LINE__.' Error : '. $lng['zip_open_err'] .' <b>'. $path . $file.'</b>';
         }
+    }
+
+    /**
+     * To delete all of the thumbnail folder's content
+     */
+    private function _clean_cache($dir, $lng) {
+        $res = $this->_delete_all ('../'.$dir.'_thumbnails/' );
+        if (empty($res['e'])) {
+            $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['cache_clean'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
+        } else {
+            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['cache_clean_err'].', '.$lng['files_deleted'].': '.$res['f'].', '.$lng['dirs_deleted'].': '.$res['d'];
+            $_SESSION['easy2err'] = array_merge($_SESSION['easy2err'], $res['e']);
+        }
+        return $res;
     }
 
 } // END OF class e2g_mod

@@ -6,7 +6,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
     <img src="<?php echo  E2G_MODULE_URL ; ?>includes/icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle" alt="" />
     <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $_GET['file_id']; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['update']; ?></a>
     &nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['Back']; ?></a>
+    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo ucfirst($lng['back']); ?></a>
 </p>
 <table cellspacing="0" cellpadding="0" width="100%">
     <tr>

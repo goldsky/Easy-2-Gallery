@@ -11,3 +11,8 @@
     color: #000;
     text-decoration: none;
 }
+
+ul.actionButtons li {
+    padding-right: 1em;
+    border-right: 1px solid #cccccc;
+}
