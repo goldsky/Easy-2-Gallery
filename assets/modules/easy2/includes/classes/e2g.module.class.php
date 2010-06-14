@@ -934,16 +934,15 @@ class e2g_mod extends e2g_pub {
                                         .'WHERE cat_id='.$k
                                         ;
                                 $query_new_tag = mysql_query($update_dir_tag);
-                                if ($update_dir_tag) {
-                                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
-                                } else {
+                                if (!$update_dir_tag) {
                                     $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
                                     $_SESSION['easy2err'][] = __LINE__.': '.$update_dir_tag;
                                 }
                             }
                         } // if (!empty($v))
-                    }
-                }
+                    } // foreach ($_POST['dir'] as $k => $v)
+                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_suc_new'];
+                } // if (!empty($_POST['dir']))
 
                 // Files
                 if (!empty($_POST['im'])) {
@@ -994,15 +993,14 @@ class e2g_mod extends e2g_pub {
                                         .'WHERE id='.$k
                                         ;
                                 $query_new_tag = mysql_query($update_file_tag);
-                                if ($query_new_tag) {
-                                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
-                                } else {
+                                if (!$query_new_tag) {
                                     $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
                                     $_SESSION['easy2err'][] = __LINE__.': '.$update_file_tag;
                                 }
                             }
                         } // if (!empty($v))
                     } // foreach ($_POST['im'] as $k => $v)
+                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_suc_new'];
                 } // if (!empty($_POST['im']))
 
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -1076,15 +1074,14 @@ class e2g_mod extends e2g_pub {
                                     .'WHERE cat_id='.$k
                                     ;
                             $query_new_tag = mysql_query($update_dir_tag);
-                            if ($update_dir_tag) {
-                                $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
-                            } else {
+                            if (!$update_dir_tag) {
                                 $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
                                 $_SESSION['easy2err'][] = __LINE__.': '.$update_dir_tag;
                             }
                         } // if (!empty($v))
-                    }
-                }
+                    } // foreach ($_POST['dir'] as $k => $v)
+                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_suc_new'];
+                } // if (!empty($_POST['dir']))
 
                 // Files
                 if (!empty($_POST['im'])) {
@@ -1133,14 +1130,13 @@ class e2g_mod extends e2g_pub {
                                     .'WHERE id='.$k
                                     ;
                             $query_new_tag = mysql_query($update_file_tag);
-                            if ($query_new_tag) {
-                                $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_new'].': '.$new_tags.' ('.$this->_basename_safe($v).')';
-                            } else {
+                            if (!$query_new_tag) {
                                 $_SESSION['easy2err'][] = __LINE__.': '.mysql_error();
                                 $_SESSION['easy2err'][] = __LINE__.': '.$update_file_tag;
                             }
                         } // if (!empty($v))
                     } // foreach ($_POST['im'] as $k => $v)
+                    $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_suc_new'];
                 } // if (!empty($_POST['im']))
 
                 $this->_clean_cache($gdir, $lng);

@@ -543,7 +543,7 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'tag_err_exist' => 'Tag exists',
         'tag_err_noexist' => 'Tag does not exist',
         'tag_err_novalue' => 'Please type in the new tag',
-        'tag_new' => 'New tag',
+        'tag_suc_new' => 'New tag is applied',
         'text' => 'text',
         'thbg_rgb' => 'Thumbnail background color',
         'thbg_rgb_cfg_desc' => 'White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.',
