@@ -882,7 +882,7 @@ class e2g_mod extends e2g_pub {
                 // store the multiple tag input as an array
                 $xpld_tag_inputs = explode(',', $_POST['tag_input']);
                 for ($c=0;$c<count($xpld_tag_inputs);$c++) {
-                    $xpld_tag_inputs[$c] = trim($xpld_tag_inputs[$c]);
+                    $xpld_tag_inputs[$c] = htmlspecialchars(trim($xpld_tag_inputs[$c]), ENT_QUOTES);
                 }
 
                 // Folders
@@ -966,7 +966,7 @@ class e2g_mod extends e2g_pub {
                             $xpld_file_tags = explode(',',$file_tags);
 
                             for ($c=0;$c<count($xpld_file_tags);$c++) {
-                                $xpld_file_tags[$c] = trim($xpld_file_tags[$c]);
+                                $xpld_file_tags[$c] = htmlspecialchars(trim($xpld_file_tags[$c]), ENT_QUOTES);
                             }
 
                             $new_tags = $int_tags = array();
@@ -1023,7 +1023,7 @@ class e2g_mod extends e2g_pub {
                 // store the multiple tag input as an array
                 $xpld_tag_inputs = explode(',', $_POST['tag_input']);
                 for ($c=0;$c<count($xpld_tag_inputs);$c++) {
-                    $xpld_tag_inputs[$c] = trim($xpld_tag_inputs[$c]);
+                    $xpld_tag_inputs[$c] = htmlspecialchars(trim($xpld_tag_inputs[$c]), ENT_QUOTES);
                 }
 
                 // Folders
@@ -1139,7 +1139,7 @@ class e2g_mod extends e2g_pub {
                     $_SESSION['easy2suc'][] = __LINE__.' : '.$lng['tag_suc_new'];
                 } // if (!empty($_POST['im']))
 
-                $this->_clean_cache($gdir, $lng);
+                $this->_clean_cache($e2g['dir'], $lng);
                 header ('Location: '.html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
         } // switch ($act)

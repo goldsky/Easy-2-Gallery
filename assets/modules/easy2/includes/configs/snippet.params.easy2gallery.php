@@ -28,8 +28,6 @@ else {
     $e2gsnip_cfg['gid'] = (!empty($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : ( !empty($gid) ? $gid : 1 );
     // to get the REAL snippet's gid call
     $e2gsnip_cfg['static_gid'] = !empty($gid) ? $gid : 1 ;
-    // to get the REAL descendant of the gid
-    $e2gsnip_cfg['get_gid'] = !empty($_GET['gid']) ? $_GET['gid'] : null;
 }
 // TAGS
 if (isset($tags)) $tag=$tags; // compatibility

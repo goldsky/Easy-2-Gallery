@@ -68,8 +68,10 @@ class e2g_snip extends e2g_pub {
         $gdir = $this->e2gsnip_cfg['gdir'];
         $gid = $this->e2gsnip_cfg['gid'];
         $static_gid = $this->e2gsnip_cfg['static_gid'];
+
         $tag = $this->e2gsnip_cfg['tag'];
         $static_tag = $this->e2gsnip_cfg['static_tag'];
+        
         $orderby = $this->e2gsnip_cfg['orderby'];
         $order = $this->e2gsnip_cfg['order'];
         $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
@@ -102,49 +104,14 @@ class e2g_snip extends e2g_pub {
         $crumbs_showCurrent = $this->e2gsnip_cfg['crumbs_showCurrent'];
         $crumbs_showPrevious = $this->e2gsnip_cfg['crumbs_showPrevious'];
 
-        /**
-         * For the pagination of the multiple snippet parameters on the same page
-        */
-        if ( isset($static_tag) && $tag==$static_tag ) {
-//            $gid = isset($_GET['gid']) ? $_GET['gid'] : ($this->_tags_ids('dir', $tag)!=FALSE? $this->_tags_ids('dir', $tag) : 1);
-            $gid = isset($gid) ? $gid : ($this->_tags_ids('dir', $tag)!=FALSE? $this->_tags_ids('dir', $tag) : 1);
-            $static_gid = ($this->_tags_ids('dir', $tag)!=FALSE? $this->_tags_ids('dir', $tag) : 1);
-        }
-        // to separate the pagination of multiple &tag parameters on the same page
-        if ( isset($static_tag)
-                && $tag!=$static_tag    // for multiple &tag call on one page
-                ) {
-            $gid = $static_gid;
-            $gpn = 0;
-        }
-        // to separate the pagination of multiple $gid parameters on the same page
-        if ( $gid!=$_GET['gid'] 
-                && !isset($static_tag)  // exclude the &tag param
-                ) {
-            $gpn = 0;
-        }
-        // to separate the pagination between &tag AND &gid parameters on the same page
-        if ( isset($static_tag)
-                && $gid!=$static_gid
-                ) {
-            $gid = $static_gid;
-            $gpn = 0;
-        }
-
-        /**
-         * To check the real decendant of the &gid and &fid parameters
-         * otherwise denied
-        */
-        if ( (!empty($gid) || !empty($static_gid)) && !isset($static_tag) ) {
-            $check_gid_decendant = $this->_check_gid_decendant($gid, $static_gid);
-            if ( !$check_gid_decendant || $gid!=$_GET['gid'] ) {
-                $gid = $static_gid;
-                $gpn = 0;
-            }
-        }
-        if ( !empty($fid) && !empty($static_fid) ) $this->_check_fid_decendant($fid, $static_fid);
-
         $this->_libs();
+
+        // for multiple snippet call of &gid params
+        if ( isset($_GET['gid'])
+                && ($this->_check_gid_decendant($_GET['gid'], $static_gid)==false)
+                ) {
+            $gpn=0;
+        }
 
         /*
          * PATHS
@@ -157,32 +124,53 @@ class e2g_snip extends e2g_pub {
         // START the grid
         $_e2g['content'] = (($grid=='css') ? '<div class="'.$grid_class.'">':'<table class="'.$grid_class.'"><tr>') ;
 
-        /**
-         * Directory counter
-         * count the directories WITHOUT limit!
-         */
-        if ( $showonly=='images'
-                || !isset($gid)
-                || ( isset($tag) && ($gid!=$static_gid) ) // exclude further tagged dir descendant
-                || ( isset($tag) && ($tag!=$static_tag) ) // separate between multiple snippet parameters in one page
-        ) {
+            /******************************************************************/
+            /*                       Directory counter                        */
+            /*              count the directories WITHOUT limit!              */
+            /******************************************************************/
+        if ( $showonly=='images' ) {
             $dir_count = 0;
         } else {
             if ( isset($static_tag) ) {
                 $select_count = 'SELECT COUNT(DISTINCT cat_id) '
                         . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs ';
 
-                $multiple_tags = @explode(',', $static_tag);
-                for ($i=0;$i<count($multiple_tags);$i++) {
-                    if ($i==0) $select_count .= 'WHERE cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                    else $select_count .= 'OR cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                // OPEN the selected tagged folder
+                if (isset($_GET['gid'])
+                        && $static_tag==$tag
+                        && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+                $select_count .= 'WHERE parent_id IN ('.$_GET['gid'].')';
                 }
+                else {
+                    // the selected tag of multiple tags on the same page
+                    if ( $static_tag==$tag ) {
+                        $multiple_tags = @explode(',', $tag);
+                    }
+                    // the UNselected tag of multiple tags on the same page
+                    else {
+                        $multiple_tags = @explode(',', $static_tag);
+                    }
+
+                    for ($i=0;$i<count($multiple_tags);$i++) {
+                        if ($i==0) $select_count .= 'WHERE cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                        else $select_count .= 'OR cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                    }
+                }
+                
             }
+            // original &gid parameter
             else {
                 $select_count = 'SELECT COUNT(DISTINCT d.cat_id) '
-                        . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
-                        . 'WHERE d.parent_id IN ('.$gid.') '
-                        . 'AND d.cat_visible = 1 '
+                        . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d ';
+
+                if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                    $select_count .= 'WHERE d.parent_id IN ('.$gid.') ';
+                }
+                else {
+                    $select_count .= 'WHERE d.parent_id IN ('.$static_gid.') ';
+                }
+
+                $select_count .= 'AND d.cat_visible = 1 '
                         // ddim -- wrapping children folders
                         . 'AND (SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
                         . 'WHERE F.dir_id in '
@@ -199,10 +187,17 @@ class e2g_snip extends e2g_pub {
 
             $dir_count = mysql_result(mysql_query($select_count), 0 ,0);
 
-            /*
+            /**
              * Add the multiple IDs capability into the &gid
+             * Check the valid params of each of snippet calls
             */
-            $multiple_gids = explode(',',$gid);
+            if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                $multiple_gids = explode(',',$gid);
+            }
+            else {
+                $multiple_gids = explode(',',$static_gid);
+            }
+            
             $multiple_gids_count = count($multiple_gids);
             // reset the directory number
             $dir_num_rows = 0;
@@ -221,6 +216,10 @@ class e2g_snip extends e2g_pub {
 
                 // get "category name" from $path
                 $_e2g['cat_name'] = is_array($path) ? end($path) : '';
+
+            /******************************************************************/
+            /*                             CRUMBS                             */
+            /******************************************************************/
                 // reset crumbs
                 $crumbs='';
 
@@ -228,7 +227,9 @@ class e2g_snip extends e2g_pub {
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
                 */
-                if ($multiple_gids_count==1 && !isset($tag)) {
+                if ($multiple_gids_count==1 
+                        && ( isset($tag) && $this->_tags_ids('dir', $tag, $gid) )
+                ) {
                     // if path more the one
                     if (count($path) > 1) {
                         end($path);
@@ -274,27 +275,50 @@ class e2g_snip extends e2g_pub {
             if ( $showonly != 'images' ) {
                 // if &tag is set
                 if ( isset($static_tag) ) {
-                    $query = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs ';
+                    $dir_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_dirs ';
 
-                    $multiple_tags = @explode(',', $static_tag);
-                    for ($i=0;$i<count($multiple_tags);$i++) {
-                        if ($i==0) $query .= 'WHERE cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                        else $query .= 'OR cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                    // OPEN the selected tagged folder
+                    if (isset($_GET['gid'])
+                            && $static_tag==$tag
+                            && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+                    $dir_select .= 'WHERE parent_id IN ('.$_GET['gid'].')';
+                    }
+                    else {
+                        // the selected tag of multiple tags on the same page
+                        if ( $static_tag==$tag ) {
+                            $multiple_tags = @explode(',', $tag);
+                        }
+                        // the UNselected tag of multiple tags on the same page
+                        else {
+                            $multiple_tags = @explode(',', $static_tag);
+                        }
+
+                        for ($i=0;$i<count($multiple_tags);$i++) {
+                            if ($i==0) $dir_select .= 'WHERE cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                            else $dir_select .= 'OR cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                        }
                     }
 
-                    $query .= 'AND cat_visible = 1 '
+                    $dir_select .= 'AND cat_visible = 1 '
                             . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' ';
-                    
+
                     // to separate the multiple &gid snippet parameters on the same page
-                    $query .= ($_GET['tag']==$static_tag) ? 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit : 'LIMIT 0, ' . $limit;
+                    $dir_select .= ($_GET['tag']==$static_tag) ? 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit : 'LIMIT 0, ' . $limit;
                 }
-                // if &gid is set
-                elseif ( isset($static_gid) ) {
-                    $query = 'SELECT DISTINCT d.* '
-                            . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d '
-                            . 'WHERE d.parent_id IN (' . $gid . ') '
+                // original &gid parameter
+                else {
+                    $dir_select = 'SELECT DISTINCT d.* '
+                            . 'FROM '.$modx->db->config['table_prefix'].'easy2_dirs AS d ';
+
+                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                        $dir_select .= 'WHERE d.parent_id IN (' . $gid . ') ';
+                    }
+                    else {
+                        $dir_select .= 'WHERE d.parent_id IN (' . $static_gid . ') ';
+                    }
+
                             // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
-                            . 'AND d.cat_visible = 1 '
+                    $dir_select .= 'AND d.cat_visible = 1 '
                             . 'AND ('
                             . 'SELECT count(*) FROM '.$modx->db->config['table_prefix'].'easy2_files F '
                             . 'WHERE F.dir_id IN ('
@@ -312,35 +336,62 @@ class e2g_snip extends e2g_pub {
                             . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' ';
 
                     // to separate the multiple &gid snippet parameters on the same page
-                    $query .= ($_GET['gid']==$static_gid) ? 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit : 'LIMIT 0, ' . $limit;
+                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                        $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
+                    }
+                    else {
+                        $dir_select .= 'LIMIT 0, ' . $limit;
+                    }
                 }
 
-                $dirquery = mysql_query($query);
-                if (!$dirquery) die(__LINE__.' : '.mysql_error().'<br />'.$query);
-                $dir_num_rows += mysql_num_rows($dirquery);
+                $dir_query = mysql_query($dir_select);
+                if (!$dir_query) die(__LINE__.' : '.mysql_error().'<br />'.$dir_select);
+                $dir_num_rows += mysql_num_rows($dir_query);
 
-                if ( isset($tag) && !isset($_GET['gid']) ) {
-                    $_e2g['permalink'] = '<a href="#" name="'.$tag.'"></a>';
-                } else {
+                // gallery's permalink
+                if ( isset($tag)
+                        && ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true)
+                        ) {
+                    $_e2g['permalink'] = '<a href="#" name="'.$static_tag.'"></a>';
+                }
+                elseif ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==false) {
+                    $_e2g['permalink'] = '<a href="#" name="'.$static_gid.'"></a>';
+                }
+                else {
                     $_e2g['permalink'] = '<a href="#" name="'.$gid.'"></a>';
                 }
 
-                if ($gal_desc=='1') {
-                    $_e2g['cat_description'] = $this->_get_dir_info($single_gid,'cat_description');
-                    $_e2g['cat_title'] = $this->_get_dir_info($single_gid,'cat_alias');
+                // gallery's description
+                if ($gal_desc=='1'
+                        // exclude the multiple gids (comma separated)
+                         && !strpos($static_gid,',')
+                ) {
+                    $gallery_id = '';
+                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==false) {
+                        $gallery_id = $static_gid;
+                    }
+                    else {
+                        $gallery_id = $single_gid;
+                    }
+
+                    $_e2g['cat_description'] = $this->_get_dir_info($gallery_id,'cat_description');
+                    $_e2g['cat_title'] = $this->_get_dir_info($gallery_id,'cat_alias');
+
                     $_e2g['title'] = ($_e2g['cat_title'] != '' ? $_e2g['cat_title'] : $_e2g['cat_name'] );
                     if ( $_e2g['title']=='' && $_e2g['cat_description']=='' ) {
                         $_e2g['desc_class']= 'style="display:none;"';
                     }
                 } else {
                     $_e2g['desc_class']= 'style="display:none;"';
-                }
+                } // gallery's description
 
                 $i = 0;
-                while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC)) {
-                    $l['permalink'] = $l['cat_id'];
-                    if ( isset($tag) && !isset($_GET['gid']) ) {
-                        $l['cat_tag'] = '&tag='.$tag;
+                while ($l = mysql_fetch_array($dir_query, MYSQL_ASSOC)) {
+                    if ( isset($static_tag) ) $l['permalink'] = $static_tag;
+                    else $l['permalink'] = $l['cat_id'];
+
+                    if ( isset($tag) ) {
+                        $l['cat_tag'] = '&tag='.$static_tag;
                     } else {
                         $l['cat_tag'] = '';
                     }
@@ -388,15 +439,14 @@ class e2g_snip extends e2g_pub {
                     $l['src'] = $this->_get_thumb( $gdir, $path1.$l1['filename'], $l['w'], $l['h'], $thq );
 
                     // making flexible FURL or not
-                    $l['link'] =  $modx->makeUrl($modx->documentIdentifier
-                            , $modx->documentAliases
-                            , 'gid='
-                    );
+                    $l['link'] =  $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases, 
+                            'gid='
+                            );
 
                     // fill up the dir list with content
                     $_e2g['content'] .= (($grid == 'css') ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>');
                     $i++;
-                } // while ($l = mysql_fetch_array($dirquery, MYSQL_ASSOC))
+                } // while ($l = mysql_fetch_array($dir_query, MYSQL_ASSOC))
             }
         }
 
@@ -415,22 +465,45 @@ class e2g_snip extends e2g_pub {
             $file_page_offset = ceil($dir_count/$limit);
 
             if ( isset($static_tag) ) {
-                $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+                $file_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files ';
 
-                $multiple_tags = @explode(',', $static_tag);
-                for ($i=0;$i<count($multiple_tags);$i++) {
-                    if ($i==0) $filequery .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                    else $filequery .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                // OPEN the selected tagged folder
+                if (isset($_GET['gid'])
+                        && $static_tag==$tag
+                        && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+                $file_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
                 }
-                $filequery .= 'AND status = 1 '
+                else {
+                    // the selected tag of multiple tags on the same page
+                    if ( $static_tag==$tag ) {
+                        $multiple_tags = @explode(',', $tag);
+                    }
+                    // the UNselected tag of multiple tags on the same page
+                    else {
+                        $multiple_tags = @explode(',', $static_tag);
+                    }
+
+                    for ($i=0;$i<count($multiple_tags);$i++) {
+                        if ($i==0) $file_select .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                        else $file_select .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                    }
+                }
+                $file_select .= 'AND status = 1 '
                         . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                 ;
             }
             // exclude &tag snippet call
             else {
-                $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                        . 'WHERE dir_id IN ('.$gid.') '
-                        . 'AND status = 1 '
+                $file_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+
+                if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                    $file_select .= 'WHERE dir_id IN ('.$gid.') ';
+                }
+                else {
+                    $file_select .= 'WHERE dir_id IN ('.$static_gid.') ';
+                }
+
+                $file_select .= 'AND status = 1 '
                         . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                 ;
             }
@@ -439,22 +512,22 @@ class e2g_snip extends e2g_pub {
              * Calculate the available grid to be floated
              */
             if ( $file_thumb_offset > 0 && $file_thumb_offset < $limit ) {
-                $filequery .= 'LIMIT '
+                $file_select .= 'LIMIT '
                         . ( $dir_num_rows > 0 ?
                         ( ' 0, ' . ( $file_thumb_offset ) ) :
                         ( ( ( $gpn - $file_page_offset) * $limit) + $file_thumb_offset ) . ', ' . $limit );
             }
             elseif ( $file_thumb_offset != 0 || $file_thumb_offset == $limit ) {
-                $filequery .= 'LIMIT '
+                $file_select .= 'LIMIT '
                         . ( $modulus_dir_count > 0 ?
                         ( ' 0, ' . ( $file_thumb_offset ) ) :
                         ( ( ( $gpn - $file_page_offset) * $limit) ) . ', ' . $limit );
             }
             else { // $file_thumb_offset == 0 --> No sub directory
-                $filequery .= 'LIMIT ' . ( $gpn * $limit) . ', ' . $limit ;
+                $file_select .= 'LIMIT ' . ( $gpn * $limit) . ', ' . $limit ;
             }
 
-            $file_query_result = mysql_query($filequery) or die(__LINE__.' : '.mysql_error().'<br />'.$filequery);
+            $file_query_result = mysql_query($file_select) or die(__LINE__.' : '.mysql_error().'<br />'.$file_select);
             $file_num_rows = mysql_num_rows($file_query_result);
 
             /**
@@ -488,8 +561,8 @@ class e2g_snip extends e2g_pub {
                 if ( isset($landingpage) ) {
                     $l['link'] = $modx->makeUrl(
                             $landingpage
-                            , ''
-                            , 'lp='.$landingpage.'&' // do not forget the '&' suffix
+                            , ''                        // empty aliases
+                            , 'lp='.$landingpage.'&'    // do not forget the '&' suffix
                     );
                 } else {
                     $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
@@ -508,20 +581,29 @@ class e2g_snip extends e2g_pub {
         /******************************************************************/
         /*                          BACK BUTTON                           */
         /******************************************************************/
-        if ($_e2g['parent_id'] > 0) {
-            $_e2g['back'] = '<p class="'.$e2gback_class.'">&laquo; <a href="'
+        if ($_e2g['parent_id'] > 0
+                && ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true)
+                && (isset($static_tag) ? $static_tag==$tag : null)
+                ) {
+            $_e2g['back'] = '<span class="'.$e2gback_class.'">&laquo; <a href="'
                     // making flexible FURL or not
-                    . $modx->makeUrl($modx->documentIdentifier
-                    , $modx->documentAliases
-                    , 'gid='.$_e2g['parent_id'].'#'.$_e2g['parent_id'])
+                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
+                            'gid='.$_e2g['parent_id']
+                            . (isset($static_tag) ? '&tag='.$static_tag : '' )
+                            .'#'.(isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
+                            )
                     .'">'.$_e2g['parent_name'].'</a></p>';
         }
 
         /******************************************************************/
         /*                             CRUMBS                             */
         /******************************************************************/
-        $_e2g['crumbs']=$crumbs;
-
+        if ( $this->_check_gid_decendant($_GET['gid'], $static_gid)==true
+                && (isset($static_tag) ? $static_tag==$tag : null)
+                ) {
+            $_e2g['crumbs']=$crumbs;
+        }
+        
         /**********************************************************************/
         /*                       PAGINATION: PAGE LINKS                       */
         /*             joining between dirs and files pagination              */
@@ -533,14 +615,39 @@ class e2g_snip extends e2g_pub {
         } elseif ( !empty($gid) ) {
             if ( isset($static_tag) ) {
                 $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
-                $multiple_tags = @explode(',', $tag);
-                for ($i=0;$i<count($multiple_tags);$i++) {
-                    if ($i==0) $file_count_select .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                    else $file_count_select .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+
+                // OPEN the selected tagged folder
+                if (isset($_GET['gid'])
+                        && $static_tag==$tag
+                        && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+                $file_count_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
+                }
+                else {
+                    // the selected tag of multiple tags on the same page
+                    if ( $static_tag==$tag ) {
+                        $multiple_tags = @explode(',', $tag);
+                    }
+                    // the UNselected tag of multiple tags on the same page
+                    else {
+                        $multiple_tags = @explode(',', $static_tag);
+                    }
+
+                    for ($i=0;$i<count($multiple_tags);$i++) {
+                        if ($i==0) $file_count_select .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                        else $file_count_select .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                    }
                 }
             }
-            elseif ( isset($static_gid) ) {
-                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id IN ('.$gid.') ';
+            // default
+            else {
+                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+
+                if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                    $file_count_select .= 'WHERE dir_id IN ('.$gid.') ';
+                }
+                else {
+                    $file_count_select .= 'WHERE dir_id IN ('.$static_gid.') ';
+                }
             }
 
             $file_count_query = mysql_query($file_count_select) or  die(__LINE__.' : '.mysql_error().'<br />'.$file_count_select);
@@ -553,6 +660,11 @@ class e2g_snip extends e2g_pub {
             $_e2g['pages'] = '<div class="'.$e2gpnums_class.'">';
             $i = 0;
             while ($i*$limit < $total_count) {
+                // differentiate the multiple tags, ignore UNselected tag
+                if ($tag!=$static_tag) {
+                    $gpn=0;
+                }
+
                 // using &tag parameter
                 if ( isset($static_tag) ) {
                     if ( $i == $gpn  ) {
@@ -561,13 +673,15 @@ class e2g_snip extends e2g_pub {
                     else {
                         $_e2g['pages'] .= '<a href="'
                                 // making flexible FURL or not
-                                . $modx->makeUrl($modx->documentIdentifier
-                                , $modx->documentAliases
-                                , 'tag='.$static_tag.'&gpn='.$i.$customgetparams.'#'.$static_tag)
+                                . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
+                                        'tag='.$static_tag
+                                        . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
+                                        . '&gpn='.$i.$customgetparams.'#'.$static_tag
+                                        )
                                 .'">'.($i+1).'</a> ';
                     }
                 }
-                // using &gid parameter
+                // original &gid parameter
                 else {
                     if ( $i == $gpn ) {
                         $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
@@ -575,9 +689,12 @@ class e2g_snip extends e2g_pub {
                     else {
                         $_e2g['pages'] .= '<a href="'
                                 // making flexible FURL or not
-                                . $modx->makeUrl($modx->documentIdentifier
-                                , $modx->documentAliases
-                                , 'gid='.$gid.'&gpn='.$i.$customgetparams.'#'.$gid)
+                                . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
+                                        'gid='.$static_gid
+                                        .'&gpn='.$i
+                                        .$customgetparams
+                                        .'#'.$static_gid
+                                        )
                                 .'">'.($i+1).'</a> ';
                     }
                 }
@@ -600,10 +717,10 @@ class e2g_snip extends e2g_pub {
         $grid_class = $this->e2gsnip_cfg['grid_class'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
 
-        $filequery = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
+        $file_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                 . 'WHERE id IN ('.$fid.') '
                 . 'AND status = 1 ';
-        $res = mysql_query($filequery) or die(__LINE__.' : '.mysql_error().'<br />'.$filequery);
+        $res = mysql_query($file_select) or die(__LINE__.' : '.mysql_error().'<br />'.$file_select);
 
         // just to hide gallery's description CSS box in gallery template
         if ( !isset($_e2g['title']) || !isset($_e2g['cat_description']) ) {
@@ -623,10 +740,9 @@ class e2g_snip extends e2g_pub {
             $l['h'] = $this->e2gsnip_cfg['h'];
 
             if ( isset($landingpage) ) {
-                $l['link'] = $modx->makeUrl(
-                        $landingpage
-                        , $modx->documentAliases
-                        , 'lp='.$landingpage.'&'); // do not forget the '&' suffix
+                $l['link'] = $modx->makeUrl($landingpage, $modx->documentAliases,
+                        'lp='.$landingpage
+                        .'&'); // do not forget the '&' suffix
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -878,7 +994,8 @@ class e2g_snip extends e2g_pub {
     /**
      * function get_dir_info
      * function to get directory's information
-     * @param int $dirid = gallery's ID
+     * @param int    $dirid  gallery's ID
+     * @param string $field  database field
      */
     private function _get_dir_info($dirid,$field) {
         return parent::get_dir_info($dirid, $field);
@@ -892,7 +1009,6 @@ class e2g_snip extends e2g_pub {
      * @param string $prefix = placeholder's prefix
      * @param string $suffix = placeholder's suffix
      */
-
     private function _filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
         foreach($data as $k => $v) {
             $tpl = str_replace($prefix.(string)$k.$suffix, (string)$v, $tpl);
@@ -1443,11 +1559,11 @@ class e2g_snip extends e2g_pub {
 
             $l['name_permalink'] = '<a href="#" name="lpcmtnm'.$l['id'].'"></a> ';
             $l['name_w_permalink'] = '<a href="'
-                            // making flexible FURL or not
-                            . $modx->makeUrl($modx->documentIdentifier
-                            , $modx->aliases
-                            , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$cpn.'#lpcmtnm'.$l['id'])
-                            .'">'.$l['author'].'</a> ';
+                    // making flexible FURL or not
+                    . $modx->makeUrl($modx->documentIdentifier
+                    , $modx->aliases
+                    , 'lp='.$landingpage.'&fid='.$fileid.'&cpn='.$cpn.'#lpcmtnm'.$l['id'])
+                    .'">'.$l['author'].'</a> ';
             if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
             else $l['name_w_mail'] = $l['author'];
 
@@ -1465,8 +1581,8 @@ class e2g_snip extends e2g_pub {
             $i = 0;
             while ($i*$ecl_page < $cnt) {
                 if ($i == $cpn) $_P['comment_pages'] .= '<b>'.($i+1).'</b> ';
-                else $_P['comment_pages'] .= 
-                    '<a href="'
+                else $_P['comment_pages'] .=
+                            '<a href="'
                             // making flexible FURL or not
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
@@ -1739,7 +1855,11 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
-     * CHECK THE REAL DESCENDANT OF gid ROOT
+     *
+     * @global mixed $modx
+     * @param int    $id            single ID to be checked
+     * @param string $static_id     comma separated IDs of valid decendants
+     * @return bool  true | false 
      */
     private function _check_gid_decendant($id,$static_id) {
         global $modx;
@@ -1787,52 +1907,70 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
-     * GET IDs OF &tag parameter
+     * CHECK the valid parent IDs OF &tag parameter
      * @global <type> $modx
      * @param string $dirorfile dir|file
      * @param string $tag from &tag parameter
-     * @return string number of &tag's decendants' IDs
+     * @param int    $id  id of the specified dir/file
+     * @return bool true | false
      */
-    private function _tags_ids($dirorfile, $tag) {
+    private function _tags_ids($dirorfile, $tag, $id=1) {
         global $modx;
+        $tag = strtolower($tag);
 
         if ($dirorfile=='dir') {
             $s = 'SELECT cat_id FROM '.$modx->db->config['table_prefix'].'easy2_dirs ';
 
             $multiple_tags = @explode(',', $tag);
             for ($i=0;$i<count($multiple_tags);$i++) {
-                if ($i==0) $s .= 'WHERE cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                else $s .= 'OR cat_tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                if ($i==0) $s .= 'WHERE LOWER(cat_tag) LIKE \'%'.$multiple_tags[$i].'%\' ';
+                else $s .= 'OR LOWER(cat_tag) LIKE \'%'.$multiple_tags[$i].'%\' ';
             }
 
             $tags_query = mysql_query($s) or die(__LINE__.': '.mysql_error().'<br />'.$s);
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
-                $tags_dir[] = $l['cat_id'];
+                $tags_dir[$l['cat_id']] = $l['cat_id'];
             }
-            if (count($tags_dir)>1) {
-                $tag_gids = implode(',',$tags_dir);
-                return $tag_gids;
+//die(__LINE__.': $id= '.$id);
+//die(__LINE__.': $tags_dir= '.print_r($tags_dir));
+//            if (count($tags_dir)>0) {
+//                $tag_gids = implode(',',$tags_dir);
+//                return $tag_gids;
+//            }
+            if (isset($tags_dir[$id])) {
+//echo __LINE__.': _tags_ids= TRUE<br />';
+                return TRUE;
             }
-            else return FALSE;
+            else {
+//echo __LINE__.': _tags_ids= FALSE<br />';
+                return FALSE;
+            }
         }
         if ($dirorfile=='file') {
             $s = 'SELECT id FROM '.$modx->db->config['table_prefix'].'easy2_files ';
 
             $multiple_tags = @explode(',', $tag);
             for ($i=0;$i<count($multiple_tags);$i++) {
-                if ($i==0) $s .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                else $s .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                if ($i==0) $s .= 'WHERE LOWER(tag) LIKE \'%'.$multiple_tags[$i].'%\' ';
+                else $s .= 'OR LOWER(tag) LIKE \'%'.$multiple_tags[$i].'%\' ';
             }
-            
+
             $tags_query = mysql_query($s) or die(__LINE__.': '.mysql_error().'<br />'.$s);
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
-                $tags_file[] = $l['id'];
+                $tags_file[$l['id']] = $l['id'];
             }
-            if (count($tags_file)>1) {
-                $tag_ids = implode(',',$tags_file);
-                return $tag_ids;
+//            if (count($tags_file)>0) {
+//                $tag_ids = implode(',',$tags_file);
+//                return $tag_ids;
+//            }
+            if (isset($tags_file[$id])) {
+//echo __LINE__.': _tags_ids= TRUE<br />';
+                return TRUE;
             }
-            else return FALSE;
+            else {
+//echo __LINE__.': _tags_ids= FALSE<br />';
+                return FALSE;
+            }
         }
     }
 } // class e2g_snip

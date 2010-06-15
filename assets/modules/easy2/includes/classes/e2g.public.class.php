@@ -111,7 +111,8 @@ class e2g_pub { // public/protected class
     /**
      * function get_dir_info
      * function to get directory's information
-     * @param int $dirid = gallery's ID
+     * @param int    $dirid  gallery's ID
+     * @param string $field  database field
      */
     protected function get_dir_info($dirid,$field) {
         global $modx;
