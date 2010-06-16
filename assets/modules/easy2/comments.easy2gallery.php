@@ -84,9 +84,9 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
             $_P['comment_body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
         }
     }
-}
-else {
-    $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
+    else {
+        $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
+    }
 }
 
 // COMMENT ROW TEMPLATE
