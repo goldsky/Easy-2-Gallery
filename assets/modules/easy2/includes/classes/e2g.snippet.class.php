@@ -498,11 +498,9 @@ class e2g_snip extends e2g_pub {
                 if (isset($_GET['gid'])
                         && $static_tag==$tag
                         && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
-echo __LINE__.': $file_select GROUP = 1 <br />';
                 $file_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
                 }
                 else {
-echo __LINE__.': $file_select GROUP = 2 <br />';
                     // the selected tag of multiple tags on the same page
                     if ( $static_tag==$tag ) {
                         $multiple_tags = @explode(',', $tag);
@@ -526,11 +524,9 @@ echo __LINE__.': $file_select GROUP = 2 <br />';
                 $file_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files ';
 
                 if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
-echo __LINE__.': $file_select GROUP = 3 <br />';
                     $file_select .= 'WHERE dir_id IN ('.$gid.') ';
                 }
                 else {
-echo __LINE__.': $file_select GROUP = 4 <br />';
                     $file_select .= 'WHERE dir_id IN ('.$static_gid.') ';
                 }
 
@@ -1934,7 +1930,7 @@ echo __LINE__.': $file_select GROUP = 4 <br />';
 
     /**
      * CHECK the valid parent IDs OF &tag parameter
-     * @global <type> $modx
+     * @global mixed $modx
      * @param string $dirorfile dir|file
      * @param string $tag from &tag parameter
      * @param int    $id  id of the specified dir/file
@@ -1957,18 +1953,11 @@ echo __LINE__.': $file_select GROUP = 4 <br />';
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_dir[$l['cat_id']] = $l['cat_id'];
             }
-//die(__LINE__.': $id= '.$id);
-//die(__LINE__.': $tags_dir= '.print_r($tags_dir));
-//            if (count($tags_dir)>0) {
-//                $tag_gids = implode(',',$tags_dir);
-//                return $tag_gids;
-//            }
+
             if (isset($tags_dir[$id])) {
-//echo __LINE__.': _tags_ids= TRUE<br />';
                 return TRUE;
             }
             else {
-//echo __LINE__.': _tags_ids= FALSE<br />';
                 return FALSE;
             }
         }
@@ -1985,16 +1974,11 @@ echo __LINE__.': $file_select GROUP = 4 <br />';
             while ($l = mysql_fetch_array($tags_query, MYSQL_ASSOC)) {
                 $tags_file[$l['id']] = $l['id'];
             }
-//            if (count($tags_file)>0) {
-//                $tag_ids = implode(',',$tags_file);
-//                return $tag_ids;
-//            }
+
             if (isset($tags_file[$id])) {
-//echo __LINE__.': _tags_ids= TRUE<br />';
                 return TRUE;
             }
             else {
-//echo __LINE__.': _tags_ids= FALSE<br />';
                 return FALSE;
             }
         }
