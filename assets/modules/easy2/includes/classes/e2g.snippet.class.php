@@ -106,9 +106,35 @@ class e2g_snip extends e2g_pub {
 
         $this->_libs();
 
-        // for multiple snippet call of &gid params
-        if ( isset($_GET['gid'])
-                && ($this->_check_gid_decendant($_GET['gid'], $static_gid)==false)
+
+        /**********************************************************************/
+        /*   PAGINATION FIXING for multiple snippet calls on the same page    */
+        /**********************************************************************/
+
+        // for the UNselected &gid snippet call when the other &gid snippet call is selected
+        if ( isset($static_gid)
+                && isset($_GET['gid'])
+                && $this->_check_gid_decendant($_GET['gid'], $static_gid)==false
+                ) {
+            $gpn=0;
+        }
+        // for the UNselected &gid snippet call when &tag snippet call is selected
+        if ( isset($static_gid)
+                && !isset($static_tag)
+                && isset($_GET['tag'])
+                ) {
+            $gpn=0;
+        }
+        // for the UNselected &tag snippet call when &gid snippet call is selected
+        if ( isset($static_tag)
+                && !isset($_GET['tag'])
+                && isset($_GET['gid'])
+                ) {
+            $gpn=0;
+        }
+        // for the UNselected &tag snippet call when the other &tag snippet call is selected
+        if ( isset($static_tag)
+                && $tag!=$static_tag
                 ) {
             $gpn=0;
         }
@@ -124,10 +150,9 @@ class e2g_snip extends e2g_pub {
         // START the grid
         $_e2g['content'] = (($grid=='css') ? '<div class="'.$grid_class.'">':'<table class="'.$grid_class.'"><tr>') ;
 
-            /******************************************************************/
-            /*                       Directory counter                        */
-            /*              count the directories WITHOUT limit!              */
-            /******************************************************************/
+        /******************************************************************/
+        /*                 COUNT DIRECTORY WITHOUT LIMIT!                 */
+        /******************************************************************/
         if ( $showonly=='images' ) {
             $dir_count = 0;
         } else {
@@ -270,7 +295,7 @@ class e2g_snip extends e2g_pub {
             }
 
             /******************************************************************/
-            /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+            /*                 FOLDERS/DIRECTORIES/GALLERIES                  */
             /******************************************************************/
             if ( $showonly != 'images' ) {
                 // if &tag is set
@@ -335,13 +360,15 @@ class e2g_snip extends e2g_pub {
                             .')<>0 '
                             . 'ORDER BY ' . $cat_orderby . ' ' . $cat_order . ' ';
 
-                    // to separate the multiple &gid snippet parameters on the same page
-                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
-                        $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
-                    }
-                    else {
-                        $dir_select .= 'LIMIT 0, ' . $limit;
-                    }
+                    $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
+
+//                    // to separate the multiple &gid snippet parameters on the same page
+//                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+//                        $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
+//                    }
+//                    else {
+//                        $dir_select .= 'LIMIT 0, ' . $limit;
+//                    }
                 }
 
                 $dir_query = mysql_query($dir_select);
@@ -450,9 +477,9 @@ class e2g_snip extends e2g_pub {
             }
         }
 
-        /******************************************************************/
-        /************* FILE content for the current directory *************/
-        /******************************************************************/
+            /******************************************************************/
+            /*             FILE content for the current directory             */
+            /******************************************************************/
 
         if( $dir_num_rows!=$limit && $showonly!='folders' && !empty($gid) ) {
 
@@ -471,9 +498,11 @@ class e2g_snip extends e2g_pub {
                 if (isset($_GET['gid'])
                         && $static_tag==$tag
                         && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+echo __LINE__.': $file_select GROUP = 1 <br />';
                 $file_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
                 }
                 else {
+echo __LINE__.': $file_select GROUP = 2 <br />';
                     // the selected tag of multiple tags on the same page
                     if ( $static_tag==$tag ) {
                         $multiple_tags = @explode(',', $tag);
@@ -492,14 +521,16 @@ class e2g_snip extends e2g_pub {
                         . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                 ;
             }
-            // exclude &tag snippet call
+            // exclude &tag snippet call, for the &gid parameter
             else {
                 $file_select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files ';
 
                 if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+echo __LINE__.': $file_select GROUP = 3 <br />';
                     $file_select .= 'WHERE dir_id IN ('.$gid.') ';
                 }
                 else {
+echo __LINE__.': $file_select GROUP = 4 <br />';
                     $file_select .= 'WHERE dir_id IN ('.$static_gid.') ';
                 }
 
@@ -660,11 +691,6 @@ class e2g_snip extends e2g_pub {
             $_e2g['pages'] = '<div class="'.$e2gpnums_class.'">';
             $i = 0;
             while ($i*$limit < $total_count) {
-                // differentiate the multiple tags, ignore UNselected tag
-                if ($tag!=$static_tag) {
-                    $gpn=0;
-                }
-
                 // using &tag parameter
                 if ( isset($static_tag) ) {
                     if ( $i == $gpn  ) {
