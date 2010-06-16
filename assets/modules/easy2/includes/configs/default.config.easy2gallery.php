@@ -3,6 +3,7 @@ $def_e2g = array (
         'e2g_debug' => 0,
         'dir' => 'assets/images/gallery/',
         'e2g_encode' => 'UTF-8',
+        'tinymcefolder' => 'assets/plugins/tinymce3241/jscripts/tiny_mce',
         'maxw' => 0,
         'maxh' => 0,
         'maxthq' => 86,
