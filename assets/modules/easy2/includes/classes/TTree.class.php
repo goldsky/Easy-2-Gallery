@@ -153,7 +153,6 @@ class TTree {
         // If catalog data is not send with link (/reference?)
         // see update() function above.
         if (!$c) {
-//            $query = 'SELECT * FROM ' . $this->table . ' WHERE '
             $select_c = 'SELECT * FROM ' . $this->table . ' WHERE '
                     . $this->id . ' = ' . $id;
             $result_select_c = mysql_query($select_c);
@@ -165,7 +164,6 @@ class TTree {
         // Данные о новой родительской ветви
         // *********************************** HANDLERS OF THE new parent ********************************** //
 
-//        $query = 'SELECT * FROM ' . $this->table
         $select_to = 'SELECT * FROM ' . $this->table                                     // goldsky
                 . ' WHERE ' . $this->id . ' = ' . $to_id;
         if (!($result_select_to = mysql_query($select_to))) {
@@ -180,7 +178,6 @@ class TTree {
         // ***************************************** ERROR HANDLERS **************************************** //
 
         if ($to[$this->left] > $c[$this->left] && $to[$this->left] < $c[$this->right]) {
-//            $this->error = 'Parent not parent';
             $this->error = __LINE__.' : Should not move parent folder
                 ( <span style="color:blue;">'.$c[$this->name].' [id: '.$c[$this->id].']</span> )
                 to its own branch folder 
@@ -201,7 +198,6 @@ class TTree {
         // Переносимая ветка * (-1)
         // ********************** SET TEMPORARY cat_left VALUE TO THE moving branches ********************** //
 
-//        $query = 'UPDATE ' . $this->table . ' SET '
         $update_between_c = 'UPDATE ' . $this->table . ' SET '                           // goldsky
                 . $this->left . ' = ' . $this->left . ' * (-1) '
                 . ' WHERE '
@@ -282,7 +278,6 @@ class TTree {
                     ;
 
         // ******* SET MARGIN VALUE OF ALL OVER THE old parent's branches AS THE RENUMBERING CONTROL ******* //
-//            $razn2 = $to[$this->left] - $razn - $c[$this->left] + 1;
             $razn2 = $to[$this->left] - $razn - $c[$this->left] + 1;
 
             $this->reports[]= __LINE__.' : $query = '.$query;

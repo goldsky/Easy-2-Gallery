@@ -253,7 +253,7 @@ class e2g_snip extends e2g_pub {
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
                 */
                 if ($multiple_gids_count==1 
-                        && ( isset($tag) && $this->_tags_ids('dir', $tag, $gid) )
+                        || ( isset($tag) && $this->_tags_ids('dir', $tag, $gid) )
                 ) {
                     // if path more the one
                     if (count($path) > 1) {
@@ -292,6 +292,7 @@ class e2g_snip extends e2g_pub {
                         $path = '';
                     }
                 }
+                $_e2g['crumbs']=$crumbs;
             }
 
             /******************************************************************/
@@ -623,15 +624,6 @@ class e2g_snip extends e2g_pub {
                     .'">'.$_e2g['parent_name'].'</a></p>';
         }
 
-        /******************************************************************/
-        /*                             CRUMBS                             */
-        /******************************************************************/
-        if ( $this->_check_gid_decendant($_GET['gid'], $static_gid)==true
-                && (isset($static_tag) ? $static_tag==$tag : null)
-                ) {
-            $_e2g['crumbs']=$crumbs;
-        }
-        
         /**********************************************************************/
         /*                       PAGINATION: PAGE LINKS                       */
         /*             joining between dirs and files pagination              */
