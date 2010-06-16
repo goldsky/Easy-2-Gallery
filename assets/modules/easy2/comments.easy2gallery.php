@@ -50,7 +50,7 @@ $_P['charset']=$settings['modx_charset'];
 // output from language file
 $_P['title']=$lng['title'];
 $_P['comment_add']=$lng['comment_add'];
-$_P['name']=ucfirst($lng['name']);
+$_P['name']=$lng['name'];
 $_P['email']=$lng['email'];
 $_P['usercomment']=$lng['usercomment'];
 $_P['send_btn']=$lng['send_btn'];

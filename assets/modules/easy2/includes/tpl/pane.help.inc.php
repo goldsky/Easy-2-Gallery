@@ -46,7 +46,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <?php echo htmlspecialchars_decode($lng['help_advance_content'], ENT_QUOTES); ?>
         </div>
         <div class="tab-page" id="tabHelpTranslation">
-            <h2 class="tab"><?php echo ucfirst($lng['translation']); ?></h2>
+            <h2 class="tab"><?php echo $lng['translation']; ?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabHelpTranslation' ) );
             </script>

@@ -2028,8 +2028,8 @@ class e2g_mod extends e2g_pub {
      * @param string $text the string to be encoded
      * @return string returns the encoding
      */
-    private function _e2g_encode($text) {
-        return parent::e2g_encode($text);
+    private function _e2g_encode($text, $callback=false) {
+        return parent::e2g_encode($text, $callback);
     }
 
     /**
@@ -2041,8 +2041,8 @@ class e2g_mod extends e2g_pub {
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    private function _e2g_decode($text) {
-        return parent::e2g_decode($text);
+    private function _e2g_decode($text, $callback=false) {
+        return parent::e2g_decode($text, $callback);
     }
 
     /**
@@ -2314,7 +2314,7 @@ class e2g_mod extends e2g_pub {
                             if ($e2g_debug)
                                 $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['files_uploaded'] .' '. $path . $zip_entry_name;
                         } else {
-                            $_SESSION['easy2err'][] = __LINE__.': '. ucfirst($lng['zip_create_err']) .' <b>'. $path . $zip_entry_name.'</b>';
+                            $_SESSION['easy2err'][] = __LINE__.': '. $lng['zip_create_err'] .' <b>'. $path . $zip_entry_name.'</b>';
                         }
                     }
                     ob_end_clean();

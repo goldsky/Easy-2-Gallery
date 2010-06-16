@@ -15,7 +15,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 tpResources2 = new WebFXTabPane(document.getElementById('tabConfigPane'));
             </script>
             <div class="tab-page" id="tabGeneralSettings">
-                <h2 class="tab"><?php echo ucfirst($lng['general']); ?></h2>
+                <h2 class="tab"><?php echo $lng['general'] ; ?></h2>
                 <script type="text/javascript">
                     tpResources2.addTabPage( document.getElementById( 'tabGeneralSettings') );
                 </script>

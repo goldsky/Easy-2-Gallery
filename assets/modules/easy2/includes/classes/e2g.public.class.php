@@ -34,15 +34,39 @@ class e2g_pub { // public/protected class
      * @param string $text the string to be encoded
      * @return string returns the encoding
      */
-    protected function e2g_encode($text) {
+    protected function e2g_encode($text, $callback=false) {
         $e2g_encode = $this->e2gpub_cfg['e2g_encode'];
 
         if ($e2g_encode == 'none') {
-            return $text;
+            if ($callback==false) {
+                $converted_text=$text;
+            }
+            if ($callback=='ucfirst') {
+                $converted_text = ucfirst($text);
+            }
+            
+            // if no matching criteria, just display plain text
+            if ($converted_text==false) $converted_text=$text;
+
+            return $converted_text;
         }
+
         if ($e2g_encode == 'UTF-8') {
-            return utf8_encode($text);
+            if ($callback==false) {
+                $converted_text=utf8_encode($text);
+            }
+            // http://bytes.com/topic/php/answers/444382-ucfirst-utf-8-setlocale#post1693669
+            if ($callback=='ucfirst') {
+                $fc = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8');
+                $converted_text = $fc.mb_substr($text, 1, mb_strlen($text, 'UTF-8'), 'UTF-8');
+            }
+
+            // if no matching criteria, just display plain text
+            if ($converted_text==false) $converted_text=$text;
+            
+            return $converted_text;
         }
+
         /**
          * Using the class from <br />
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
@@ -54,10 +78,19 @@ class e2g_pub { // public/protected class
              */
             include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
             include_once MODX_BASE_PATH.'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
-            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            $converted_text = UTF8::convert_to($text,mb_detect_encoding($text));
-            if ($converted_text!=false) $text=$converted_text;
-            return $text;
+
+            if ($callback==false) {
+                // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+                $converted_text = UTF8::convert_to($text,mb_detect_encoding($text));
+            }
+            if ($callback=='ucfirst') {
+                $converted_text = UTF8::ucfirst($text);
+            }
+
+            // if no matching criteria, just display plain text
+            if ($converted_text==false) $converted_text=$text;
+
+            return $converted_text;
         }
     }
 
@@ -70,7 +103,7 @@ class e2g_pub { // public/protected class
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    protected function e2g_decode($text) {
+    protected function e2g_decode($text, $callback=false) {
         $e2g_encode = $this->e2gpub_cfg['e2g_encode'];
 
         if ($e2g_encode == 'none') {

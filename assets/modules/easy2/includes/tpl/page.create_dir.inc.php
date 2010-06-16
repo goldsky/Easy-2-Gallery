@@ -2,7 +2,7 @@
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <p><?php echo $lng['dir_create'];?>&nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index;?>&pid=<?php echo $parent_id;?>"><?php echo ucfirst($lng['back']);?></a>
+    <a href="<?php echo $index;?>&pid=<?php echo $parent_id;?>"><?php echo $lng['back'];?></a>
 </p>
 <form name="list" action="" method="post">
     <table cellspacing="0" cellpadding="2" class="aForm" >
@@ -15,7 +15,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <td><input name="alias" type="text" size="30" /></td>
         </tr>
         <tr>
-            <td><b><?php echo ucfirst($lng['tag']);?> :</b></td>
+            <td><b><?php echo $lng['tag'];?> :</b></td>
             <td><input name="alias" type="text" size="30" /></td>
         </tr>
         <tr>

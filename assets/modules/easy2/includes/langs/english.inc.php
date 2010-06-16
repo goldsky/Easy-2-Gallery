@@ -1,16 +1,14 @@
 <?php
 $e2g_lang['english'] = array (
-        'alias' => 'alias',
-        'tinymce_path' => 'Tiny MCE path',
-        'tinymce_path_desc' => 'Path to tiny_mce.js file',
         '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
-        'add' => 'add',
+        'add' => 'Add',
         'add_to_db' => 'Add to DB',
+        'alias' => 'Alias',
         'and' => 'and',
         'archive' => 'Archive zip',
         'asc' => 'asc',
         'author' => 'Author',
-        'back' => 'back',
+        'back' => 'Back',
         'bottom' => 'bottom',
         'btn_field_add' => 'Upload more',
         'cache_clean' => 'Cache is cleared',
@@ -24,7 +22,7 @@ $e2g_lang['english'] = array (
         'cfg_e2gback_class' => 'Back button&#039;s class',
         'cfg_e2gpnums_class' => 'Pagination&#039;s class',
         'char_bad' => 'Invalid characters for file system',
-        'char_limitation' => 'Please use &lt;b&gt;common latin letters&lt;/b&gt; for the filenames inside the ZIP contents, or the file system will find errors while uploading.&lt;br /&gt;UTF-8 letter will be ignored or translated to the closest character.',
+        'char_limitation' => '&lt;p&gt;Please use &lt;strong&gt;common latin letters&lt;/strong&gt; for the filenames inside the ZIP contents, or the file system will find errors while uploading.&lt;br /&gt;For some encodings, UTF-8 letter will be ignored or translated to the closest character.&lt;/p&gt;',
         'charset' => 'UTF-8',
         'chmod_err' => 'Unable to change the permission',
         'classname' => 'Class name',
@@ -43,6 +41,10 @@ $e2g_lang['english'] = array (
         'commentsmgr' => 'Comments Manager',
         'config' => 'Config',
         'copy' => 'Copy',
+        'credit_lang_file' => 'Language file credit',
+        'credit_lang_file_author' => 'Cx2, Temus, goldsky',
+        'credit_lang_file_date' => 'June 17, 2010',
+        'credit_lang_file_version' => '2.0',
         'css' => 'CSS',
         'date' => 'Date',
         'date_added' => 'date',
@@ -50,10 +52,10 @@ $e2g_lang['english'] = array (
         'delete' => 'Delete',
         'desc' => 'desc',
         'description' => 'Description',
-        'dir' => 'folder',
+        'dir' => 'Folder',
         'dir_add_err' => 'There was an error while trying to create a folder',
         'dir_added' => 'Folder created',
-        'dir_cfg_desc' => 'Path to folder with &lt;b class=&quot;warning&quot;&gt;trailing slash&lt;/b&gt;, e.g.: assets/easy2gallery/.',
+        'dir_cfg_desc' => '&lt;p&gt;Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.&lt;/p&gt;',
         'dir_create' => 'Create folder',
         'dir_create_err' => 'Could not create folder',
         'dir_created' => 'folder created',
@@ -94,7 +96,7 @@ $e2g_lang['english'] = array (
         'enter_new_alias' => 'Folder&#039;s title',
         'enter_new_dirname' => 'Rename folder',
         'extension_valid' => 'Valid extensions ',
-        'file' => 'file',
+        'file' => 'File',
         'file_add_err' => 'Could not add file',
         'file_added' => 'File added',
         'file_del_err' => 'Could not delete file',
@@ -107,8 +109,8 @@ $e2g_lang['english'] = array (
         'file_rename' => 'Change the filename',
         'file_rename_err' => 'Could not rename file',
         'file_to_same_dir_err' => 'Could not move file into the same folder',
-        'filename' => 'filename',
-        'files' => 'files',
+        'filename' => 'Filename',
+        'files' => 'Files',
         'files_delete_err' => 'Could not delete files',
         'files_deleted' => 'files deleted',
         'files_deleted_fdb' => 'files removed from DB',
@@ -116,7 +118,7 @@ $e2g_lang['english'] = array (
         'files_uploaded' => 'files uploaded',
         'fpath_err' => 'path or id of image is undefined',
         'gallery' => 'Gallery',
-        'general' => 'general',
+        'general' => 'General',
         'glib' => 'JS Library',
         'glib_cfg_desc' => 'Graphic library',
         'go' => 'Go',
@@ -127,38 +129,35 @@ $e2g_lang['english'] = array (
         'grid_class' => 'Grid&#039;s class',
         'grid_class_cfg_desc' => 'CSS class name for the grid.',
         'h' => 'Height',
-        'h_cfg_desc' => 'Max height in pixels, larger images will be resized automatically.&lt;br&gt; &lt;b&gt;0 - no limit&lt;/b&gt;.',
+        'h_cfg_desc' => '&lt;p&gt;Max height in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
         'h_thumb_cfg_desc' => 'Thumbnail height, px',
         'help' => 'Help',
         'help_advance_content' => '&lt;h2&gt;Nested easy2 with MODx API&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;$customgetparams &lt;/strong&gt;- (with dollar sign) a blank variable handle to add custom &amp;amp;_GET parameter into &lt;strong&gt;pagination &lt;/strong&gt;to be nested with other snippets.&lt;/p&gt;
-&lt;p&gt;Example:
-&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;hr /&gt;
 &lt;p&gt;$select = &#039;SELECT * FROM `your_table` WHERE id=&#039;.$param1;&lt;br /&gt;$query = mysql_query($select);&lt;br /&gt;$row = mysql_fetch_array($query);&lt;/p&gt;
 &lt;p&gt;$easy2pictures = $modx-&amp;gt;runSnippet(&quot;easy2&quot;,array(&lt;br /&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; &quot;gid&quot;=&amp;gt;$row[&quot;your_Gallery_Id_Field_Inside_Custom_Table&quot;]&lt;br /&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; ,&quot;customgetparams&quot;=&amp;gt;&#039;&amp;amp;param1=&#039;.$_GET[&#039;param1&#039;].&#039;&amp;amp;param2=&#039;.$_GET[&#039;param2&#039;]&lt;br /&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; ));&lt;/p&gt;
-&lt;p&gt;echo $easy2pictures;
-&lt;/p&gt;
+&lt;p&gt;echo $easy2pictures;&lt;/p&gt;
 &lt;hr /&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;The pagination hyperlink will be like:&lt;br /&gt;http://your-website/index.php?id=4&lt;strong&gt;&amp;amp;param1&lt;/strong&gt;=string&lt;strong&gt;&amp;amp;param2&lt;/strong&gt;=string&amp;amp;gid=2&amp;amp;gpn=1&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;h2&gt;Increase the upload limit&lt;/h2&gt;
-&lt;p&gt;PHP only allows 2MB maximum on the file uploading.&lt;br /&gt;This can be increased by putting the .htaccess file into the &lt;b&gt;[modx-root]/manager/&lt;/b&gt; with this content:&lt;/p&gt;
-&lt;b&gt;php_value upload_max_filesize 16M&lt;/b&gt;
+&lt;p&gt;PHP only allows 2MB maximum on the file uploading.&lt;br /&gt;This can be increased by putting the .htaccess file into the &lt;strong&gt;[modx-root]/manager/&lt;/strong&gt; with this content:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;php_value upload_max_filesize 16M&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Or whatever size you need.&lt;/p&gt;',
         'help_advance_title' => 'Advance',
-        'help_moreinfo_content' => '&lt;p&gt;&lt;a href=&quot;http://e2g.info/documentation.htm&quot; target=&quot;_blank&quot;&gt;&lt;b&gt;Documentation&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;&lt;a href=&quot;http://e2g.info/&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery official site&lt;/a&gt;&lt;/b&gt;&lt;/p&gt;
-&lt;p&gt;&lt;b&gt;&lt;a href=&quot;http://wiki.modxcms.com/index.php/Easy2gallery&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery WIKI&lt;/a&gt;&lt;/b&gt;&lt;/p&gt;',
+        'help_moreinfo_content' => '&lt;p&gt;&lt;a href=&quot;http://e2g.info/documentation.htm&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://e2g.info/&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery official site&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://wiki.modxcms.com/index.php/Easy2gallery&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery WIKI&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;',
         'help_moreinfo_title' => 'More information',
         'help_params_content' => '&lt;h2&gt;Basic call: [!easy2!]&lt;/h2&gt;
 &lt;p&gt;Will show all directories and images under assets/gallery folder&lt;/p&gt;
 &lt;h2&gt;Main parameters&lt;/h2&gt;
 &lt;p&gt;You can have multiple IDs&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt; - id of gallery, from which e2g snippet starts&lt;br /&gt;
-default 1 - root.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt; - id of gallery, from which e2g snippet starts&lt;br /&gt; default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;fid &lt;/strong&gt;- id of image for spesific image display&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;rgid &lt;/strong&gt;- gallery id for random thumbnail output&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;tag&lt;/strong&gt; - image&#039;s/folder&#039;s tag (this parameter will ignore the &amp;amp;gid parameter, but can accompanied by &amp;amp;showonly). Options: word/string.&lt;/p&gt;
@@ -173,10 +172,8 @@ default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100%. (100 - max)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name
-&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;colls&lt;/strong&gt; - images per column&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;limit&lt;/strong&gt; - images per page.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;gpn&lt;/strong&gt; - start page number.&lt;/p&gt;
@@ -188,15 +185,11 @@ default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;
-&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s landing page.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;for the slideshow: if
-there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is
-set up, then the image will be opened directly inside the page,
-replacing the slideshow box.&lt;/li&gt;
+&lt;li&gt;for the slideshow: if there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is set up, then the image will be opened directly inside the page, replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;for the thumbnail, it will open the javascript iframe pop up.&lt;/li&gt;
 &lt;li&gt;At the landing page, the snippet should be called again with its own docID:&lt;br /&gt;[ ! easy2? &amp;amp;landingpage=`__own_ID__` ! ]&lt;/li&gt;
 &lt;li&gt;options: document ID. &lt;/li&gt;
@@ -212,7 +205,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;h2&gt;Comments&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecm&lt;/strong&gt; - comments on / off, 1 / 0 correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecl&lt;/strong&gt; - Comments per page.&lt;/p&gt;
-&lt;h2&gt; Breadcrumbs parameters &lt;/h2&gt;
+&lt;h2&gt;Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_separator&lt;/strong&gt; - Separator. default is &#039;/&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showHome&lt;/strong&gt; - This toggles the root crumb to be added to the beginning of the trail. default is 0&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
@@ -223,8 +216,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;p&gt;Will show all directories and images under assets/gallery folder&lt;/p&gt;
 &lt;h2&gt;Main parameters&lt;/h2&gt;
 &lt;p&gt;You can have multiple IDs&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt; - id of gallery, from which e2g snippet starts&lt;br /&gt;
-default 1 - root.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt; - id of gallery, from which e2g snippet starts&lt;br /&gt; default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;fid &lt;/strong&gt;- id of image for spesific image display&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;rgid &lt;/strong&gt;- gallery id for random thumbnail output&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;showonly&lt;/strong&gt; - images | folders, to show only those spesific type&lt;/p&gt;
@@ -237,10 +229,8 @@ default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100%. (100 - max)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name
-&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;colls&lt;/strong&gt; - images per column&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;limit&lt;/strong&gt; - images per page.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;gpn&lt;/strong&gt; - start page number.&lt;/p&gt;
@@ -252,15 +242,11 @@ default 1 - root.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;
-&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s landing page.&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;for the slideshow: if
-there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is
-set up, then the image will be opened directly inside the page,
-replacing the slideshow box.&lt;/li&gt;
+&lt;li&gt;for the slideshow: if there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is set up, then the image will be opened directly inside the page, replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;for the thumbnail, it will open the javascript iframe pop up.&lt;/li&gt;
 &lt;li&gt;At the landing page, the snippet should be called again with its own docID:&lt;br /&gt;[ ! easy2? &amp;amp;landingpage=`__own_ID__` ! ]&lt;/li&gt;
 &lt;li&gt;options: document ID. &lt;/li&gt;
@@ -276,7 +262,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;h2&gt;Comments&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecm&lt;/strong&gt; - comments on / off, 1 / 0 correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecl&lt;/strong&gt; - Comments per page.&lt;/p&gt;
-&lt;h2&gt; Breadcrumbs parameters &lt;/h2&gt;
+&lt;h2&gt;Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_separator&lt;/strong&gt; - Separator. default is &#039;/&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showHome&lt;/strong&gt; - This toggles the root crumb to be added to the beginning of the trail. default is 0&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
@@ -288,7 +274,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;plugins=`thumb: _pluginname1_ , pluginname2 | gallery: _pluginname3_ , _pluginname4_@custom/index/file.php | landingpage: _pluginname5_`&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Originally, plugins only make a new layer above the thumbnail.&lt;br /&gt;But in the displaying process, each of plugin gets all thumbnails&#039; information from the database by their IDs.&lt;/p&gt;
 &lt;p&gt;All IDs of files are identified by &lt;strong&gt;fid_&lt;/strong&gt;&lt;em&gt;[file_id]&lt;br /&gt;&lt;/em&gt;All IDs of directories are identified by &lt;strong&gt;gid_&lt;/strong&gt;&lt;em&gt;[gallery_id]&lt;br /&gt;&lt;/em&gt;ID for the landingpage is identified by &lt;strong&gt;fid_&lt;/strong&gt;&lt;em&gt;[file_id]&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;The plugins target the specified objects: &lt;/p&gt;
+&lt;p&gt;The plugins target the specified objects:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;thumb (for image thumbnail), &lt;/li&gt;
 &lt;li&gt;gallery (for directory thumbnail), &lt;/li&gt;
@@ -308,9 +294,9 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;contentflow&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
-&lt;p&gt;Default options: &lt;/p&gt;
+&lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic 
+&lt;li&gt;galleriffic     
 &lt;ul&gt;
 &lt;li&gt;example-1&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -318,7 +304,7 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery 
+&lt;li&gt;smoothgallery     
 &lt;ul&gt;
 &lt;li&gt;fullgallery&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -332,27 +318,17 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview 
+&lt;li&gt;galleryview     
 &lt;ul&gt;
-&lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`
-        &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`
-    &amp;amp;ss_h=`400` !]&lt;/li&gt;
-&lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`
-        &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`
-    &amp;amp;ss_h=`400` !]&lt;/li&gt;
-&lt;li&gt;topfilmstrip&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`
-        &amp;amp;ss_config=`topfilmstrip` &amp;amp;w=`100` &amp;amp;h=`38` &amp;amp;ss_w=`700`
-    &amp;amp;ss_h=`400` !]&lt;/li&gt;
-&lt;li&gt;polaroid&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`
-        &amp;amp;ss_config=`polaroid` &amp;amp;w=`114` &amp;amp;h=`110` &amp;amp;ss_w=`469`
-    &amp;amp;ss_h=`452` !]&lt;/li&gt;
-&lt;li&gt;filmstrip&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`
-    &amp;amp;ss_config=`filmstrip` &amp;amp;w=`100` &amp;amp;h=`100` !]&lt;/li&gt;
-&lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`
-    &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
+&lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
+&lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
+&lt;li&gt;topfilmstrip&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`topfilmstrip` &amp;amp;w=`100` &amp;amp;h=`38` &amp;amp;ss_w=`700`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
+&lt;li&gt;polaroid&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`polaroid` &amp;amp;w=`114` &amp;amp;h=`110` &amp;amp;ss_w=`469`     &amp;amp;ss_h=`452` !]&lt;/li&gt;
+&lt;li&gt;filmstrip&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`filmstrip` &amp;amp;w=`100` &amp;amp;h=`100` !]&lt;/li&gt;
+&lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow 
+&lt;li&gt;contentflow     
 &lt;ul&gt;
 &lt;li&gt;default&lt;/li&gt;
 &lt;/ul&gt;
@@ -365,127 +341,60 @@ replacing the slideshow box.&lt;/li&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default = 400 (in px)&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default = 300 (in px)&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default = white&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt;
-- allowed width/height ratio of image dimension inside slideshow box,
-default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).&lt;br /&gt;     Options:&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt; - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).&lt;br /&gt; Options:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&#039;minimumfloatnumber-maximumfloatnumber&#039;, eg: `1.0-2.0`&lt;/li&gt;
 &lt;li&gt;&#039;none&#039; - disable this ratio, all landscape/portrait images will be shown&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_limit&lt;/strong&gt; - to set how many images the slide show should retrieve from the gallery ID.&lt;br /&gt; More images mean longer page loading!&lt;br /&gt; Options&amp;nbsp;: int | &#039;none&#039;&lt;br /&gt; Default&amp;nbsp;: (int)6 &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_css&lt;/strong&gt; - set the slideshow&#039;s CSS path. &lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_js&lt;/strong&gt; - set the slideshow&#039;s JS path. &lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_limit&lt;/strong&gt; - to set how many images the slide show should retrieve from the gallery ID.&lt;br /&gt; More images mean longer page loading!&lt;br /&gt; Options&amp;nbsp;: int | &#039;none&#039;&lt;br /&gt; Default&amp;nbsp;: (int)6&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_css&lt;/strong&gt; - set the slideshow&#039;s CSS path.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_js&lt;/strong&gt; - set the slideshow&#039;s JS path.&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;hr /&gt;
-&lt;p&gt;
-Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.
-&lt;/p&gt;
-&lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt;
-Will show slideshow with all images under folder ID 2 and 4, with box
-dimension 600x200px, with image ratio allowance (width/height) is
-between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
+&lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.&lt;/p&gt;
+&lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt; Will show slideshow with all images under folder ID 2 and 4, with box dimension 600x200px, with image ratio allowance (width/height) is between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
 &lt;p&gt;Images height will be adjusted automatically.&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;h2&gt;Create New Slideshow&lt;/h2&gt;
-&lt;p&gt;&lt;a target=&quot;_blank&quot; href=&quot;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&quot;&gt;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&lt;/a&gt;&lt;/p&gt;',
+&lt;p&gt;&lt;a href=&quot;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&quot; target=&quot;_blank&quot;&gt;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&lt;/a&gt;&lt;/p&gt;',
         'help_slideshow_title' => 'Slideshows',
-        'help_tpl_content' => '&lt;h2&gt; Templates parameters &lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;glib&lt;/strong&gt; - javascript library&lt;br /&gt;
-Default: highslide
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;css&lt;/strong&gt; - CSS style&lt;br /&gt;
-chunk name or path to file&lt;br /&gt;
-Default: assets/modules/easy2/templates/default/style.css
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;tpl&lt;/strong&gt; - gallery template&lt;br /&gt;
-chunk name or path to file&lt;br /&gt;
-Default: assets/modules/easy2/templates/gallery.htm&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;dir_tpl&lt;/strong&gt; - folder template&lt;br /&gt;
-chunk name or path to file.&lt;br /&gt;
-Default: assets/modules/easy2/templates/directory.htm
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;thumb_tpl&lt;/strong&gt; - thumbnail template.&lt;br /&gt;
-chunk name or path to file.&lt;br /&gt;
-Default: assets/modules/easy2/templates/thumbnail.htm
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;rand_tpl&lt;/strong&gt; - random pic template&lt;br /&gt;
-chunk name or path to file.&lt;br /&gt;
-Default: assets/modules/easy2/templates/random_thumbnail.htm
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;page_tpl&lt;/strong&gt; - landing page template&lt;br /&gt;
-chunk name or path to file.&lt;br /&gt;
-Default: assets/modules/easy2/templates/page.htm&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;comments_tpl&lt;/strong&gt; - comments template.&lt;br /&gt;
-chunk name or path to file, relative to file comments.easy2gallery.php.&lt;br /&gt;
-Default: assets/modules/easy2/templates/comments.htm
-&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;comments_row_tpl&lt;/strong&gt; - comments row template.&lt;br /&gt;
-chunk name or path to file, relative to file comments.easy2gallery.php.&lt;br /&gt;
-Default: assets/modules/easy2/templates/comments_row.htm
-&lt;/p&gt;
+        'help_tpl_content' => '&lt;h2&gt;Templates parameters&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;glib&lt;/strong&gt; - javascript library&lt;br /&gt; Default: highslide&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;css&lt;/strong&gt; - CSS style&lt;br /&gt; chunk name or path to file&lt;br /&gt; Default: assets/modules/easy2/templates/default/style.css&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;tpl&lt;/strong&gt; - gallery template&lt;br /&gt; chunk name or path to file&lt;br /&gt; Default: assets/modules/easy2/templates/gallery.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;dir_tpl&lt;/strong&gt; - folder template&lt;br /&gt; chunk name or path to file.&lt;br /&gt; Default: assets/modules/easy2/templates/directory.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;thumb_tpl&lt;/strong&gt; - thumbnail template.&lt;br /&gt; chunk name or path to file.&lt;br /&gt; Default: assets/modules/easy2/templates/thumbnail.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;rand_tpl&lt;/strong&gt; - random pic template&lt;br /&gt; chunk name or path to file.&lt;br /&gt; Default: assets/modules/easy2/templates/random_thumbnail.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;page_tpl&lt;/strong&gt; - landing page template&lt;br /&gt; chunk name or path to file.&lt;br /&gt; Default: assets/modules/easy2/templates/page.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;comments_tpl&lt;/strong&gt; - comments template.&lt;br /&gt; chunk name or path to file, relative to file comments.easy2gallery.php.&lt;br /&gt; Default: assets/modules/easy2/templates/comments.htm&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;comments_row_tpl&lt;/strong&gt; - comments row template.&lt;br /&gt; chunk name or path to file, relative to file comments.easy2gallery.php.&lt;br /&gt; Default: assets/modules/easy2/templates/comments_row.htm&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h2&gt; Placeholders description &lt;/h2&gt;
-&lt;h3&gt; gallery &lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;[+easy2:permalink+]&lt;/strong&gt; - permalink to the gallery grid&lt;br /&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - current folder name&lt;br /&gt;
-&lt;strong&gt;[+easy2:back+]&lt;/strong&gt; - link back to parent&lt;br /&gt;
-&lt;strong&gt;[+easy2:content+]&lt;/strong&gt; - content&lt;br /&gt;
-&lt;strong&gt;[+easy2:pages+]&lt;/strong&gt; - pagination&lt;/p&gt;
-&lt;h3&gt; Folders &lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - folder name&lt;br /&gt;
-&lt;strong&gt;[+easy2:cat_id+]&lt;/strong&gt; - folder id&lt;br /&gt;
-&lt;strong&gt;[+easy2:parent_id+]&lt;/strong&gt; - parent folder id&lt;br /&gt;
-&lt;strong&gt;[+easy2:cat_level+]&lt;/strong&gt; - level&lt;br /&gt;
-&lt;strong&gt;[+easy2:count+]&lt;/strong&gt; - number of files (new)
-&lt;/p&gt;
-&lt;p&gt;and all thumbnail placeholders
-&lt;/p&gt;
-&lt;h3&gt; Thumbnails &lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;[+easy2:src+]&lt;/strong&gt; - path to thumbnail&lt;br /&gt;
-&lt;strong&gt;[+easy2:w+]&lt;/strong&gt; - thumb&#039;s width&lt;br /&gt;
-&lt;strong&gt;[+easy2:h+]&lt;/strong&gt; - thumb&#039;s height&lt;br /&gt;
-&lt;strong&gt;[+easy2:id+]&lt;/strong&gt; - id of image&lt;br /&gt;
-&lt;strong&gt;[+easy2:name+]&lt;/strong&gt; - image name (if &amp;gt; name_len, that lenght = name_len-2)&lt;br /&gt;
-&lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - title (full name)&lt;br /&gt;
-&lt;strong&gt;[+easy2:description+]&lt;/strong&gt; - image description&lt;br /&gt;
-&lt;strong&gt;[+easy2:filename+]&lt;/strong&gt; - image filename&lt;br /&gt;
-&lt;strong&gt;[+easy2:size+]&lt;/strong&gt; - size of file (bytes)&lt;br /&gt;
-&lt;strong&gt;[+easy2:comments+]&lt;/strong&gt; - comments total for image&lt;br /&gt;
-&lt;strong&gt;[+easy2:date_added+]&lt;/strong&gt; - date added&lt;br /&gt;
-&lt;strong&gt;[+easy2:last_modified+]&lt;/strong&gt; - last modified date&lt;br /&gt;
-&lt;strong&gt;[+easy2:dir_id+]&lt;/strong&gt; - folder id&lt;/p&gt;
-&lt;h3&gt; Page&lt;/h3&gt;
-&lt;p&gt;for landing page
-&lt;/p&gt;
-&lt;p&gt;
-&lt;strong&gt;[+easy2:src+]&lt;/strong&gt; - path to thumbnail&lt;br /&gt;
-&lt;strong&gt;[+easy2:name+]&lt;/strong&gt; - image name (if &amp;gt; name_len, that lenght = name_len-2)&lt;br /&gt;
-&lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - title (if there is no alias, it&#039;ll use name)&lt;br /&gt;
-&lt;strong&gt;[+easy2:description+]&lt;/strong&gt; - image description&lt;/p&gt;
-&lt;h3&gt; Comments (row) &lt;/h3&gt;
-&lt;p&gt;&lt;strong&gt;[+easy2:id+]&lt;/strong&gt; - comment id&lt;br /&gt;
-&lt;strong&gt;[+easy2:file_id+]&lt;/strong&gt; - file id&lt;br /&gt;
-&lt;strong&gt;[+easy2:author+]&lt;/strong&gt; - author&#039;s name&lt;br /&gt;
-&lt;strong&gt;[+easy2:email+]&lt;/strong&gt; - author&#039;s email&lt;br /&gt;
-&lt;strong&gt;[+easy2:name_w_mail+]&lt;/strong&gt; - if email is set &quot;&amp;lt;a href=&quot;mailto:[+easy2:email+]&quot;&amp;gt;[+easy2:author+]&amp;lt;/a&amp;gt;&quot;, else &quot;[+easy2:author+]&quot;&lt;br /&gt;
-&lt;strong&gt;[+easy2:comment+]&lt;/strong&gt; - comment&lt;br /&gt;
-&lt;strong&gt;[+easy2:date_added+]&lt;/strong&gt; - comment date&lt;br /&gt;
-&lt;strong&gt;[+easy2:last_modified+]&lt;/strong&gt; - comment last modified date&lt;/p&gt;
-&lt;h3&gt; Comments (page) &lt;/h3&gt;
-&lt;p&gt;
-&lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - pagetitle (from includes/langs/*.comments.php)&lt;br /&gt;
-&lt;strong&gt;[+easy2:body+]&lt;/strong&gt; - comments&lt;br /&gt;
-&lt;strong&gt;[+easy2:pages+]&lt;/strong&gt; - pagination links&lt;br /&gt;
-+ language specific settings includes/langs/*.comments.php&lt;/p&gt;',
+&lt;h2&gt;Placeholders description&lt;/h2&gt;
+&lt;h3&gt;gallery&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:permalink+]&lt;/strong&gt; - permalink to the gallery grid&lt;br /&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - current folder name&lt;br /&gt; &lt;strong&gt;[+easy2:back+]&lt;/strong&gt; - link back to parent&lt;br /&gt; &lt;strong&gt;[+easy2:content+]&lt;/strong&gt; - content&lt;br /&gt; &lt;strong&gt;[+easy2:pages+]&lt;/strong&gt; - pagination&lt;/p&gt;
+&lt;h3&gt;Folders&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - folder name&lt;br /&gt; &lt;strong&gt;[+easy2:cat_id+]&lt;/strong&gt; - folder id&lt;br /&gt; &lt;strong&gt;[+easy2:parent_id+]&lt;/strong&gt; - parent folder id&lt;br /&gt; &lt;strong&gt;[+easy2:cat_level+]&lt;/strong&gt; - level&lt;br /&gt; &lt;strong&gt;[+easy2:count+]&lt;/strong&gt; - number of files (new)&lt;/p&gt;
+&lt;p&gt;and all thumbnail placeholders&lt;/p&gt;
+&lt;h3&gt;Thumbnails&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:src+]&lt;/strong&gt; - path to thumbnail&lt;br /&gt; &lt;strong&gt;[+easy2:w+]&lt;/strong&gt; - thumb&#039;s width&lt;br /&gt; &lt;strong&gt;[+easy2:h+]&lt;/strong&gt; - thumb&#039;s height&lt;br /&gt; &lt;strong&gt;[+easy2:id+]&lt;/strong&gt; - id of image&lt;br /&gt; &lt;strong&gt;[+easy2:name+]&lt;/strong&gt; - image name (if &amp;gt; name_len, that lenght = name_len-2)&lt;br /&gt; &lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - title (full name)&lt;br /&gt; &lt;strong&gt;[+easy2:description+]&lt;/strong&gt; - image description&lt;br /&gt; &lt;strong&gt;[+easy2:filename+]&lt;/strong&gt; - image filename&lt;br /&gt; &lt;strong&gt;[+easy2:size+]&lt;/strong&gt; - size of file (bytes)&lt;br /&gt; &lt;strong&gt;[+easy2:comments+]&lt;/strong&gt; - comments total for image&lt;br /&gt; &lt;strong&gt;[+easy2:date_added+]&lt;/strong&gt; - date added&lt;br /&gt; &lt;strong&gt;[+easy2:last_modified+]&lt;/strong&gt; - last modified date&lt;br /&gt; &lt;strong&gt;[+easy2:dir_id+]&lt;/strong&gt; - folder id&lt;/p&gt;
+&lt;h3&gt;Page&lt;/h3&gt;
+&lt;p&gt;for landing page&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:src+]&lt;/strong&gt; - path to thumbnail&lt;br /&gt; &lt;strong&gt;[+easy2:name+]&lt;/strong&gt; - image name (if &amp;gt; name_len, that lenght = name_len-2)&lt;br /&gt; &lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - title (if there is no alias, it&#039;ll use name)&lt;br /&gt; &lt;strong&gt;[+easy2:description+]&lt;/strong&gt; - image description&lt;/p&gt;
+&lt;h3&gt;Comments (row)&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:id+]&lt;/strong&gt; - comment id&lt;br /&gt; &lt;strong&gt;[+easy2:file_id+]&lt;/strong&gt; - file id&lt;br /&gt; &lt;strong&gt;[+easy2:author+]&lt;/strong&gt; - author&#039;s name&lt;br /&gt; &lt;strong&gt;[+easy2:email+]&lt;/strong&gt; - author&#039;s email&lt;br /&gt; &lt;strong&gt;[+easy2:name_w_mail+]&lt;/strong&gt; - if email is set &quot;&amp;lt;a href=&quot;mailto:[+easy2:email+]&quot;&amp;gt;[+easy2:author+]&amp;lt;/a&amp;gt;&quot;, else &quot;[+easy2:author+]&quot;&lt;br /&gt; &lt;strong&gt;[+easy2:comment+]&lt;/strong&gt; - comment&lt;br /&gt; &lt;strong&gt;[+easy2:date_added+]&lt;/strong&gt; - comment date&lt;br /&gt; &lt;strong&gt;[+easy2:last_modified+]&lt;/strong&gt; - comment last modified date&lt;/p&gt;
+&lt;h3&gt;Comments (page)&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;[+easy2:title+]&lt;/strong&gt; - pagetitle (from includes/langs/*.comments.php)&lt;br /&gt; &lt;strong&gt;[+easy2:body+]&lt;/strong&gt; - comments&lt;br /&gt; &lt;strong&gt;[+easy2:pages+]&lt;/strong&gt; - pagination links&lt;br /&gt; + language specific settings includes/langs/*.comments.php&lt;/p&gt;',
         'help_tpl_title' => 'Templates',
         'hidden' => 'Hidden',
         'id_err' => 'wrong id',
         'ignore' => 'Ignore',
         'image' => 'image',
         'img_old_resize' => 'Resize existing images',
-        'img_old_resize_cfg_desc' => 'Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.',
-        'indexfile' => '&lt;h2&gt;Unauthorized access&lt;/h2&gt;You&#039;re not allowed to access file folder',
+        'img_old_resize_cfg_desc' => '&lt;p&gt;Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.&lt;/p&gt;',
+        'indexfile' => '&lt;h2&gt;Unauthorized access&lt;/h2&gt;
+&lt;p&gt;You&#039;re not allowed to access file folder&lt;/p&gt;',
         'info' => 'Info',
         'inner' => 'inner',
         'install' => 'Install',
@@ -511,7 +420,7 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'modified' => 'Modified',
         'move' => 'Move',
         'movetofolder' => 'Move to folder',
-        'name' => 'name',
+        'name' => 'Name',
         'name_len' => 'max thumbnail name length',
         'name_len_cfg_desc' => 'Max name length',
         'no' => 'no',
@@ -526,11 +435,11 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'path' => 'Path',
         'post' => 'Post',
         'random' => 'random',
-        'remove' => 'remove',
+        'remove' => 'Remove',
         'resize' => 'resize',
         'resize_err' => 'Could not resize file',
         'resize_type' => 'Thumbnail Resize',
-        'resize_type_cfg_desc' => 'Inner: cropped | Shrink: shrink | Resize: proportional autofit',
+        'resize_type_cfg_desc' => '&lt;p&gt;Inner: cropped | Shrink: shrink | Resize: proportional autofit&lt;/p&gt;',
         'restore_err' => 'There was an error while trying to restore',
         'restore_suc' => 'Gallery&#039;s names restored',
         'right' => 'right',
@@ -538,6 +447,8 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'search' => 'Search',
         'select_dirfile' => 'Please select any directory or image',
         'select_newdir' => 'Please select the new directory destination',
+        'setlocale_category' => 'LC_ALL',
+        'setlocale_locale' => 'en_US.utf8',
         'settings_display' => 'Display settings',
         'settings_img' => 'Images settings',
         'settings_thumb' => 'Thumbnails settings',
@@ -548,30 +459,32 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'synchro_err' => 'There was an error while trying to synchronize',
         'synchro_suc' => 'Gallery synchronized',
         'table' => 'table',
-        'tag' => 'tag',
+        'tag' => 'Tag',
         'tag_err_exist' => 'Tag exists',
         'tag_err_noexist' => 'Tag does not exist',
         'tag_err_novalue' => 'Please type in the new tag',
         'tag_suc_new' => 'New tag is applied',
         'text' => 'text',
         'thbg_rgb' => 'Thumbnail background color',
-        'thbg_rgb_cfg_desc' => 'White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.',
+        'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.&lt;/p&gt;',
         'thq' => 'Compression level',
         'thq_cfg_desc' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
         'thumb' => 'thumbnail',
+        'tinymce_path' => 'Tiny MCE path',
+        'tinymce_path_desc' => 'Path to tiny_mce.js file',
         'tofolder' => 'to folder',
         'top' => 'top',
         'tpl' => 'Templates',
-        'tpl_comments_cfg_desc' => 'chunk name or path to file, &lt;b class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/b&gt;',
+        'tpl_comments_cfg_desc' => '&lt;p&gt;chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;&lt;/p&gt;',
         'tpl_css_path_cfg_desc' => 'Path to CSS file',
         'tpl_lp' => 'Landing page tpl',
         'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
         'tpl_lp_cmt_path_cfg_desc' => 'Chunk name or path to landingpage&#039;s comment tpl file',
         'tpl_lp_cmt_row' => 'Landingpage&#039;s comment row tpl',
         'tpl_lp_css' => 'Landing page CSS',
-        'tpl_lp_path_cfg_desc' => 'chunk name or path to template file of a single landing page',
+        'tpl_lp_path_cfg_desc' => '&lt;p&gt;chunk name or path to template file of a single landing page&lt;/p&gt;',
         'tpl_path_cfg_desc' => 'Chunk name or path to tpl file',
-        'translation' => 'translation',
+        'translation' => 'Translation',
         'type' => 'type',
         'type_err' => 'Restricted type of file',
         'uim_preview' => 'Preview',
@@ -584,8 +497,9 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'upload_dir' => 'Upload image in folder',
         'upload_err' => 'Could not upload file',
         'upload_image' => 'Image Upload',
+        'version' => 'Version',
         'w' => 'Width',
-        'w_cfg_desc' => 'Max width in pixels, larger images will be resized automatically.&lt;br&gt; &lt;b&gt;0 - no limit&lt;/b&gt;.',
+        'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
         'w_thumb_cfg_desc' => 'Thumbnail width, px.',
         'watermark_horpos' => 'Horizontal position',
         'watermark_horpos_cfg_desc' => 'horisontal position of watermark',
@@ -597,8 +511,8 @@ Default: assets/modules/easy2/templates/comments_row.htm
         'watermarks' => 'Watermarks',
         'withselected' => 'With selected',
         'yes' => 'yes',
-        'zip' => 'zip',
-        'zip_create_err' => 'unable to create the zip file',
+        'zip' => 'Zip',
+        'zip_create_err' => 'Unable to create the zip file',
         'zip_open_err' => 'unable to create the zip file',
         'zip_select_none' => 'Please select any directory or file to be downloaded',
 );

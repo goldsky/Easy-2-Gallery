@@ -13,7 +13,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             tpResources2 = new WebFXTabPane(document.getElementById('tabImageUploadPane'));
         </script>
         <div class="tab-page" id="tabFile">
-            <h2 class="tab"><?php echo ucfirst($lng['file']);?></h2>
+            <h2 class="tab"><?php echo $lng['file'];?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabFile') );
             </script>
@@ -23,11 +23,11 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <table cellspacing="0" cellpadding="2" class="aForm" height="165">
                             <tr>
                                 <!--th width="165" rowspan="3" class="imPreview" id="imBox">&nbsp;</th-->
-                                <td width="70"><b><?php echo ucfirst($lng['file']);?>:</b></td>
+                                <td width="70"><b><?php echo $lng['file'];?>:</b></td>
                                 <td><input name="img[]" type="file" size="77" onchange="//uimPreview(this.value)"></td>
                             </tr>
                             <tr>
-                                <td><b><?php echo ucfirst($lng['name']);?>:</b></td>
+                                <td><b><?php echo $lng['name'];?>:</b></td>
                                 <td><input name="name[]" type="text" size="75"></td>
                             </tr>
                             <tr>
@@ -44,7 +44,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             </form>
         </div>
         <div class="tab-page" id="tabZip">
-            <h2 class="tab"><?php echo ucfirst($lng['zip']);?></h2>
+            <h2 class="tab"><?php echo $lng['zip'];?></h2>
             <script type="text/javascript">
                 tpResources2.addTabPage( document.getElementById( 'tabZip') );
             </script>

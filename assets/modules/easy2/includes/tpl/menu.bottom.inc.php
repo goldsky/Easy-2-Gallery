@@ -38,13 +38,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </ul>
                     <ul class="actionButtons">
                         <li>
-                            <?php echo ucfirst($lng['tag']);?>:
+                            <?php echo $lng['tag'];?>:
                             <input name="tag_input" type="text" size="20" />&nbsp;
                             <a name="tag_add" href="javascript: submitform(6)" title="Add Tag">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/add.png" alt="" /> <?php echo ucfirst($lng['add']); ?>
+                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/add.png" alt="" /> <?php echo $lng['add']; ?>
                             </a>&nbsp;
                             <a name="tag_del" href="javascript: submitform(7)" title="Remove Tag">
-                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" alt="" /> <?php echo ucfirst($lng['remove']); ?>
+                                <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" alt="" /> <?php echo $lng['remove']; ?>
                             </a>
                         </li>
                     </ul>

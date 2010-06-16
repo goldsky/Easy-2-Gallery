@@ -3,7 +3,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 ?>
 <p><?php echo $lng['editing']; ?> <?php echo $lng['files']; ?> <b><?php echo $row['filename']; ?> <a href="javascript:imPreview4('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $lng['uim_preview']; ?></a></b> (<?php echo $row['comments'].' '. strtolower($lng['comments']); ?>)
     &nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo ucfirst($lng['back']); ?></a>
+    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['back']; ?></a>
 </p>
 
 <table cellspacing="0" cellpadding="0" width="100%">
@@ -12,15 +12,15 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <form name="list" action="" method="post">
                 <table cellspacing="0" cellpadding="2" class="aForm">
                     <tr>
-                        <td nowrap="nowrap"><b><?php echo ucfirst($lng['file_rename']); ?> :</b></td>
+                        <td nowrap="nowrap"><b><?php echo $lng['file_rename'] ; ?> :</b></td>
                         <td><input name="newfilename" type="text" value="<?php echo $filename; ?>" size="30" style="text-align:right;"> <?php echo $ext; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo ucfirst($lng['name']); ?> :</b></td>
+                        <td><b><?php echo $lng['name']; ?> :</b></td>
                         <td><input name="name" type="text" value="<?php echo $row['name']; ?>" size="30"></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo ucfirst($lng['tag']); ?> :</b></td>
+                        <td><b><?php echo $lng['tag']; ?> :</b></td>
                         <td><input name="tag" type="text" value="<?php echo $row['tag']; ?>" size="95"></td>
                     </tr>
                     <tr>

@@ -32,7 +32,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </select>
             </li>
             <li>
-                <?php echo ucfirst($lng['tag']); ?>:
+                <?php echo $lng['tag']; ?>:
                 <select name="opentag" onchange="submitform(2)">
                     <option value=""></option>
                     <?php echo $this->_get_tag_options($_get_tag); ?>

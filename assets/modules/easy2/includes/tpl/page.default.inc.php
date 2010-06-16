@@ -37,7 +37,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td><?php echo $dir[$parent_id]['alias']; ?></td>
     </tr>
     <tr>
-        <td valign="top"><b><?php echo ucfirst($lng['tag']); ?></b></td>
+        <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
         <td valign="top">:</td>
         <td>
             <?php
@@ -65,9 +65,9 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     <tr>
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
                         <td width="20"> </td>
-                        <td><b><?php echo  ucfirst($lng['dir']).' / '.ucfirst($lng['filename']); ?></b></td>
-                        <td><b><?php echo ucfirst($lng['alias']).' / '.ucfirst($lng['name']); ?></b></td>
-                        <td><b><?php echo ucfirst($lng['tag']); ?></b></td>
+                        <td><b><?php echo  $lng['dir'].' / '.$lng['filename']; ?></b></td>
+                        <td><b><?php echo $lng['alias'].' / '.$lng['name']; ?></b></td>
+                        <td><b><?php echo $lng['tag']; ?></b></td>
                         <td width="80"><b><?php echo $lng['modified']; ?></b></td>
                         <td width="40"><b><?php echo $lng['size']; ?></b></td>
                         <td width="60" align="right"><b><?php echo $lng['options']; ?></b></td>

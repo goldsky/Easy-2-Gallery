@@ -1,5 +1,7 @@
 <?php
-header('content-type: text/html; charset=utf-8');
+header('content-type: text/html;'.$lng['charset']);
+setlocale($lng['setlocale_category'], '\''.$lng['setlocale_locale'].'\'');
+
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cfg['_t'];
 ?>
@@ -28,7 +30,7 @@ $_t = $this->e2gmod_cfg['_t'];
                 var im = document.getElementById("imFields");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo ucfirst($lng['remove']); ?></b></a>'+fi.innerHTML;
+                di.innerHTML = '<a href="#" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?></b></a>'+fi.innerHTML;
                 im.appendChild(di);
                 return TRUE;
             }

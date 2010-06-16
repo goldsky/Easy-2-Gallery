@@ -291,8 +291,8 @@ class e2g_snip extends e2g_pub {
                     } else { // if not many, path is set as empty
                         $path = '';
                     }
+                    $_e2g['crumbs']=$crumbs;
                 }
-                $_e2g['crumbs']=$crumbs;
             }
 
             /******************************************************************/
@@ -1882,8 +1882,8 @@ class e2g_snip extends e2g_pub {
      * @param string $text the string to be encoded
      * @return string returns the encoding
      */
-    private function _e2g_encode($text) {
-        return parent::e2g_encode($text);
+    private function _e2g_encode($text, $callback=false) {
+        return parent::e2g_encode($text, $callback);
     }
 
     /**
@@ -1895,8 +1895,8 @@ class e2g_snip extends e2g_pub {
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    private function _e2g_decode($text) {
-        return parent::e2g_decode($text);
+    private function _e2g_decode($text, $callback=false) {
+        return parent::e2g_decode($text, $callback);
     }
 
     /**

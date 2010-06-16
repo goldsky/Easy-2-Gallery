@@ -23,7 +23,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 <tr>
                                     <td width="20"><input type="checkbox" onclick="selectAllComments(this.checked); void(0);" style="border:0;"></td>
                                     <td><b><?php echo $lng['options']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.ucfirst($lng['file']).'</b>'; ?></td>
+                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>
@@ -169,7 +169,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 <tr>
                                     <td width="20"><input type="checkbox" onclick="selectAllHiddenComments(this.checked); void(0);" style="border:0;"></td>
                                     <td><b><?php echo $lng['options']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.ucfirst($lng['file']).'</b>'; ?></td>
+                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
                                     <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>

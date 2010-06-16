@@ -7,10 +7,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 
 include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
 ?>
-<a href="<?php echo $index; ?>"><?php echo ucfirst($lng['back']); ?></a>
+<a href="<?php echo $index; ?>"><?php echo $lng['back']; ?></a>
 <table cellspacing="2" cellpadding="0">
     <tr>
-        <td valign="top"><b><?php echo ucfirst($lng['tag']); ?></b></td>
+        <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
         <td valign="top">:</td>
         <td>
             <?php echo '<a href="'.$index.'&page=tag&tag='.$_get_tag.'">'.$_get_tag.'</a>'; ?>
@@ -27,9 +27,9 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
                         <td width="20"> </td>
                         <td><b><?php echo $lng['path']; ?></b></td>
-                        <td><b><?php echo  ucfirst($lng['dir']).' / '.ucfirst($lng['filename']); ?></b></td>
-                        <td><b><?php echo ucfirst($lng['alias']).' / '.ucfirst($lng['name']); ?></b></td>
-                        <td><b><?php echo ucfirst($lng['tag']); ?></b></td>
+                        <td><b><?php echo  $lng['dir'].' / '.$lng['filename']; ?></b></td>
+                        <td><b><?php echo $lng['alias'].' / '.$lng['name']; ?></b></td>
+                        <td><b><?php echo $lng['tag']; ?></b></td>
                         <td width="80"><b><?php echo $lng['modified']; ?></b></td>
                         <td width="40"><b><?php echo $lng['size']; ?></b></td>
                         <td width="60" align="right"><b><?php echo $lng['options']; ?></b></td>
