@@ -50,7 +50,7 @@ $_P['charset']=$settings['modx_charset'];
 // output from language file
 $_P['title']=$lng['title'];
 $_P['comment_add']=$lng['comment_add'];
-$_P['name']=$lng['name'];
+$_P['name']=ucfirst($lng['name']);
 $_P['email']=$lng['email'];
 $_P['usercomment']=$lng['usercomment'];
 $_P['send_btn']=$lng['send_btn'];
@@ -84,9 +84,9 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
             $_P['comment_body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
         }
     }
-    else {
-        $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
-    }
+}
+else {
+    $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
 }
 
 // COMMENT ROW TEMPLATE

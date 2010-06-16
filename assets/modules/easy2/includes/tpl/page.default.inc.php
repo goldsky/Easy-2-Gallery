@@ -15,7 +15,7 @@ $qdesc = 'SELECT * '
 
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
-    $dir[$parent_id]['title'] = $l['cat_alias'];
+    $dir[$parent_id]['alias'] = $l['cat_alias'];
     $dir[$parent_id]['tag'] = $l['cat_tag'];
     $dir[$parent_id]['desc'] = $l['cat_description'];
 }
@@ -34,7 +34,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
     <tr>
         <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dir[$parent_id]['title']; ?></td>
+        <td><?php echo $dir[$parent_id]['alias']; ?></td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo ucfirst($lng['tag']); ?></b></td>
@@ -53,7 +53,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
     <tr>
         <td valign="top"><b><?php echo $lng['description']; ?></b></td>
         <td valign="top">:</td>
-        <td><?php echo $dir[$parent_id]['desc']; ?></td>
+        <td><?php echo htmlspecialchars_decode($dir[$parent_id]['desc'], ENT_QUOTES); ?></td>
     </tr>
 </table>
 <br />
@@ -65,7 +65,8 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     <tr>
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
                         <td width="20"> </td>
-                        <td><b><?php echo $lng['name']; ?></b></td>
+                        <td><b><?php echo  ucfirst($lng['dir']).' / '.ucfirst($lng['filename']); ?></b></td>
+                        <td><b><?php echo ucfirst($lng['alias']).' / '.ucfirst($lng['name']); ?></b></td>
                         <td><b><?php echo ucfirst($lng['tag']); ?></b></td>
                         <td width="80"><b><?php echo $lng['modified']; ?></b></td>
                         <td width="40"><b><?php echo $lng['size']; ?></b></td>
@@ -82,6 +83,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         foreach ($dirs as $f) {
                             $name = $this->_basename_safe($f);
                             $name = $this->_e2g_encode($name);
+                            $alias = $mdirs[$name]['alias'];
                             $tag = $mdirs[$name]['cat_tag'];
                             $time = filemtime($f);
                             $cnt = $this->_count_files($f);
@@ -123,6 +125,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         </td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
                         <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
+                        <td><?php echo $alias; ?></td>
                         <td>
                             <?php
                                 $multiple_tags = @explode(',', $tag);
@@ -156,6 +159,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td><input name="dir[<?php echo $v['id']; ?>]" value="" type="checkbox" style="border:0;padding:0"></td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder_delete.png" width="16" height="16" border="0" alt="" /></td>
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
+                        <td><?php echo $alias; ?></td>
                         <td>---</td>
                         <td>---</td>
                         <td>---</td>
@@ -191,6 +195,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                             $time = filemtime($f);
                             $name = $this->_basename_safe($f);
                             $name = $this->_e2g_encode($name);
+                            $alias = $mfiles[$name]['alias'];
                             $tag = $mfiles[$name]['tag'];
 
                             $ext = 'picture';
@@ -231,6 +236,7 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         </td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
                         <td><?php echo $n; ?></td>
+                        <td><?php echo $alias; ?></td>
                         <td>
                             <?php
                                 $multiple_tags = @explode(',', $tag);
@@ -264,8 +270,9 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     <tr<?php echo $cl[$i%2]; ?>>
                         <td><input name="im[<?php echo $v['id']; ?>]" value="" type="checkbox" style="border:0;padding:0"></td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/picture_delete.png" width="16" height="16" border="0" alt="" /></td>
-                        <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
-                        <td>---</td>
+                        <td><b style="color:red;"><u><?php echo $v['filename']; ?></u></b> [<?php echo $v['id']; ?>]</td>
+                        <td><?php echo $v['name']; ?></td>
+                        <td><?php echo $alias; ?></td>
                         <td>---</td>
                         <td>---</td>
                         <td align="right" nowrap>

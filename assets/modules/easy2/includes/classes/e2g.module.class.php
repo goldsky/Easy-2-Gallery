@@ -1225,21 +1225,22 @@ class e2g_mod extends e2g_pub {
                     if ($this->_has_bad_char($_POST['newdirname'])) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['char_bad'];
                     } else {
-                        // check the CHMOD permission first
-                        $chmodolddir = chmod('../'.$this->_e2g_decode($gdir.$row['cat_name']), 0755);
-                        $renamedir = rename('../'.$this->_e2g_decode($gdir.$row['cat_name']), '../'.$this->_e2g_decode($gdir.$_POST['newdirname']));
-                        $chmodnewdir = chmod('../'.$this->_e2g_decode($gdir.$_POST['newdirname']), 0755);
-
-                        if (!$chmodolddir) {
+                        // check the CHMOD permission first, EXCLUDE the root gallery
+                        if ($row['cat_id']!=1) {
+                            $chmodolddir = chmod('../'.$this->_e2g_decode($gdir.$row['cat_name']), 0755);
+                            $renamedir = rename('../'.$this->_e2g_decode($gdir.$row['cat_name']), '../'.$this->_e2g_decode($gdir.$_POST['newdirname']));
+                            $chmodnewdir = chmod('../'.$this->_e2g_decode($gdir.$_POST['newdirname']), 0755);
+                        }
+                        if (!$chmodolddir && ($row['cat_id']!=1)) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.'../'.$this->_e2g_decode($gdir.$row['cat_name']);
                         }
-                        elseif (!$renamedir) {
+                        elseif (!$renamedir && ($row['cat_id']!=1)) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['update_err'];
                             $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$_POST['newdirname']);
                         }
                         else {
-                            if (!$chmodnewdir) {
+                            if (!$chmodnewdir && ($row['cat_id']!=1)) {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             }
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs SET ';
@@ -1356,7 +1357,7 @@ class e2g_mod extends e2g_pub {
             /******************************************************************/
             /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
             /******************************************************************/
-                    $q = 'SELECT parent_id,cat_id,cat_name,cat_tag,cat_visible,last_modified FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
+                    $q = 'SELECT parent_id,cat_id,cat_name,cat_alias,cat_tag,cat_visible,last_modified FROM '.$modx->db->config['table_prefix'].'easy2_dirs '
                             .'WHERE cat_tag LIKE \'%'.$_get_tag.'%\' '
                             .'ORDER BY cat_name ASC';
                     $res = mysql_query($q);
@@ -1367,6 +1368,7 @@ class e2g_mod extends e2g_pub {
                             $mdirs[$l['cat_name']]['parent_id'] = $l['parent_id'];
                             $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
+                            $mdirs[$l['cat_name']]['alias'] = $l['cat_alias'];
                             $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
                             $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
                             $mdirs[$l['cat_name']]['last_modified'] = $l['last_modified'];
@@ -1379,7 +1381,7 @@ class e2g_mod extends e2g_pub {
             /******************************************************************/
             /************* FILE content for the current directory *************/
             /******************************************************************/
-                    $q = 'SELECT id,dir_id,filename,tag,last_modified,status FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                    $q = 'SELECT id,dir_id,filename,name,tag,last_modified,status FROM '.$modx->db->config['table_prefix'].'easy2_files '
                             .'WHERE tag LIKE \'%'.$_get_tag.'%\' ';
                     $res = mysql_query($q);
                     $mfiles = array();
@@ -1389,6 +1391,7 @@ class e2g_mod extends e2g_pub {
                             $mfiles[$l['filename']]['id'] = $l['id'];
                             $mfiles[$l['filename']]['dir_id'] = $l['dir_id'];
                             $mfiles[$l['filename']]['name'] = $l['filename'];
+                            $mfiles[$l['filename']]['alias'] = $l['name'];
                             $mfiles[$l['filename']]['tag'] = $l['tag'];
                             $mfiles[$l['filename']]['last_modified'] = $l['last_modified'];
                             $mfiles[$l['filename']]['status'] = $l['status'];
@@ -1407,7 +1410,7 @@ class e2g_mod extends e2g_pub {
                 // display list by ROOT id
                 if (empty($cpath)) {
                     // MySQL Dir list
-                    $q = 'SELECT cat_id,cat_name,cat_tag, cat_visible '
+                    $q = 'SELECT cat_id,cat_name,cat_alias, cat_tag, cat_visible '
                             .'FROM '.$modx->db->config['table_prefix'].'easy2_dirs'.' '
                             .'WHERE parent_id = '.$parent_id.' '
                             .'ORDER BY cat_name ASC'
@@ -1419,6 +1422,7 @@ class e2g_mod extends e2g_pub {
                             // goldsky -- store the array to be connected between db <--> fs
                             $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
                             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
+                            $mdirs[$l['cat_name']]['alias'] = $l['cat_alias'];
                             $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
                             $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
                         }
@@ -1428,7 +1432,9 @@ class e2g_mod extends e2g_pub {
                     mysql_free_result($res);
 
                     // MySQL File list
-                    $q = 'SELECT id,filename,tag,status FROM '.$modx->db->config['table_prefix'].'easy2_files WHERE dir_id = '.$parent_id ;
+                    $q = 'SELECT id, filename, name, tag, status '
+                            .'FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                            .'WHERE dir_id = '.$parent_id ;
                     $res = mysql_query($q);
                     $mfiles = array();
                     if ($res) {
@@ -1436,6 +1442,7 @@ class e2g_mod extends e2g_pub {
                             // goldsky -- store the array to be connected between db <--> fs
                             $mfiles[$l['filename']]['id'] = $l['id'];
                             $mfiles[$l['filename']]['name'] = $l['filename'];
+                            $mfiles[$l['filename']]['alias'] = $l['name'];
                             $mfiles[$l['filename']]['tag'] = $l['tag'];
                             $mfiles[$l['filename']]['status'] = $l['status'];
                         }
@@ -1981,9 +1988,9 @@ class e2g_mod extends e2g_pub {
         if ($mem_usage < 1024)
             echo $mem_usage." bytes";
         elseif ($mem_usage < 1048576)
-            echo round($mem_usage/1024,2)." kilobytes";
+            echo round($mem_usage/1024,2).' '.$lng['kilobytes'];
         else
-            echo round($mem_usage/1048576,2)." megabytes";
+            echo round($mem_usage/1048576,2).' '.$lng['megabytes'];
         echo "</a></span>";
     }
 

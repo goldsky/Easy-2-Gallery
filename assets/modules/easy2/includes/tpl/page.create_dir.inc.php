@@ -7,7 +7,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 <form name="list" action="" method="post">
     <table cellspacing="0" cellpadding="2" class="aForm" >
         <tr>
-            <td><b><?php echo $lng['dir_create'];?> :</b></td>
+            <td><b><?php echo $lng['enter_dirname'];?> :</b></td>
             <td><input name="name" type="text" size="30" /></td>
         </tr>
         <tr>
@@ -20,7 +20,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description'];?> :</b></td>
-            <td><textarea name="description" style="width:500px" cols="" rows=""></textarea></td>
+            <td><textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""></textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="<?php echo $lng['save'];?>" />

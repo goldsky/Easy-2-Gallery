@@ -28,7 +28,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description']; ?> :</b></td>
-            <td><textarea name="description" style="width:500px" cols="" rows=""><?php echo $row['cat_description']; ?></textarea></td>
+            <td><textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""><?php echo $row['cat_description']; ?></textarea></td>
         </tr>
         <tr><td></td>
             <td><input type="submit" value="<?php echo $lng['save']; ?>">

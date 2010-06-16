@@ -27,7 +27,8 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
                         <td width="20"> </td>
                         <td><b><?php echo $lng['path']; ?></b></td>
-                        <td><b><?php echo $lng['name']; ?></b></td>
+                        <td><b><?php echo  ucfirst($lng['dir']).' / '.ucfirst($lng['filename']); ?></b></td>
+                        <td><b><?php echo ucfirst($lng['alias']).' / '.ucfirst($lng['name']); ?></b></td>
                         <td><b><?php echo ucfirst($lng['tag']); ?></b></td>
                         <td width="80"><b><?php echo $lng['modified']; ?></b></td>
                         <td width="40"><b><?php echo $lng['size']; ?></b></td>
@@ -51,6 +52,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                             $cdir='';
                             if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
 
+                            $alias = $mdirs[$name]['alias'];
                             $tag = $mdirs[$name]['cat_tag'];
                             $sanitized_tags = @explode(',', $tag);
                             for ($c=0;$c<count($sanitized_tags);$c++) {
@@ -91,6 +93,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                             <?php } ?>
                         </td>
                         <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
+                        <td><?php echo $alias; ?></td>
                         <td>
                                     <?php
                                     $multiple_tags = @explode(',', $tag);
@@ -136,6 +139,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                             $cdir='';
                             if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
 
+                            $alias = $mfiles[$name]['alias'];
                             $time =  ($mfiles[$name]['last_modified']==''? '---':strtotime($mfiles[$name]['last_modified']));
                             $tag = $mfiles[$name]['tag'];
                             $sanitized_tags = @explode(',', $tag);
@@ -171,6 +175,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                                         <?php } ?>
                         </td>
                         <td><?php echo $n; ?></td>
+                        <td><?php echo $alias; ?></td>
                         <td>
                                     <?php
                                     $multiple_tags = @explode(',', $tag);

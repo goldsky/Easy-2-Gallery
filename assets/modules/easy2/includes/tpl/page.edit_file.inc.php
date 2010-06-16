@@ -16,7 +16,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="newfilename" type="text" value="<?php echo $filename; ?>" size="30" style="text-align:right;"> <?php echo $ext; ?></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng['name']; ?> :</b></td>
+                        <td><b><?php echo ucfirst($lng['name']); ?> :</b></td>
                         <td><input name="name" type="text" value="<?php echo $row['name']; ?>" size="30"></td>
                     </tr>
                     <tr>
@@ -26,7 +26,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td valign="top"><b><?php echo $lng['description']; ?> :</b></td>
                         <td>
-                            <textarea name="description" style="width:500px" cols="" rows=""><?php echo $row['description']; ?></textarea>
+                            <textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""><?php echo $row['description']; ?></textarea>
                         </td>
                     </tr>
                     <tr><td></td>

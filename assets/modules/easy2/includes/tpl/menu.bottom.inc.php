@@ -26,10 +26,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 <?php echo $this->_get_folder_options(0); ?>
 
                             </select>
-                            and
+                            <?php echo $lng['and']; ?>
                             <select name="gotofolder">
-                                <option value="gothere">go there</option>
-                                <option value="stayhere">stay here</option>
+                                <option value="gothere"><?php echo $lng['go_there']; ?></option>
+                                <option value="stayhere"><?php echo $lng['stay_here']; ?></option>
                             </select>
                             <a name="move" href="javascript: submitform(5)">
                                 <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/sort.png" alt="" /> <?php echo $lng['go']; ?>

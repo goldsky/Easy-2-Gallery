@@ -129,7 +129,7 @@ class e2g_pub { // public/protected class
         }
         mysql_free_result($res);
         if (empty($dirinfo[$field])) return null;
-        return $dirinfo[$field];
+        return htmlspecialchars_decode($dirinfo[$field], ENT_QUOTES);
     }
 
     /**

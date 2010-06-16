@@ -164,13 +164,16 @@ $_t = $this->e2gmod_cfg['_t'];
                 }
             }
         </script>
-        <script type="text/javascript" src="<?php echo MODX_BASE_URL;?>assets/plugins/<?php echo $e2g['tinymcefolder'];?>/tiny_mce.js"></script>
+        <script type="text/javascript" src="<?php echo MODX_BASE_URL.$e2g['tinymcefolder'];?>/tiny_mce.js"></script>
         <script type="text/javascript">
         tinyMCE.init({
             mode : "textareas",
             theme : "advanced",
-            editor_selector : "mceAdvanced",
+            editor_selector : "mceEditor",
             theme_advanced_toolbar_location : "top",
+            theme_advanced_toolbar_align : "left",
+            theme_advanced_statusbar_location : "bottom",
+            theme_advanced_resizing : true,
             content_css : "<?php echo E2G_MODULE_URL; ?>includes/tpl/e2g_mod.css"
         });
         </script>

@@ -15,7 +15,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 tpResources2 = new WebFXTabPane(document.getElementById('tabConfigPane'));
             </script>
             <div class="tab-page" id="tabGeneralSettings">
-                <h2 class="tab">General</h2>
+                <h2 class="tab"><?php echo ucfirst($lng['general']); ?></h2>
                 <script type="text/javascript">
                     tpResources2.addTabPage( document.getElementById( 'tabGeneralSettings') );
                 </script>
@@ -50,6 +50,16 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td colspan="2"><?php echo $lng['e2g_encode_cfg_desc']; ?></td>
                     </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['tinymce_path']; ?>:</b></td>
+                        <td>
+                            <input name="tinymcefolder" size="50" type="text" value="<?php echo $e2g['tinymcefolder']; ?>">
+                            /tiny_mce.js
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tinymce_path_desc']); ?></td>
+                    </tr>
                 </table>
             </div>
             <div class="tab-page" id="tabImagesSettings">
@@ -82,8 +92,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['img_old_resize']; ?>:</b></td>
                         <td>
-                            <input type="radio" name="resizeoldimg" value="0" <?php echo ($e2g['resizeoldimg']=='0' ? 'checked="checked"' : '');?>> No
-                            <input type="radio" name="resizeoldimg" value="1" <?php echo ($e2g['resizeoldimg']=='1' ? 'checked="checked"' : '');?>> Yes
+                            <input type="radio" name="resizeoldimg" value="0" <?php echo ($e2g['resizeoldimg']=='0' ? 'checked="checked"' : '');?>> <?php echo $lng['no']; ?>
+                            <input type="radio" name="resizeoldimg" value="1" <?php echo ($e2g['resizeoldimg']=='1' ? 'checked="checked"' : '');?>> <?php echo $lng['yes']; ?>
                         </td>
                     </tr>
                     <tr>
