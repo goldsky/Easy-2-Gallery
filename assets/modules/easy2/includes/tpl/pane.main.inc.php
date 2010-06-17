@@ -1,6 +1,6 @@
 <?php
 header('content-type: text/html;'.$lng['charset']);
-setlocale($lng['setlocale_category'], '\''.$lng['setlocale_locale'].'\'');
+$lng['setlocale_locale'];
 
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cfg['_t'];

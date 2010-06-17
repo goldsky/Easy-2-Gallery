@@ -89,11 +89,11 @@ else {
                     </tr>
                         <?php
                         foreach ($engs as $eng) {
-                            if ($eng['key'] == 'setlocale_category' || $eng['key'] == 'setlocale_locale') {
+                            if ($eng['key'] == 'setlocale') {
                                 ?>
                     <tr>
                         <td style="border:1px dotted #000;" valign="top"><?php echo $eng['key'];?></td>
-                        <td style="border:1px dotted #000;" valign="top"><?php echo $eng['value'];?></td>
+                        <td style="border:1px dotted #000;" valign="top" nowrap="nowrap"><?php echo $eng['value'];?></td>
                         <td style="border:1px dotted #000;" valign="top">
                                         <?php
                                         echo '<input type="text" size="" style="width:98%;" name="'.$others[$eng['key']]['key'].'"
