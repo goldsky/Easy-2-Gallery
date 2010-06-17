@@ -92,7 +92,7 @@ class e2g_mod extends e2g_pub {
                                 .($err===0? 'Missing zip library (php_zip.dll / zip.so)':'').'</b></span><br /><br />';
                     }
 
-                    @unlink( '../'.$this->_e2g_decode($gdir.$_FILES['zip']['name']) );
+//                    @unlink( '../'.$this->_e2g_decode($gdir.$_FILES['zip']['name']) );
                     @unlink($_FILES['zip']['tmp_name']);
                     if( $this->_synchro('../'.$e2g['dir'],1,$e2g, $lng ) ) {
                         $_SESSION['easy2suc'][] = __LINE__.' : '. $lng['synchro_suc'];

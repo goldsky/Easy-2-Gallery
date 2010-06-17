@@ -270,8 +270,8 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- Enabling the previous crumb path from the original &amp;amp;gid call. default is 0&lt;/p&gt;
 &lt;/div&gt;',
         'help_params_title' => 'Parameters',
-        'help_plugins_content' => '&lt;h2&gt;Plugins parameters&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;plugins=`thumb: _pluginname1_ , pluginname2 | gallery: _pluginname3_ , _pluginname4_@custom/index/file.php | landingpage: _pluginname5_`&lt;/strong&gt;&lt;/p&gt;
+        'help_plugins_content' => '&lt;h2&gt;Plugin parameters&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;plugin=`thumb: _pluginname1_ , pluginname2 | gallery: _pluginname3_ , _pluginname4_@custom/index/file.php | landingpage: _pluginname5_`&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Originally, plugins only make a new layer above the thumbnail.&lt;br /&gt;But in the displaying process, each of plugin gets all thumbnails&#039; information from the database by their IDs.&lt;/p&gt;
 &lt;p&gt;All IDs of files are identified by &lt;strong&gt;fid_&lt;/strong&gt;&lt;em&gt;[file_id]&lt;br /&gt;&lt;/em&gt;All IDs of directories are identified by &lt;strong&gt;gid_&lt;/strong&gt;&lt;em&gt;[gallery_id]&lt;br /&gt;&lt;/em&gt;ID for the landingpage is identified by &lt;strong&gt;fid_&lt;/strong&gt;&lt;em&gt;[file_id]&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;The plugins target the specified objects:&lt;/p&gt;
@@ -296,7 +296,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic     
+&lt;li&gt;galleriffic      
 &lt;ul&gt;
 &lt;li&gt;example-1&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -304,7 +304,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery     
+&lt;li&gt;smoothgallery      
 &lt;ul&gt;
 &lt;li&gt;fullgallery&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -318,7 +318,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview     
+&lt;li&gt;galleryview      
 &lt;ul&gt;
 &lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
@@ -328,7 +328,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow     
+&lt;li&gt;contentflow      
 &lt;ul&gt;
 &lt;li&gt;default&lt;/li&gt;
 &lt;/ul&gt;

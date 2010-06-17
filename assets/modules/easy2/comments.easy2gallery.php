@@ -103,8 +103,7 @@ while($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
 
     $l['i'] = $i%2;
 
-    if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
-    else $l['name_w_mail'] = $l['author'];
+    $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
 
     $_P['comment_body'] .= filler($row_tpl, $l);
     $i++;
