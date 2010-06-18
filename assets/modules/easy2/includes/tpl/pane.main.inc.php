@@ -179,6 +179,10 @@ $_t = $this->e2gmod_cfg['_t'];
             // file edit page preview
             function imPreview4 (imPath) {
                 var pElt = this.document.getElementById("pElt4");
+                if(pElt.style.display == "block") {
+                    pElt.style.display = "none";
+                }
+                else pElt.style.display = "block";
                 pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
             }
             // file comment page preview
