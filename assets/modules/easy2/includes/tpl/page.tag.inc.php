@@ -82,19 +82,19 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                             ?>
 
                     <tr<?php echo $cl[$i%2]; ?>>
-                        <td>
+                        <td valign="top">
                             <input name="dir[<?php echo (empty($id)?'d'.$i:$id); ?>]" value="<?php echo $gdir.$name; ?>"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
-                        <td>
+                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
+                        <td valign="top">
                             <?php if($cdir) { ?>
                             <a href="<?php echo $index; ?>&pid=<?php echo $mdirs[$name]['parent_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
                             <?php } ?>
                         </td>
-                        <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
-                        <td><?php echo $alias; ?></td>
-                        <td>
+                        <td valign="top"><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
+                        <td valign="top"><?php echo $alias; ?></td>
+                        <td valign="top">
                                     <?php
                                     $multiple_tags = @explode(',', $tag);
                                     $count_tags = count($multiple_tags);
@@ -104,8 +104,8 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                                     }
                                     ?>
                         </td>
-                        <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
-                        <td>---</td>
+                        <td valign="top"><?php echo @date($e2g['mdate_format'], $time); ?></td>
+                        <td valign="top">---</td>
                         <td align="right" nowrap>
                                     <?php echo $buttons; ?>
                             <a href="<?php echo $index; ?>&act=delete_dir&dir_path=<?php echo $gdir.$cdir.$name.(empty($id)?'':'&dir_id='.$id); ?>"
@@ -123,17 +123,14 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                     /******************************************************************/
                     /************* FILE content for the current directory *************/
                     /******************************************************************/
-//$_SESSION['easy2err'][] = __LINE__.' $mdirs= '.print_r($mdirs);
-//$_SESSION['easy2err'][] = __LINE__.' count($mdirs[$name])= '.count($mdirs);
-//die(__LINE__.': $mfiles= '.print_r($mfiles));
-
+                    
                     $mfiles = isset($mfiles) ? $mfiles : array();
                     if (count($mfiles)>0) {
                         if(is_array($mfiles)) natsort($mfiles);
                         foreach ($mfiles as $f) {
                             $name = $this->_basename_safe($f['name']);
                             $name = $this->_e2g_encode($name);
-
+                            $n_stat = $mfiles[$name]['status']==1 ? '' : '<i>('.$lng['hidden'].')</i>';
                             $cp = $this->_path_to($mfiles[$name]['dir_id']);
                             unset ($cp[1]);
                             $cdir='';
@@ -147,11 +144,8 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                                 $sanitized_tags[$c] = trim($sanitized_tags[$c]);
                             }
                             $ext = 'picture';
-                            if ($mfiles[$name]['status']==1) {
-                                $n = '<a href="javascript:imPreview(\''.$gdir.$cdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
-                            } else {
-                                $n = '<a href="javascript:imPreview(\''.$gdir.$cdir.$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
-                            }
+                            $n = $mfiles[$name]['status']==1 ? $name : '<i>'.$name.'</i>';
+                            $n_stat = $mfiles[$name]['status']==1 ? '' : '<i>('.$lng['hidden'].')</i>';
                             $tag = $mfiles[$name]['tag'];
                             $id = $mfiles[$name]['id'];
                             $buttons = '
@@ -164,19 +158,28 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                             // content
                             ?>
                     <tr<?php echo $cl[$i%2]; ?>>
-                        <td>
+                        <td valign="top">
                             <input name="im[<?php echo (empty($id)?'f'.$i:$id) ;?>]" value="<?php echo $gdir.$cdir.$name;?>"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
-                        <td>
+                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
+                        <td valign="top">
                                     <?php if($cdir) { ?>
                             <a href="<?php echo $index; ?>&pid=<?php echo $mfiles[$name]['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
                                         <?php } ?>
                         </td>
-                        <td><?php echo $n; ?></td>
-                        <td><?php echo $alias; ?></td>
-                        <td>
+                        <td valign="top">
+                            <div>
+                                <a href="javascript:void(0)" onclick="imPreview('<?php echo $gdir.$cdir.$name; ?>', <?php echo $i; ?>);"><?php echo $n; ?>
+                                </a> <?php echo '[id: '.$id.']'; ?> <?php echo $n_stat; ?>
+                            </div>
+                            <div class="imPreview" id="rowPreview_<?php echo $i; ?>" style="display:none;"></div>
+                                        
+                                        <?php //echo $n; ?>
+
+                        </td>
+                        <td valign="top"><?php echo $alias; ?></td>
+                        <td valign="top">
                                     <?php
                                     $multiple_tags = @explode(',', $tag);
                                     $count_tags = count($multiple_tags);
@@ -186,9 +189,9 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                                     }
                                     ?>
                         </td>
-                        <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
-                        <td><?php echo $size; ?>Kb</td>
-                        <td align="right" nowrap><?php echo $buttons; ?>
+                        <td valign="top"><?php echo @date($e2g['mdate_format'], $time); ?></td>
+                        <td valign="top"><?php echo $size; ?>Kb</td>
+                        <td align="right" nowrap valign="top"><?php echo $buttons; ?>
                             <a href="<?php echo $index; ?>&act=delete_file&file_path=<?php echo $gdir.$cdir.$name.(empty($id)?'':'&file_id='.$id); ?>"
                                onclick="return confirmDelete();">
                                 <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/delete.png" border="0"
@@ -205,10 +208,5 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                 <?php include_once E2G_MODULE_PATH . 'includes/tpl/menu.bottom.inc.php'; ?>
             </form>
         </td>
-        <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
-            </table>
-        </th>
     </tr>
 </table>

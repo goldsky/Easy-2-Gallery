@@ -218,12 +218,8 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                             $ext = 'picture';
                             if (isset($mfiles[$name])) {
-                                $n = $name;
-                                if ($mfiles[$name]['status']==1) {
-                                    $n_stat = '';
-                                } else {
-                                    $n_stat = '<i>('.$lng['hidden'].')</i>';
-                                }
+                                $n = $mfiles[$name]['status']==1 ? $name : '<i>'.$name.'</i>';
+                                $n_stat = $mfiles[$name]['status']==1 ? '' : '<i>('.$lng['hidden'].')</i>';
                                 $tag = $mfiles[$name]['tag'];
                                 $id = $mfiles[$name]['id'];
                                 unset($mfiles[$name]);
