@@ -24,6 +24,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/preview.png" alt="" /> <?php echo $lng['search']; ?>
                 </a>
             </li-->
+        </ul>
+        <ul class="actionButtons">
             <li>
                 <?php echo $lng['gotofolder']; ?>:
                 <select name="newparent" onchange="submitform(1)">

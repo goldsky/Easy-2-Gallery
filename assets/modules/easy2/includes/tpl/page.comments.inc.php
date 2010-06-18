@@ -1,7 +1,7 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<p><?php echo $lng['comments']; ?> <?php echo $lng['files']; ?>: <?php echo $gdir; ?> <b><a href="javascript:imPreview('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $row['filename']; ?></a></b> (<?php echo $row['comments']; ?>)
+<p><?php echo $lng['comments']; ?> <?php echo $lng['files']; ?>: <?php echo $gdir; ?> <b><a href="javascript:imPreview5('<?php echo $gdir.$row['filename']; ?>');void(0);"><?php echo $row['filename']; ?></a></b> (<?php echo $row['comments']; ?>)
     &nbsp; &nbsp; &nbsp;
     <img src="<?php echo  E2G_MODULE_URL ; ?>includes/icons/arrow_refresh.png" width="16" height="16" border="0" align="absmiddle" alt="" />
     <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $_GET['file_id']; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['update']; ?></a>
@@ -15,11 +15,11 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
                     <tr>
                         <td width="20"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td align="center"><b><?php echo $lng['date']; ?></b></td>
-                        <td align="center"><b><?php echo $lng['author']; ?></b></td>
-                        <td align="center"><b><?php echo $lng['email']; ?></b></td>
-                        <td align="center"><b><?php echo $lng['ip_address']; ?></b></td>
-                        <td align="center"><b><?php echo $lng['comments']; ?></b></td>
+                        <th><?php echo $lng['date']; ?></th>
+                        <th><?php echo $lng['author']; ?></th>
+                        <th><?php echo $lng['email']; ?></th>
+                        <th><?php echo $lng['ip_address']; ?></th>
+                        <th><?php echo $lng['comments']; ?></th>
                     </tr>
                 <?php
                 $res = mysql_query(
@@ -52,7 +52,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
         </td>
         <th width="205" valign="top">
             <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
+                <tr><th class="imPreview" id="pElt5"></th></tr>
             </table>
         </th>
     </tr>

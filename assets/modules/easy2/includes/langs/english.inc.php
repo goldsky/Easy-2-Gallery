@@ -211,63 +211,6 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showCurrent&lt;/strong&gt; - Include the current page at the end of the trail. default is 1&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- Enabling the previous crumb path from the original &amp;amp;gid call. default is 0&lt;/p&gt;
-&lt;div id=&quot;_mcePaste&quot; style=&quot;overflow: hidden; position: absolute; left: -10000px; top: 171px; width: 1px; height: 1px;&quot;&gt;
-&lt;h2&gt;Basic call: [!easy2!]&lt;/h2&gt;
-&lt;p&gt;Will show all directories and images under assets/gallery folder&lt;/p&gt;
-&lt;h2&gt;Main parameters&lt;/h2&gt;
-&lt;p&gt;You can have multiple IDs&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt; - id of gallery, from which e2g snippet starts&lt;br /&gt; default 1 - root.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;fid &lt;/strong&gt;- id of image for spesific image display&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;rgid &lt;/strong&gt;- gallery id for random thumbnail output&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;showonly&lt;/strong&gt; - images | folders, to show only those spesific type&lt;/p&gt;
-&lt;p&gt;Example call: [!easy2?fid=`2,3`!]&lt;br /&gt;Will show images ID# 2 &lt;strong&gt;and &lt;/strong&gt;3&lt;/p&gt;
-&lt;p&gt;Example call: [!easy2?gid=`20,57` &amp;amp;showonly=`images`!]&lt;br /&gt;Will show &lt;strong&gt;only &lt;/strong&gt;images from folder ID 20 &lt;strong&gt;and &lt;/strong&gt;57 (excluding directory&#039;s thumbnails).&lt;/p&gt;
-&lt;p&gt;Example call: [!easy2?rgid=`102,138`!]&lt;br /&gt;Will show random image from folder ID 102 &lt;strong&gt;and &lt;/strong&gt;138, inside &lt;strong&gt;one &lt;/strong&gt;thumbnail.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;If you want to apply changes to added images you should clean cache.&lt;/strong&gt;&lt;/p&gt;
-&lt;h2&gt;Thumbnail&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt; Folder _thumbnails in root of gallery.&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100%. (100 - max)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;colls&lt;/strong&gt; - images per column&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;limit&lt;/strong&gt; - images per page.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;gpn&lt;/strong&gt; - start page number.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;orderby&lt;/strong&gt; - Sort by: date_added, last_modified, comments, filename, name, random.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;order&lt;/strong&gt; - Sort ASCENDING or DESCENDING, ASC / DESC correspondingly.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;cat_orderby&lt;/strong&gt; - Field by which folders will be sorted out: cat_id, cat_name, random.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;cat_order&lt;/strong&gt; - Sort folders ASCENDING or DESCENDING, ASC / DESC correspondingly&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;resize_type&lt;/strong&gt; - type of thumbnail resizing: &#039;inner&#039; (cropped) | &#039;resize&#039; (autofit) | &#039;shrink&#039; (shrink)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s landing page.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;for the slideshow: if there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is set up, then the image will be opened directly inside the page, replacing the slideshow box.&lt;/li&gt;
-&lt;li&gt;for the thumbnail, it will open the javascript iframe pop up.&lt;/li&gt;
-&lt;li&gt;At the landing page, the snippet should be called again with its own docID:&lt;br /&gt;[ ! easy2? &amp;amp;landingpage=`__own_ID__` ! ]&lt;/li&gt;
-&lt;li&gt;options: document ID. &lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;gal_desc=`1`&lt;/strong&gt; (on) to see the Gallery&#039;s information (title &amp;amp; description) above the gallery template.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;showonly &lt;/strong&gt;- &#039;images&#039; | &#039;folders&#039; under the &amp;amp;gid parameter&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;css &lt;/strong&gt;- path to the customized CSS file&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;js&lt;/strong&gt; - path to the customized javascript file&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;grid_class &lt;/strong&gt;- CSS classname for the gallery grid&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2g_currentcrumb_class &lt;/strong&gt;- CSS classname for the current crumb&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gback_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the back button&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gpnums_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the pagination&lt;/p&gt;
-&lt;h2&gt;Comments&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ecm&lt;/strong&gt; - comments on / off, 1 / 0 correspondingly.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ecl&lt;/strong&gt; - Comments per page.&lt;/p&gt;
-&lt;h2&gt;Breadcrumbs parameters&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_separator&lt;/strong&gt; - Separator. default is &#039;/&#039;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showHome&lt;/strong&gt; - This toggles the root crumb to be added to the beginning of the trail. default is 0&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showCurrent&lt;/strong&gt; - Include the current page at the end of the trail. default is 1&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- Enabling the previous crumb path from the original &amp;amp;gid call. default is 0&lt;/p&gt;
 &lt;/div&gt;',
         'help_params_title' => 'Parameters',
         'help_plugins_content' => '&lt;h2&gt;Plugin parameters&lt;/h2&gt;
@@ -445,6 +388,7 @@ $e2g_lang['english'] = array (
         'right' => 'right',
         'save' => 'Save',
         'search' => 'Search',
+        'select_all' => 'Select all',
         'select_dirfile' => 'Please select any directory or image',
         'select_newdir' => 'Please select the new directory destination',
         'setlocale' => 'setlocale( LC_ALL ,\'en_US.utf8\' )',

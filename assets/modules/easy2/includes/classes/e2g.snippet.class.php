@@ -263,8 +263,8 @@ class e2g_snip extends e2g_pub {
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
                 */
-                if ($multiple_gids_count==1
-                        || ( isset($tag) && $this->_tags_ids('dir', $tag, $gid) )
+                if ( $multiple_gids_count==1
+                        && ( isset($static_tag) ? $this->_tags_ids('dir', $static_tag, $gid) : '' )
                 ) {
                     // if path more the one
                     if (count($path) > 1) {
@@ -301,7 +301,7 @@ class e2g_snip extends e2g_pub {
                         $path = implode('/', array_values($path)).'/';
                     } else { // if not many, path is set as empty
                         $path = '';
-                    }
+                    } // if (count($path) > 1)
                     $_e2g['crumbs']=$crumbs;
                 }
             }

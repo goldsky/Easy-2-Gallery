@@ -124,6 +124,7 @@ class e2g_mod extends e2g_pub {
                         continue;
                     }
 
+                    $_FILES['img']['name'][$i] = $modx->stripAlias(trim($_FILES['img']['name'][$i]));
                     /*
                      * CHECK the existing filenames inside the system.
                      * If exists, amend the filename with number

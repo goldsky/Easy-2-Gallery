@@ -25,12 +25,22 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td valign="top"><b><?php echo $lng['path']; ?></b></td>
         <td valign="top">:</td>
         <td>
+            <?php
+            // signature of non recorded directory = &path in the address bar
+            if (!isset($_GET['path'])) {
+            ?>
             <a href="<?php echo $index; ?>&page=edit_dir&dir_id=<?php echo $parent_id; ?>&pid=<?php echo $this->_get_dir_info($parent_id, 'parent_id'); ?>">
                 <img src="<?php echo  E2G_MODULE_URL ; ?>includes/icons/folder_edit.png" width="16" height="16"
                      alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" align="absmiddle" border=0>
-            </a> <b><?php echo $path; ?></b>
+            </a>
+            <?php } ?>
+            <b><?php echo $path; ?></b>
         </td>
     </tr>
+    <?php
+    // signature of non recorded directory = &path in the address bar
+    if (!isset($_GET['path'])) {
+    ?>
     <tr>
         <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
         <td valign="top">:</td>
@@ -41,12 +51,12 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td valign="top">:</td>
         <td>
             <?php
-                $multiple_tags = @explode(',', $dir[$parent_id]['tag']);
-                $count_tags = count($multiple_tags);
-                for ($c=0;$c<$count_tags;$c++) {
-                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
-                    if ($c<($count_tags-1)) echo ', ';
-                }
+            $multiple_tags = @explode(',', $dir[$parent_id]['tag']);
+            $count_tags = count($multiple_tags);
+            for ($c=0;$c<$count_tags;$c++) {
+                echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                if ($c<($count_tags-1)) echo ', ';
+            }
             ?>
         </td>
     </tr>
@@ -55,8 +65,17 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td valign="top">:</td>
         <td><?php echo htmlspecialchars_decode($dir[$parent_id]['desc'], ENT_QUOTES); ?></td>
     </tr>
+    <?php } ?>
 </table>
 <br />
+<!--div>
+    <a href="javascript:void(0);" id="displayText" onclick="showAllImages();">
+        <span style="float: left;width: 1.2em;">+</span> Show all images
+    </a>
+</div>
+<div id="toggleText" style="display: none;">
+    test
+</div-->
 <table cellspacing="0" cellpadding="0" width="100%">
     <tr>
         <td valign="top">
@@ -75,10 +94,10 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                     <?php
 
-            /******************************************************************/
-            /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
-            /******************************************************************/
-                    
+                    /******************************************************************/
+                    /***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+                    /******************************************************************/
+
                     if ($dirs!=FALSE) {
                         foreach ($dirs as $f) {
                             $name = $this->_basename_safe($f);
@@ -117,7 +136,6 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                             // print out the content
                             ?>
-
                     <tr<?php echo $cl[$i%2]; ?>>
                         <td>
                             <input name="dir[<?php echo (empty($id)?'d'.$i:$id); ?>]" value="<?php echo $gdir.$name; ?>"
@@ -127,14 +145,14 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
                         <td><?php echo $alias; ?></td>
                         <td>
-                            <?php
-                                $multiple_tags = @explode(',', $tag);
-                                $count_tags = count($multiple_tags);
-                                for ($c=0;$c<$count_tags;$c++) {
-                                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
-                                    if ($c<($count_tags-1)) echo ', ';
-                                }
-                            ?>
+                                    <?php
+                                    $multiple_tags = @explode(',', $tag);
+                                    $count_tags = count($multiple_tags);
+                                    for ($c=0;$c<$count_tags;$c++) {
+                                        echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                                        if ($c<($count_tags-1)) echo ', ';
+                                    }
+                                    ?>
                         </td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
                         <td>---</td>
@@ -178,10 +196,10 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     } // if ($dirs!=FALSE)
 
 
-            /******************************************************************/
-            /************* FILE content for the current directory *************/
-            /******************************************************************/
-                    
+                    /******************************************************************/
+                    /************* FILE content for the current directory *************/
+                    /******************************************************************/
+
                     $mfiles = isset($mfiles) ? $mfiles : array();
 
                     $files = @glob('../'.$this->_e2g_decode($gdir).'*.*');
@@ -200,10 +218,11 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                             $ext = 'picture';
                             if (isset($mfiles[$name])) {
+                                $n = $name;
                                 if ($mfiles[$name]['status']==1) {
-                                    $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);">'.$name.'</a> [id: '.$mfiles[$name]['id'].']';
+                                    $n_stat = '';
                                 } else {
-                                    $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);"><i>'.$name.'</i></a> [id: '.$mfiles[$name]['id'].'] <i>('.$lng['hidden'].')</i>';
+                                    $n_stat = '<i>('.$lng['hidden'].')</i>';
                                 }
                                 $tag = $mfiles[$name]['tag'];
                                 $id = $mfiles[$name]['id'];
@@ -216,40 +235,47 @@ while ($l = mysql_fetch_array($resultdesc)) {
      <img src="' . E2G_MODULE_URL . 'includes/icons/picture_edit.png" width="16" height="16" alt="'.$lng['edit'].'" title="'.$lng['edit'].'" border=0>
  </a>';
                             } else {
-                                $n = '<a href="javascript:imPreview(\''.$gdir.$name.'\');void(0);" style="color:gray"><b>'.$name.'</b></a>';
+                                $n = '<span style="color:gray"><b>'.$name.'</b></span>';
                                 $id = null;
                                 $ext .= '_error';
                                 if (empty($cpath)) {
-                                    $buttons = '<a href="'.$index.'&act=add_file&file_path='.$gdir.$name.'&pid='.$parent_id.'">
-                                    <img src="' . E2G_MODULE_URL . 'includes/icons/picture_add.png" width="16" height="16"
-                                        alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
-                                            </a>';
+                                    $buttons = '
+<a href="'.$index.'&act=add_file&file_path='.$gdir.$name.'&pid='.$parent_id.'">
+    <img src="' . E2G_MODULE_URL . 'includes/icons/picture_add.png" width="16" height="16" alt="'.$lng['add_to_db'].'" title="'.$lng['add_to_db'].'" border=0>
+</a>';
                                 }
                                 else $buttons = '';
                             }
                             // content
                             ?>
                     <tr<?php echo $cl[$i%2]; ?>>
-                        <td>
+                        <td valign="top">
                             <input name="im[<?php echo (empty($id)?'f'.$i:$id) ;?>]" value="<?php echo $gdir.$name;?>"
                                    type="checkbox" style="border:0;padding:0">
                         </td>
-                        <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
-                        <td><?php echo $n; ?></td>
-                        <td><?php echo $alias; ?></td>
+                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
                         <td>
-                            <?php
-                                $multiple_tags = @explode(',', $tag);
-                                $count_tags = count($multiple_tags);
-                                for ($c=0;$c<$count_tags;$c++) {
-                                    echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
-                                    if ($c<($count_tags-1)) echo ', ';
-                                }
-                            ?>
+                            <div>
+                                <a href="javascript:void(0)" onclick="imPreview('<?php echo $gdir.$name; ?>', <?php echo $i; ?>);"><?php echo $n; ?>
+                                </a> <?php if ($id!=null) echo '[id: '.$id.']'; ?> <?php echo $n_stat; ?>
+                            </div>
+                            <div class="imPreview" id="rowPreview_<?php echo $i; ?>" style="display:none;"></div>
                         </td>
-                        <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
-                        <td><?php echo $size; ?>Kb</td>
-                        <td align="right" nowrap><?php echo $buttons; ?>
+                        <td valign="top"><?php echo $alias; ?></td>
+                        <td valign="top">
+                                    <?php
+                                    $multiple_tags = @explode(',', $tag);
+                                    $count_tags = count($multiple_tags);
+                                    for ($c=0;$c<$count_tags;$c++) {
+                                        echo '<a href="'.$index.'&page=tag&tag='.trim($multiple_tags[$c]).'">'.trim($multiple_tags[$c]).'</a>';
+                                        if ($c<($count_tags-1)) echo ', ';
+                                    }
+                                    ?>
+                        </td>
+                        <td valign="top"><?php echo @date($e2g['mdate_format'], $time); ?></td>
+                        <td valign="top"><?php echo $size; ?>Kb</td>
+                        <td align="right" nowrap valign="top">
+                        <?php echo $buttons; ?>
                             <a href="<?php echo $index; ?>&act=delete_file&file_path=<?php echo $gdir.$name.(empty($id)?'':'&file_id='.$id); ?>"
                                onclick="return confirmDelete();">
                                 <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/delete.png" border="0"
@@ -294,13 +320,8 @@ while ($l = mysql_fetch_array($resultdesc)) {
 
                     ?>
                 </table>
-               <?php include_once E2G_MODULE_PATH . 'includes/tpl/menu.bottom.inc.php'; ?>
+                <?php include_once E2G_MODULE_PATH . 'includes/tpl/menu.bottom.inc.php'; ?>
             </form>
         </td>
-        <th width="205" valign="top">
-            <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                <tr><th class="imPreview" id="pElt"></th></tr>
-            </table>
-        </th>
     </tr>
 </table>

@@ -103,7 +103,7 @@ else {
                     </tr>
                                 <?php
                             }
-                            unset($engs['setlocale_category'],$engs['setlocale_locale']);
+                            unset($engs['setlocale']);
                         }
                         ?>
                 </table>
@@ -120,7 +120,7 @@ else {
             </tr>
                 <?php
                 foreach ($engs as $eng) {
-                    if ($eng['key'] != 'setlocale_category' || $eng['key'] != 'setlocale_locale') {
+                    if ($eng['key'] != 'setlocale') {
                         // to separate the javascript text
                         $jsclass = (strpos($eng['key'],'js_')!==false ? 'background-color:#FFC;': '');
                         ?>

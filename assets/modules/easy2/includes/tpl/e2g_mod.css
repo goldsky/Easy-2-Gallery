@@ -16,3 +16,13 @@ ul.actionButtons li {
     padding-right: 1em;
     border-right: 1px solid #cccccc;
 }
+
+div.imPreview {
+    display: block;
+    width: 100%;
+    margin: 5px;
+}
+
+div.imPreview img {
+    display: block;
+}

@@ -21,13 +21,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <form name="listComments" action="<?php echo $index; ?>&act=delete_allcomments" method="post">
                             <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
                                 <tr>
-                                    <td width="20"><input type="checkbox" onclick="selectAllComments(this.checked); void(0);" style="border:0;"></td>
-                                    <td><b><?php echo $lng['options']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['comments']; ?></b></td>
+                                    <td colspan="3">
+                                        <input type="checkbox" onclick="selectAllComments(this.checked); void(0);" style="border:0;">
+                                        <?php echo $lng['select_all']; ?>
+                                    </td>
                                 </tr>
                                 <?php
                                 $res = mysql_query(
@@ -45,10 +42,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
                                     ?>
                                 <tr <?php echo $cl[$i%2]; ?> >
-                                    <td valign="top" nowrap="nowrap">
+                                    <td valign="top">
                                         <input name="allcomment[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0">
                                     </td>
-                                    <td valign="top" nowrap="nowrap">
+                                    <td valign="top" width="205">
+                                        <?php if($cdir) { ?>
+                                            <a href="<?php echo $index; ?>&pid=<?php echo $l['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
+                                        <?php } ?>
+                                            
                                         <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
                                             <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"
@@ -59,20 +60,18 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                             <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/picture_edit.png" width="16" height="16"
                                                  alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border=0>
                                         </a>
+                                        <b>
+                                                    <a href="javascript:void(0)" onclick="imPreview2('<?php echo '../'.$e2g['dir'].$cdir.$l['filename']; ?>', <?php echo $i; ?>);">
+                                                    <?php echo $l['filename']; ?></a>
+                                        </b>
+                                            [id:<?php echo $l['file_id']; ?>]
+                                        <div class="imPreview" id="rowPreview2_<?php echo $i; ?>" style="display:none;"></div>
                                     </td>
-                                    <td valign="top" style="width:20%;">
-                                            <?php if($cdir) { ?>
-                                        <a href="<?php echo $index; ?>&pid=<?php echo $l['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
-                                                <?php } ?>
-                                        <b><a href="javascript:imPreview2('<?php echo '../'.$e2g['dir'].$cdir.$l['filename']; ?>');void(0);">
-                                                    <?php echo $l['filename']; ?></a></b> [id:<?php echo $l['file_id']; ?>]
-                                    </td>
-                                    <td valign="top" nowrap="nowrap"><?php echo $l['date_added']; ?></td>
-                                    <td valign="top" nowrap="nowrap">
-                                            <?php echo $l['author']; ?><br />
-                                        <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a>
-                                    </td>
-                                    <td nowrap="nowrap"><?php echo $l['ip_address']; 
+                                    <td valign="top" style="width:100%;">
+                                        <div>
+                                            <b><?php echo $l['author']; ?></b> (
+                                        <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a> ,
+                                        <?php echo $l['ip_address'];
                                             if($l['ip_address']) {?>
                                         <a href="<?php echo $index
                                                         .'&act=ignore_ip'
@@ -80,13 +79,18 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                                         .'&ip='.$l['ip_address']
                                                         .'&u='.$l['author']
                                                         .'&e='.$l['email']
-                                                   ; ?>" onclick="return ignoreIPAddress();">
+                                                   ; ?>"
+                                                   onclick="return ignoreIPAddress();">
                                             <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/delete.png" border="0"
                                                  alt="<?php echo $lng['ignore']; ?>" title="<?php echo $lng['ignore']; ?>" />
                                         </a>
-                                                <?php } ?>
+                                                <?php } ?> )
+                                        </div>
+                                        <hr />
+                                        <div><em style="font-size:smaller;"><?php echo $l['date_added']; ?></em><br />
+                                            <?php echo htmlspecialchars_decode($l['comment'], ENT_QUOTES) ; ?>
+                                        </div>
                                     </td>
-                                    <td valign="top" style="width:100%;"><?php echo htmlspecialchars($l['comment']); ?></td>
                                 </tr>
                                     <?php
                                     if (isset($cdir)) {
@@ -99,11 +103,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                             <input type="submit" value="<?php echo $lng['delete']; ?>" name="delete" style="font-weight:bold;color:red" />
                         </form>
                     </td>
-                    <th width="205" valign="top">
-                        <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                            <tr><th class="imPreview" id="pElt2"></th></tr>
-                        </table>
-                    </th>
                 </tr>
             </table>
         </div>
@@ -167,13 +166,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <form name="listHiddenComments" action="<?php echo $index; ?>&act=delete_allcomments" method="post">
                             <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
                                 <tr>
-                                    <td width="20"><input type="checkbox" onclick="selectAllHiddenComments(this.checked); void(0);" style="border:0;"></td>
-                                    <td><b><?php echo $lng['options']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><?php echo '['.$lng['path'].'/] <b>'.$lng['file'].'</b>'; ?></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['date']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['author']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['ip_address']; ?></b></td>
-                                    <td align="center" nowrap="nowrap"><b><?php echo $lng['comments']; ?></b></td>
+                                    <td colspan="3">
+                                        <input type="checkbox" onclick="selectAllHiddenComments(this.checked); void(0);" style="border:0;">
+                                        <?php echo $lng['select_all']; ?>
+                                    </td>
                                 </tr>
                                 <?php
                                 $res = mysql_query(
@@ -189,11 +185,20 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     unset ($cp[1]);
                                     if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
                                     ?>
+
+
+
+
+
                                 <tr <?php echo $cl[$i%2]; ?> >
-                                    <td valign="top" nowrap="nowrap">
+                                    <td valign="top">
                                         <input name="allcomment[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0">
                                     </td>
-                                    <td valign="top" nowrap="nowrap">
+                                    <td valign="top" width="205">
+                                        <?php if($cdir) { ?>
+                                            <a href="<?php echo $index; ?>&pid=<?php echo $l['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
+                                        <?php } ?>
+
                                         <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $l['file_id']; ?>"
                                            onclick="showTab('file')">
                                             <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"
@@ -204,33 +209,37 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                             <img src="<?php echo E2G_MODULE_URL; ?>includes/icons/picture_edit.png" width="16" height="16"
                                                  alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border=0>
                                         </a>
+                                        <b>
+                                                    <a href="javascript:void(0)" onclick="imPreview3('<?php echo '../'.$e2g['dir'].$cdir.$l['filename']; ?>', <?php echo $i; ?>);">
+                                                    <?php echo $l['filename']; ?></a>
+                                        </b>
+                                            [id:<?php echo $l['file_id']; ?>]
+                                        <div class="imPreview" id="rowPreview3_<?php echo $i; ?>" style="display:none;" ></div>
                                     </td>
-                                    <td valign="top" style="width:20%;">
-                                            <?php if($cdir) { ?>
-                                        <a href="<?php echo $index; ?>&pid=<?php echo $l['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
-                                                <?php } ?>
-                                        <b><a href="javascript:imPreview3('<?php echo '../'.$e2g['dir'].$cdir.$l['filename']; ?>');void(0);">
-                                                    <?php echo $l['filename']; ?></a></b> [id:<?php echo $l['file_id']; ?>]
-                                    </td>
-                                    <td valign="top" nowrap="nowrap"><?php echo $l['date_added']; ?></td>
-                                    <td valign="top" nowrap="nowrap">
-                                            <?php echo $l['author']; ?><br />
-                                        <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a>
-                                    </td>
-                                    <td nowrap="nowrap"><?php echo $l['ip_address'];
+                                    <td valign="top" style="width:100%;">
+                                        <div>
+                                            <b><?php echo $l['author']; ?></b> (
+                                        <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a> ,
+
+
+                                        <?php echo $l['ip_address'];
                                             if($l['ip_address']) {?>
                                         <a href="<?php echo $index
                                                         .'&page=comments'
                                                         .'&act=unignore_ip'
                                                         .'&ip='.$l['ip_address']
                                                    ; ?>"
-                                           onclick="return unignoreIPAddress();">
+                                                   onclick="return unignoreIPAddress();">
                                             <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/icon_accept.gif" border="0"
                                                  alt="<?php echo $lng['unignore']; ?>" title="<?php echo $lng['unignore']; ?>" />
                                         </a>
-                                                <?php } ?>
+                                                <?php } ?> )
+                                        </div>
+                                        <hr />
+                                        <div><em style="font-size:smaller;"><?php echo $l['date_added']; ?></em><br />
+                                            <?php echo htmlspecialchars_decode($l['comment'], ENT_QUOTES) ; ?>
+                                        </div>
                                     </td>
-                                    <td valign="top" style="width:100%;"><?php echo htmlspecialchars($l['comment']); ?></td>
                                 </tr>
                                     <?php
                                     if (isset($cdir)) {
@@ -243,11 +252,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                             <input type="submit" value="<?php echo $lng['delete']; ?>" name="delete" style="font-weight:bold;color:red" />
                         </form>
                     </td>
-                    <th width="205" valign="top">
-                        <table cellspacing="0" cellpadding="0" style="margin-left:5px; border: 1px solid #ccc;width:200px; height:200px; ">
-                            <tr><th class="imPreview" id="pElt3"></th></tr>
-                        </table>
-                    </th>
                 </tr>
             </table>
         </div>
