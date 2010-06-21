@@ -17,7 +17,7 @@ class e2g_mod extends e2g_pub {
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
-        set_time_limit(0);
+//        set_time_limit(0);
 
         $this->e2gmod_cfg = $e2gmod_cfg;
 //        $this->e2g = $e2g;
@@ -123,7 +123,6 @@ class e2g_mod extends e2g_pub {
                         continue;
                     }
 
-                    $_FILES['img']['name'][$i] = $modx->stripAlias(trim($_FILES['img']['name'][$i]));
                     /*
                      * CHECK the existing filenames inside the system.
                      * If exists, amend the filename with number
@@ -1569,7 +1568,7 @@ class e2g_mod extends e2g_pub {
         $fs = @glob($path.'*');
         if (is_array($fs)) natsort($fs);
         // goldsky -- alter the maximum execution time
-//        set_time_limit(0);
+        set_time_limit(0);
         if ($fs!=FALSE)
             foreach ($fs as $f) {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
@@ -1735,7 +1734,7 @@ class e2g_mod extends e2g_pub {
     private function _synchro ($path, $pid, $cfg, $lng) {
         global $modx;
         // goldsky -- alter the maximum execution time
-//        set_time_limit(0);
+        set_time_limit(0);
         $time_start = microtime(TRUE);
         /*
          * STORE variable arrays for synchronizing comparison

@@ -276,7 +276,8 @@ class e2g_pub { // public/protected class
         // encoding
         $endpath = end($path);
 //        $encodinghtml= htmlspecialchars($this->e2g_encode($endpath), ENT_QUOTES);
-        $encodinghtml= htmlspecialchars($endpath, ENT_QUOTES);
+//        $encodinghtml= htmlspecialchars($endpath, ENT_QUOTES);
+        $encodinghtml = $endpath;
         return $encodinghtml;
     }
 }
