@@ -342,63 +342,166 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     chref($index);
 
 } else {
-    $content = '<br />
-<form method="post">
-<table cellspacing="0" cellpadding="0">
-<tr>
-<td width="50"><b>'.$lngi['path'].':</b></td>
-<td><input name="path" type="text" style="width:100%" value="'.$e2g['dir'].'"></td>
-</tr>
-</table>
-'.$lngi['comment1'].'
-<p><br />'.$lngi['comment'].'</p><br />
-<input type="submit" value="'.$lngi['ok'].'">
-</form>';
-}
 
-$suc = $err = '';
-if (count($_SESSION['easy2err']) > 0) {
-    $err = '<p class="warning">'.implode('<br />', $_SESSION['easy2err']).'</p>';
-    $_SESSION['easy2err'] = array();
-    $err .= '<br /><br /><a href="#" onclick="document.location.href=\''.$index.'\'"><b>'.$lngi['back'].'</b></a>';
-}
-if (count($_SESSION['easy2suc']) > 0) {
-    $suc = '<p class="success">'.implode('<br />', $_SESSION['easy2suc']).'</p>';
-    $_SESSION['easy2suc'] = array();
-}
-if (!empty($suc) || !empty($err)) $content = $suc.$err;
-
-$out = '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+    ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>Easy 2 Gallery '.E2G_VERSION.' installation</title>
-<link rel="stylesheet" type="text/css" href="media/style/' . $_t . '/style.css" />
-<script type="text/javascript" src="media/script/tabpane.js"></script>
-</head>
-<body>
-<div class="sectionHeader">Easy 2 Gallery '.E2G_VERSION.' installation</div>
-<div class="sectionBody">
- <div class="tab-pane" id="easy2Pane">
-<script type="text/javascript">
- tpResources = new WebFXTabPane(document.getElementById("easy2Pane"));
-</script>
-  <div class="tab-page" id="install">
-   <h2 class="tab">'.$lng['install'].'</h2>
-<script type="text/javascript">
- tpResources.addTabPage(document.getElementById("install"));
-</script>
-   '.htmlspecialchars_decode($content).'</div>
- </div>
-</div>
-</body>
-</html>';
-
-echo $out;
+    <head>
+        <title>Easy 2 Gallery <?php echo E2G_VERSION;?> installation</title>
+        <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t;?>/style.css" />
+        <script type="text/javascript" src="media/script/tabpane.js"></script>
+    </head>
+    <body>
+        <div class="sectionHeader">Easy 2 Gallery <?php echo E2G_VERSION;?> installation</div>
+        <div class="sectionBody">
+            <div class="tab-pane" id="easy2Pane">
+                <script type="text/javascript">
+                    tpResources = new WebFXTabPane(document.getElementById("easy2Pane"));
+                </script>
+                <div class="tab-page" id="install">
+                    <h2 class="tab"><?php echo $lng['install'];?></h2>
+                    <script type="text/javascript">
+                        tpResources.addTabPage(document.getElementById("install"));
+                    </script>
+                        <?php
+                        if (count($_SESSION['easy2err']) > 0 || count($_SESSION['easy2suc']) > 0 ) {
+                            $suc = $err = '';
+                            if (count($_SESSION['easy2err']) > 0) {
+                                $err = '<p class="warning">'.implode('<br />', $_SESSION['easy2err']).'</p>';
+                                $_SESSION['easy2err'] = array();
+                                $err .= '<br /><br /><a href="#" onclick="document.location.href=\''.$index.'\'"><b>'.$lngi['back'].'</b></a>';
+                            }
+                            if (count($_SESSION['easy2suc']) > 0) {
+                                $suc = '<p class="success">'.implode('<br />', $_SESSION['easy2suc']).'</p>';
+                                $_SESSION['easy2suc'] = array();
+                            }
+                            echo $suc.$err;
+                        } else {
+                            ?>
+                    <br />
+                    <form method="post" action="">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td width="50"><b><?php echo $lngi['path'];?>:</b></td>
+                                <td><input name="path" type="text" style="width:100%" value="<?php echo $e2g['dir'];?>"></td>
+                            </tr>
+                        </table>
+                        <p><?php echo htmlspecialchars_decode($lngi['comment1']);?></p>
+                        <p><?php echo htmlspecialchars_decode($lngi['comment']);?></p>
+                        <div style="color:green; font-weight: bold; font-size: 1.5em;">
+                            <?php echo htmlspecialchars_decode($lngi['system_check']);?> :
+                        </div>
+                        <ul>
+                            <?php
+                            system_check($lngi);
+                            ?>
+                        </ul>
+                    </form>
+                            <?php
+                        }
+                        ?>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
+    <?php
+}
 
 function chref ($href) {
     $_SESSION['easy2ms'] = $ms;
     header('Location: '.$href);
     exit();
+}
+
+function system_check($lngi) {
+    $icon_ok  = '<img src="'.MODX_BASE_URL.'assets/modules/easy2/includes/icons/action_check.png" /> ';
+    $icon_bad = '<img src="'.MODX_BASE_URL.'assets/modules/easy2/includes/icons/action_delete.png" /> ';
+    $disabled = '';
+
+    // PHP version
+    if (PHP_VERSION<'5') {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad.'PHP version '.PHP_VERSION;
+        echo '</li>';
+    }
+    else {
+        echo '<li>';
+        echo $icon_ok .'PHP version '.PHP_VERSION;
+        echo '</li>';
+    }
+
+    // PHP magic_quotes_gpc()
+    if (get_magic_quotes_gpc()) {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad.'PHP magic_quotes_gpc()=ON';
+        echo '</li>';
+    }
+    else {
+        echo '<li>';
+        echo $icon_ok .'PHP magic_quotes_gpc()=OFF';
+        echo '</li>';
+    }
+
+    // PHP Multibyte String
+    if (is_array(mb_get_info())) {
+        echo '<li>';
+        echo $icon_ok.'PHP Multibyte String enabled';
+        echo '</li>';
+    }
+    else {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad .'PHP Multibyte String disabled';
+        echo '</li>';
+    }
+
+    // PHP Zipclass
+    if (class_exists(ZipArchive)) {
+        echo '<li>';
+        echo $icon_ok.'PHP ZipArchive';
+        echo '</li>';
+    }
+    else {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad .'PHP ZipArchive';
+        echo '</li>';
+    }
+
+    // Easy 2 javascript library folders
+    if (is_dir('../assets/libs')) {
+        echo '<li>';
+        echo $icon_ok.'assets/libs';
+        echo '</li>';
+    }
+    else {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad .'assets/libs';
+        echo '</li>';
+    }
+
+    // Easy 2 javascript config file
+    if (is_file('../assets/modules/easy2/includes/configs/config.easy2gallery.php')) {
+        echo '<li>';
+        echo $icon_ok.'config.easy2gallery.php';
+        echo '</li>';
+    }
+    else {
+        $disabled = 'disabled';
+        echo '<li>';
+        echo $icon_bad .'config.easy2gallery.php';
+        echo '</li>';
+    }
+
+    if ($disabled == 'disabled') $style='style="color:gray;"';
+?>
+    <br />
+    <input type="submit" <?php echo $style;?> value="<?php echo htmlspecialchars_decode($lngi['ok']);?>" <?php echo $disabled;?>>
+<?php
 }
 
 /*
