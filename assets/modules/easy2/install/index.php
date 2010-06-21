@@ -77,10 +77,11 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         cat_level int(10) unsigned NOT NULL default \'0\',
                         cat_name varchar(255) NOT NULL default \'\',
                         cat_alias varchar(255) NULL default \'\',
+                        cat_summary varchar(255) NULL default \'\',
                         cat_tag varchar(255) NULL default \'\',
-                        cat_visible tinyint(4) NOT NULL default \'1\',
                         cat_description text default NULL,
                         last_modified datetime default NULL,
+                        cat_visible tinyint(4) NOT NULL default \'1\',
                         PRIMARY KEY  (cat_id),
                         KEY cat_left (cat_left)
                         ) TYPE=MyISAM')) {
@@ -117,7 +118,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // cat_left
     if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left')!==FALSE
             && check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_left', 'Type')!= 'int(10)'
-            ) {
+    ) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs CHANGE cat_left cat_left INT(10) default \'0\' NOT NULL');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_left '.$lngi['upgraded'];
     }
@@ -136,12 +137,25 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_tag '.$lngi['created'];
     }
 
+    // rearrange field for 1.4.0 RC1
+    // cat_visible
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_visible')!==FALSE) {
+        @mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs CHANGE `cat_visible` `cat_visible` TINYINT(4) DEFAULT \'1\' NOT NULL AFTER `last_modified`') ;
+    }
+
+    // additional field for 1.4.0 RC1
+    // cat_summary
+    if (check_field($GLOBALS['table_prefix'].'easy2_dirs', 'cat_summary')===FALSE) {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_dirs ADD cat_summary varchar(255) default NULL AFTER cat_alias');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_dirs.cat_summary '.$lngi['created'];
+    }
+
     $res = mysql_query('SELECT cat_right FROM '.$GLOBALS['table_prefix'].'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
         if (mysql_query(
-                'INSERT INTO '.$GLOBALS['table_prefix'].'easy2_dirs '
-                .'(parent_id, cat_id, cat_left, cat_right, cat_level, cat_name, cat_alias, cat_visible, cat_description, last_modified) '
-                ."VALUES (0,1,1,2,0,'Easy 2','',1,'','')")) {
+        'INSERT INTO '.$GLOBALS['table_prefix'].'easy2_dirs '
+        .'(parent_id, cat_id, cat_left, cat_right, cat_level, cat_name, cat_alias, cat_description, last_modified, cat_visible) '
+        ."VALUES (0,1,1,2,0,'Easy 2','','','',1)")) {
             $_SESSION['easy2suc'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['added'];
         } else {
             $_SESSION['easy2err'][] = $lngi['data'].' '.$GLOBALS['table_prefix'].'easy2_dirs '.$lngi['add_err'].'<br />'.mysql_error();
@@ -204,6 +218,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         filename varchar(255) NOT NULL default \'\',
                         size varchar(32) NOT NULL default \'\',
                         name varchar(255) NOT NULL default \'\',
+                        summary varchar(255) NOT NULL default \'\',
                         tag varchar(255) NULL default \'\',
                         description text NULL default \'\',
                         date_added datetime NOT NULL default \'0000-00-00 00:00:00\',
@@ -231,6 +246,13 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     if (check_field($GLOBALS['table_prefix'].'easy2_files', 'tag')===FALSE) {
         mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_files ADD tag varchar(255) default NULL AFTER name');
         $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_files.tag '.$lngi['created'];
+    }
+
+    // additional field for 1.4.0 RC1
+    // summary
+    if (check_field($GLOBALS['table_prefix'].'easy2_files', 'summary')===FALSE) {
+        mysql_query('ALTER TABLE '.$GLOBALS['table_prefix'].'easy2_files ADD summary varchar(255) default NULL AFTER name');
+        $_SESSION['easy2suc'][] = $lngi['field'].' '.$GLOBALS['table_prefix'].'easy2_files.summary '.$lngi['created'];
     }
 
     // adding ignore IP table for 1.4.0 Beta4
@@ -633,7 +655,7 @@ function is_validfolder($foldername, $e2g_debug=0) {
  * To LOOP restore file's and folder's name of previous version's installation
  * @param string $path path to file or folder
  * @param int $pid current parent ID
-*/
+ */
 
 function restore_all ($path, $pid) {
     global $modx;

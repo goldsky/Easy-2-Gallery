@@ -16,6 +16,7 @@ $qdesc = 'SELECT * '
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
     $dir[$parent_id]['alias'] = $l['cat_alias'];
+    $dir[$parent_id]['summary'] = $l['cat_summary'];
     $dir[$parent_id]['tag'] = $l['cat_tag'];
     $dir[$parent_id]['desc'] = $l['cat_description'];
 }
@@ -45,6 +46,11 @@ while ($l = mysql_fetch_array($resultdesc)) {
         <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
         <td valign="top">:</td>
         <td><?php echo $dir[$parent_id]['alias']; ?></td>
+    </tr>
+    <tr>
+        <td valign="top"><b><?php echo $lng['summary']; ?></b></td>
+        <td valign="top">:</td>
+        <td><?php echo htmlspecialchars_decode($dir[$parent_id]['summary'], ENT_QUOTES); ?></td>
     </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
@@ -83,13 +89,13 @@ while ($l = mysql_fetch_array($resultdesc)) {
                 <table width="100%" cellpadding="2" border="0" cellspacing="0" class="grid" style="margin-bottom:10px">
                     <tr>
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td width="20"> </td>
-                        <td><b><?php echo  $lng['dir'].' / '.$lng['filename']; ?></b></td>
-                        <td><b><?php echo $lng['alias'].' / '.$lng['name']; ?></b></td>
-                        <td><b><?php echo $lng['tag']; ?></b></td>
-                        <td width="80"><b><?php echo $lng['modified']; ?></b></td>
-                        <td width="40"><b><?php echo $lng['size']; ?></b></td>
-                        <td width="60" align="right"><b><?php echo $lng['options']; ?></b></td>
+                        <th width="20"><?php echo $lng['type']; ?></th>
+                        <th><?php echo $lng['dir'].' / '.$lng['filename']; ?></th>
+                        <th><?php echo $lng['alias'].' / '.$lng['name']; ?></th>
+                        <th><?php echo $lng['tag']; ?></th>
+                        <th width="80"><?php echo $lng['modified']; ?></th>
+                        <th width="40"><?php echo $lng['size']; ?></th>
+                        <th width="60" align="right"><?php echo $lng['options']; ?></th>
                     </tr>
 
                     <?php

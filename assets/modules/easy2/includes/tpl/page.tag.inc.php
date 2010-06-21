@@ -25,14 +25,14 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                 <table width="100%" cellpadding="2" border="0" cellspacing="0" class="grid" style="margin-bottom:10px">
                     <tr>
                         <td width="25"><input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;"></td>
-                        <td width="20"> </td>
-                        <td><b><?php echo $lng['path']; ?></b></td>
-                        <td><b><?php echo  $lng['dir'].' / '.$lng['filename']; ?></b></td>
-                        <td><b><?php echo $lng['alias'].' / '.$lng['name']; ?></b></td>
-                        <td><b><?php echo $lng['tag']; ?></b></td>
-                        <td width="80"><b><?php echo $lng['modified']; ?></b></td>
-                        <td width="40"><b><?php echo $lng['size']; ?></b></td>
-                        <td width="60" align="right"><b><?php echo $lng['options']; ?></b></td>
+                        <th><?php echo $lng['path']; ?></th>
+                        <th width="20"><?php echo $lng['type']; ?></th>
+                        <th><?php echo  $lng['dir'].' / '.$lng['filename']; ?></th>
+                        <th><?php echo $lng['alias'].' / '.$lng['name']; ?></th>
+                        <th><?php echo $lng['tag']; ?></th>
+                        <th width="80"><?php echo $lng['modified']; ?></th>
+                        <th width="40"><?php echo $lng['size']; ?></th>
+                        <th width="60" align="right"><?php echo $lng['options']; ?></th>
                     </tr>
 
                     <?php
@@ -85,13 +85,12 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                         <td valign="top">
                             <input name="dir[<?php echo (empty($id)?'d'.$i:$id); ?>]" value="<?php echo $gdir.$name; ?>"
                                    type="checkbox" style="border:0;padding:0">
-                        </td>
-                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
-                        <td valign="top">
+                        </td><td valign="top">
                             <?php if($cdir) { ?>
                             <a href="<?php echo $index; ?>&pid=<?php echo $mdirs[$name]['parent_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
                             <?php } ?>
                         </td>
+                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder<?php echo $ext;?>.png" width="16" height="16" border="0" alt="" /></td>
                         <td valign="top"><?php echo $n; ?> (<?php echo $cnt; ?>)</td>
                         <td valign="top"><?php echo $alias; ?></td>
                         <td valign="top">
@@ -161,13 +160,12 @@ include_once E2G_MODULE_PATH . 'includes/tpl/menu.top.inc.php';
                         <td valign="top">
                             <input name="im[<?php echo (empty($id)?'f'.$i:$id) ;?>]" value="<?php echo $gdir.$cdir.$name;?>"
                                    type="checkbox" style="border:0;padding:0">
-                        </td>
-                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
-                        <td valign="top">
+                        </td><td valign="top">
                                     <?php if($cdir) { ?>
                             <a href="<?php echo $index; ?>&pid=<?php echo $mfiles[$name]['dir_id']; ?>&page=openexplorer" onclick="showTab('file')"><?php echo $cdir; ?></a><br />
                                         <?php } ?>
                         </td>
+                        <td valign="top"><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/<?php echo $ext ; ?>.png" width="16" height="16" alt="" /></td>
                         <td valign="top">
                             <div>
                                 <a href="javascript:void(0)" onclick="imPreview('<?php echo $gdir.$cdir.$name; ?>', <?php echo $i; ?>);"><?php echo $n; ?>

@@ -28,7 +28,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['e2g_debug_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_debug_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['path']; ?>:</b></td>
@@ -48,7 +48,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['e2g_encode_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_encode_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tinymce_path']; ?>:</b></td>
@@ -97,7 +97,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['img_old_resize_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['img_old_resize_cfg_desc']); ?></td>
                     </tr>
                 </table>
             </div>
@@ -112,14 +112,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['w_thumb_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['h']; ?>:</b></td>
                         <td><span style="color:green;">&amp;h=</span> <input name="h" type="text" value="<?php echo $e2g['h']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['h_thumb_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['resize_type']; ?>:</b></td>
@@ -132,7 +132,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['resize_type_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?></td>
                     </tr>
 
 
@@ -145,7 +145,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['thbg_rgb_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
                     </tr>
 
 
@@ -154,7 +154,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['thq_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['glib']; ?>:</b></td>
@@ -168,7 +168,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['glib_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['glib_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['grid']; ?>:</b></td>
@@ -177,7 +177,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['grid_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['grid_cfg_desc']); ?></td>
                     </tr>
                     <tr>
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['settings_display']; ?></b></td>
@@ -187,28 +187,28 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;name_len=</span> <input name="name_len" type="text" value="<?php echo $e2g['name_len']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['name_len_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['name_len_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cat_name_len']; ?>:</b></td>
                         <td><span style="color:green;">&amp;cat_name_len=</span> <input name="cat_name_len" type="text" value="<?php echo $e2g['cat_name_len']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['cat_name_len_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['cat_name_len_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['colls']; ?>:</b></td>
                         <td><span style="color:green;">&amp;colls=</span> <input name="colls" type="text" value="<?php echo $e2g['colls']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['colls_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['colls_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['limit']; ?>:</b></td>
                         <td><span style="color:green;">&amp;limit=</span> <input name="limit" type="text" value="<?php echo $e2g['limit']; ?>" size="4"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['limit_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['limit_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['order']; ?>:</b></td>
@@ -229,7 +229,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['order_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['order_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['order2']; ?>:</b></td>
@@ -247,7 +247,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['order2_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['order2_cfg_desc']); ?></td>
                     </tr>
                 </table>
             </div>
@@ -262,35 +262,35 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['gallery']; ?>:</b></td>
                         <td><span style="color:green;">&amp;tpl=</span> <input name="tpl" type="text" value="<?php echo $e2g['tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['dir']; ?>:</b></td>
                         <td><span style="color:green;">&amp;dir_tpl=</span> <input name="dir_tpl" type="text" value="<?php echo $e2g['dir_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thumb']; ?>:</b></td>
                         <td><span style="color:green;">&amp;thumb_tpl=</span> <input name="thumb_tpl" type="text" value="<?php echo $e2g['thumb_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thumb']; ?> RAND:</b></td>
                         <td><span style="color:green;">&amp;rand_tpl=</span> <input name="rand_tpl" type="text" value="<?php echo $e2g['rand_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['comments']; ?>:</b></td>
@@ -311,28 +311,28 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;page_tpl=</span> <input name="page_tpl" type="text" value="<?php echo $e2g['page_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_lp_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_lp_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_css']; ?>:</b></td>
                         <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_css_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_cmt']; ?>:</b></td>
                         <td><span style="color:green;">&amp;page_comments_tpl=</span> <input name="page_comments_tpl" type="text" value="<?php echo $e2g['page_comments_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_cmt_row']; ?>:</b></td>
                         <td><span style="color:green;">&amp;page_comments_row_tpl=</span> <input name="page_comments_row_tpl" type="text" value="<?php echo $e2g['page_comments_row_tpl']; ?>" size="70"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['tpl_lp_cmt_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
                     </tr>
                     <tr>
                         <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>
@@ -342,7 +342,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;grid_class=</span> <input name="grid_class" type="text" value="<?php echo $e2g['grid_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['grid_class_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['grid_class_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['cfg_e2g_currentcrumb_class']; ?>:</b></td>
@@ -392,14 +392,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['watermark_type_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['watermark_type_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['watermark_textpath']; ?>:</b></td>
                         <td><input size="50" name="wmt" type="text" value="<?php echo $e2g['wmt']; ?>"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['watermark_text_path_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['watermark_text_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['watermark_horpos']; ?>:</b></td>
@@ -411,7 +411,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['watermark_horpos_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['watermark_horpos_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['watermark_verpos']; ?>:</b></td>
@@ -422,7 +422,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['watermark_verpos_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['watermark_verpos_cfg_desc']); ?></td>
                     </tr>
                 </table>
             </div>
@@ -446,14 +446,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;ecl=</span> <input name="ecl" type="text" value="<?php echo $e2g['ecl']; ?>" size="3"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ecl_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['ecl_page']; ?>:</b></td>
                         <td><span style="color:green;">&amp;ecl_page=</span> <input name="ecl_page" type="text" value="<?php echo $e2g['ecl_page']; ?>" size="3"></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo $lng['ecl_cfg_desc']; ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ecl_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['captcha']; ?>:</b></td>

@@ -1,7 +1,6 @@
 <?php
 if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-header('Content-Type: text/html; charset=UTF-8');
-//setlocale(LC_ALL, 'en_US.UTF8');
+
 /**
  * EASY 2 GALLERY
  * Gallery Module Class for Easy 2 Gallery Module for MODx Evolution
@@ -18,7 +17,7 @@ class e2g_mod extends e2g_pub {
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
-//        set_time_limit(0);
+        set_time_limit(0);
 
         $this->e2gmod_cfg = $e2gmod_cfg;
 //        $this->e2g = $e2g;
@@ -1249,6 +1248,7 @@ class e2g_mod extends e2g_pub {
                                 $q .= 'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                    .', cat_summary = \''.htmlspecialchars(trim($_POST['summary']), ENT_QUOTES).'\''
                                     .', cat_tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                     .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '
@@ -1309,6 +1309,7 @@ class e2g_mod extends e2g_pub {
                                 $q .= 'filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
+                                    .', summary = \''.htmlspecialchars(trim($_POST['summary']), ENT_QUOTES).'\''
                                     .', tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                     .', description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                     .', last_modified=NOW() '

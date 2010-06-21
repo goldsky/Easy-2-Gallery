@@ -20,6 +20,10 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><input name="name" type="text" value="<?php echo $row['name']; ?>" size="30"></td>
                     </tr>
                     <tr>
+                        <td><b><?php echo $lng['summary']; ?> :</b></td>
+                        <td><input name="summary" type="text" value="<?php echo $row['summary']; ?>" size="95"></td>
+                    </tr>
+                    <tr>
                         <td><b><?php echo $lng['tag']; ?> :</b></td>
                         <td><input name="tag" type="text" value="<?php echo $row['tag']; ?>" size="95"></td>
                     </tr>
@@ -32,7 +36,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                             </div>
                             <div class="imPreview2" id="pElt4"></div>
                         </td>
-                        <td>
+                        <td valign="top" >
                             <textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""><?php echo $row['description']; ?></textarea>
                         </td>
                     </tr>

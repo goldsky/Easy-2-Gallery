@@ -1,6 +1,7 @@
 <?php
 $e2g_lang['english'] = array (
         '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
+        'summary' => 'Summary',
         'add' => 'Add',
         'add_to_db' => 'Add to DB',
         'alias' => 'Alias',
@@ -428,7 +429,7 @@ $e2g_lang['english'] = array (
         'tpl_lp_path_cfg_desc' => '&lt;p&gt;chunk name or path to template file of a single landing page&lt;/p&gt;',
         'tpl_path_cfg_desc' => 'Chunk name or path to tpl file',
         'translation' => 'Translation',
-        'type' => 'type',
+        'type' => 'Type',
         'type_err' => 'Restricted type of file',
         'uim_preview' => 'Preview',
         'uim_preview_err' => 'Preview&lt;br /&gt;not available',
