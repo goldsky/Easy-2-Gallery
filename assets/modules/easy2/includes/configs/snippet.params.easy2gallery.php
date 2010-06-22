@@ -147,9 +147,15 @@ $e2gsnip_cfg['page_comments_row_tpl'] = (!empty($page_comments_row_tpl)) ? str_r
 
 // CSS classes
 $e2gsnip_cfg['grid_class'] = (isset($grid_class) ? $grid_class : $e2g['grid_class']);
-$e2gsnip_cfg['e2g_currentcrumb_class'] = (isset($e2g_currentcrumb_class) ? $e2g_currentcrumb_class : $e2g['e2g_currentcrumb_class']);
-$e2gsnip_cfg['e2gback_class'] = (isset($e2gback_class) ? $e2gback_class : $e2g['e2gback_class']);
-$e2gsnip_cfg['e2gpnums_class'] = (isset($e2gpnums_class) ? $e2gpnums_class : $e2g['e2gpnums_class']);
+
+if (isset($e2g_currentcrumb_class)) $crumbs_classCurrent = $e2g_currentcrumb_class; // backward compatibility
+$e2gsnip_cfg['crumbs_classCurrent'] = (isset($crumbs_classCurrent) ? $crumbs_classCurrent : $e2g['crumbs_classCurrent']);
+
+if (isset($e2gback_class)) $back_class = $e2gback_class; // backward compatibility
+$e2gsnip_cfg['back_class'] = (isset($back_class) ? $back_class : $e2g['back_class']);
+
+if (isset($e2gpnums_class)) $pagenum_class = $e2gpnums_class; // backward compatibility
+$e2gsnip_cfg['pagenum_class'] = (isset($pagenum_class) ? $pagenum_class : $e2g['pagenum_class']);
 
 // THUMB 'resize-type' settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
 $e2gsnip_cfg['resize_type'] = isset($resize_type) ? $resize_type : $e2g['resize_type'];
@@ -211,6 +217,8 @@ $e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
 $e2gsnip_cfg['landingpage'] = (isset($landingpage) ? $landingpage : (!empty($_GET['lp']) ? $_GET['lp'] : NULL)) ;
 
 // CRUMBS
+$e2gsnip_cfg['crumbs'] = ( isset($crumbs) && is_numeric($crumbs) ) ? $crumbs : $e2g['crumbs'] ;
+$e2gsnip_cfg['crumbs_use'] = ( isset($crumbs_use) ) ? $crumbs_use : $e2g['crumbs_use'] ;
 $e2gsnip_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
 $e2gsnip_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
 $e2gsnip_cfg['crumbs_showAsLinks'] = isset($crumbs_showAsLinks) ? $crumbs_showAsLinks : 1;
@@ -226,3 +234,6 @@ $e2gsnip_cfg['mbstring'] = function_exists('mb_strlen') && function_exists('mb_s
 */
 if (isset($plugins)) $plugin=$plugins; // compatibility
 $e2gsnip_cfg['plugin'] = isset($plugin) ? $plugin : null;
+
+//pagination
+$e2gsnip_cfg['pagination'] = ( isset($pagination) && is_numeric($pagination) ) ? $pagination : $e2g['pagination'] ;

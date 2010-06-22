@@ -86,7 +86,7 @@ class e2g_snip extends e2g_pub {
             $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
             $cat_order = $this->e2gsnip_cfg['cat_order'];
         }
-        
+
         $gpn = $this->e2gsnip_cfg['gpn'];
         $limit = $this->e2gsnip_cfg['limit'];
 
@@ -97,9 +97,9 @@ class e2g_snip extends e2g_pub {
 //        $notables = $this->e2gsnip_cfg['notables']; // deprecated
         $grid = $this->e2gsnip_cfg['grid'];
         $grid_class = $this->e2gsnip_cfg['grid_class'];
-        $e2g_currentcrumb_class = $this->e2gsnip_cfg['e2g_currentcrumb_class'];
-        $e2gback_class = $this->e2gsnip_cfg['e2gback_class'];
-        $e2gpnums_class = $this->e2gsnip_cfg['e2gpnums_class'];
+        $crumbs_classCurrent = $this->e2gsnip_cfg['crumbs_classCurrent'];
+        $back_class = $this->e2gsnip_cfg['back_class'];
+        $pagenum_class = $this->e2gsnip_cfg['pagenum_class'];
         $colls = $this->e2gsnip_cfg['colls'];
 
         $showonly = $this->e2gsnip_cfg['showonly'];
@@ -109,11 +109,16 @@ class e2g_snip extends e2g_pub {
         $plugin = $this->e2gsnip_cfg['plugin'];
 
         // CRUMBS
+        $crumbs = $this->e2gsnip_cfg['crumbs'];
+        $crumbs_use = $this->e2gsnip_cfg['crumbs_use'];
         $crumbs_separator = $this->e2gsnip_cfg['crumbs_separator'];
         $crumbs_showHome = $this->e2gsnip_cfg['crumbs_showHome'];
         $crumbs_showAsLinks = $this->e2gsnip_cfg['crumbs_showAsLinks'];
         $crumbs_showCurrent = $this->e2gsnip_cfg['crumbs_showCurrent'];
         $crumbs_showPrevious = $this->e2gsnip_cfg['crumbs_showPrevious'];
+
+        // PAGINATION
+        $pagination = $this->e2gsnip_cfg['pagination'];
 
         $this->_libs();
 
@@ -241,12 +246,13 @@ class e2g_snip extends e2g_pub {
             foreach ($multiple_gids as $single_gid) {
                 // get path from the $gid
                 $path = $this->_get_path($single_gid);
+                $crumbs_path = $this->_get_path($single_gid, $crumbs_use);
 
                 // To limit the CRUMBS paths.
-                if ( ($static_gid !=1) && !empty($path) && !isset($tag) ) {
+                if ( ($static_gid !=1) && !empty($crumbs_path) && !isset($tag) ) {
                     $static_path = $this->_get_path($static_gid);
                     if (!$crumbs_showPrevious) {
-                        $path = array_slice($path, (count($static_path)-2),null,true);
+                        $crumbs_path = array_slice($crumbs_path, (count($static_path)-2),null,true);
                     }
                 }
 
@@ -257,52 +263,54 @@ class e2g_snip extends e2g_pub {
                 /*                             CRUMBS                             */
                 /******************************************************************/
                 // reset crumbs
-                $crumbs='';
+                $breadcrumbs='';
 
                 /*
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
                 */
+                if (isset($static_tag) && !$this->_tags_ids('dir', $static_tag, $single_gid)) continue;
                 if ( $multiple_gids_count==1
-                        && ( isset($static_tag) ? $this->_tags_ids('dir', $static_tag, $gid) : '' )
+                        && $crumbs ==1
                 ) {
                     // if path more the one
-                    if (count($path) > 1) {
-                        end($path);
-                        prev($path);
-                        $_e2g['parent_id'] = key($path);
-                        $_e2g['parent_name'] = $path[$_e2g['parent_id']];
+                    if (count($crumbs_path) > 1) {
+                        end($crumbs_path);
+                        prev($crumbs_path);
+                        $_e2g['parent_id'] = key($crumbs_path);
+                        $_e2g['parent_name'] = $crumbs_path[$_e2g['parent_id']];
 
                         // create crumbs
                         $cnt=0;
-                        foreach ($path as $k=>$v) {
+                        foreach ($crumbs_path as $k=>$v) {
                             $cnt++;
                             if ($cnt==1 && !$crumbs_showHome) {
                                 continue;
                             }
-                            if ($cnt==count($path) && !$crumbs_showCurrent) {
+                            if ($cnt==count($crumbs_path) && !$crumbs_showCurrent) {
                                 continue;
                             }
-                            if ($cnt!=count($path)) $crumbs .= $crumbs_separator.($crumbs_showAsLinks ?
+
+                            if ($cnt!=count($crumbs_path)) $breadcrumbs .= $crumbs_separator.($crumbs_showAsLinks ?
                                         '<a href="'
                                                 // making flexible FURL or not
                                                 . $modx->makeUrl($modx->documentIdentifier
                                                 , $modx->aliases
                                                 , 'gid='.$k.'#'.$k)
                                                 .'">'.$v.'</a>' : $v);
-                            else $crumbs .= $crumbs_separator.'<span class="'.$e2g_currentCrumb_class.'">'.$v.'</span>';
+                            else $breadcrumbs .= $crumbs_separator.'<span class="'.$crumbs_classCurrent.'">'.$v.'</span>';
                         }
-                        $crumbs = substr_replace($crumbs,'',0,strlen($crumbs_separator));
+                        $breadcrumbs = substr_replace($breadcrumbs,'',0,strlen($crumbs_separator));
 
-                        // unset Easy 2-$path value
-                        unset($path[1]);
+                        // unset Easy 2-$crumbs_path value
+                        unset($crumbs_path[1]);
 
                         // joining many of directory paths
-                        $path = implode('/', array_values($path)).'/';
+                        $crumbs_path = implode('/', array_values($crumbs_path)).'/';
                     } else { // if not many, path is set as empty
-                        $path = '';
+                        $crumbs_path = '';
                     } // if (count($path) > 1)
-                    $_e2g['crumbs']=$crumbs;
+                    $_e2g['crumbs']=$breadcrumbs;
                 }
             }
 
@@ -576,7 +584,7 @@ class e2g_snip extends e2g_pub {
             $i = 0;
 
             // checking the $dir_num_rows first
-            if ( $dir_num_rows % $colls == 0 ) $_e2g['content'] .= '</tr><tr>';
+            if ( $dir_num_rows % $colls == 0 && $grid == 'table' ) $_e2g['content'] .= '</tr><tr>';
 
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
                 /*
@@ -625,7 +633,7 @@ class e2g_snip extends e2g_pub {
                 && ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true)
                 && (isset($static_tag) ? $static_tag==$tag : null)
         ) {
-            $_e2g['back'] = '<span class="'.$e2gback_class.'">&laquo; <a href="'
+            $_e2g['back'] = '<span class="'.$back_class.'">&laquo; <a href="'
                     // making flexible FURL or not
                     . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
                     'gid='.$_e2g['parent_id']
@@ -639,96 +647,105 @@ class e2g_snip extends e2g_pub {
         /*                       PAGINATION: PAGE LINKS                       */
         /*             joining between dirs and files pagination              */
         /**********************************************************************/
-
-        // count the files again, this time WITHOUT limit!
-        if ( $showonly=='folders' || $orderby == 'rand()' || $cat_orderby=='rand()' ) {
-            $file_count = 0;
-        } elseif ( !empty($gid) ) {
-            if ( isset($static_tag) ) {
-                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
-
-                // OPEN the selected tagged folder
-                if (isset($_GET['gid'])
-                        && $static_tag==$tag
-                        && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
-                    $file_count_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
-                }
-                else {
-                    // the selected tag of multiple tags on the same page
-                    if ( $static_tag==$tag ) {
-                        $multiple_tags = @explode(',', $tag);
-                    }
-                    // the UNselected tag of multiple tags on the same page
-                    else {
-                        $multiple_tags = @explode(',', $static_tag);
-                    }
-
-                    for ($i=0;$i<count($multiple_tags);$i++) {
-                        if ($i==0) $file_count_select .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                        else $file_count_select .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
-                    }
-                }
-            }
-            // default
-            else {
-                $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
-
-                if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
-                    $file_count_select .= 'WHERE dir_id IN ('.$gid.') ';
-                }
-                else {
-                    $file_count_select .= 'WHERE dir_id IN ('.$static_gid.') ';
-                }
-            }
-
-            $file_count_query = mysql_query($file_count_select) or  die(__LINE__.' : '.mysql_error().'<br />'.$file_count_select);
-            $file_count = mysql_result($file_count_query, 0, 0);
-        }
-
-        $total_count = $dir_count+$file_count;
-
-        if ($total_count > $limit) {
-            $_e2g['pages'] = '<div class="'.$e2gpnums_class.'">';
-            $i = 0;
-            while ($i*$limit < $total_count) {
-                // using &tag parameter
+        if ($pagination==1) {
+            // count the files again, this time WITHOUT limit!
+            if ( $showonly=='folders' || $orderby == 'rand()' || $cat_orderby=='rand()' ) {
+                $file_count = 0;
+            } elseif ( !empty($gid) ) {
                 if ( isset($static_tag) ) {
-                    if ( $i == $gpn  ) {
-                        $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
+                    $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+
+                    // OPEN the selected tagged folder
+                    if (isset($_GET['gid'])
+                            && $static_tag==$tag
+                            && $this->_tags_ids('dir', $tag, $_GET['gid'])) {
+                        $file_count_select .= 'WHERE dir_id IN ('.$_GET['gid'].')';
                     }
                     else {
-                        $_e2g['pages'] .= '<a href="'
-                                // making flexible FURL or not
-                                . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-                                'tag='.$static_tag
-                                . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
-                                . '&gpn='.$i.$customgetparams.'#'.$static_tag
-                                )
-                                .'">'.($i+1).'</a> ';
+                        // the selected tag of multiple tags on the same page
+                        if ( $static_tag==$tag ) {
+                            $multiple_tags = @explode(',', $tag);
+                        }
+                        // the UNselected tag of multiple tags on the same page
+                        else {
+                            $multiple_tags = @explode(',', $static_tag);
+                        }
+
+                        for ($i=0;$i<count($multiple_tags);$i++) {
+                            if ($i==0) $file_count_select .= 'WHERE tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                            else $file_count_select .= 'OR tag LIKE \'%'.$multiple_tags[$i].'%\' ';
+                        }
                     }
                 }
-                // original &gid parameter
+                // default
                 else {
-                    if ( $i == $gpn ) {
-                        $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
+                    $file_count_select = 'SELECT COUNT(id) FROM '.$modx->db->config['table_prefix'].'easy2_files ';
+
+                    if ($this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true) {
+                        $file_count_select .= 'WHERE dir_id IN ('.$gid.') ';
                     }
                     else {
-                        $_e2g['pages'] .= '<a href="'
-                                // making flexible FURL or not
-                                . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-//                                        'gid='.$static_gid
-                                'gid='.$gid
-                                .'&gpn='.$i
-                                .$customgetparams
-//                                        .'#'.$static_gid
-                                .'#'.$gid
-                                )
-                                .'">'.($i+1).'</a> ';
+                        $file_count_select .= 'WHERE dir_id IN ('.$static_gid.') ';
                     }
                 }
-                $i++;
+
+                $file_count_query = mysql_query($file_count_select) or  die(__LINE__.' : '.mysql_error().'<br />'.$file_count_select);
+                $file_count = mysql_result($file_count_query, 0, 0);
             }
-            $_e2g['pages'] .= '</div>';
+
+            $total_count = $dir_count+$file_count;
+
+            if ($total_count > $limit) {
+                $_e2g['pages'] = '<div class="'.$pagenum_class.'">';
+                $i = 0;
+                while ($i*$limit < $total_count) {
+                    // using &tag parameter
+                    if ( isset($static_tag) ) {
+                        if ( $i == $gpn  ) {
+                            $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
+                        }
+                        else {
+                            $_e2g['pages'] .= '<a href="'
+                                    // making flexible FURL or not
+                                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
+                                    'tag='.$static_tag
+                                    . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
+                                    . '&gpn='.$i.$customgetparams.'#'.$static_tag
+                                    )
+                                    .'">'.($i+1).'</a> ';
+                        }
+                    }
+                    // original &gid parameter
+                    else {
+                        if ( $i == $gpn ) {
+                            $_e2g['pages'] .= '<b>'.($i+1).'</b> ';
+                        }
+                        else {
+                            $_e2g['pages'] .= '<a href="'
+                                    // making flexible FURL or not
+                                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
+                                    ( ( isset($static_gid)
+                                            && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
+                                            ? 'gid='.$gid
+                                            : 'gid='.$static_gid )
+//                                    'gid='.$static_gid
+//                                    'gid='.$gid
+                                    .'&gpn='.$i
+                                    .$customgetparams
+                                    .'#'.( ( isset($static_gid)
+                                            && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
+                                            ? $static_gid
+                                            : $gid )
+//                                    .'#'.$static_gid
+//                                    .'#'.$gid
+                                    )
+                                    .'">'.($i+1).'</a> ';
+                        }
+                    }
+                    $i++;
+                }
+                $_e2g['pages'] .= '</div>';
+            }
         }
         return $this->_filler($this->_gal_tpl(), $_e2g);
     }
@@ -855,7 +872,7 @@ class e2g_snip extends e2g_pub {
         }
         // END the grid
         $_e2g['content'] .= (($grid == 'css') ? '</div>':'</tr></table>');
-        
+
         return $this->_filler($this->_gal_tpl(), $_e2g );
     }
 
@@ -1025,7 +1042,7 @@ class e2g_snip extends e2g_pub {
      * To get image's path
      * @param int $id = image's ID
      */
-    private function _get_path ($id) {
+    private function _get_path ($id, $option=false) {
         global $modx;
 
         $result = array();
@@ -1040,13 +1057,20 @@ class e2g_snip extends e2g_pub {
 
         $res = mysql_query($q);
         if (!$res) return; // asuming there are multiple gids
-//        while ($l = mysql_fetch_row($res)) {
-//            $result[$l[0]] = $l[1];
-//        }
-        while ($l = mysql_fetch_array($res)) {
-            if ($l['cat_alias']!='') $result[$l['cat_id']] = $l['cat_alias'];
-            else $result[$l['cat_id']] = $l['cat_name'];
+
+        if ($option==='alias') {
+            while ($l = mysql_fetch_array($res)) {
+                if ($l['cat_alias']!='') $result[$l['cat_id']] = $l['cat_alias'];
+                else $result[$l['cat_id']] = $l['cat_name'];
+            }
         }
+        // default
+        else {
+            while ($l = mysql_fetch_row($res)) {
+                $result[$l[0]] = $l[1];
+            }
+        }
+
         if (empty($result)) return null;
         return $result;
     }

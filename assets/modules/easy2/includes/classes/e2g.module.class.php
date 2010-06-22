@@ -17,7 +17,7 @@ class e2g_mod extends e2g_pub {
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
-//        set_time_limit(0);
+        set_time_limit(0);
 
         $this->e2gmod_cfg = $e2gmod_cfg;
 //        $this->e2g = $e2g;
@@ -748,6 +748,7 @@ class e2g_mod extends e2g_pub {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_create_err'].' "'.$npath."'";
                     }
                 }
+                ksort($_POST);
                 $c = "<?php\r\n\$e2g = array (\r\n";
                 foreach($_POST as $k => $v) {
                     $c .= "        '$k' => ".(is_numeric($v)?$v:"'".addslashes($v)."'").",\r\n";

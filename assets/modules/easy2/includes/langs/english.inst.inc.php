@@ -12,6 +12,7 @@ $e2g_lang['english'] = array (
         'data' => 'Data',
         'del_inst_dir' => 'Delete INSTALL folder',
         'dir_created' => 'Folder created',
+        'dir_exists' => 'Folder exists',
         'empty_dir' => 'folder not set',
         'field' => 'Field',
         'mod_update_err' => 'Can&#039;t update module',
@@ -26,7 +27,7 @@ $e2g_lang['english'] = array (
         'snippet_added' => 'Snippet created',
         'snippet_update_err' => 'Can&#039;t update snippet',
         'snippet_updated' => 'Snippet updated',
-        'success' => 'Install successful',
+        'success' => 'Installed successfully',
         'table' => 'Table',
         'upgraded' => 'upgraded successfully.',
 );

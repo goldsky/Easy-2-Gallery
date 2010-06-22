@@ -1,11 +1,15 @@
 <?php
 $e2g_lang['english'] = array (
         '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
-        'summary' => 'Summary',
         'add' => 'Add',
         'add_to_db' => 'Add to DB',
         'alias' => 'Alias',
+        'title' => 'Title',
+        'crumbs_usage_cfg_desc' => 'Crumbs will use the selected text. If one of the folders\' Alias is empty, it will automatically use its name instead.',
+        'settings_crumbs' => 'Breadcrumbs Settings',
         'and' => 'and',
+        'enable' => 'Enable',
+        'use' => 'Use',
         'archive' => 'Archive zip',
         'asc' => 'asc',
         'author' => 'Author',
@@ -19,9 +23,9 @@ $e2g_lang['english'] = array (
         'cat_name_len' => 'max folder name length',
         'cat_name_len_cfg_desc' => 'Max folder name length',
         'center' => 'center',
-        'cfg_e2g_currentcrumb_class' => 'Current crumb&#039;s class',
-        'cfg_e2gback_class' => 'Back button&#039;s class',
-        'cfg_e2gpnums_class' => 'Pagination&#039;s class',
+        'cfg_crumbs_classCurrent' => 'Current crumb&#039;s class',
+        'cfg_back_class' => 'Back button&#039;s class',
+        'cfg_pagenum_class' => 'Pagination&#039;s class',
         'char_bad' => 'Invalid characters for file system',
         'char_limitation' => '&lt;p&gt;Please use &lt;strong&gt;common latin letters&lt;/strong&gt; for the filenames inside the ZIP contents, or the file system will find errors while uploading.&lt;br /&gt;For some encodings, UTF-8 letter will be ignored or translated to the closest character.&lt;/p&gt;',
         'charset' => 'UTF-8',
@@ -52,6 +56,7 @@ $e2g_lang['english'] = array (
         'db_err' => 'DB error',
         'delete' => 'Delete',
         'desc' => 'desc',
+        'dir_name' => 'Folder\'s name',
         'description' => 'Description',
         'dir' => 'Folder',
         'dir_add_err' => 'There was an error while trying to create a folder',
@@ -200,9 +205,9 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;css &lt;/strong&gt;- path to the customized CSS file&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;js&lt;/strong&gt; - path to the customized javascript file&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;grid_class &lt;/strong&gt;- CSS classname for the gallery grid&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2g_currentcrumb_class &lt;/strong&gt;- CSS classname for the current crumb&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gback_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the back button&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gpnums_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the pagination&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_classCurrent &lt;/strong&gt;- CSS classname for the current crumb&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;back_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the back button&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;pagenum_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the pagination&lt;/p&gt;
 &lt;h2&gt;Comments&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecm&lt;/strong&gt; - comments on / off, 1 / 0 correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecl&lt;/strong&gt; - Comments per page.&lt;/p&gt;
@@ -211,8 +216,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showHome&lt;/strong&gt; - This toggles the root crumb to be added to the beginning of the trail. default is 0&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showCurrent&lt;/strong&gt; - Include the current page at the end of the trail. default is 1&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- Enabling the previous crumb path from the original &amp;amp;gid call. default is 0&lt;/p&gt;
-&lt;/div&gt;',
+&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- Enabling the previous crumb path from the original &amp;amp;gid call. default is 0&lt;/p&gt;',
         'help_params_title' => 'Parameters',
         'help_plugins_content' => '&lt;h2&gt;Plugin parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;plugin=`thumb: _pluginname1_ , pluginname2 | gallery: _pluginname3_ , _pluginname4_@custom/index/file.php | landingpage: _pluginname5_`&lt;/strong&gt;&lt;/p&gt;
@@ -240,7 +244,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic      
+&lt;li&gt;galleriffic       
 &lt;ul&gt;
 &lt;li&gt;example-1&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -248,7 +252,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery      
+&lt;li&gt;smoothgallery       
 &lt;ul&gt;
 &lt;li&gt;fullgallery&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -262,7 +266,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview      
+&lt;li&gt;galleryview       
 &lt;ul&gt;
 &lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
@@ -272,7 +276,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow      
+&lt;li&gt;contentflow       
 &lt;ul&gt;
 &lt;li&gt;default&lt;/li&gt;
 &lt;/ul&gt;
@@ -376,6 +380,7 @@ $e2g_lang['english'] = array (
         'order2' => 'Folders order by',
         'order2_cfg_desc' => 'Folder sorting method',
         'order_cfg_desc' => 'Sorting method',
+        'settings_pagination' => 'Pagination',
         'path' => 'Path',
         'post' => 'Post',
         'random' => 'random',
@@ -392,13 +397,14 @@ $e2g_lang['english'] = array (
         'select_all' => 'Select all',
         'select_dirfile' => 'Please select any directory or image',
         'select_newdir' => 'Please select the new directory destination',
-        'setlocale' => 'setlocale( LC_ALL ,\'en_US.utf8\' )',
+        'setlocale' => 'setlocale( LC_ALL ,&#039;en_US.utf8&#039; )',
         'settings_display' => 'Display settings',
         'settings_img' => 'Images settings',
         'settings_thumb' => 'Thumbnails settings',
         'shrink' => 'shrink',
         'size' => 'Size',
         'stay_here' => 'stay here',
+        'summary' => 'Summary',
         'synchro' => 'Synchronize',
         'synchro_err' => 'There was an error while trying to synchronize',
         'synchro_suc' => 'Gallery synchronized',

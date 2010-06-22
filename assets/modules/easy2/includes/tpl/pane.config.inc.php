@@ -218,7 +218,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                 <option value="last_modified"<?php echo ($e2g['orderby']=='last_modified'?' selected':''); ?>><?php echo $lng['last_modified']; ?></option>
                                 <option value="comments"<?php echo ($e2g['orderby']=='comments'?' selected':''); ?>><?php echo $lng['comments_cnt']; ?></option>
                                 <option value="filename"<?php echo ($e2g['orderby']=='filename'?' selected':''); ?>><?php echo $lng['filename']; ?></option>
-                                <option value="name"<?php echo ($e2g['orderby']=='name'?' selected':''); ?>><?php echo strtolower($lng['name']); ?></option>
+                                <option value="name"<?php echo ($e2g['orderby']=='name'?' selected':''); ?>><?php echo $lng['name']; ?></option>
                                 <option value="random"<?php echo ($e2g['orderby']=='random'?' selected':''); ?>><?php echo $lng['random']; ?></option>
                             </select>
                             <span style="color:green;">&amp;order=</span>
@@ -236,7 +236,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td><span style="color:green;">&amp;cat_orderby=</span>
                             <select size="1" name="cat_orderby">
                                 <option value="cat_id"<?php echo ($e2g['cat_orderby']=='cat_id'?' selected':''); ?>><?php echo $lng['date_added']; ?></option>
-                                <option value="cat_name"<?php echo ($e2g['cat_orderby']=='cat_name'?' selected':''); ?>><?php echo strtolower($lng['name']); ?></option>
+                                <option value="cat_name"<?php echo ($e2g['cat_orderby']=='cat_name'?' selected':''); ?>><?php echo $lng['name']; ?></option>
                                 <option value="random"<?php echo ($e2g['cat_orderby']=='random'?' selected':''); ?>><?php echo $lng['random']; ?></option>
                             </select>
                             <span style="color:green;">&amp;cat_order=</span>
@@ -248,6 +248,50 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['order2_cfg_desc']); ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['settings_crumbs']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['enable']; ?>:</b></td>
+                        <td>
+                            <span style="color:green;">&amp;crumbs= 0 | 1</span>
+                                <input name="crumbs" type="radio" value="0"<?php echo ($e2g['crumbs']==0?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs" type="radio" value="1"<?php echo ($e2g['crumbs']==1?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['on']; ?></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['use']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;crumbs_use=</span>
+                            <select size="1" name="crumbs_use">
+                                <option value="foldername"<?php echo ($e2g['crumbs_use']=='foldername'?' selected':''); ?>><?php echo $lng['dir_name']; ?></option>
+                                <option value="alias"<?php echo ($e2g['crumbs_use']=='alias'?' selected':''); ?>><?php echo $lng['alias'].' / '.$lng['title']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_usage_cfg_desc']); ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['settings_pagination']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['enable']; ?>:</b></td>
+                        <td>
+                            <span style="color:green;">&amp;pagination= 0 | 1</span>
+                                <input name="pagination" type="radio" value="0"<?php echo ($e2g['pagination']==0?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="pagination" type="radio" value="1"<?php echo ($e2g['pagination']==1?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['on']; ?></b>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
                     </tr>
                 </table>
             </div>
@@ -345,23 +389,23 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['grid_class_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['cfg_e2g_currentcrumb_class']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;e2g_currentcrumb_class=</span> <input name="e2g_currentcrumb_class" type="text" value="<?php echo $e2g['e2g_currentcrumb_class']; ?>" size="20"></td>
+                        <td><b><?php echo $lng['cfg_crumbs_classCurrent']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;crumbs_classCurrent=</span> <input name="crumbs_classCurrent" type="text" value="<?php echo $e2g['crumbs_classCurrent']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>
                     </tr>
                     <tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['cfg_e2gback_class']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;e2gback_class=</span> <input name="e2gback_class" type="text" value="<?php echo $e2g['e2gback_class']; ?>" size="20"></td>
+                        <td><b><?php echo $lng['cfg_back_class']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;back_class=</span> <input name="back_class" type="text" value="<?php echo $e2g['back_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['cfg_e2gpnums_class']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;e2gpnums_class=</span> <input name="e2gpnums_class" type="text" value="<?php echo $e2g['e2gpnums_class']; ?>" size="20"></td>
+                        <td><b><?php echo $lng['cfg_pagenum_class']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;pagenum_class=</span> <input name="pagenum_class" type="text" value="<?php echo $e2g['pagenum_class']; ?>" size="20"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo $lng['classname']; ?></td>

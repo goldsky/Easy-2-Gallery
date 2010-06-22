@@ -18,9 +18,9 @@ $e2g_lang['russian-UTF8'] = array (
         'cat_name_len' => 'max длина П',
         'cat_name_len_cfg_desc' => 'Максимальное количество символов в названии папки',
         'center' => 'по центру',
-        'cfg_e2g_currentcrumb_class' => 'CSS класс текущего эскиза',
-        'cfg_e2gback_class' => 'CSS класс ссылки Назад',
-        'cfg_e2gpnums_class' => 'CSS класс нумерации страниц',
+        'cfg_crumbs_classCurrent' => 'CSS класс текущего эскиза',
+        'cfg_back_class' => 'CSS класс ссылки Назад',
+        'cfg_pagenum_class' => 'CSS класс нумерации страниц',
         'char_bad' => 'Недопустимые символы для файловой системы',
         'char_limitation' => 'Используйте &lt;b&gt;только латинские символы&lt;/b&gt; в названиях файлов, включая содержимое ZIP архивов, иначе будут ошибки при загрузке.&lt;br /&gt;Нестандартные символы будут проигнорированы или трансформированы в похожие.',
         'charset' => 'UTF-8',
@@ -207,9 +207,9 @@ $e2g_lang['russian-UTF8'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - чтобы выводить ссылки обычным текстом, установите в 0. По умолчанию 1&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showCurrent&lt;/strong&gt; - включать текущую страницу в конец цепочки. По умолчанию 1&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showPrevious &lt;/strong&gt;- включать предыдущую цепочку из оригинального вызова &amp;amp;gid. По умолчанию 0&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2g_currentcrumb_class &lt;/strong&gt;- CSS класс для для текущей страницы в навигации&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gback_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS класс для ссылки Назад&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;e2gpnums_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS класс нумерации страниц&lt;/p&gt;',
+&lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_classCurrent &lt;/strong&gt;- CSS класс для для текущей страницы в навигации&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;back_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS класс для ссылки Назад&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;pagenum_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS класс нумерации страниц&lt;/p&gt;',
         'help_params_title' => 'Параметры',
         'help_plugins_content' => '&lt;h2&gt;Параметры плагинов&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;plugins=`thumb: _pluginname1_ , pluginname2 | gallery: _pluginname3_ , _pluginname4_@custom/index/file.php | landingpage: _pluginname5_`&lt;/strong&gt;&lt;/p&gt;
