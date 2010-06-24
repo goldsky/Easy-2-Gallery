@@ -434,9 +434,9 @@ function system_check($lngi) {
 
     // PHP magic_quotes_gpc()
     if (get_magic_quotes_gpc()) {
-        $disabled = 'disabled';
+//        $disabled = 'disabled';
         echo '<li>';
-        echo $icon_bad.'PHP magic_quotes_gpc()=ON';
+        echo $icon_bad.'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
         echo '</li>';
     }
     else {
