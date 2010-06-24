@@ -1613,6 +1613,7 @@ class e2g_snip extends e2g_pub {
                 $_P['comment_body'] .= '<h2>'.$lng_cmt['recaptcha_err'].'</h2>';
             }
             if($recaptcha==1 && $_POST['recaptcha_response_field']) {
+            require_once E2G_SNIPPET_PATH.'includes/recaptchalib.php';
                 # the response from reCAPTCHA
                 $resp = null;
                 # the error code from reCAPTCHA, if any
@@ -2080,7 +2081,7 @@ class e2g_snip extends e2g_pub {
      * @return string - The HTML to be embedded in the user's form.
      */
     private function _e2g_recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
-        require_once('includes/recaptchalib.php');
+        require_once(E2G_SNIPPET_PATH.'includes/recaptchalib.php');
         $theme = $this->e2gsnip_cfg['recaptcha_theme'];
         $theme_custom = $this->e2gsnip_cfg['recaptcha_theme_custom'];
 
