@@ -1,18 +1,17 @@
 <?php
-
 $e2g_lang['spanish'] = array (
-        'title' => 'Comentarios',
-        'comment_add' => 'Agregar Comentario',
-        'name' => 'Nombre',
+        'captcha_err' => 'C&oacute;digo inv&aacute;lido',
+        'code' => 'C&oacute;digo',
+        'comment_add' => 'A&ntilde;adir un comentario',
+        'comment_add_err' => 'Ha habido un &nbsp;error al intentar publicar el comentario',
+        'comment_added' => 'El comentario ha sido a&ntilde;adido',
         'email' => 'Email',
-        'usercomment' => 'Su comentario',
-        'send_btn' => 'Enviar Comentario',
-        'code' => 'Codigo',
-        'empty_name_comment' => 'Debe introducir nombre y comentario',
-        'comment_added' => 'Comentario agregado',
-        'comment_add_err' => 'Se ha detectado un error tratando de enviar su comentario.',
+        'email_err' => 'El email no es inv&aacute;lido',
+        'empty_name_comment' => 'Debe introducir su nombre y comentario',
+        'name' => 'Nombre',
         'pages' => 'P&aacute;ginas',
-        'captcha_err' => 'C&oacute;digo invalido',
-        'email_err' => 'Email invalido'
+        'send_btn' => 'A&ntilde;adir comentario',
+        'title' => 'Comentarios',
+        'usercomment' => 'Su comentario',
 );
 ?>
