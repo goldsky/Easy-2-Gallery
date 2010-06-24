@@ -139,7 +139,7 @@ $e2g_lang['polish-utf8'] = array (
         'last_modified' => 'data edycji',
         'comments_cnt' => 'liczba komentarzy',
         'random' => 'losowo',
-        'captcha' => 'Captcha',
+        'recaptcha' => 'recaptcha',
 
         'asc' => 'rosnąco',
         'desc' => 'malejąco',

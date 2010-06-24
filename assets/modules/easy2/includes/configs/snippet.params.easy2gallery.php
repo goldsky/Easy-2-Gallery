@@ -87,7 +87,12 @@ $e2gsnip_cfg['ecl'] = (isset($ecl) && is_numeric($ecl)) ? $ecl : $e2g['ecl'];
 // COMMENT LIMIT on landingpage
 $e2gsnip_cfg['ecl_page'] = (isset($ecl_page) && is_numeric($ecl_page)) ? $ecl_page : $e2g['ecl_page'];
 // COMMENT's CAPTCHA
-$e2gsnip_cfg['captcha'] = (isset($captcha) && is_numeric($captcha)) ? $captcha : $e2g['captcha'];
+if (isset($captcha)) $recaptcha = $captcha; // backward compatibility
+$e2gsnip_cfg['recaptcha'] = (isset($recaptcha) && is_numeric($recaptcha)) ? $recaptcha : $e2g['recaptcha'];
+$e2gsnip_cfg['recaptcha_key_private'] = $e2g['recaptcha_key_private'];
+$e2gsnip_cfg['recaptcha_key_public'] = $e2g['recaptcha_key_public'];
+$e2gsnip_cfg['recaptcha_theme'] = $e2g['recaptcha_theme'];
+$e2gsnip_cfg['recaptcha_theme_custom'] = $e2g['recaptcha_theme_custom'];
 
 // PAGE NUMBER
 //$gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;

@@ -280,4 +280,31 @@ class e2g_pub { // public/protected class
         $encodinghtml = $endpath;
         return $encodinghtml;
     }
+
+    /**
+     * to check email validation
+     * @param <type> $email
+     * @return <type>
+     */
+    public function check_email_address($email) {
+        if (!preg_match("/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)*\.([a-zA-Z]{2,6})$/", $email)) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * Gallery's TEMPLATE function
+     * @param string $tpl = gallery's template (@FILE or chunk)
+     * @param string $data = template's array data
+     * @param string $prefix = placeholder's prefix
+     * @param string $suffix = placeholder's suffix
+     * @return string templated data
+     */
+    public function filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
+        foreach($data as $k => $v) {
+            $tpl = str_replace($prefix.(string)$k.$suffix, (string)$v, $tpl);
+        }
+        return $tpl;
+    }
 }

@@ -21,9 +21,7 @@ if ($e2g['ecm'] == 0) {
 
 $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
 
-
 require '../../../manager/includes/config.inc.php';
-
 startCMSSession();
 
 mysql_connect($database_server, $database_user, $database_password)
@@ -59,7 +57,6 @@ $_P['comment_pages']='';
 $_P['code']=$lng['code'];
 
 // INSERT THE COMMENT INTO DATABASE
-
 if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     $n = htmlspecialchars(trim($_POST['name']), ENT_QUOTES);
     $c = htmlspecialchars(trim($_POST['comment']), ENT_QUOTES);
@@ -69,14 +66,48 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
     if(check_email_address($e) == FALSE) {
         $_P['comment_body'] .= '<h2>'.$lng['email_err'].'</h2>';
     }
-    elseif(!empty($e2g['captcha']) && ((trim($_POST['vericode'])=='') || (isset($_SESSION['veriword']) && $_SESSION['veriword'] != $_POST['vericode']))) {
-        $_P['comment_body'] .= '<h2>'.$lng['captcha_err'].'</h2>';
+    elseif($e2g['recaptcha']==1 && (trim($_POST['recaptcha_response_field'])=='') ) {
+        $_P['comment_body'] .= '<h2>'.$lng['recaptcha_err'].'</h2>';
     }
 
-    elseif (!empty($n) && !empty($c)) {
-        if (mysql_query('INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
-        . "VALUES($id,'$n','$e','$ip','$c', NOW())")) {
+    //captcha
+    if($e2g['recaptcha']==1 && $_POST['recaptcha_response_field']) {
+        require_once 'includes/recaptchalib.php';
+        # the response from reCAPTCHA
+        $resp = null;
+        # the error code from reCAPTCHA, if any
+        $error = null;
 
+        # was there a reCAPTCHA response?
+        if ($_POST["recaptcha_response_field"]) {
+            $privatekey = $e2g['recaptcha_key_private'];
+            $resp = recaptcha_check_answer ($privatekey,
+                    $_SERVER["REMOTE_ADDR"],
+                    $_POST["recaptcha_challenge_field"],
+                    $_POST["recaptcha_response_field"]);
+
+            if (!$resp->is_valid) {
+                # set the error code so that we can display it
+                $error = $resp->error;
+            }
+            else {
+                $com_insert = 'INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+                        . "VALUES($id,'$n','$e','$ip','$c', NOW())";
+                if (mysql_query($com_insert)) {
+                    mysql_query('UPDATE '.$table_prefix.'easy2_files SET comments=comments+1 WHERE id='.$id);
+                    $_P['comment_body'] .= '<h3>'.$lng['comment_added'].'</h3>';
+
+                } else {
+                    $_P['comment_body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
+                }
+            }
+        }
+    }
+    // NOT USING reCaptcha
+    else {
+        $com_insert = 'INSERT INTO '.$table_prefix.'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+                . "VALUES($id,'$n','$e','$ip','$c', NOW())";
+        if (mysql_query($com_insert)) {
             mysql_query('UPDATE '.$table_prefix.'easy2_files SET comments=comments+1 WHERE id='.$id);
             $_P['comment_body'] .= '<h3>'.$lng['comment_added'].'</h3>';
 
@@ -84,10 +115,12 @@ if (!empty($_POST['name']) && !empty($_POST['comment'])) {
             $_P['comment_body'] .= '<h2>'.$lng['comment_add_err'].'</h2>';
         }
     }
-    else {
-        $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
-    }
 }
+
+if ($_POST && empty($_POST['name']) && empty($_POST['comment']) ) {
+    $_P['comment_body'] .= '<h2>'.$lng['empty_name_comment'].'</h2>';
+}
+
 
 // COMMENT ROW TEMPLATE
 
@@ -133,17 +166,64 @@ if (file_exists($e2g['comments_tpl'])) {
     die ('Comments template not found!');
 }
 
-if(!empty($e2g['captcha'])) {
-    $seed=rand();
-    $_SESSION['veriword'] = md5($seed);
-    $siteurl = str_replace("assets/modules/easy2/", "", $site_url);
-    $_P['captcha'] = '<tr><td>'.$_P['code'].'</td><td><input type="text" name="vericode" /></td><td colspan="2" class="captcha_cell"><img src="'.$siteurl.'manager/includes/veriword.php?rand='.$seed.'" alt="" /><td></tr>';
+if($e2g['recaptcha']==1) {
+    $publickey = $e2g['recaptcha_key_public'];
+    $_P['recaptcha'] = '
+                <tr>
+                    <td colspan="4">'.e2g_recaptcha_get_html($publickey, $error).'</td>
+                </tr>';
 }
 else {
-    $_P['captcha'] ='';
+    $_P['recaptcha'] ='';
 }
+
 header('Content-Type: text/html; charset='.$_P['charset']);
 echo filler ($tpl, $_P);
+
+/**
+ * Gets the challenge HTML (javascript and non-javascript version).
+ * This is called from the browser, and the resulting reCAPTCHA HTML widget
+ * is embedded within the HTML form it was called from.
+ * @param string $pubkey A public key for reCAPTCHA
+ * @param string $error The error given by reCAPTCHA (optional, default is null)
+ * @param boolean $use_ssl Should the request be made over ssl? (optional, default is false)
+
+ * @return string - The HTML to be embedded in the user's form.
+ */
+function e2g_recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
+    require_once 'includes/recaptchalib.php';
+    include 'includes/configs/config.easy2gallery.php';
+
+    $theme = $e2g['recaptcha_theme'];
+    $theme_custom = $e2g['recaptcha_theme_custom'];
+
+    if ($pubkey == null || $pubkey == '') {
+        return ("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
+    }
+
+    if ($use_ssl) {
+        $server = RECAPTCHA_API_SECURE_SERVER;
+    } else {
+        $server = RECAPTCHA_API_SERVER;
+    }
+
+    $errorpart = "";
+    if ($error) {
+        $errorpart = "&amp;error=" . $error;
+    }
+    return '
+        <script type="text/javascript">
+        var RecaptchaOptions = {
+        theme : \''.$theme.'\'
+            '.($theme=='custom' ? ',custom_theme_widget: \''.$theme_custom.'\'' :'').'};
+        </script>
+        <script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
+        <noscript>
+            <iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500" frameborder="0"></iframe><br/>
+            <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+            <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+        </noscript>';
+}
 
 function filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
     foreach($data as $k => $v) {

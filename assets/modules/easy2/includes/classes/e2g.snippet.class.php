@@ -726,16 +726,16 @@ class e2g_snip extends e2g_pub {
                                     . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
                                     ( ( isset($static_gid)
                                             && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
-                                            ? 'gid='.$gid
-                                            : 'gid='.$static_gid )
+                                    ? 'gid='.$gid
+                                    : 'gid='.$static_gid )
 //                                    'gid='.$static_gid
 //                                    'gid='.$gid
                                     .'&gpn='.$i
                                     .$customgetparams
                                     .'#'.( ( isset($static_gid)
                                             && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
-                                            ? $static_gid
-                                            : $gid )
+                                    ? $static_gid
+                                    : $gid )
 //                                    .'#'.$static_gid
 //                                    .'#'.$gid
                                     )
@@ -1086,21 +1086,15 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
-     * function filler
      * Gallery's TEMPLATE function
      * @param string $tpl = gallery's template (@FILE or chunk)
      * @param string $data = template's array data
      * @param string $prefix = placeholder's prefix
      * @param string $suffix = placeholder's suffix
+     * @return string templated data
      */
     private function _filler ($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
-        foreach($data as $k => $v) {
-            $tpl = str_replace($prefix.(string)$k.$suffix, (string)$v, $tpl);
-        }
-        /*
-         * returned as image's template
-        */
-        return $tpl;
+        return parent::filler($tpl, $data, $prefix, $suffix);
     }
 
     /**
@@ -1575,9 +1569,14 @@ class e2g_snip extends e2g_pub {
     private function _comments($fileid) {
         global $modx;
         $landingpage = $this->e2gsnip_cfg['landingpage'];
-        $captcha= $this->e2gsnip_cfg['captcha'];
+        $recaptcha= $this->e2gsnip_cfg['recaptcha'];
         $ecl_page = $this->e2gsnip_cfg['ecl_page'];
         $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
+
+        require_once(E2G_SNIPPET_PATH.'includes/recaptchalib.php');
+        // Get a key from https://www.google.com/recaptcha/admin/create
+        $publickey = $this->e2gsnip_cfg['recaptcha_key_public'];
+        $privatekey = $this->e2gsnip_cfg['recaptcha_key_private'];
 
         if (file_exists(E2G_SNIPPET_PATH.'includes/langs/'.$modx->config['manager_language'].'.comments.php')) {
             include_once E2G_SNIPPET_PATH.'includes/langs/'.$modx->config['manager_language'].'.comments.php';
@@ -1600,8 +1599,7 @@ class e2g_snip extends e2g_pub {
         $_P['comment_pages']='';
         $_P['code']=$lng_cmt['code'];
 
-// INSERT THE COMMENT INTO DATABASE
-
+        // INSERT THE COMMENT INTO DATABASE
         if (!empty($_POST['name']) && !empty($_POST['comment'])) {
             $n = htmlspecialchars(trim($_POST['name']), ENT_QUOTES);
             $c = htmlspecialchars(trim($_POST['comment']), ENT_QUOTES);
@@ -1611,13 +1609,44 @@ class e2g_snip extends e2g_pub {
             if($this->_check_email_address($e) == FALSE) {
                 $_P['comment_body'] .= '<h2>'.$lng_cmt['email_err'].'</h2>';
             }
-            elseif(!empty($captcha) && ((trim($_POST['vericode'])=='') || (isset($_SESSION['veriword']) && $_SESSION['veriword'] != $_POST['vericode']))) {
-                $_P['comment_body'] .= '<h2>'.$lng_cmt['captcha_err'].'</h2>';
+            elseif($recaptcha==1 && (trim($_POST['recaptcha_response_field'])=='') ) {
+                $_P['comment_body'] .= '<h2>'.$lng_cmt['recaptcha_err'].'</h2>';
             }
-            elseif (!empty($n) && !empty($c)) {
-                if (mysql_query('INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
-                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())")) {
+            if($recaptcha==1 && $_POST['recaptcha_response_field']) {
+                # the response from reCAPTCHA
+                $resp = null;
+                # the error code from reCAPTCHA, if any
+                $error = null;
 
+                # was there a reCAPTCHA response?
+                if ($_POST["recaptcha_response_field"]) {
+                    $resp = recaptcha_check_answer ($privatekey,
+                            $_SERVER["REMOTE_ADDR"],
+                            $_POST["recaptcha_challenge_field"],
+                            $_POST["recaptcha_response_field"]);
+
+                    if (!$resp->is_valid) {
+                        # set the error code so that we can display it
+                        $error = $resp->error;
+                    }
+                    else {
+                $com_insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
+                if (mysql_query($com_insert)) {
+                    mysql_query('UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET comments=comments+1 WHERE id='.$fileid);
+                    $_P['comment_body'] .= '<h3>'.$lng_cmt['comment_added'].'</h3>';
+
+                } else {
+                    $_P['comment_body'] .= '<h2>'.$lng_cmt['comment_add_err'].'</h2>';
+                }
+                    }
+                }
+            }
+            // NOT USING reCaptcha
+            else {
+                $com_insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
+                if (mysql_query($com_insert)) {
                     mysql_query('UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET comments=comments+1 WHERE id='.$fileid);
                     $_P['comment_body'] .= '<h3>'.$lng_cmt['comment_added'].'</h3>';
 
@@ -1625,11 +1654,13 @@ class e2g_snip extends e2g_pub {
                     $_P['comment_body'] .= '<h2>'.$lng_cmt['comment_add_err'].'</h2>';
                 }
             }
-            else {
-                $_P['comment_body'] .= '<h2>'.$lng_cmt['empty_name_comment'].'</h2>';
-            }
+        }
+        
+        if ($_POST && empty($_POST['name']) && empty($_POST['comment']) ) {
+            $_P['comment_body'] .= '<h2>'.$lng_cmt['empty_name_comment'].'</h2>';
         }
 
+        // DISPLAY THE AVAILABLE COMMENTS
         $comments_query = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_comments '
                 .'WHERE file_id = '.$fileid.' '
                 .'AND STATUS=1 '
@@ -1679,20 +1710,14 @@ class e2g_snip extends e2g_pub {
 
         // COMMENT TEMPLATE
 
-        if(!empty($captcha)) {
-            $seed=rand();
-            $_SESSION['veriword'] = md5($seed);
-            $_P['captcha'] = '
+        if($recaptcha==1) {
+            $_P['recaptcha'] = '
                 <tr>
-                    <td>'.$_P['code'].'</td>
-                    <td><input type="text" name="vericode" /></td>
-                    <td colspan="2" class="captcha_cell">
-                        <img src="'.MODX_BASE_URL.'manager/includes/veriword.php?rand='.$seed.'" alt="" />
-                    <td>
+                    <td colspan="4">'.$this->_e2g_recaptcha_get_html($publickey, $error).'</td>
                 </tr>';
         }
         else {
-            $_P['captcha'] ='';
+            $_P['recaptcha'] ='';
         }
         return $this->_filler($this->_page_comments_tpl(), $_P);
     }
@@ -1841,10 +1866,7 @@ class e2g_snip extends e2g_pub {
      * @return bool  True/False
      */
     function _check_email_address($email) {
-        if (!preg_match("/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)*\.([a-zA-Z]{2,6})$/", $email)) {
-            return false;
-        }
-        return true;
+        return parent::check_email_address($email);
     }
 
     /**
@@ -2045,5 +2067,50 @@ class e2g_snip extends e2g_pub {
             }
         }
     }
+
+
+    /**
+     * Gets the challenge HTML (javascript and non-javascript version).
+     * This is called from the browser, and the resulting reCAPTCHA HTML widget
+     * is embedded within the HTML form it was called from.
+     * @param string $pubkey A public key for reCAPTCHA
+     * @param string $error The error given by reCAPTCHA (optional, default is null)
+     * @param boolean $use_ssl Should the request be made over ssl? (optional, default is false)
+
+     * @return string - The HTML to be embedded in the user's form.
+     */
+    private function _e2g_recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
+        require_once('includes/recaptchalib.php');
+        $theme = $this->e2gsnip_cfg['recaptcha_theme'];
+        $theme_custom = $this->e2gsnip_cfg['recaptcha_theme_custom'];
+
+        if ($pubkey == null || $pubkey == '') {
+            return ("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
+        }
+
+        if ($use_ssl) {
+            $server = RECAPTCHA_API_SECURE_SERVER;
+        } else {
+            $server = RECAPTCHA_API_SERVER;
+        }
+
+        $errorpart = "";
+        if ($error) {
+            $errorpart = "&amp;error=" . $error;
+        }
+        return '
+            <script type="text/javascript">
+            var RecaptchaOptions = {
+            theme : \''.$theme.'\'
+                '.($theme=='custom' ? ',custom_theme_widget: \''.$theme_custom.'\'' :'').'};
+            </script>
+            <script type="text/javascript" src="'. $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
+            <noscript>
+                <iframe src="'. $server . '/noscript?k=' . $pubkey . $errorpart . '" height="300" width="500" frameborder="0"></iframe><br/>
+                <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
+                <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
+            </noscript>';
+    }
+
 } // class e2g_snip
 ?>

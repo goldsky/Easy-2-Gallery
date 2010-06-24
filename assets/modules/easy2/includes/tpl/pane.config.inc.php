@@ -486,7 +486,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="25%"><b><?php echo $lng['ecl']; ?>:</b></td>
+                        <td width="250"><b><?php echo $lng['ecl']; ?>:</b></td>
                         <td><span style="color:green;">&amp;ecl=</span> <input name="ecl" type="text" value="<?php echo $e2g['ecl']; ?>" size="3"></td>
                     </tr>
                     <tr>
@@ -499,10 +499,54 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['ecl_cfg_desc']); ?></td>
                     </tr>
+                    <tr>
+                        <td colspan="2"><br><b class="success" style="font-size:120%"><?php echo $lng['settings_recaptcha']; ?></b></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><span style="color:green;">&amp;recaptcha= 0 | 1</span>
+                                <input name="recaptcha" type="radio" value="0"<?php echo ($e2g['recaptcha']==0?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="recaptcha" type="radio" value="1"<?php echo ($e2g['recaptcha']==1?' checked':''); ?> style="border:0">
+                                <b><?php echo $lng['on']; ?></b>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['captcha_desc']); ?></td>
+                    </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['captcha']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;captcha= 0 | 1</span>
-                            <input name="captcha" type="checkbox"<?php echo ((isset($e2g['captcha']) && $e2g['captcha']==1)?' checked':''); ?> value="1" style="border:0"></td>
+                        <td><b><?php echo $lng['recaptcha_key_public']; ?>:</b></td>
+                        <td><input name="recaptcha_key_public" type="text" value="<?php echo $e2g['recaptcha_key_public']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['recaptcha_key_public_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['recaptcha_key_private']; ?>:</b></td>
+                        <td><input name="recaptcha_key_private" type="text" value="<?php echo $e2g['recaptcha_key_private']; ?>" size="70"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['recaptcha_key_private_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['theme']; ?>:</b></td>
+                        <td>
+                            <select name="recaptcha_theme">
+                                <option value="red"<?php echo ($e2g['recaptcha_theme']=='red'?' selected':''); ?>><?php echo $lng['red']; ?></option>
+                                <option value="white"<?php echo ($e2g['recaptcha_theme']=='white'?' selected':''); ?>><?php echo $lng['white']; ?></option>
+                                <option value="blackglass"<?php echo ($e2g['recaptcha_theme']=='blackglass'?' selected':''); ?>><?php echo $lng['blackglass']; ?></option>
+                                <option value="clean"<?php echo ($e2g['recaptcha_theme']=='clean'?' selected':''); ?>><?php echo $lng['clean']; ?></option>
+                                <option value="custom"<?php echo ($e2g['recaptcha_theme']=='custom'?' selected':''); ?>><?php echo $lng['custom']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['theme_recaptcha_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['theme_custom']; ?>:</b></td>
+                        <td><input name="recaptcha_theme_custom" type="text" value="<?php echo $e2g['recaptcha_theme_custom']; ?>" size="30"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['theme_custom_recaptcha_desc']); ?></td>
                     </tr>
                 </table>
             </div>

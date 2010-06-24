@@ -115,7 +115,7 @@ $e2g_lang['spanish'] = array (
         'last_modified' => 'fecha de edicion',
         'comments_cnt' => 'contador de comentarios',
         'random' => 'al azar',
-        'captcha' => 'Captcha',
+        'recaptcha' => 'Captcha',
 
         'asc' => 'ascendente',
         'desc' => 'descendente',

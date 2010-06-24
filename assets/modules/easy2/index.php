@@ -83,7 +83,7 @@ if (file_exists( E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery
     }
 
     foreach ($def_e2g as $dk => $dv) {
-        if ( !isset($confkey[$dk]) && $dk!='captcha') {
+        if ( !isset($confkey[$dk]) ) {
             $e2g[$dk] = $dv;
         }
     }

@@ -107,7 +107,7 @@ $e2g_lang['nederlands'] = array (
         'last_modified' => 'wijzigingsdatum',
         'comments_cnt' => 'aantal reacties',
         'random' => 'willekeurig',
-        'captcha' => 'Captcha',
+        'recaptcha' => 'Captcha',
 
         'asc' => 'opl',
         'desc' => 'afl',

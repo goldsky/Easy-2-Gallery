@@ -42,7 +42,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                     if (!empty($cp)) $cdir .= implode( '/', $cp ) . '/';
                                     ?>
                                 <tr <?php echo $cl[$i%2]; ?> >
-                                    <td valign="top">
+                                    <td valign="top" width="20">
                                         <input name="allcomment[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0">
                                     </td>
                                     <td valign="top" width="205">
@@ -67,7 +67,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                                             [id:<?php echo $l['file_id']; ?>]
                                         <div class="imPreview" id="rowPreview2_<?php echo $i; ?>" style="display:none;"></div>
                                     </td>
-                                    <td valign="top" style="width:100%;">
+                                    <td valign="top">
                                         <div>
                                             <b><?php echo $l['author']; ?></b> (
                                         <a href="mailto:<?php echo $l['email']; ?>"><?php echo $l['email']; ?></a> ,
@@ -130,7 +130,8 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     while ($ign = mysql_fetch_array($ign_ip_res, MYSQL_ASSOC)) {
                         ?>
                     <tr <?php echo $cl[$i%2]; ?> >
-                        <td><input name="unignored_ip[]" value="<?php echo $ign['ign_ip_address']; ?>" type="checkbox" style="border:0;padding:0"></td>
+                        <td valign="top" width="20">
+                            <input name="unignored_ip[]" value="<?php echo $ign['ign_ip_address']; ?>" type="checkbox" style="border:0;padding:0"></td>
                         <td width="20">
                             <a href="<?php echo $index
                                         .'&page=comments'
@@ -191,7 +192,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
 
 
                                 <tr <?php echo $cl[$i%2]; ?> >
-                                    <td valign="top">
+                                    <td valign="top" width="20">
                                         <input name="allcomment[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0">
                                     </td>
                                     <td valign="top" width="205">
