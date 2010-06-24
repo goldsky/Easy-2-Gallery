@@ -198,7 +198,7 @@ function e2g_recaptcha_get_html ($pubkey, $error = null, $use_ssl = false) {
     $theme_custom = $e2g['recaptcha_theme_custom'];
 
     if ($pubkey == null || $pubkey == '') {
-        return ("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
+        die("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create' target=\"_blank\">https://www.google.com/recaptcha/admin/create</a>");
     }
 
     if ($use_ssl) {
