@@ -1,6 +1,7 @@
 <?php
 $e2g_lang['polish-utf8'] = array (
         '_thumb_err' => 'Nie można utworzyć folderu &quot;_thumbnails&quot;.',
+        'add' => 'Dodawać',
         'add_to_db' => 'Dodaj do bazy danych',
         'archive' => 'Archiwum ZIP',
         'asc' => 'rosnąco',
@@ -132,7 +133,6 @@ $e2g_lang['polish-utf8'] = array (
         'ip_ignored_title' => 'Ignorowane adresy IP',
         'ip_unignored_err' => 'Nie można usunąć IP z listy ignorowanych.',
         'ip_unignored_suc' => 'To IP już nie jest ignorowane.',
-        'js_delete_confirm' => 'Czy na pewno chcesz usunąć te pliki?\n\nKliknij OK aby potwierdzić.',
         'last_modified' => 'data edycji',
         'left' => 'lewo',
         'limit' => 'Ilość obrazów na stronę',

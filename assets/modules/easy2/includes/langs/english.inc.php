@@ -154,7 +154,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;PHP only allows 2MB maximum on the file uploading.&lt;br /&gt;This can be increased by putting the .htaccess file into the &lt;strong&gt;[modx-root]/manager/&lt;/strong&gt; with this content:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;php_value upload_max_filesize 16M&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Or whatever size you need.&lt;/p&gt;',
-        'help_advance_title' => 'Awans',
+        'help_advance_title' => 'Advance',
         'help_moreinfo_content' => '&lt;p&gt;&lt;a href=&quot;http://e2g.info/documentation.htm&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://e2g.info/&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery official site&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://wiki.modxcms.com/index.php/Easy2gallery&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery WIKI&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;',
