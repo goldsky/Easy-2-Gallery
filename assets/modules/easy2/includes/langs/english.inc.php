@@ -3,28 +3,19 @@ $e2g_lang['english'] = array (
         '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
         'add' => 'Add',
         'add_to_db' => 'Add to DB',
-        'theme' => 'Theme',
-        'theme_recaptcha_desc' => 'Theme selection for reCaptcha',
-        'theme_custom_recaptcha_desc' => 'Custom theme name for reCaptcha (<a href="http://wiki.recaptcha.net/index.php/Overview#Custom_Theming" target="_blank">Custom Theming</a>)',
-        'theme_custom' => 'Custom theme',
-        'red' => 'Red',
-        'white' => 'White',
-        'blackglass' => 'Blackglass',
-        'custom' => 'Custom',
-        'clean' => 'Clean',
         'alias' => 'Alias',
         'and' => 'and',
         'archive' => 'Archive zip',
         'asc' => 'asc',
         'author' => 'Author',
         'back' => 'Back',
+        'blackglass' => 'Blackglass',
         'bottom' => 'bottom',
         'btn_field_add' => 'Upload more',
         'cache_clean' => 'Cache is cleared',
         'cache_clean_err' => 'There was an error while trying to clean cache',
         'cancel' => 'Cancel',
-        'recaptcha' => 'recaptcha',
-        'captcha_desc' => 'If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;',
+        'captcha_desc' => '&lt;p&gt;If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;&lt;/p&gt;',
         'cat_name_len' => 'max folder name length',
         'cat_name_len_cfg_desc' => 'Max folder name length',
         'center' => 'center',
@@ -36,6 +27,7 @@ $e2g_lang['english'] = array (
         'charset' => 'UTF-8',
         'chmod_err' => 'Unable to change the permission',
         'classname' => 'Class name',
+        'clean' => 'Clean',
         'clean_cache' => 'Clear cache',
         'colls' => 'columns',
         'colls_cfg_desc' => 'Columns',
@@ -55,8 +47,9 @@ $e2g_lang['english'] = array (
         'credit_lang_file_author' => 'Cx2, Temus, goldsky',
         'credit_lang_file_date' => 'June 17, 2010',
         'credit_lang_file_version' => '2.0',
-        'crumbs_usage_cfg_desc' => 'Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.',
+        'crumbs_usage_cfg_desc' => '&lt;p&gt;Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.&lt;/p&gt;',
         'css' => 'CSS',
+        'custom' => 'Custom',
         'date' => 'Date',
         'date_added' => 'date',
         'db_err' => 'DB error',
@@ -161,7 +154,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;PHP only allows 2MB maximum on the file uploading.&lt;br /&gt;This can be increased by putting the .htaccess file into the &lt;strong&gt;[modx-root]/manager/&lt;/strong&gt; with this content:&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;php_value upload_max_filesize 16M&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;Or whatever size you need.&lt;/p&gt;',
-        'help_advance_title' => 'Advance',
+        'help_advance_title' => 'Awans',
         'help_moreinfo_content' => '&lt;p&gt;&lt;a href=&quot;http://e2g.info/documentation.htm&quot; target=&quot;_blank&quot;&gt;&lt;strong&gt;Documentation&lt;/strong&gt;&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://e2g.info/&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery official site&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;a href=&quot;http://wiki.modxcms.com/index.php/Easy2gallery&quot; target=&quot;_blank&quot;&gt;Easy 2 Gallery WIKI&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;',
@@ -251,7 +244,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic       
+&lt;li&gt;galleriffic        
 &lt;ul&gt;
 &lt;li&gt;example-1&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -259,7 +252,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery       
+&lt;li&gt;smoothgallery        
 &lt;ul&gt;
 &lt;li&gt;fullgallery&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -273,7 +266,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview       
+&lt;li&gt;galleryview        
 &lt;ul&gt;
 &lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
@@ -283,7 +276,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow       
+&lt;li&gt;contentflow        
 &lt;ul&gt;
 &lt;li&gt;default&lt;/li&gt;
 &lt;/ul&gt;
@@ -390,10 +383,12 @@ $e2g_lang['english'] = array (
         'path' => 'Path',
         'post' => 'Post',
         'random' => 'random',
+        'recaptcha' => 'recaptcha',
         'recaptcha_key_private' => 'Private key',
-        'recaptcha_key_private_desc' => 'This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.',
+        'recaptcha_key_private_desc' => '&lt;p&gt;This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.&lt;/p&gt;',
         'recaptcha_key_public' => 'Public key',
         'recaptcha_key_public_desc' => 'This is used in the JavaScript code that is served to your users',
+        'red' => 'Red',
         'remove' => 'Remove',
         'resize' => 'resize',
         'resize_err' => 'Could not resize file',
@@ -430,6 +425,10 @@ $e2g_lang['english'] = array (
         'text' => 'text',
         'thbg_rgb' => 'Thumbnail background color',
         'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.&lt;/p&gt;',
+        'theme' => 'Theme',
+        'theme_custom' => 'Custom theme',
+        'theme_custom_recaptcha_desc' => '&lt;p&gt;Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;)&lt;/p&gt;',
+        'theme_recaptcha_desc' => 'Theme selection for reCaptcha',
         'thq' => 'Compression level',
         'thq_cfg_desc' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
         'thumb' => 'thumbnail',
@@ -474,6 +473,7 @@ $e2g_lang['english'] = array (
         'watermark_verpos' => 'Vertical position',
         'watermark_verpos_cfg_desc' => 'vertical position of watermark',
         'watermarks' => 'Watermarks',
+        'white' => 'White',
         'withselected' => 'With selected',
         'yes' => 'yes',
         'zip' => 'Zip',

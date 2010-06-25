@@ -8,6 +8,7 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
+require_once MODX_BASE_PATH . 'assets/modules/easy2/includes/utf8/utf8.php';
 
 // Easy 2 Gallery snippet path
 if(!defined('E2G_SNIPPET_PATH')) {

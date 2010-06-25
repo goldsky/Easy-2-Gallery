@@ -46,7 +46,15 @@ else {
     <table width="100%" style="background-color:#eee;">
         <tr>
             <td width="50%">
-                <p style="font-size: large; font-weight: bold;"><?php echo $lng['credit_lang_file'];?></p>
+                <table cellpadding="2" cellspacing="0" width="100%">
+                    <tr>
+                        <td style="font-size: large; font-weight: bold;" nowrap><?php echo $lng['credit_lang_file'];?></td>
+                        <td style="font-size: large; font-weight: bold;" width="100%">
+                            <input type="text" size="" style="width:98%;" name="<?php echo $engs['credit_lang_file']['key'];?>"
+                                   value="<?php echo $others['credit_lang_file']['value'];?>" />
+                        </td>
+                    </tr>
+                </table>
                 <table style="border:1px dotted #000;" cellpadding="2" cellspacing="0" width="100%">
                     <tr style="border:1px dotted #000;">
                         <th style="border:1px dotted #000;">Keys</th>
@@ -64,16 +72,13 @@ else {
                         <td style="border:1px dotted #000;" valign="top" nowrap="nowrap"><?php echo $eng['key'];?></td>
                         <td style="border:1px dotted #000;" valign="top" nowrap="nowrap"><?php echo $eng['value'];?></td>
                         <td style="border:1px dotted #000;" valign="top">
-                                        <?php
-                                        echo '<input type="text" size="" style="width:98%;" name="'.$others[$eng['key']]['key'].'"
-                    value="'.$others[$eng['key']]['value'].'" />';
-                                        ?>
+                            <input type="text" size="" style="width:98%;" name="<?php echo $engs[$eng['key']]['key'];?>"
+                                   value="<?php echo $others[$eng['key']]['value'];?>" />
                         </td>
                     </tr>
                                 <?php
-                            }
-                            unset($engs['credit_lang_file_author'],$engs['credit_lang_file_date'],$engs['credit_lang_file_version']);
-                        }
+                            } // if ($eng['key'] == 'credit_lang_file_author' ...
+                        } // foreach ($engs as $eng)
                         ?>
                 </table>
             </td>
@@ -95,16 +100,13 @@ else {
                         <td style="border:1px dotted #000;" valign="top"><?php echo $eng['key'];?></td>
                         <td style="border:1px dotted #000;" valign="top" nowrap="nowrap"><?php echo $eng['value'];?></td>
                         <td style="border:1px dotted #000;" valign="top">
-                                        <?php
-                                        echo '<input type="text" size="" style="width:98%;" name="'.$others[$eng['key']]['key'].'"
-                    value="'.$others[$eng['key']]['value'].'" />';
-                                        ?>
+                            <input type="text" size="" style="width:98%;" name="<?php echo $engs[$eng['key']]['key'];?>"
+                                   value="<?php echo $others[$eng['key']]['value'];?>" />
                         </td>
                     </tr>
                                 <?php
-                            }
-                            unset($engs['setlocale']);
-                        }
+                            } // if ($eng['key'] == 'setlocale')
+                        } // foreach ($engs as $eng)
                         ?>
                 </table>
             </td>
@@ -120,7 +122,12 @@ else {
             </tr>
                 <?php
                 foreach ($engs as $eng) {
-                    if ($eng['key'] != 'setlocale') {
+                    if ($eng['key'] != 'setlocale'
+                            && $eng['key'] != 'credit_lang_file'
+                            && $eng['key'] != 'credit_lang_file_author'
+                            && $eng['key'] != 'credit_lang_file_date'
+                            && $eng['key'] != 'credit_lang_file_version'
+                            ) {
                         // to separate the javascript text
                         $jsclass = (strpos($eng['key'],'js_')!==false ? 'background-color:#FFC;': '');
                         ?>
@@ -133,24 +140,24 @@ else {
                 </td>
                 <td style="border:1px dotted #000;<?php echo $jsclass;?>" valign="top">
                                 <?php
-                                if (strlen($eng['value'])<80) {
-                                    echo '<input type="text" size="60" name="'.$others[$eng['key']]['key'].'"
+                                if (strlen($eng['value'])<60) {
+                                    echo '<input type="text" size="80" name="'.$engs[$eng['key']]['key'].'"
                                 value="'.$others[$eng['key']]['value'].'" />';
                                 } else {
                                     $textareaheight = (strlen($eng['value'])/5);
-                                    echo '<textarea rows="" cols="" style="width : 94%;height: '.$textareaheight.'px;"'
+                                    echo '<textarea rows="2" cols="" style="width : 94%;'
+                                            . ( $textareaheight<50 ? '' : 'height: '.$textareaheight.'px;"' )
                                             . ( strpos($eng['key'],'js_')===false ? ' class="mceEditor"' : '' )
-                                            .' name="'.$others[$eng['key']]['key'].'" >';
+                                            .' name="'.$engs[$eng['key']]['key'].'" >';
                                     echo $others[$eng['key']]['value'];
                                     echo '</textarea>';
                                 }
                                 ?>
-
                 </td>
             </tr>
                         <?php
-                    }
-                }
+                    } // if ($eng['key'] != 'setlocale' ...
+                } // foreach ($engs as $eng)
                 ?>
         </table>
     </div>

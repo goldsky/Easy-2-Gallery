@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
+//header('Content-Type: text/html; charset=UTF-8');
 //set_ini('display_errors', '1');
 /**
  * EASY 2 GALLERY
@@ -1445,8 +1445,14 @@ class e2g_snip extends e2g_pub {
                 } else {
                     $path = '';
                 }
-//                $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
-                $l['src'] = $gdir.$path.$fetch['filename'];
+                $src = $gdir.$path.$fetch['filename'];
+
+                // goldsky -- only to switch between localhost and live site.
+                // need review!
+                if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
+                    $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($src)));
+                } else $l['src'] = $src;
+
                 $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $l['name'] = $fetch['name'];
                 $l['description'] = $fetch['description'];
@@ -1520,8 +1526,13 @@ class e2g_snip extends e2g_pub {
             } else {
                 $path = '';
             }
-//            $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
-            $l['src'] = $gdir.$path.$fetch['filename'];
+            
+            // goldsky -- only to switch between localhost and live site.
+            // need review!
+            if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
+                $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($gdir.$path.$fetch['filename'])));
+            } else $l['src'] = $gdir.$path.$fetch['filename'];
+
             $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
             $l['name'] = $fetch['name'];
             $l['description'] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);

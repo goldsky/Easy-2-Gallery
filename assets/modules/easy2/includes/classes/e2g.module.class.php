@@ -766,9 +766,15 @@ class e2g_mod extends e2g_pub {
             case 'save_lang':
                 ksort($_POST);
                 $c = "<?php\r\n\$e2g_lang['".$_GET['lang']."'] = array (\r\n";
+
                 foreach($_POST as $k => $v) {
+                    if ($v=='') {
+                        unset($k);
+                        continue;
+                    }
                     $c .= "        '$k' => '".htmlspecialchars($v,ENT_QUOTES)."',\r\n";
                 }
+                
                 $c .= ");\r\n?>";
                 $f = fopen( E2G_MODULE_PATH . 'includes/langs/'.$_GET['langfile'] , 'w' );
                 fwrite($f, $c);
