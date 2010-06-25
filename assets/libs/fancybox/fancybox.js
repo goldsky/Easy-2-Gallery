@@ -16,8 +16,8 @@ jQuery(function($) {
 	});
 	$("a.iframe").fancybox({
 	/* Put custom options here */
-	'frameWidth': 400,
-	'frameHeight': 300,
+	'frameWidth': 450,
+	'frameHeight': 320,
     'autoDimensions': true
 	});
 });
