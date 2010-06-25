@@ -1,5 +1,5 @@
 <?php
-header('Content-Type: text/html; charset=UTF-8');
+//header('Content-Type: text/html; charset=UTF-8');
 //set_ini('display_errors', '1');
 /**
  * EASY 2 GALLERY

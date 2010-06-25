@@ -270,14 +270,15 @@ else {
         <p>'.$_ssfile['description'][$i].'</p>
         <a href="'
                 // making flexible FURL or not
-                . $modx->makeUrl($modx->documentIdentifier
-                        , $modx->documentAliases
+                . $modx->makeUrl(
+                        $modx->documentIdentifier
+                        , $modx->aliases
                         , 'fid='.$_ssfile['id'][$i])
                 .'" title="open image" class="open"></a>
         <img src="'.$_ssfile['resizedimg'][$i].'" class="full" alt="" />
         <img src="'.$_ssfile['thumbsrc'][$i].'" class="thumbnail" alt="" />
     </div>';
-//die(__LINE__.': '.$_ssfile['resizedimg'][$i]);
+
                 // if there is a image number limitation
                 $j++;
                 if ($j==$ss_limit) break;
@@ -298,7 +299,6 @@ else {
         $cat_orderby = $this->e2gsnip_cfg['cat_orderby'];
         $cat_order = $this->e2gsnip_cfg['cat_order'];
         $_ssfile = array();
-        unset($_ssfile);
         
         if (!empty($gid)) {
 
@@ -328,10 +328,10 @@ else {
                             . 'ORDER BY ' . $orderby . ' ' . $order . ' '
                             . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
                     ;
-                    $query = mysql_query($select) or die('319 '.$select.mysql_error());
+                    $query = mysql_query($select) or die(__LINE__.' '.mysql_error().'<br />'.$select);
                     $countimg[$k] = mysql_num_rows($query);
                     // for an empty folder
-                    if ($countimg[$k]==0) continue;
+                    if ($countimg[$k]==0) unset($galleries[$k]);
                     
                     while ($fetch = mysql_fetch_array($query)) {
                         $path = $this->_get_path($fetch['dir_id']);
@@ -361,26 +361,27 @@ else {
             $ss_display = 'There is no gallery inside ID:'.$gid;
             return;
         }
-        foreach ($galleries as $k => $v ) {
+        foreach ($galleries as $gk => $gv ) {
             $ss_display .= '
     <div id="gallery1" class="galleryElement">
-        <h2>'.$v['cat_name'].'</h2>';
+        <h2>'.$gv['cat_name'].'</h2>';
 
             $j=0;
-            for ($i=0;$i<$countimg[$k];$i++) {
-                $_ssfile['title'][$k][$i] = ($_ssfile['title'][$k][$i]!='' ? $_ssfile['title'][$k][$i] : $_ssfile['filename'][$k][$i]);
+            for ($i=0;$i<$countimg[$gk];$i++) {
+                $_ssfile['title'][$gk][$i] = ($_ssfile['title'][$gk][$i]!='' ? $_ssfile['title'][$gk][$i] : $_ssfile['filename'][$gk][$i]);
                 $ss_display .= '
         <div class="imageElement">
-            <h3>'.$_ssfile['title'][$k][$i].'</h3>
-            <p>'.$_ssfile['description'][$k][$i].'</p>
+            <h3>'.$_ssfile['title'][$gk][$i].'</h3>
+            <p>'.$_ssfile['description'][$gk][$i].'</p>
             <a href="'
                 // making flexible FURL or not
-                . $modx->makeUrl($modx->documentIdentifier
-                        , $modx->documentAliases
-                        , 'fid='.$_ssfile['id'][$k][$i])
+                . $modx->makeUrl(
+                        $modx->documentIdentifier
+                        , $modx->aliases
+                        , 'fid='.$_ssfile['id'][$gk][$i])
                 .'" title="open image" class="open"></a>
-            <img src="'.$_ssfile['resizedimg'][$k][$i].'" class="full" alt="" />
-            <img src="'.$_ssfile['thumbsrc'][$k][$i].'" class="thumbnail" alt="" />
+            <img src="'.$_ssfile['resizedimg'][$gk][$i].'" class="full" alt="" />
+            <img src="'.$_ssfile['thumbsrc'][$gk][$i].'" class="thumbnail" alt="" />
         </div>';
                 // if there is a image number limitation
                 $j++;
@@ -415,7 +416,7 @@ else {
             // ------------- start the images looping ------------- //
             $j=0;
             for ($i=0;$i<$count;$i++) {
-                $dim = getimagesize(utf8_decode($_ssfile['src'][$i]));
+                $dim = getimagesize($this->_e2g_decode($_ssfile['src'][$i]));
                 $width[$i] = $dim[0];
                 $height[$i] = $dim[1];
                 $image_ratio[$i] = $width[$i]/$height[$i];
@@ -429,7 +430,7 @@ else {
     <div class="imageElement">
         <h3>'.$_ssfile['title'][$i].'</h3>
         <p>'.$_ssfile['description'][$i].'</p>
-        <a href="'.str_replace('%2F','/',rawurlencode(utf8_decode($_ssfile['src'][$i]))).'" title="open image" class="open"></a>
+        <a href="'.str_replace('%2F','/',rawurlencode($this->_e2g_decode($_ssfile['src'][$i]))).'" title="open image" class="open"></a>
         <img src="'.$_ssfile['resizedimg'][$i].'" class="full" alt="" '
                         . ( ( ($ss_w/$ss_h) < $image_ratio[$i] ) ? 'height="'.$ss_h.'px" ' : 'width="'.$ss_w.'px" ' )
                         .'/>

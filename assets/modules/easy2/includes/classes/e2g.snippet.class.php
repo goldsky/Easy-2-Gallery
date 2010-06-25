@@ -486,9 +486,7 @@ class e2g_snip extends e2g_pub {
                     $l['src'] = $this->_get_thumb( $gdir, $path1.$l1['filename'], $l['w'], $l['h'], $thq );
 
                     // making flexible FURL or not
-                    $l['link'] =  $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-                            'gid='
-                    );
+                    $l['link'] =  $modx->makeUrl($modx->documentIdentifier, $modx->aliases,'gid=');
 
                     // fill up the dir list with content
                     $_e2g['content'] .= (($grid == 'css') ? $this->_filler($this->_dir_tpl(), $l) : '<td>'. $this->_filler($this->_dir_tpl(), $l ).'</td>');
@@ -635,11 +633,13 @@ class e2g_snip extends e2g_pub {
         ) {
             $_e2g['back'] = '<span class="'.$back_class.'">&laquo; <a href="'
                     // making flexible FURL or not
-                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-                    'gid='.$_e2g['parent_id']
-                    . (isset($static_tag) ? '&tag='.$static_tag : '' )
-                    .'#'.(isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
-                    )
+                    . $modx->makeUrl(
+                            $modx->documentIdentifier
+                            , $modx->aliases
+                            , 'gid='.$_e2g['parent_id']
+                            . (isset($static_tag) ? '&tag='.$static_tag : '' )
+                            .'#'.(isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
+                            )
                     .'">'.$_e2g['parent_name'].'</a></p>';
         }
 
@@ -707,11 +707,13 @@ class e2g_snip extends e2g_pub {
                         else {
                             $_e2g['pages'] .= '<a href="'
                                     // making flexible FURL or not
-                                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-                                    'tag='.$static_tag
-                                    . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
-                                    . '&gpn='.$i.$customgetparams.'#'.$static_tag
-                                    )
+                                    . $modx->makeUrl(
+                                            $modx->documentIdentifier
+                                            , $modx->aliases
+                                            , 'tag='.$static_tag
+                                            . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
+                                            . '&gpn='.$i.$customgetparams.'#'.$static_tag
+                                            )
                                     .'">'.($i+1).'</a> ';
                         }
                     }
@@ -723,9 +725,11 @@ class e2g_snip extends e2g_pub {
                         else {
                             $_e2g['pages'] .= '<a href="'
                                     // making flexible FURL or not
-                                    . $modx->makeUrl($modx->documentIdentifier, $modx->documentAliases,
-                                    ( ( isset($static_gid)
-                                            && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
+                                    . $modx->makeUrl(
+                                            $modx->documentIdentifier
+                                            , $modx->aliases
+                                            , ( ( isset($static_gid)
+                                    && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
                                     ? 'gid='.$gid
                                     : 'gid='.$static_gid )
 //                                    'gid='.$static_gid
@@ -793,9 +797,11 @@ class e2g_snip extends e2g_pub {
                 $l['thumbplugin'] = $this->_plugin('thumb',$plugin,$l);
 
             if ( isset($landingpage) ) {
-                $l['link'] = $modx->makeUrl($landingpage, $modx->documentAliases,
-                        'lp='.$landingpage
-                        .'&'); // do not forget the '&' suffix
+                $l['link'] = $modx->makeUrl(
+                        $landingpage
+                        , $modx->aliases
+                        , 'lp=' . $landingpage . '&'  // do not forget the '&' suffix
+                        );
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -859,9 +865,11 @@ class e2g_snip extends e2g_pub {
                 $l['thumbplugin'] = $this->_plugin('thumb',$plugin,$l);
 
             if ( isset($landingpage) ) {
-                $l['link'] = $modx->makeUrl($landingpage, $modx->documentAliases,
-                        'lp='.$landingpage
-                        .'&'); // do not forget the '&' suffix
+                $l['link'] = $modx->makeUrl(
+                        $landingpage
+                        , $modx->aliases
+                        , 'lp=' . $landingpage . '&'  // do not forget the '&' suffix
+                        );
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -1211,7 +1219,6 @@ class e2g_snip extends e2g_pub {
         }
         // gallery's javascript library activation
         elseif ( $glibs[$glib] ) {
-//        if ( $glibs[$glib] && !isset($landingpage) ) {
             $row['glibact'] = $glibs[$glib]['glibact'];
         }
 
@@ -1272,7 +1279,7 @@ class e2g_snip extends e2g_pub {
         $ss_css = $this->e2gsnip_cfg['ss_css'];
         $ss_js = $this->e2gsnip_cfg['ss_js'];
 
-//        $_ssfile = array();
+        $_ssfile = array();
         if (!empty($gid) && $modx->documentIdentifier!=$landingpage ) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
@@ -1414,11 +1421,11 @@ class e2g_snip extends e2g_pub {
         */
         if ( isset($_GET['fid']) && isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
             // making flexible FURL or not
-            $modx->sendRedirect($modx->makeUrl(
+            $redirect_url = $modx->makeUrl(
                     $landingpage
                     , $modx->aliases
-                    , 'fid='.$_GET['fid']).'&lp='.$landingpage
-            );
+                    , 'lp='.$landingpage.'&fid='.$_GET['fid']);
+            $modx->sendRedirect(htmlspecialchars_decode($redirect_url));
         }
         elseif ( isset($_GET['fid']) && !isset($landingpage) ) {
             $modx->regClientCSS($css,'screen');
@@ -1438,8 +1445,8 @@ class e2g_snip extends e2g_pub {
                 } else {
                     $path = '';
                 }
-                $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
-//                $l['src'] = $gdir.$path.$fetch['filename'];
+//                $l['src'] = $this->_e2g_decode($gdir.$path.$fetch['filename']);
+                $l['src'] = $gdir.$path.$fetch['filename'];
                 $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $l['name'] = $fetch['name'];
                 $l['description'] = $fetch['description'];
@@ -1468,8 +1475,8 @@ class e2g_snip extends e2g_pub {
             }
             $_ssfile = array();
         }
-//        $_ssfile = array();
-//        unset($_ssfile);
+        $_ssfile = array();
+        unset($_ssfile);
         // return the slideshow
         return $ss_display;
     }
