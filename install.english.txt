@@ -10,7 +10,7 @@ Installation
    If this is an upgrade, this module will use the existing config.easy2gallery.php values.
 3. Create new module, name it anything (Eg: Easy 2 Gallery), type this one line code:
 
-    include(MODX_BASE_PATH.'assets/modules/easy2/index.php');
+    include_once MODX_BASE_PATH . 'assets/modules/easy2/index.php';
       
    , then click save.
 4. Refresh modx manager, then open the module tab.
