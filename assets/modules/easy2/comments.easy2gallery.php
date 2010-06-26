@@ -1,8 +1,8 @@
 <?php
-if (!isset($_COOKIE['SN4c1f988fbebc4'])) { // MODx's $site_sessionname signature
-    die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />
-    Please visit the site's pages instead of accessing this file directly.");
-}
+//if (!isset($_COOKIE['SN4c1f988fbebc4'])) { // MODx's $site_sessionname signature
+//    die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />
+//    Please visit the site's pages instead of accessing this file directly.");
+//}
 
 /**
  * EASY 2 GALLERY
