@@ -11,15 +11,19 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             <td><input name="name" type="text" size="30" /></td>
         </tr>
         <tr>
-            <td><b><?php echo $lng['enter_new_alias'];?> :</b></td>
-            <td><input name="alias" type="text" size="30" /></td>
+            <td><b><?php echo $lng['enter_new_alias']; ?> :</b></td>
+            <td><input name="alias" type="text" size="30"></td>
         </tr>
         <tr>
-            <td><b><?php echo $lng['tag'];?> :</b></td>
-            <td><input name="alias" type="text" size="30" /></td>
+            <td><b><?php echo $lng['summary']; ?> :</b></td>
+            <td><input name="summary" type="text" size="95"></td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['description'];?> :</b></td>
+            <td><b><?php echo $lng['tag']; ?> :</b></td>
+            <td><input name="tag" type="text" size="95"></td>
+        </tr>
+        <tr>
+            <td valign="top"><b><?php echo $lng['description']; ?> :</b></td>
             <td><textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""></textarea></td>
         </tr>
         <tr><td></td>

@@ -1193,6 +1193,7 @@ class e2g_mod extends e2g_pub {
                                 $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs '
                                         .'SET '
                                         .'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
+                                        .', cat_summary = \''.htmlspecialchars(trim($_POST['summary']), ENT_QUOTES).'\''
                                         .', cat_tag = \''.htmlspecialchars(trim($_POST['tag']), ENT_QUOTES).'\''
                                         .', cat_description = \''.htmlspecialchars(trim($_POST['description']), ENT_QUOTES).'\''
                                         .', last_modified=NOW() '
