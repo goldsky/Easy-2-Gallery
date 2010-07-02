@@ -11,6 +11,8 @@ elseif ($count == 0) {
 }
 //http://www.twospy.com/galleriffic/
 else {
+    // just making a default selection
+    if (!isset($ss_config)) $ss_config='example-1';
 
     /**************************************************/
     /*            PREPARE THE HTML HEADERS            */
@@ -58,8 +60,22 @@ else {
             max-width: '.$ss_w.'px;
             max-height: '.$ss_h.'px; /* This should be set to be at least the height of the largest image in the slideshow */
         }
+
+        div.slideshow-container,
+        div.loader,
+        div.slideshow a.advance-link {
+            width: '.((int)$ss_w+2).'px; /* This should be set to be at least the width of the largest image in the slideshow with padding */
+        }
+
+        div.loader,
+        div.slideshow a.advance-link,
+        div.caption-container {
+            height: '.((int)$ss_h+2).'px; /* This should be set to be at least the height of the largest image in the slideshow with padding */
+        }
+
         div.slideshow-container {
-            background-color: '.$ss_bg.';
+            background-color: '.( $ss_bg=='rgb' ? 'rgb('.$thbg_red.','.$thbg_green.','.$thbg_blue.')' : $ss_bg ).';
+            height: '.$ss_h.'px;
         }
         </style>');
     }

@@ -21,7 +21,7 @@ else {
         #slideshow {
             width: '.$ss_w.'px;
             height: '.$ss_h.'px;
-            background-color: '.$ss_bg.';
+            background-color: '.( $ss_bg=='rgb' ? 'rgb('.$thbg_red.','.$thbg_green.','.$thbg_blue.')' : $ss_bg ).';
          }
         </style>
             ');

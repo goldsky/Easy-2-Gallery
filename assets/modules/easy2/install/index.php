@@ -465,7 +465,7 @@ function system_check($lngi) {
         echo '</li>';
     }
     else {
-        $disabled = 'disabled';
+//        $disabled = 'disabled';
         echo '<li>';
         echo $icon_bad .'PHP ZipArchive';
         echo '</li>';

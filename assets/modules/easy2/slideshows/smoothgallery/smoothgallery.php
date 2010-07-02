@@ -6,6 +6,8 @@ if ( !defined(E2G_SNIPPET_URL) && $slideshow!='smoothgallery') {
 
 // http://smoothgallery.jondesign.net/
 else {
+    // just making a default selection
+    if (!isset($ss_config)) $ss_config='fullgallery';
 
     /**************************************************/
     /*            PREPARE THE HTML HEADERS            */
@@ -18,7 +20,7 @@ else {
         #myGallery {
             width: '.$ss_w.'px !important;
             height: '.$ss_h.'px !important;
-            background-color: '.$ss_bg.';
+            background-color: '.( $ss_bg=='rgb' ? 'rgb('.$thbg_red.','.$thbg_green.','.$thbg_blue.')' : $ss_bg ).';
         }
         #myGallery img .imageElement .full {
             max-width: '.$ss_w.'px !important;

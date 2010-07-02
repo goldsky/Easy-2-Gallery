@@ -11,6 +11,8 @@ elseif ($count == 0) {
 }
 // http://www.jacksasylum.eu/ContentFlow/index.php
 else {
+    // just making a default selection
+    if (!isset($ss_config)) $ss_config='default';
 
     /**************************************************/
     /*            PREPARE THE HTML HEADERS            */

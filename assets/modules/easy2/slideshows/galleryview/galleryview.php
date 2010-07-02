@@ -11,6 +11,8 @@ elseif ($count == 0) {
 }
 //http://spaceforaname.com/galleryview
 else {
+    // just making a default selection
+    if (!isset($ss_config)) $ss_config='gallerylight';
 
     /**************************************************/
     /*            PREPARE THE HTML HEADERS            */

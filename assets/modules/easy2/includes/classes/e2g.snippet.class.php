@@ -5,7 +5,7 @@
  * EASY 2 GALLERY
  * Gallery Snippet Class for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
- * @author Temus
+ * @author Temus <temus3@gmail.com>
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
@@ -169,6 +169,7 @@ class e2g_snip extends e2g_pub {
         /******************************************************************/
         /*                 COUNT DIRECTORY WITHOUT LIMIT!                 */
         /******************************************************************/
+        // dir_count is used for pagination. random can not have this.
         if ( $showonly=='images' || $orderby == 'rand()' || $cat_orderby=='rand()' ) {
             $dir_count = 0;
         } else {
@@ -991,7 +992,8 @@ class e2g_snip extends e2g_pub {
                  * proportionally reduce to default dimensions
                 */
                 // Shifts
-                $x = $y = 0;
+                $x = 0;
+                $y = 0;
 
                 // Dimensions
                 $w2 = $w;
@@ -1000,7 +1002,24 @@ class e2g_snip extends e2g_pub {
                 if ($w > $h) {          // landscape thumbnail box
                     $w2 = round($i[0] * $h / $i[1], 2);
                     $x = abs($w-$w2)/2.00 ;
-                } else {                // portrait thumbnail box
+                }
+                elseif ($w == $h) {     // square thumbnail box
+                    if ($i[0] < $i[1]) {// portrait image
+                        $w2 = round($i[0] * $h / $i[1], 2);
+                        $x = abs($w-$w2)/2.00 ;
+                    }
+                    elseif ($i[0] == $i[1]) {
+                        $w2 = $w;
+                        $h2 = $h;
+                        $x=0;
+                        $y=0;
+                    }
+                    else {              // landscape image
+                        $h2 = round($i[1] * $w / $i[0], 2);
+                        $y = abs($h-$h2)/2.00 ;
+                    }
+                }
+                else {                  // portrait thumbnail box
                     $h2 = round($i[1] * $w / $i[0], 2);
                     $y = abs($h-$h2)/2.00 ;
                 }
@@ -1267,12 +1286,16 @@ class e2g_snip extends e2g_pub {
         $w = $this->e2gsnip_cfg['w'];
         $h = $this->e2gsnip_cfg['h'];
         $thq = $this->e2gsnip_cfg['thq'];
+        $resize_type = $this->e2gsnip_cfg['resize_type'];
         $css = $this->e2gsnip_cfg['css'];
         $landingpage = $this->e2gsnip_cfg['landingpage'];
         $ss_indexfile = $this->e2gsnip_cfg['ss_indexfile'];
         $ss_w = $this->e2gsnip_cfg['ss_w'];
         $ss_h = $this->e2gsnip_cfg['ss_h'];
         $ss_bg = $this->e2gsnip_cfg['ss_bg'];
+        $thbg_red = $this->e2gsnip_cfg['thbg_red'];
+        $thbg_green = $this->e2gsnip_cfg['thbg_green'];
+        $thbg_blue = $this->e2gsnip_cfg['thbg_blue'];
         $ss_allowedratio = $this->e2gsnip_cfg['ss_allowedratio'];
         $ss_limit = $this->e2gsnip_cfg['ss_limit'];
         $ss_config = $this->e2gsnip_cfg['ss_config'];
@@ -1317,8 +1340,8 @@ class e2g_snip extends e2g_pub {
                 } else {
                     $path = '';
                 }
-                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
                 /*
                  * @todo: Making a work around if _get_thumb returns an empty result
                 */
@@ -1357,8 +1380,8 @@ class e2g_snip extends e2g_pub {
                 } else {
                     $path = '';
                 }
-                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
             }
         }
 
@@ -1395,8 +1418,8 @@ class e2g_snip extends e2g_pub {
                 } else {
                     $path = '';
                 }
-                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq);
-                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq);
+                $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
+                $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
             }
         }
 
@@ -1448,7 +1471,7 @@ class e2g_snip extends e2g_pub {
                 $src = $gdir.$path.$fetch['filename'];
 
                 // goldsky -- only to switch between localhost and live site.
-                // need review!
+                // @todo : need review!
                 if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
                     $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($src)));
                 } else $l['src'] = $src;
@@ -1528,7 +1551,7 @@ class e2g_snip extends e2g_pub {
             }
             
             // goldsky -- only to switch between localhost and live site.
-            // need review!
+            // @todo : need review!
             if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
                 $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($gdir.$path.$fetch['filename'])));
             } else $l['src'] = $gdir.$path.$fetch['filename'];

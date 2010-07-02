@@ -43,6 +43,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <input type="button" value="<?php echo $lng['btn_field_add'];?>" onclick="javascript:addField(); void(0);">
             </form>
         </div>
+        <?php if(class_exists(ZipArchive)) { ?>
         <div class="tab-page" id="tabZip">
             <h2 class="tab"><?php echo $lng['zip'];?></h2>
             <script type="text/javascript">
@@ -63,5 +64,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </table>
             </form>
         </div>
+        <?php } ?>
     </div>
 </div>
