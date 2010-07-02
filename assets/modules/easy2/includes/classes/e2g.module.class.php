@@ -136,7 +136,7 @@ class e2g_mod extends e2g_pub {
                     mysql_free_result($querycheck);
 
                     if (isset($existingname[$_FILES['img']['name'][$i]])) {
-                        $filteredname = $this->_single_file($_FILES['img']['name'][$i]);
+                        $filteredname = $this->_single_file($_FILES['img']['name'][$i], $_GET['pid']);
                     } else {
                         $filteredname = $_FILES['img']['name'][$i];
                     }
@@ -1935,10 +1935,10 @@ class e2g_mod extends e2g_pub {
      * to check the existance of filename/folder in the file system.<br />
      * if exists, this will add numbering into the uploaded files.
      */
-    private function _single_file($name) {
+    private function _single_file($name, $pid) {
         global $modx;
         $selectcheck = 'SELECT filename FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                . 'WHERE filename = \''.$name.'\'';
+                . 'WHERE filename = \''.$name.'\' AND dir_id = \''.$pid.'\'';
         $querycheck = @mysql_query($selectcheck);
         while ($rowcheck = @mysql_fetch_array($querycheck)) {
             $fetchrow[$rowcheck['filename']] = $rowcheck['filename'];
@@ -1959,17 +1959,18 @@ class e2g_mod extends e2g_pub {
             $newfilename = ( $prefixfilename!='' ? $prefixfilename.$notnumbersuffix : $filename ).'_'.$newnumbersuffix.$ext;
             $_SESSION['easy2suc'][] = __LINE__.' : '. $name .' exists, file was renamed to be '.$newfilename;
         }
+        else return $name;
 
         // recursive check
         $selectcheck2 = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                . 'WHERE filename=\''.$newfilename.'\'';
+                . 'WHERE filename=\''.$newfilename.'\' AND dir_id = \''.$pid.'\'';
         $querycheck2 = @mysql_query($selectcheck2);
         while ($rowcheck2 = @mysql_fetch_array($querycheck2)) {
             $fetchrow2[$rowcheck2['filename']] = $rowcheck2['filename'];
         }
         mysql_free_result($querycheck2);
         if ( isset( $fetchrow2[$newfilename]) ) {
-            $newfilename2 = $this->_single_file($newfilename);
+            $newfilename2 = $this->_single_file($newfilename, $pid);
             if (!$newfilename2) {
                 $_SESSION['easy2err'][] = __LINE__.' : '. $name .' exists, but file could not be renamed to be '.$newfilename;
             } else $newfilename = $newfilename2;
