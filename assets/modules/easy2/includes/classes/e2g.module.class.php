@@ -20,7 +20,7 @@ class e2g_mod extends e2g_pub {
         set_time_limit(0);
 
         $this->e2gmod_cfg = $e2gmod_cfg;
-//        $this->e2g = $e2g;
+        $this->e2g = $e2g;
 //        $this->lng = $lng;
 //        $this->_explore($e2g, $lng);
     }
@@ -155,9 +155,8 @@ class e2g_mod extends e2g_pub {
                     }
 
                     $inf = getimagesize($_FILES['img']['tmp_name'][$i]);
-                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
-                        $this->_resize_img ($_FILES['img']['tmp_name'][$i], $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
-                    }
+                    if ($inf[2] > 3) continue;
+                    $this->_resize_img ($_FILES['img']['tmp_name'][$i], $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     if (! move_uploaded_file($_FILES['img']['tmp_name'][$i], '../'.$this->_e2g_decode($gdir.$filteredname))) {
                         $_SESSION['easy2err'][] = __LINE__.' : '.$lng['upload_err'].' : '.'../'.$this->_e2g_decode($gdir.$filteredname);
                     }
@@ -797,9 +796,7 @@ class e2g_mod extends e2g_pub {
                 $inf = getimagesize($f);
                 if ($inf[2] <= 3 && is_numeric($_GET['pid'])) {
                     // RESIZE
-                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
-                        $this->_resize_img($f, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
-                    }
+                    $this->_resize_img($f, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                     $n = $this->_basename_safe($f);
                     $n = $this->_e2g_encode($n);
                     $s = filesize($f);
@@ -1221,11 +1218,13 @@ class e2g_mod extends e2g_pub {
                     if ($this->_has_bad_char($_POST['newdirname'])) {
                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['char_bad'];
                     } else {
+                        $newdirname = $modx->stripAlias($_POST['newdirname']);
                         // check the CHMOD permission first, EXCLUDE the root gallery
                         if ($row['cat_id']!=1) {
                             $chmodolddir = chmod('../'.$this->_e2g_decode($gdir.$row['cat_name']), 0755);
-                            $renamedir = rename('../'.$this->_e2g_decode($gdir.$row['cat_name']), '../'.$this->_e2g_decode($gdir.$_POST['newdirname']));
-                            $chmodnewdir = chmod('../'.$this->_e2g_decode($gdir.$_POST['newdirname']), 0755);
+                            $renamedir = rename('../'.$this->_e2g_decode($gdir.$row['cat_name'])
+                                    , '../'.$this->_e2g_decode($gdir.$newdirname));
+                            $chmodnewdir = chmod('../'.$this->_e2g_decode($gdir.$newdirname), 0755);
                         }
                         if (!$chmodolddir && ($row['cat_id']!=1)) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
@@ -1233,15 +1232,15 @@ class e2g_mod extends e2g_pub {
                         }
                         elseif (!$renamedir && ($row['cat_id']!=1)) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['update_err'];
-                            $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$_POST['newdirname']);
+                            $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$newdirname);
                         }
                         else {
                             if (!$chmodnewdir && ($row['cat_id']!=1)) {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             }
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_dirs SET ';
-                            if( $row['cat_id']!='1' && $_POST['newdirname'] != $row['cat_name'] ) {
-                                $q .= 'cat_name = \''.htmlspecialchars(trim($_POST['newdirname']), ENT_QUOTES).'\', '; // trailing comma!
+                            if( $row['cat_id']!='1' && $newdirname != $row['cat_name'] ) {
+                                $q .= 'cat_name = \''.htmlspecialchars(trim($newdirname), ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'cat_alias = \''.htmlspecialchars(trim($_POST['alias']), ENT_QUOTES).'\''
                                     .', cat_summary = \''.htmlspecialchars(trim($_POST['summary']), ENT_QUOTES).'\''
@@ -1286,23 +1285,25 @@ class e2g_mod extends e2g_pub {
 
                         header ("Location: ".html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     } else {
+                        $newfilename = $modx->stripAlias($_POST['newfilename']);
                         // check the CHMOD permission first
                         $chmodoldfile = chmod('../'.$this->_e2g_decode($gdir.$row['filename']), 0644);
-                        $renamefile = rename('../'.$this->_e2g_decode($gdir.$row['filename']) , '../'.$this->_e2g_decode($gdir.$_POST['newfilename'].$ext));
-                        $chmodnewfile = chmod('../'.$this->_e2g_decode($gdir.$_POST['newfilename'].$ext), 0644);
+                        $renamefile = rename('../'.$this->_e2g_decode($gdir.$row['filename']) 
+                                , '../'.$this->_e2g_decode($gdir.$newfilename.$ext));
+                        $chmodnewfile = chmod('../'.$this->_e2g_decode($gdir.$newfilename.$ext), 0644);
 
                         if (!$chmodoldfile) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                         } elseif (!$renamefile) {
                             $_SESSION['easy2err'][] = __LINE__.' : '.$lng['update_err'];
-                            $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$_POST['newfilename'].$ext);
+                            $_SESSION['easy2err'][] = __LINE__.' : '.$this->_e2g_decode($gdir.$newfilename.$ext);
                         } else {
                             if (!$chmodnewfile) {
                                 $_SESSION['easy2err'][] = __LINE__.' : '.$lng['chmod_err'];
                             }
                             $q = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET ';
-                            if( $_POST['newfilename'] != $filename ) {
-                                $q .= 'filename = \''.htmlspecialchars(trim($_POST['newfilename']).$ext, ENT_QUOTES).'\', '; // trailing comma!
+                            if( $newfilename != $filename ) {
+                                $q .= 'filename = \''.htmlspecialchars(trim($newfilename).$ext, ENT_QUOTES).'\', '; // trailing comma!
                             }
                             $q .= 'name = \''.htmlspecialchars(trim($_POST['name']), ENT_QUOTES).'\''
                                     .', summary = \''.htmlspecialchars(trim($_POST['summary']), ENT_QUOTES).'\''
@@ -1601,9 +1602,7 @@ class e2g_mod extends e2g_pub {
                     $inf = getimagesize($f);
                     if ($inf[2] > 3) continue;
                     // RESIZE
-                    if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) ) || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
-                        $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
-                    }
+                    $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
                     $q = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_files '
                             . '(dir_id,filename,size,name,description,date_added) '
                             . "VALUES($id,'$n',$s,'','',NOW())";
@@ -1630,9 +1629,7 @@ class e2g_mod extends e2g_pub {
         $inf = getimagesize($f);
         if ($inf[2] <= 3 && is_numeric($pid)) {
             // RESIZE
-            if ( ( ($cfg['maxw'] > 0) && ($inf[0] > $cfg['maxw']) ) || ( ($cfg['maxh'] > 0) && ($inf[1] > $cfg['maxh']) ) ) {
-                $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
-            }
+            $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
             $n = $this->_basename_safe($f);
             $n = $this->_e2g_encode($n);
 
@@ -1671,31 +1668,36 @@ class e2g_mod extends e2g_pub {
      * @param int    $thq :thumbnail quality
      */
     private function _resize_img ($f, $inf, $w, $h, $thq) {
-        global $modx;
-        // OPEN
-        if ($inf[2] == 1) $im = imagecreatefromgif ($f);
-        elseif ($inf[2] == 2) $im = imagecreatefromjpeg ($f);
-        elseif ($inf[2] == 3) $im = imagecreatefrompng ($f);
-        else {
-            $_SESSION['easy2err'][] = __LINE__.' : '.$f;
-            return FALSE;
+        $e2g = $this->e2g;
+        if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) )
+                || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
+            // OPEN
+            if ($inf[2] == 1) $im = imagecreatefromgif ($f);
+            elseif ($inf[2] == 2) $im = imagecreatefromjpeg ($f);
+            elseif ($inf[2] == 3) $im = imagecreatefrompng ($f);
+            else {
+                $_SESSION['easy2err'][] = __LINE__.' : '.$f;
+                return FALSE;
+            }
+
+            // RESIZE
+            if ($inf[0] > $inf[1]) $h = round($inf[1] * $w / $inf[0]);
+            else $w = round($inf[0] * $h / $inf[1]);
+            // CREATE NEW IMG
+            $pic = imagecreatetruecolor($w, $h);
+            $bgc = imagecolorallocate($pic, 255, 255, 255);
+            imagefill($pic, 0, 0, $bgc);
+            imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
+
+            // SAVE
+            if ($inf[2] == 1) imagegif ($pic, $f);
+            elseif ($inf[2] == 2) imagejpeg($pic, $f, $thq);
+            elseif ($inf[2] == 3) imagepng ($pic, $f);
+            @chmod($f, 0644);
+            imagedestroy($pic);
+            imagedestroy($im);
+            return TRUE;
         }
-        // RESIZE
-        if ($inf[0] > $inf[1]) $h = round($inf[1] * $w / $inf[0]);
-        else $w = round($inf[0] * $h / $inf[1]);
-        // CREATE NEW IMG
-        $pic = imagecreatetruecolor($w, $h);
-        $bgc = imagecolorallocate($pic, 255, 255, 255);
-        imagefill($pic, 0, 0, $bgc);
-        imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
-        // SAVE
-        if ($inf[2] == 1) imagegif ($pic, $f);
-        elseif ($inf[2] == 2) imagejpeg($pic, $f, $thq);
-        elseif ($inf[2] == 3) imagepng ($pic, $f);
-        @chmod($f, 0644);
-        imagedestroy($pic);
-        imagedestroy($im);
-        return TRUE;
     }
 
     /**
@@ -1838,9 +1840,7 @@ class e2g_mod extends e2g_pub {
                             $inf = getimagesize($f);
                             if ($inf[2] <= 3) {
                                 // RESIZE
-                                if ( ( ($cfg['maxw'] > 0) && ($inf[0] > $cfg['maxw']) ) || ( ($cfg['maxh'] > 0) && ($inf[1] > $cfg['maxh']) ) ) {
-                                    $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
-                                }
+                                $this->_resize_img($f, $inf, $cfg['maxw'], $cfg['maxh'], $cfg['maxthq']);
                                 $n = $this->_basename_safe($f);
                                 $n = $this->_e2g_encode($n);
                                 $s = filesize($f);

@@ -15,7 +15,7 @@ $e2g_lang['english'] = array (
         'cache_clean' => 'Cache is cleared',
         'cache_clean_err' => 'There was an error while trying to clean cache',
         'cancel' => 'Cancel',
-        'captcha_desc' => '&lt;p&gt;If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;&lt;/p&gt;',
+        'captcha_desc' => 'If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;',
         'cat_name_len' => 'max folder name length',
         'cat_name_len_cfg_desc' => 'Max folder name length',
         'center' => 'center',
@@ -47,7 +47,7 @@ $e2g_lang['english'] = array (
         'credit_lang_file_author' => 'Cx2, Temus, goldsky',
         'credit_lang_file_date' => 'June 17, 2010',
         'credit_lang_file_version' => '2.0',
-        'crumbs_usage_cfg_desc' => '&lt;p&gt;Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.&lt;/p&gt;',
+        'crumbs_usage_cfg_desc' => 'Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.',
         'css' => 'CSS',
         'custom' => 'Custom',
         'date' => 'Date',
@@ -59,14 +59,14 @@ $e2g_lang['english'] = array (
         'dir' => 'Folder',
         'dir_add_err' => 'There was an error while trying to create a folder',
         'dir_added' => 'Folder created',
-        'dir_cfg_desc' => '&lt;p&gt;Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.&lt;/p&gt;',
+        'dir_cfg_desc' => 'Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.',
         'dir_create' => 'Create folder',
         'dir_create_err' => 'Could not create folder',
         'dir_created' => 'folder created',
-        'dir_deleted' => 'folders deleted',
         'dir_delete_err' => 'Could not delete folders',
         'dir_delete_fdb' => 'folders removed only from DB',
         'dir_delete_fhdd' => 'folders removed only from hd',
+        'dir_deleted' => 'folders deleted',
         'dir_move_err' => 'Could not move folder',
         'dir_move_suc' => 'Moved folder',
         'dir_moved' => 'folder moved',
@@ -135,7 +135,7 @@ $e2g_lang['english'] = array (
         'grid_class' => 'Grid&#039;s class',
         'grid_class_cfg_desc' => 'CSS class name for the grid.',
         'h' => 'Height',
-        'h_cfg_desc' => '&lt;p&gt;Max height in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
+        'h_cfg_desc' => 'Max height in pixels, larger images will be resized automatically.&lt;br /&gt;&lt;strong&gt;0 - no limit&lt;/strong&gt;.',
         'h_thumb_cfg_desc' => 'Thumbnail height, px',
         'help' => 'Help',
         'help_advance_content' => '&lt;h2&gt;Nested easy2 with MODx API&lt;/h2&gt;
@@ -244,17 +244,17 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic        
+&lt;li&gt;galleriffic          
 &lt;ul&gt;
-&lt;li&gt;example-1&lt;/li&gt;
+&lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
 &lt;li&gt;example-3&lt;/li&gt;
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery        
+&lt;li&gt;smoothgallery          
 &lt;ul&gt;
-&lt;li&gt;fullgallery&lt;/li&gt;
+&lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
 &lt;li&gt;timedgallery&lt;/li&gt;
 &lt;li&gt;simpletimedslideshow&lt;/li&gt;
@@ -266,9 +266,9 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview        
+&lt;li&gt;galleryview          
 &lt;ul&gt;
-&lt;li&gt;gallerylight&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
+&lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;topfilmstrip&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`topfilmstrip` &amp;amp;w=`100` &amp;amp;h=`38` &amp;amp;ss_w=`700`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;polaroid&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`polaroid` &amp;amp;w=`114` &amp;amp;h=`110` &amp;amp;ss_w=`469`     &amp;amp;ss_h=`452` !]&lt;/li&gt;
@@ -276,19 +276,19 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow        
+&lt;li&gt;contentflow          
 &lt;ul&gt;
-&lt;li&gt;default&lt;/li&gt;
+&lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The typical snippet call of using one of these slideshows is&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;[!easy2?slideshow=`smoothgallery` &amp;amp;ss_config=`fullgallery`!]&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&lt;br /&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from &lt;strong&gt;assets/modules/easy2/slideshows/&#039;.$slideshow.&#039;/&#039;.$slideshow.&#039;.php&lt;/strong&gt;&lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from &lt;strong&gt;assets/modules/easy2/slideshows/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;.php&lt;/strong&gt;&lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default = 400 (in px)&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default = 300 (in px)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default = white&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default = white&lt;br /&gt;To use the RGB color: &lt;strong&gt;&amp;amp;ss_bg=`rgb` &amp;amp;thbg_red=`255`&lt;/strong&gt; &lt;strong&gt; &amp;amp;thbg_green=`255` &lt;/strong&gt;&lt;strong&gt; &amp;amp;thbg_blue=`255`&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt; - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).&lt;br /&gt; Options:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&#039;minimumfloatnumber-maximumfloatnumber&#039;, eg: `1.0-2.0`&lt;/li&gt;
@@ -320,7 +320,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;comments_row_tpl&lt;/strong&gt; - comments row template.&lt;br /&gt; chunk name or path to file, relative to file comments.easy2gallery.php.&lt;br /&gt; Default: assets/modules/easy2/templates/comments_row.htm&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;h2&gt;Placeholders description&lt;/h2&gt;
-&lt;h3&gt;gallery&lt;/h3&gt;
+&lt;h3&gt;Gallery&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;[+easy2:permalink+]&lt;/strong&gt; - permalink to the gallery grid&lt;br /&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - current folder name&lt;br /&gt; &lt;strong&gt;[+easy2:back+]&lt;/strong&gt; - link back to parent&lt;br /&gt; &lt;strong&gt;[+easy2:content+]&lt;/strong&gt; - content&lt;br /&gt; &lt;strong&gt;[+easy2:pages+]&lt;/strong&gt; - pagination&lt;/p&gt;
 &lt;h3&gt;Folders&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;[+easy2:cat_name+]&lt;/strong&gt; - folder name&lt;br /&gt; &lt;strong&gt;[+easy2:cat_id+]&lt;/strong&gt; - folder id&lt;br /&gt; &lt;strong&gt;[+easy2:parent_id+]&lt;/strong&gt; - parent folder id&lt;br /&gt; &lt;strong&gt;[+easy2:cat_level+]&lt;/strong&gt; - level&lt;br /&gt; &lt;strong&gt;[+easy2:count+]&lt;/strong&gt; - number of files (new)&lt;/p&gt;
@@ -340,7 +340,7 @@ $e2g_lang['english'] = array (
         'ignore' => 'Ignore',
         'image' => 'image',
         'img_old_resize' => 'Resize existing images',
-        'img_old_resize_cfg_desc' => '&lt;p&gt;Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.&lt;/p&gt;',
+        'img_old_resize_cfg_desc' => 'Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.',
         'indexfile' => '&lt;h2&gt;Unauthorized access&lt;/h2&gt;
 &lt;p&gt;You&#039;re not allowed to access file folder&lt;/p&gt;',
         'info' => 'Info',
@@ -353,10 +353,6 @@ $e2g_lang['english'] = array (
         'ip_ignored_title' => 'Ignored IP Address',
         'ip_unignored_err' => 'Could not release IP from ignore list.',
         'ip_unignored_suc' => 'This IP is now unignored.',
-        'js_delete_confirm' => 'Are you sure you want to delete this file?\n\nClick ok to confirm.',
-        'js_delete_folder_confirm' => 'Are you sure you want to delete this folder?\nAll child files and folders will be removed as well.\n\nClick ok to confirm.',
-        'js_ignore_ip_address_confirm' => 'Are you sure want to ignore this IP Address?\nAll comments from this IP address will be hidden as well.\n\nClick ok to confirm.',
-        'js_unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
         'kilobytes' => 'kb',
         'langfile_updated' => 'Language file is updated.',
         'last_modified' => 'editing date',
@@ -385,7 +381,7 @@ $e2g_lang['english'] = array (
         'random' => 'random',
         'recaptcha' => 'recaptcha',
         'recaptcha_key_private' => 'Private key',
-        'recaptcha_key_private_desc' => '&lt;p&gt;This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.&lt;/p&gt;',
+        'recaptcha_key_private_desc' => 'This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.',
         'recaptcha_key_public' => 'Public key',
         'recaptcha_key_public_desc' => 'This is used in the JavaScript code that is served to your users',
         'red' => 'Red',
@@ -393,7 +389,7 @@ $e2g_lang['english'] = array (
         'resize' => 'resize',
         'resize_err' => 'Could not resize file',
         'resize_type' => 'Thumbnail Resize',
-        'resize_type_cfg_desc' => '&lt;p&gt;Inner: cropped | Shrink: shrink | Resize: proportional autofit&lt;/p&gt;',
+        'resize_type_cfg_desc' => 'Inner: cropped | Shrink: shrink | Resize: proportional autofit',
         'restore_err' => 'There was an error while trying to restore',
         'restore_suc' => 'Gallery&#039;s names restored',
         'right' => 'right',
@@ -427,7 +423,7 @@ $e2g_lang['english'] = array (
         'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.&lt;/p&gt;',
         'theme' => 'Theme',
         'theme_custom' => 'Custom theme',
-        'theme_custom_recaptcha_desc' => '&lt;p&gt;Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;)&lt;/p&gt;',
+        'theme_custom_recaptcha_desc' => 'Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;)',
         'theme_recaptcha_desc' => 'Theme selection for reCaptcha',
         'thq' => 'Compression level',
         'thq_cfg_desc' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
@@ -438,7 +434,7 @@ $e2g_lang['english'] = array (
         'tofolder' => 'to folder',
         'top' => 'top',
         'tpl' => 'Templates',
-        'tpl_comments_cfg_desc' => '&lt;p&gt;chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;&lt;/p&gt;',
+        'tpl_comments_cfg_desc' => 'chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;',
         'tpl_css_path_cfg_desc' => 'Path to CSS file',
         'tpl_lp' => 'Landing page tpl',
         'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
@@ -463,7 +459,7 @@ $e2g_lang['english'] = array (
         'use' => 'Use',
         'version' => 'Version',
         'w' => 'Width',
-        'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
+        'w_cfg_desc' => 'Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.',
         'w_thumb_cfg_desc' => 'Thumbnail width, px.',
         'watermark_horpos' => 'Horizontal position',
         'watermark_horpos_cfg_desc' => 'horisontal position of watermark',
@@ -478,7 +474,7 @@ $e2g_lang['english'] = array (
         'yes' => 'yes',
         'zip' => 'Zip',
         'zip_create_err' => 'Unable to create the zip file',
-        'zip_open_err' => 'unable to create the zip file',
+        'zip_open_err' => 'Unable to open the zip file',
         'zip_select_none' => 'Please select any directory or file to be downloaded',
 );
 ?>

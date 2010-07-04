@@ -25,12 +25,12 @@ class e2g_snip extends e2g_pub {
      * @global mixed $modx
      */
     public function display() {
-        /*
+        /**
          * 1. '&gid' : full gallery directory (directory - &gid - default)
          * 2. '&fid' : one file only (file - $fid)
          * 3. '&rgid' : random file in a directory (random - $rgid)
          * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
-        */
+         */
         global $modx;
         $gid = $this->e2gsnip_cfg['gid']; // default
         $static_gid = $this->e2gsnip_cfg['static_gid'];
@@ -155,9 +155,9 @@ class e2g_snip extends e2g_pub {
             $gpn=0;
         }
 
-        /*
+        /**
          * PATHS
-        */
+         */
         // NOT the $e2g config
         $_e2g = array('content'=>'','pages'=>'','parent_id'=>0,'back'=>'');
 
@@ -266,10 +266,10 @@ class e2g_snip extends e2g_pub {
                 // reset crumbs
                 $breadcrumbs='';
 
-                /*
+                /**
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories in 1 page?
-                */
+                 */
                 if (isset($static_tag) && !$this->_tags_ids('dir', $static_tag, $single_gid)) continue;
                 if ( $multiple_gids_count==1
                         && $crumbs ==1
@@ -474,9 +474,9 @@ class e2g_snip extends e2g_pub {
                     }
                     elseif (strlen($l['title']) > $title_len) $l['title'] = substr($l['title'], 0, $title_len-1).'...';
 
-                    /*
+                    /**
                      * insert plugin for each gallery
-                    */
+                     */
                     if (isset($plugin) && preg_match('/gallery:/', $plugin))
                         $l['galleryplugin'] = $this->_plugin('gallery',$plugin,$l);
 
@@ -502,10 +502,10 @@ class e2g_snip extends e2g_pub {
 
         if( $dir_num_rows!=$limit && $showonly!='folders' && !empty($gid) ) {
 
-            /*
+            /**
              * goldsky -- manage the pagination limit between dirs and files
              * (join the pagination AND the table grid).
-            */
+             */
             $modulus_dir_count = $dir_count%$limit;
             $file_thumb_offset = $limit-$modulus_dir_count;
             $file_page_offset = ceil($dir_count/$limit);
@@ -586,10 +586,10 @@ class e2g_snip extends e2g_pub {
             if ( $dir_num_rows % $colls == 0 && $grid == 'table' ) $_e2g['content'] .= '</tr><tr>';
 
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
-                /*
+                /**
                  * whether configuration setting is set with or without table, the template will adjust it
                  * goldsky -- this is where the file's thumb 'float' to the dirs' in TABLE grid
-                */
+                 */
                 if ( ( $i > 0 )
                         && ( ( $i + $dir_num_rows ) % $colls == 0 )
                         && $grid == 'table' ) {
@@ -635,12 +635,12 @@ class e2g_snip extends e2g_pub {
             $_e2g['back'] = '<span class="'.$back_class.'">&laquo; <a href="'
                     // making flexible FURL or not
                     . $modx->makeUrl(
-                            $modx->documentIdentifier
-                            , $modx->aliases
-                            , 'gid='.$_e2g['parent_id']
-                            . (isset($static_tag) ? '&tag='.$static_tag : '' )
-                            .'#'.(isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
-                            )
+                    $modx->documentIdentifier
+                    , $modx->aliases
+                    , 'gid='.$_e2g['parent_id']
+                    . (isset($static_tag) ? '&tag='.$static_tag : '' )
+                    .'#'.(isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
+                    )
                     .'">'.$_e2g['parent_name'].'</a></p>';
         }
 
@@ -709,12 +709,12 @@ class e2g_snip extends e2g_pub {
                             $_e2g['pages'] .= '<a href="'
                                     // making flexible FURL or not
                                     . $modx->makeUrl(
-                                            $modx->documentIdentifier
-                                            , $modx->aliases
-                                            , 'tag='.$static_tag
-                                            . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
-                                            . '&gpn='.$i.$customgetparams.'#'.$static_tag
-                                            )
+                                    $modx->documentIdentifier
+                                    , $modx->aliases
+                                    , 'tag='.$static_tag
+                                    . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
+                                    . '&gpn='.$i.$customgetparams.'#'.$static_tag
+                                    )
                                     .'">'.($i+1).'</a> ';
                         }
                     }
@@ -727,10 +727,10 @@ class e2g_snip extends e2g_pub {
                             $_e2g['pages'] .= '<a href="'
                                     // making flexible FURL or not
                                     . $modx->makeUrl(
-                                            $modx->documentIdentifier
-                                            , $modx->aliases
-                                            , ( ( isset($static_gid)
-                                    && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
+                                    $modx->documentIdentifier
+                                    , $modx->aliases
+                                    , ( ( isset($static_gid)
+                                            && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
                                     ? 'gid='.$gid
                                     : 'gid='.$static_gid )
 //                                    'gid='.$static_gid
@@ -802,7 +802,7 @@ class e2g_snip extends e2g_pub {
                         $landingpage
                         , $modx->aliases
                         , 'lp=' . $landingpage . '&'  // do not forget the '&' suffix
-                        );
+                );
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -870,7 +870,7 @@ class e2g_snip extends e2g_pub {
                         $landingpage
                         , $modx->aliases
                         , 'lp=' . $landingpage . '&'  // do not forget the '&' suffix
-                        );
+                );
             } else {
                 $l['link'] = 'assets/modules/easy2/show.easy2gallery.php?'; // do not forget the '?' suffix
             }
@@ -915,9 +915,9 @@ class e2g_snip extends e2g_pub {
 
         $thumb_path = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_'.$w.'x'.$h.'.jpg';
 
-        /*
+        /**
          * CREATE THUMBNAIL
-        */
+         */
         // goldsky -- alter the maximum execution time
         set_time_limit(0);
 
@@ -947,10 +947,10 @@ class e2g_snip extends e2g_pub {
                 $im = $temp;
             }
 
-            /*
+            /**
              * $resize_type == 'inner'
              * trim to default dimensions
-            */
+             */
             if ($resize_type == 'inner') {
                 // Shifts
                 $x = $y = 0;
@@ -974,10 +974,10 @@ class e2g_snip extends e2g_pub {
 
             }
             elseif ($resize_type == 'shrink') {
-                /*
+                /**
                  * $resize_type == 'shrink'
                  * shrink to default dimensions
-                */
+                 */
                 if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0], 2);
                 else $w = round($i[0] * $h / $i[1], 2);
 
@@ -987,10 +987,10 @@ class e2g_snip extends e2g_pub {
                 imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $i[0], $i[1]);
             }
             elseif ($resize_type == 'resize') {
-                /*
+                /**
                  * $resize_type == 'resize'
                  * proportionally reduce to default dimensions
-                */
+                 */
                 // Shifts
                 $x = 0;
                 $y = 0;
@@ -1031,9 +1031,9 @@ class e2g_snip extends e2g_pub {
             }
             else return;
 
-            /*
+            /**
              * make directory of thumbnails
-            */
+             */
             $dirs = explode('/', $path);
             $npath = $gdir.'_thumbnails';
             for ($c = 0; $c < count($dirs) - 1; $c++) {
@@ -1043,15 +1043,15 @@ class e2g_snip extends e2g_pub {
                 @chmod($npath, 0755);
             }
 
-            /*
+            /**
              * create the thumbnails
-            */
+             */
             imagejpeg($pic, $gdir.$thumb_path, $thq);
             @chmod($gdir.$thumb_path, 0644);
 
-            /*
+            /**
              * image cache destroy
-            */
+             */
             imagedestroy($pic);
             imagedestroy($im);
 
@@ -1159,9 +1159,9 @@ class e2g_snip extends e2g_pub {
         if ($result) $result['count'] = mysql_num_rows($res);
         mysql_free_result($res);
 
-        /*
+        /**
          * returned as folder's thumbnail's info array
-        */
+         */
         return $result;
     }
 
@@ -1342,9 +1342,9 @@ class e2g_snip extends e2g_pub {
                 }
                 $_ssfile['thumbsrc'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $w, $h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
                 $_ssfile['resizedimg'][] .= $this->_get_thumb($gdir, $path.$fetch['filename'], $ss_w, $ss_h, $thq, $resize_type, $thbg_red, $thbg_green, $thbg_blue);
-                /*
+                /**
                  * @todo: Making a work around if _get_thumb returns an empty result
-                */
+                 */
             }
         }
 
@@ -1423,9 +1423,9 @@ class e2g_snip extends e2g_pub {
             }
         }
 
-        /*
+        /**
          * Storing the slideshow size ratio
-        */
+         */
         if ($ss_allowedratio != 'none') {
             // create min-max slideshow width/height ratio
             $ss_exratio = explode('-', $ss_allowedratio);
@@ -1433,15 +1433,15 @@ class e2g_snip extends e2g_pub {
             $ss_maxratio = $ss_exratio[1];
         }
 
-        /*
+        /**
          * if the counting below = 0 (zero), then should be considered inside
          * the slideshow types, while in some slideshows this doesn't matter.
-        */
+         */
         $count = count($_ssfile['src']);
 
-        /*
+        /**
          * added the &fid parameter inside the &slideshow, to open a full page of the clicked image.
-        */
+         */
         if ( isset($_GET['fid']) && isset($landingpage) && $modx->documentIdentifier!=$landingpage ) {
             // making flexible FURL or not
             $redirect_url = $modx->makeUrl(
@@ -1549,7 +1549,7 @@ class e2g_snip extends e2g_pub {
             } else {
                 $path = '';
             }
-            
+
             // goldsky -- only to switch between localhost and live site.
             // @todo : need review!
             if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
@@ -1567,9 +1567,9 @@ class e2g_snip extends e2g_pub {
                 $path = '';
             }
 
-            /*
+            /**
              * insert plugin for THE IMAGE
-            */
+             */
             if (isset($plugin) && preg_match('/landingpage:/', $plugin))
                 $l['landingpageplugin'] = $this->_plugin('landingpage',$plugin,$fetch);
 
@@ -1654,7 +1654,7 @@ class e2g_snip extends e2g_pub {
                 $_P['comment_body'] .= '<h2>'.$lng_cmt['recaptcha_err'].'</h2>';
             }
             if($recaptcha==1 && $_POST['recaptcha_response_field']) {
-            require_once E2G_SNIPPET_PATH.'includes/recaptchalib.php';
+                require_once E2G_SNIPPET_PATH.'includes/recaptchalib.php';
                 # the response from reCAPTCHA
                 $resp = null;
                 # the error code from reCAPTCHA, if any
@@ -1672,22 +1672,22 @@ class e2g_snip extends e2g_pub {
                         $error = $resp->error;
                     }
                     else {
-                $com_insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
-                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
-                if (mysql_query($com_insert)) {
-                    mysql_query('UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET comments=comments+1 WHERE id='.$fileid);
-                    $_P['comment_body'] .= '<h3>'.$lng_cmt['comment_added'].'</h3>';
+                        $com_insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
+                                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
+                        if (mysql_query($com_insert)) {
+                            mysql_query('UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET comments=comments+1 WHERE id='.$fileid);
+                            $_P['comment_body'] .= '<h3>'.$lng_cmt['comment_added'].'</h3>';
 
-                } else {
-                    $_P['comment_body'] .= '<h2>'.$lng_cmt['comment_add_err'].'</h2>';
-                }
+                        } else {
+                            $_P['comment_body'] .= '<h2>'.$lng_cmt['comment_add_err'].'</h2>';
+                        }
                     }
                 }
             }
             // NOT USING reCaptcha
             else {
                 $com_insert = 'INSERT INTO '.$modx->db->config['table_prefix'].'easy2_comments (file_id,author,email,ip_address,comment,date_added) '
-                . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
+                        . "VALUES($fileid,'$n','$e','$ip','$c', NOW())";
                 if (mysql_query($com_insert)) {
                     mysql_query('UPDATE '.$modx->db->config['table_prefix'].'easy2_files SET comments=comments+1 WHERE id='.$fileid);
                     $_P['comment_body'] .= '<h3>'.$lng_cmt['comment_added'].'</h3>';
@@ -1697,7 +1697,7 @@ class e2g_snip extends e2g_pub {
                 }
             }
         }
-        
+
         if ($_POST && empty($_POST['name']) && empty($_POST['comment']) ) {
             $_P['comment_body'] .= '<h2>'.$lng_cmt['empty_name_comment'].'</h2>';
         }

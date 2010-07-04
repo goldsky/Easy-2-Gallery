@@ -32,9 +32,12 @@ $glibs = array(
         'fancybox' => array (
                 'alias' => 'fancybox (jq)',
                 'regClient' => array (
-                        'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/fancybox/fancybox.css' )),
+                        'CSS' => array ( 'screen' => array (
+                                        MODX_BASE_URL . 'assets/libs/fancybox/fancybox.css'
+                                )
+                        ),
                         'JS' => array (
-//                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
+                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
                                 MODX_BASE_URL . 'assets/libs/fancybox/jquery.js',
                                 MODX_BASE_URL . 'assets/libs/fancybox/fancybox.js',
                         )
