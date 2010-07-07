@@ -1,7 +1,7 @@
 /******************************************************************************
 Name:    Highslide JS
 Version: 4.1.8 (October 27 2009)
-Config:  default
+Config:  default +inline +ajax +iframe +flash
 Author:  Torstein Hønsi
 Support: http://highslide.com/support
 
@@ -35,6 +35,20 @@ lang : {
 	fullExpandTitle : 'Expand to actual size (f)',
 	creditsText : 'Powered by <i>Highslide JS</i>',
 	creditsTitle : 'Go to the Highslide JS homepage',
+	previousText : 'Previous',
+	nextText : 'Next', 
+	moveText : 'Move',
+	closeText : 'Close', 
+	closeTitle : 'Close (esc)', 
+	resizeTitle : 'Resize',
+	playText : 'Play',
+	playTitle : 'Play slideshow (spacebar)',
+	pauseText : 'Pause',
+	pauseTitle : 'Pause slideshow (spacebar)',
+	previousTitle : 'Previous (arrow left)',
+	nextTitle : 'Next (arrow right)',
+	moveTitle : 'Move',
+	fullExpandText : '1:1',
 	restoreTitle : 'Click to close image, click and drag to move. Use arrow keys for next and previous.'
 },
 // See http://highslide.com/ref for examples of settings  
@@ -62,11 +76,41 @@ creditsTarget : '_self',
 enableKeyListener : true,
 openerTagNames : ['a'], // Add more to allow slideshow indexing
 
+allowWidthReduction : false,
+allowHeightReduction : true,
+preserveContent : true, // Preserve changes made to the content and position of HTML popups.
+objectLoadTime : 'before', // Load iframes 'before' or 'after' expansion.
+cacheAjax : true, // Cache ajax popups for instant display. Can be overridden for each popup.
 dragByHeading: true,
 minWidth: 200,
 minHeight: 200,
 allowSizeReduction: true, // allow the image to reduce to fit client size. If false, this overrides minWidth and minHeight
 outlineType : 'drop-shadow', // set null to disable outlines
+skin : {
+	contentWrapper:
+		'<div class="highslide-header"><ul>'+
+			'<li class="highslide-previous">'+
+				'<a href="#" title="{hs.lang.previousTitle}" onclick="return hs.previous(this)">'+
+				'<span>{hs.lang.previousText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-next">'+
+				'<a href="#" title="{hs.lang.nextTitle}" onclick="return hs.next(this)">'+
+				'<span>{hs.lang.nextText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-move">'+
+				'<a href="#" title="{hs.lang.moveTitle}" onclick="return false">'+
+				'<span>{hs.lang.moveText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-close">'+
+				'<a href="#" title="{hs.lang.closeTitle}" onclick="return hs.close(this)">'+
+				'<span>{hs.lang.closeText}</span></a>'+
+			'</li>'+
+		'</ul></div>'+
+		'<div class="highslide-body"></div>'+
+		'<div class="highslide-footer"><div>'+
+			'<span class="highslide-resize" title="{hs.lang.resizeTitle}"><span></span></span>'+
+		'</div></div>'
+},
 // END OF YOUR SETTINGS
 
 
@@ -93,6 +137,19 @@ overrides : [
 	'width',
 	'height',
 	
+	'contentId',
+	'allowWidthReduction',
+	'allowHeightReduction',
+	'preserveContent',
+	'maincontentId',
+	'maincontentText',
+	'maincontentEval',
+	'objectType',	
+	'cacheAjax',	
+	'objectWidth',
+	'objectHeight',
+	'objectLoadTime',	
+	'swfOptions',
 	'wrapperClassName',
 	'minWidth',
 	'minHeight',
@@ -113,9 +170,14 @@ oPos : {
 mouse: {},
 headingOverlay: {},
 captionOverlay: {},
+swfOptions: { flashvars: {}, params: {}, attributes: {} },
 timers : [],
 
 pendingOutlines : {},
+sleeping : [],
+preloadTheseAjax : [],
+cacheBindings : [],
+cachedGets : {},
 clones : {},
 onReady: [],
 uaVersion: /Trident\/4\.0/.test(navigator.userAgent) ? 8 :
@@ -226,13 +288,90 @@ getPosition : function(el)	{
 
 expand : function(a, params, custom, type) {
 	if (!a) a = hs.createElement('a', null, { display: 'none' }, hs.container);
-	if (typeof a.getParams == 'function') return params;	
+	if (typeof a.getParams == 'function') return params;
+	if (type == 'html') {
+		for (var i = 0; i < hs.sleeping.length; i++) {
+			if (hs.sleeping[i] && hs.sleeping[i].a == a) {
+				hs.sleeping[i].awake();
+				hs.sleeping[i] = null;
+				return false;
+			}
+		}
+		hs.hasHtmlExpanders = true;
+	}	
 	try {	
-		new hs.Expander(a, params, custom);
+		new hs.Expander(a, params, custom, type);
 		return false;
 	} catch (e) { return true; }
 },
 
+htmlExpand : function(a, params, custom) {
+	return hs.expand(a, params, custom, 'html');
+},
+
+getSelfRendered : function() {
+	return hs.createElement('div', { 
+		className: 'highslide-html-content', 
+		innerHTML: hs.replaceLang(hs.skin.contentWrapper) 
+	});
+},
+getElementByClass : function (el, tagName, className) {
+	var els = el.getElementsByTagName(tagName);
+	for (var i = 0; i < els.length; i++) {
+    	if ((new RegExp(className)).test(els[i].className)) {
+			return els[i];
+		}
+	}
+	return null;
+},
+replaceLang : function(s) {
+	s = s.replace(/\s/g, ' ');
+	var re = /{hs\.lang\.([^}]+)\}/g,
+		matches = s.match(re),
+		lang;
+	if (matches) for (var i = 0; i < matches.length; i++) {
+		lang = matches[i].replace(re, "$1");
+		if (typeof hs.lang[lang] != 'undefined') s = s.replace(matches[i], hs.lang[lang]);
+	}
+	return s;
+},
+
+
+getCacheBinding : function (a) {
+	for (var i = 0; i < hs.cacheBindings.length; i++) {
+		if (hs.cacheBindings[i][0] == a) {
+			var c = hs.cacheBindings[i][1];
+			hs.cacheBindings[i][1] = c.cloneNode(1);
+			return c;
+		}
+	}
+	return null;
+},
+
+preloadAjax : function (e) {
+	var arr = hs.getAnchors();
+	for (var i = 0; i < arr.htmls.length; i++) {
+		var a = arr.htmls[i];
+		if (hs.getParam(a, 'objectType') == 'ajax' && hs.getParam(a, 'cacheAjax'))
+			hs.push(hs.preloadTheseAjax, a);
+	}
+	
+	hs.preloadAjaxElement(0);
+},
+
+preloadAjaxElement : function (i) {
+	if (!hs.preloadTheseAjax[i]) return;
+	var a = hs.preloadTheseAjax[i];
+	var cache = hs.getNode(hs.getParam(a, 'contentId'));
+	if (!cache) cache = hs.getSelfRendered();
+	var ajax = new hs.Ajax(a, cache, 1);	
+   	ajax.onError = function () { };
+   	ajax.onLoad = function () {
+   		hs.push(hs.cacheBindings, [a, cache]);
+   		hs.preloadAjaxElement(i + 1);
+   	};
+   	ajax.run();
+},
 
 focusTopmost : function() {
 	var topZ = 0, 
@@ -446,6 +585,10 @@ mouseClickHandler : function(e)
 			}
 			return false;
 		}
+		else if (/highslide-html/.test(el.className) && hs.focusKey != exp.key) {
+			exp.focus();
+			exp.doShowHide('hidden');
+		}
 	} else if (e.type == 'mouseup') {
 		
 		hs.removeEventListener(document, 'mousemove', hs.dragHandler);
@@ -461,6 +604,9 @@ mouseClickHandler : function(e)
 			else if (hasDragged || (!hasDragged && hs.hasHtmlExpanders)) {
 				hs.dragArgs.exp.doShowHide('hidden');
 			}
+			
+			if (hs.dragArgs.exp.releaseMask) 
+				hs.dragArgs.exp.releaseMask.style.display = 'none';
 			hs.hasFocused = false;
 			hs.dragArgs = null;
 		
@@ -476,6 +622,15 @@ dragHandler : function(e)
 	if (!hs.dragArgs) return true;
 	if (!e) e = window.event;
 	var a = hs.dragArgs, exp = a.exp;
+	if (exp.iframe) {		
+		if (!exp.releaseMask) exp.releaseMask = hs.createElement('div', null, 
+			{ position: 'absolute', width: exp.x.size+'px', height: exp.y.size+'px', 
+				left: exp.x.cb+'px', top: exp.y.cb+'px', zIndex: 4,	background: (hs.ie ? 'white' : 'none'), 
+				opacity: .01 }, 
+			exp.wrapper, true);
+		if (exp.releaseMask.style.display == 'none')
+			exp.releaseMask.style.display = '';
+	}
 	
 	a.dX = e.clientX - a.clickX;
 	a.dY = e.clientY - a.clickY;	
@@ -575,6 +730,7 @@ init : function () {
 	
 		hs.getPageSize();
 		hs.ieLt7 = hs.ie && hs.uaVersion < 7;
+		hs.ie6SSL = hs.ieLt7 && location.protocol == 'https:';
 		for (var x in hs.langDefaults) {
 			if (typeof hs[x] != 'undefined') hs.lang[x] = hs[x];
 			else if (typeof hs.lang[x] == 'undefined' && typeof hs.langDefaults[x] != 'undefined') 
@@ -607,6 +763,8 @@ init : function () {
 			}, hs.container
 		);
 		hs.garbageBin = hs.createElement('div', null, { display: 'none' }, hs.container);
+		hs.clearing = hs.createElement('div', null, 
+			{ clear: 'both', paddingTop: '1px' }, null, true);
 		
 		// http://www.robertpenner.com/easing/ 
 		Math.linearTween = function (t, b, c, d) {
@@ -629,7 +787,7 @@ ready : function() {
 },
 
 updateAnchors : function() {
-	var el, els, all = [], images = [],groups = {}, re;
+	var el, els, all = [], images = [], htmls = [],groups = {}, re;
 		
 	for (var i = 0; i < hs.openerTagNames.length; i++) {
 		els = document.getElementsByTagName(hs.openerTagNames[i]);
@@ -639,13 +797,14 @@ updateAnchors : function() {
 			if (re) {
 				hs.push(all, el);
 				if (re[0] == 'hs.expand') hs.push(images, el);
+				else if (re[0] == 'hs.htmlExpand') hs.push(htmls, el);
 				var g = hs.getParam(el, 'slideshowGroup') || 'none';
 				if (!groups[g]) groups[g] = [];
 				hs.push(groups[g], el);
 			}
 		}
 	}
-	hs.anchors = { all: all, groups: groups, images: images };
+	hs.anchors = { all: all, groups: groups, images: images, htmls: htmls };
 	return hs.anchors;
 	
 },
@@ -956,6 +1115,19 @@ setSize: function(i) {
 	exp.content.style[this.wh] = i +'px';
 	exp.wrapper.style[this.wh] = this.get('wsize') +'px';
 	if (exp.outline) exp.outline.setPosition();
+	if (exp.releaseMask) exp.releaseMask.style[this.wh] = i +'px';
+	if (this.dim == 'y' && exp.iDoc && exp.body.style.height != 'auto') try {
+		exp.iDoc.body.style.overflow = 'auto';
+	} catch (e) {}
+	if (exp.isHtml) {
+		var d = exp.scrollerDiv;
+		if (this.sizeDiff === undefined)
+			this.sizeDiff = exp.innerContent['offset'+ this.ucwh] - d['offset'+ this.ucwh];
+		d.style[this.wh] = (this.size - this.sizeDiff) +'px';
+			
+		if (this.dim == 'x') exp.mediumContent.style.width = 'auto';
+		if (exp.body) exp.body.style[this.wh] = 'auto';
+	}
 	if (this.dim == 'x' && exp.overlayBox) exp.sizeOverlayBox(true);
 },
 setPos: function(i) {
@@ -977,6 +1149,7 @@ hs.Expander = function(a, params, custom, contentType) {
 	this.a = a;
 	this.custom = custom;
 	this.contentType = contentType || 'image';
+	this.isHtml = (contentType == 'html');
 	this.isImage = !this.isHtml;
 	
 	hs.continuePreloading = false;
@@ -1114,6 +1287,76 @@ imageCreate : function() {
 	this.showLoading();
 },
 
+htmlCreate : function () {
+	
+	this.content = hs.getCacheBinding(this.a);
+	if (!this.content) 
+		this.content = hs.getNode(this.contentId);
+	if (!this.content) 
+		this.content = hs.getSelfRendered();
+	this.getInline(['maincontent']);
+	if (this.maincontent) {
+		var body = hs.getElementByClass(this.content, 'div', 'highslide-body');
+		if (body) body.appendChild(this.maincontent);
+		this.maincontent.style.display = 'block';
+	}
+	
+	var innerContent = this.innerContent = this.content;
+	
+	if (/(swf|iframe)/.test(this.objectType)) this.setObjContainerSize(innerContent);
+	
+	// the content tree
+	hs.container.appendChild(this.wrapper);
+	hs.setStyles( this.wrapper, { 
+		position: 'static',
+		padding: '0 '+ hs.marginRight +'px 0 '+ hs.marginLeft +'px'
+	});
+	this.content = hs.createElement(
+    	'div', {
+    		className: 'highslide-html' 
+    	}, {
+			position: 'relative',
+			zIndex: 3,
+			overflow: 'hidden'
+		},
+		this.wrapper
+	);
+	this.mediumContent = hs.createElement('div', null, null, this.content, 1);
+	this.mediumContent.appendChild(innerContent);
+	
+	hs.setStyles (innerContent, { 
+		position: 'relative',
+		display: 'block',
+		direction: hs.lang.cssDirection || ''
+	});
+	if (this.width) innerContent.style.width = this.width +'px';
+	if (this.height) hs.setStyles(innerContent, {
+		height: this.height +'px',
+		overflow: 'hidden'
+	});
+	if (innerContent.offsetWidth < this.minWidth)
+		innerContent.style.width = this.minWidth +'px';
+		
+	
+    
+	if (this.objectType == 'ajax' && !hs.getCacheBinding(this.a)) {
+		this.showLoading();
+    	var exp = this;
+    	var ajax = new hs.Ajax(this.a, innerContent);
+		ajax.src = this.src;
+    	ajax.onLoad = function () {	if (hs.expanders[exp.key]) exp.contentLoaded(); };
+    	ajax.onError = function () { location.href = exp.src; };
+    	ajax.run();
+	}
+    else
+    
+    if (this.objectType == 'iframe' && this.objectLoadTime == 'before') {
+		this.writeExtendedContent();
+	}
+    else
+    	this.contentLoaded();
+},
+
 contentLoaded : function() {
 	try {	
 		if (!this.content) return;
@@ -1126,7 +1369,8 @@ contentLoaded : function() {
 		if (this.loading) {
 			hs.setStyles(this.loading, { top: '-9999px' });
 			this.loading = null;
-		}	
+		}
+		if (this.isImage) {	
 			x.full = this.content.width;
 			y.full = this.content.height;
 			
@@ -1136,6 +1380,7 @@ contentLoaded : function() {
 			});
 			this.wrapper.appendChild(this.content);
 			hs.container.appendChild(this.wrapper);
+		} else if (this.htmlGetSize) this.htmlGetSize();
 		
 		x.calcBorders();
 		y.calcBorders();
@@ -1152,11 +1397,14 @@ contentLoaded : function() {
 		
 		y.calcExpanded();
 		this.justify(y);
+		if (this.isHtml) this.htmlSizeOperations();
 		if (this.overlayBox) this.sizeOverlayBox(0, 1);
 
 		
 		if (this.allowSizeReduction) {
+			if (this.isImage)
 				this.correctRatio(ratio);
+			else this.fitOverlayBox();
 			if (this.isImage && this.x.full > (this.x.imgSize || this.x.size)) {
 				this.createFullExpand();
 				if (this.overlays.length == 1) this.sizeOverlayBox();
@@ -1166,6 +1414,159 @@ contentLoaded : function() {
 		
 	} catch (e) {
 		this.error(e);
+	}
+},
+
+
+setObjContainerSize : function(parent, auto) {
+	var c = hs.getElementByClass(parent, 'DIV', 'highslide-body');
+	if (/(iframe|swf)/.test(this.objectType)) {
+		if (this.objectWidth) c.style.width = this.objectWidth +'px';
+		if (this.objectHeight) c.style.height = this.objectHeight +'px';
+	}
+},
+
+writeExtendedContent : function () {
+	if (this.hasExtendedContent) return;
+	var exp = this;
+	this.body = hs.getElementByClass(this.innerContent, 'DIV', 'highslide-body');
+	if (this.objectType == 'iframe') {
+		this.showLoading();
+		var ruler = hs.clearing.cloneNode(1);
+		this.body.appendChild(ruler);
+		this.newWidth = this.innerContent.offsetWidth;
+		if (!this.objectWidth) this.objectWidth = ruler.offsetWidth;
+		var hDiff = this.innerContent.offsetHeight - this.body.offsetHeight,
+			h = this.objectHeight || hs.page.height - hDiff - hs.marginTop - hs.marginBottom,
+			onload = this.objectLoadTime == 'before' ? 
+				' onload="if (hs.expanders['+ this.key +']) hs.expanders['+ this.key +'].contentLoaded()" ' : '';
+		this.body.innerHTML += '<iframe name="hs'+ (new Date()).getTime() +'" frameborder="0" key="'+ this.key +'" '
+			+' style="width:'+ this.objectWidth +'px; height:'+ h +'px" '
+			+ onload +' src="'+ this.src +'" ></iframe>';
+		this.ruler = this.body.getElementsByTagName('div')[0];
+		this.iframe = this.body.getElementsByTagName('iframe')[0];
+		
+		if (this.objectLoadTime == 'after') this.correctIframeSize();
+		
+	}
+	if (this.objectType == 'swf') {
+		this.body.id = this.body.id || 'hs-flash-id-' + this.key;
+		var a = this.swfOptions;
+		if (!a.params) a.params = {};
+		if (typeof a.params.wmode == 'undefined') a.params.wmode = 'transparent';
+		if (swfobject) swfobject.embedSWF(this.src, this.body.id, this.objectWidth, this.objectHeight, 
+			a.version || '7', a.expressInstallSwfurl, a.flashvars, a.params, a.attributes);
+	}
+	this.hasExtendedContent = true;
+},
+htmlGetSize : function() {
+	if (this.iframe && !this.objectHeight) { // loadtime before
+		this.iframe.style.height = this.body.style.height = this.getIframePageHeight() +'px';
+	}
+	this.innerContent.appendChild(hs.clearing);
+	if (!this.x.full) this.x.full = this.innerContent.offsetWidth;
+    this.y.full = this.innerContent.offsetHeight;
+    this.innerContent.removeChild(hs.clearing);
+    if (hs.ie && this.newHeight > parseInt(this.innerContent.currentStyle.height)) { // ie css bug
+		this.newHeight = parseInt(this.innerContent.currentStyle.height);
+	}
+	hs.setStyles( this.wrapper, { position: 'absolute',	padding: '0'});
+	hs.setStyles( this.content, { width: this.x.t +'px', height: this.y.t +'px'});
+	
+},
+
+getIframePageHeight : function() {
+	var h;
+	try {
+		var doc = this.iDoc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+		var clearing = doc.createElement('div');
+		clearing.style.clear = 'both';
+		doc.body.appendChild(clearing);
+		h = clearing.offsetTop;
+		if (hs.ie) h += parseInt(doc.body.currentStyle.marginTop) 
+			+ parseInt(doc.body.currentStyle.marginBottom) - 1;
+	} catch (e) { // other domain
+		h = 300;
+	}
+	return h;
+},
+correctIframeSize : function () {
+	var wDiff = this.innerContent.offsetWidth - this.ruler.offsetWidth;
+	hs.discardElement(this.ruler);
+	if (wDiff < 0) wDiff = 0;
+	
+	var hDiff = this.innerContent.offsetHeight - this.iframe.offsetHeight;
+	if (this.iDoc && !this.objectHeight && !this.height && this.y.size == this.y.full) try {
+		this.iDoc.body.style.overflow = 'hidden';
+	} catch (e) {}
+	hs.setStyles(this.iframe, { 
+		width: Math.abs(this.x.size - wDiff) +'px', 
+		height: Math.abs(this.y.size - hDiff) +'px'
+	});
+    hs.setStyles(this.body, { 
+		width: this.iframe.style.width, 
+    	height: this.iframe.style.height
+	});
+    	
+    this.scrollingContent = this.iframe;
+    this.scrollerDiv = this.scrollingContent;
+	
+},
+htmlSizeOperations : function () {
+	
+	this.setObjContainerSize(this.innerContent);
+	
+	
+	if (this.objectType == 'swf' && this.objectLoadTime == 'before') this.writeExtendedContent();	
+	
+    // handle minimum size
+    if (this.x.size < this.x.full && !this.allowWidthReduction) this.x.size = this.x.full;
+    if (this.y.size < this.y.full && !this.allowHeightReduction) this.y.size = this.y.full;
+	this.scrollerDiv = this.innerContent;
+    hs.setStyles(this.mediumContent, { 
+		position: 'relative',
+		width: this.x.size +'px'
+	});
+    hs.setStyles(this.innerContent, { 
+    	border: 'none',
+    	width: 'auto',
+    	height: 'auto'
+    });
+	var node = hs.getElementByClass(this.innerContent, 'DIV', 'highslide-body');
+    if (node && !/(iframe|swf)/.test(this.objectType)) {
+    	var cNode = node; // wrap to get true size
+    	node = hs.createElement(cNode.nodeName, null, {overflow: 'hidden'}, null, true);
+    	cNode.parentNode.insertBefore(node, cNode);
+    	node.appendChild(hs.clearing); // IE6
+    	node.appendChild(cNode);
+    	
+    	var wDiff = this.innerContent.offsetWidth - node.offsetWidth;
+    	var hDiff = this.innerContent.offsetHeight - node.offsetHeight;
+		node.removeChild(hs.clearing);
+    	
+    	var kdeBugCorr = hs.safari || navigator.vendor == 'KDE' ? 1 : 0; // KDE repainting bug
+    	hs.setStyles(node, { 
+    			width: (this.x.size - wDiff - kdeBugCorr) +'px', 
+    			height: (this.y.size - hDiff) +'px',
+    			overflow: 'auto', 
+    			position: 'relative' 
+    		} 
+    	);
+		if (kdeBugCorr && cNode.offsetHeight > node.offsetHeight)	{
+    		node.style.width = (parseInt(node.style.width) + kdeBugCorr) + 'px';
+		}
+    	this.scrollingContent = node;
+    	this.scrollerDiv = this.scrollingContent;
+	}
+    if (this.iframe && this.objectLoadTime == 'before') this.correctIframeSize();
+    if (!this.scrollingContent && this.y.size < this.mediumContent.offsetHeight) this.scrollerDiv = this.content;
+	
+	if (this.scrollerDiv == this.content && !this.allowWidthReduction && !/(iframe|swf)/.test(this.objectType)) {
+		this.x.size += 17; // room for scrollbars
+	}
+	if (this.scrollerDiv && this.scrollerDiv.offsetHeight > this.scrollerDiv.parentNode.offsetHeight) {
+		setTimeout("try { hs.expanders["+ this.key +"].scrollerDiv.style.overflow = 'auto'; } catch(e) {}",
+			 hs.expandDuration);
 	}
 },
 
@@ -1260,7 +1661,7 @@ correctRatio : function(ratio) {
 },
 fitOverlayBox : function(ratio, changed) {
 	var x = this.x, y = this.y;
-	if (this.overlayBox) {
+	if (this.overlayBox && (this.isImage || this.allowHeightReduction)) {
 		while (y.size > this.minHeight && x.size > this.minWidth 
 				&&  y.get('wsize') > y.get('fitsize')) {
 			y.size -= 10;
@@ -1300,7 +1701,8 @@ changeSize : function(up, to, dur) {
 	
 	if (this.outline && !this.outlineWhileAnimating) {
 		if (up) this.outline.setPosition();
-		else this.outline.destroy();
+		else this.outline.destroy(
+				(this.isHtml && this.preserveContent));
 	}
 	
 	
@@ -1326,6 +1728,12 @@ changeSize : function(up, to, dur) {
 		width: x.t +'px',
 		height: y.t +'px'
 	});
+	if (up && this.isHtml) {
+		hs.setStyles(this.wrapper, {
+			left: (x.tpos - x.cb + x.tb) +'px',
+			top: (y.tpos - y.cb + y.tb) +'px'
+		});
+	}
 	if (this.fadeInOut) {
 		hs.setStyles(this.wrapper, { opacity: up ? 0 : 1 });
 		hs.extend(to.wrapper, { opacity: up });
@@ -1344,12 +1752,19 @@ changeSize : function(up, to, dur) {
 				};
 				exp.outline.setPosition(pos, 0, 1);				
 			}
+			if (exp.isHtml) {	
+				if (args.prop == 'left') 
+					exp.mediumContent.style.left = (x.pos - val) +'px';
+				if (args.prop == 'top') 
+					exp.mediumContent.style.top = (y.pos - val) +'px';
+			}
 		}
 	});
 	hs.animate( this.content, to.content, dur, easing, after);
 	if (up) {
 		this.wrapper.style.visibility = 'visible';
 		this.content.style.visibility = 'visible';
+		if (this.isHtml) this.innerContent.style.visibility = 'visible';
 		this.a.className += ' highslide-active-anchor';
 	}
 },
@@ -1360,6 +1775,19 @@ changeSize : function(up, to, dur) {
 afterExpand : function() {
 	this.isExpanded = true;	
 	this.focus();
+	
+	if (this.isHtml && this.objectLoadTime == 'after') this.writeExtendedContent();
+	if (this.iframe) {
+		try {
+			var exp = this,
+				doc = this.iframe.contentDocument || this.iframe.contentWindow.document;
+			hs.addEventListener(doc, 'mousedown', function () {
+				if (hs.focusKey != exp.key) exp.focus();
+			});
+		} catch(e) {}
+		if (hs.ie && typeof this.isClosing != 'boolean') // first open 
+			this.iframe.style.width = (this.objectWidth - 1) +'px'; // hasLayout
+	}
 	if (hs.upcoming && hs.upcoming == this.a) hs.upcoming = null;
 	this.prepareNextOutline();
 	var p = hs.page, mX = hs.mouse.x + p.scrollLeft, mY = hs.mouse.y + p.scrollTop;
@@ -1524,8 +1952,10 @@ focus : function() {
 		if (hs.expanders[i] && i == hs.focusKey) {
 			var blurExp = hs.expanders[i];
 			blurExp.content.className += ' highslide-'+ blurExp.contentType +'-blur';
+			if (blurExp.isImage) {
 				blurExp.content.style.cursor = hs.ie ? 'hand' : 'pointer';
-				blurExp.content.title = hs.lang.focusTitle;
+				blurExp.content.title = hs.lang.focusTitle;	
+			}
 		}
 	}
 	
@@ -1533,6 +1963,7 @@ focus : function() {
 	if (this.outline) this.outline.table.style.zIndex 
 		= this.wrapper.style.zIndex - 1;
 	this.content.className = 'highslide-'+ this.contentType;
+	if (this.isImage) {
 		this.content.title = hs.lang.restoreTitle;
 		
 		if (hs.restoreCursor) {
@@ -1540,7 +1971,7 @@ focus : function() {
 			if (hs.ie && hs.uaVersion < 6) hs.styleRestoreCursor = 'hand';
 			this.content.style.cursor = hs.styleRestoreCursor;
 		}
-		
+	}
 	hs.focusKey = this.key;	
 	hs.addEventListener(document, window.opera ? 'keypress' : 'keydown', hs.keyHandler);	
 },
@@ -1552,7 +1983,7 @@ resize : function (e) {
 	var w, h, r = e.width / e.height;
 	w = Math.max(e.width + e.dX, Math.min(this.minWidth, this.x.full));
 	if (this.isImage && Math.abs(w - this.x.full) < 12) w = this.x.full;
-	h = w / r;
+	h = this.isHtml ? e.height + e.dY : w / r;
 	if (h < Math.min(this.minHeight, this.y.full)) {
 		h = Math.min(this.minHeight, this.y.full);
 		if (this.isImage) w = h * r;
@@ -1572,6 +2003,7 @@ close : function() {
 	hs.removeEventListener(document, window.opera ? 'keypress' : 'keydown', hs.keyHandler);
 	
 	try {
+		if (this.isHtml) this.htmlPrepareClose();
 		this.content.style.cursor = 'default';
 		this.changeSize(
 			0, {
@@ -1590,6 +2022,58 @@ close : function() {
 			}, hs.restoreDuration
 		);
 	} catch (e) { this.afterClose(); }
+},
+
+htmlPrepareClose : function() {
+	if (hs.geckoMac) { // bad redraws
+		if (!hs.mask) hs.mask = hs.createElement('div', null, 
+			{ position: 'absolute' }, hs.container);
+		hs.setStyles(hs.mask, { width: this.x.size +'px', height: this.y.size +'px', 
+			left: this.x.pos +'px', top: this.y.pos +'px', display: 'block' });			
+	}
+	if (this.objectType == 'swf') try { hs.$(this.body.id).StopPlay(); } catch (e) {}
+	
+	if (this.objectLoadTime == 'after' && !this.preserveContent) this.destroyObject();		
+	if (this.scrollerDiv && this.scrollerDiv != this.scrollingContent) 
+		this.scrollerDiv.style.overflow = 'hidden';
+},
+
+destroyObject : function () {
+	if (hs.ie && this.iframe)
+		try { this.iframe.contentWindow.document.body.innerHTML = ''; } catch (e) {}
+	if (this.objectType == 'swf') swfobject.removeSWF(this.body.id);
+	this.body.innerHTML = '';
+},
+
+sleep : function() {
+	if (this.outline) this.outline.table.style.display = 'none';
+	this.releaseMask = null;
+	this.wrapper.style.display = 'none';
+	hs.push(hs.sleeping, this);
+},
+
+awake : function() {try {
+	
+	hs.expanders[this.key] = this;
+	
+	if (!hs.allowMultipleInstances &&hs.focusKey != this.key) {	
+		try { hs.expanders[hs.focusKey].close(); } catch (e){}
+	}
+	
+	var z = hs.zIndexCounter++, stl = { display: '', zIndex: z };
+	hs.setStyles (this.wrapper, stl);
+	this.isClosing = false;
+	
+	var o = this.outline || 0;
+	if (o) {
+		if (!this.outlineWhileAnimating) stl.visibility = 'hidden';
+		hs.setStyles (o.table, stl);		
+	}
+		
+	this.show();
+} catch (e) {}
+
+
 },
 
 createOverlay : function (o) {
@@ -1704,6 +2188,7 @@ getOverlays : function() {
 		var o = hs.overlays[i], tId = o.thumbnailId, sg = o.slideshowGroup;
 		if ((!tId && !sg) || (tId && tId == this.thumbsUserSetId)
 				|| (sg && sg === this.slideshowGroup)) {
+			if (this.isImage || (this.isHtml && o.useOnHtml))
 			this.createOverlay(o);
 		}
 	}
@@ -1790,6 +2275,10 @@ showOverlays : function() {
 
 destroyOverlays : function() {
 	if (!this.overlays.length) return;
+	if (this.isHtml && this.preserveContent) {
+		this.overlayBox.style.top = '-9999px';
+		hs.container.appendChild(this.overlayBox);
+	} else
 	hs.discardElement(this.overlayBox);
 },
 
@@ -1835,15 +2324,113 @@ doFullExpand : function () {
 afterClose : function () {
 	this.a.className = this.a.className.replace('highslide-active-anchor', '');
 	
-	this.doShowHide('visible');
+	this.doShowHide('visible');	
+	
+	if (this.isHtml && this.preserveContent) {
+		this.sleep();
+	} else {
 		if (this.outline && this.outlineWhileAnimating) this.outline.destroy();
 	
 		hs.discardElement(this.wrapper);
+	}
+	if (hs.mask) hs.mask.style.display = 'none';
 	
 	hs.expanders[this.key] = null;		
 	hs.reOrder();
 }
 
+};
+
+
+// hs.Ajax object prototype
+hs.Ajax = function (a, content, pre) {
+	this.a = a;
+	this.content = content;
+	this.pre = pre;
+};
+
+hs.Ajax.prototype = {
+run : function () {
+	var xhr;
+	if (!this.src) this.src = hs.getSrc(this.a);
+	if (this.src.match('#')) {
+		var arr = this.src.split('#');
+		this.src = arr[0];
+		this.id = arr[1];
+	}
+	if (hs.cachedGets[this.src]) {
+		this.cachedGet = hs.cachedGets[this.src];
+		if (this.id) this.getElementContent();
+		else this.loadHTML();
+		return;
+	}
+	try { xhr = new XMLHttpRequest(); }
+	catch (e) {
+		try { xhr = new ActiveXObject("Msxml2.XMLHTTP"); }
+		catch (e) {
+			try { xhr = new ActiveXObject("Microsoft.XMLHTTP"); }
+			catch (e) { this.onError(); }
+		}
+	}
+	var pThis = this; 
+	xhr.onreadystatechange = function() {
+		if(pThis.xhr.readyState == 4) {
+			if (pThis.id) pThis.getElementContent();
+			else pThis.loadHTML();
+		}
+	};
+	var src = this.src;
+	this.xhr = xhr;
+	if (hs.forceAjaxReload) 
+		src = src.replace(/$/, (/\?/.test(src) ? '&' : '?') +'dummy='+ (new Date()).getTime());
+	xhr.open('GET', src, true);
+	xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+	xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+	xhr.send(null);
+},
+
+getElementContent : function() {
+	hs.init();
+	var attribs = window.opera || hs.ie6SSL ? { src: 'about:blank' } : null;
+	
+	this.iframe = hs.createElement('iframe', attribs, 
+		{ position: 'absolute', top: '-9999px' }, hs.container);
+		
+	this.loadHTML();
+},
+
+loadHTML : function() {
+	var s = this.cachedGet || this.xhr.responseText,
+		regBody;
+	if (this.pre) hs.cachedGets[this.src] = s;
+	if (!hs.ie || hs.uaVersion >= 5.5) {
+		s = s.replace(new RegExp('<link[^>]*>', 'gi'), '')
+			.replace(new RegExp('<script[^>]*>.*?</script>', 'gi'), '');
+		if (this.iframe) {
+			var doc = this.iframe.contentDocument;
+			if (!doc && this.iframe.contentWindow) doc = this.iframe.contentWindow.document;
+			if (!doc) { // Opera
+				var pThis = this;
+				setTimeout(function() {	pThis.loadHTML(); }, 25);
+				return;
+			}
+			doc.open();
+			doc.write(s);
+			doc.close();
+			try { s = doc.getElementById(this.id).innerHTML; } catch (e) {
+				try { s = this.iframe.document.getElementById(this.id).innerHTML; } catch (e) {} // opera
+			}
+			hs.discardElement(this.iframe);
+		} else {
+			regBody = /(<body[^>]*>|<\/body>)/ig;
+			
+			if (regBody.test(s)) s = s.split(regBody)[hs.ie ? 1 : 2];
+		}
+	}
+	hs.getElementByClass(this.content, 'DIV', 'highslide-body').innerHTML = s;
+	this.onLoad();
+	for (var x in this) this[x] = null;
+}
 };
 hs.langDefaults = hs.lang;
 // history
@@ -1895,4 +2482,5 @@ hs.addEventListener(document, 'mouseup', hs.mouseClickHandler);
 
 hs.addEventListener(document, 'ready', hs.getAnchors);
 hs.addEventListener(window, 'load', hs.preloadImages);
+hs.addEventListener(window, 'load', hs.preloadAjax);
 }

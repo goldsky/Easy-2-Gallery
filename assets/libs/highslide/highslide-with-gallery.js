@@ -1,7 +1,7 @@
 /******************************************************************************
 Name:    Highslide JS
 Version: 4.1.8 (October 27 2009)
-Config:  default
+Config:  default +slideshow +positioning +transitions +viewport +thumbstrip
 Author:  Torstein Hønsi
 Support: http://highslide.com/support
 
@@ -35,6 +35,21 @@ lang : {
 	fullExpandTitle : 'Expand to actual size (f)',
 	creditsText : 'Powered by <i>Highslide JS</i>',
 	creditsTitle : 'Go to the Highslide JS homepage',
+	previousText : 'Previous',
+	nextText : 'Next', 
+	moveText : 'Move',
+	closeText : 'Close', 
+	closeTitle : 'Close (esc)', 
+	resizeTitle : 'Resize',
+	playText : 'Play',
+	playTitle : 'Play slideshow (spacebar)',
+	pauseText : 'Pause',
+	pauseTitle : 'Pause slideshow (spacebar)',
+	previousTitle : 'Previous (arrow left)',
+	nextTitle : 'Next (arrow right)',
+	moveTitle : 'Move',
+	fullExpandText : '1:1',
+	number: 'Image %1 of %2',
 	restoreTitle : 'Click to close image, click and drag to move. Use arrow keys for next and previous.'
 },
 // See http://highslide.com/ref for examples of settings  
@@ -61,12 +76,53 @@ creditsHref : 'http://highslide.com/',
 creditsTarget : '_self',
 enableKeyListener : true,
 openerTagNames : ['a'], // Add more to allow slideshow indexing
+transitions : [],
+transitionDuration: 250,
+dimmingOpacity: 0, // Lightbox style dimming background
+dimmingDuration: 50, // 0 for instant dimming
 
+anchor : 'auto', // where the image expands from
+align : 'auto', // position in the client (overrides anchor)
+targetX: null, // the id of a target element
+targetY: null,
 dragByHeading: true,
 minWidth: 200,
 minHeight: 200,
 allowSizeReduction: true, // allow the image to reduce to fit client size. If false, this overrides minWidth and minHeight
 outlineType : 'drop-shadow', // set null to disable outlines
+skin : {
+	controls:
+		'<div class="highslide-controls"><ul>'+
+			'<li class="highslide-previous">'+
+				'<a href="#" title="{hs.lang.previousTitle}">'+
+				'<span>{hs.lang.previousText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-play">'+
+				'<a href="#" title="{hs.lang.playTitle}">'+
+				'<span>{hs.lang.playText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-pause">'+
+				'<a href="#" title="{hs.lang.pauseTitle}">'+
+				'<span>{hs.lang.pauseText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-next">'+
+				'<a href="#" title="{hs.lang.nextTitle}">'+
+				'<span>{hs.lang.nextText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-move">'+
+				'<a href="#" title="{hs.lang.moveTitle}">'+
+				'<span>{hs.lang.moveText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-full-expand">'+
+				'<a href="#" title="{hs.lang.fullExpandTitle}">'+
+				'<span>{hs.lang.fullExpandText}</span></a>'+
+			'</li>'+
+			'<li class="highslide-close">'+
+				'<a href="#" title="{hs.lang.closeTitle}" >'+
+				'<span>{hs.lang.closeText}</span></a>'+
+			'</li>'+
+		'</ul></div>'
+},
 // END OF YOUR SETTINGS
 
 
@@ -77,6 +133,10 @@ expanders : [],
 overrides : [
 	'allowSizeReduction',
 	'useBox',
+	'anchor',
+	'align',
+	'targetX',
+	'targetY',
 	'outlineType',
 	'outlineWhileAnimating',
 	'captionId',
@@ -89,6 +149,10 @@ overrides : [
 	'headingOverlay',
 	'creditsPosition',
 	'dragByHeading',
+	'autoplay',
+	'numberPosition',
+	'transitions',
+	'dimmingOpacity',
 	
 	'width',
 	'height',
@@ -114,6 +178,8 @@ mouse: {},
 headingOverlay: {},
 captionOverlay: {},
 timers : [],
+
+slideshows : [],
 
 pendingOutlines : {},
 clones : {},
@@ -232,6 +298,26 @@ expand : function(a, params, custom, type) {
 		return false;
 	} catch (e) { return true; }
 },
+getElementByClass : function (el, tagName, className) {
+	var els = el.getElementsByTagName(tagName);
+	for (var i = 0; i < els.length; i++) {
+    	if ((new RegExp(className)).test(els[i].className)) {
+			return els[i];
+		}
+	}
+	return null;
+},
+replaceLang : function(s) {
+	s = s.replace(/\s/g, ' ');
+	var re = /{hs\.lang\.([^}]+)\}/g,
+		matches = s.match(re),
+		lang;
+	if (matches) for (var i = 0; i < matches.length; i++) {
+		lang = matches[i].replace(re, "$1");
+		if (typeof hs.lang[lang] != 'undefined') s = s.replace(matches[i], hs.lang[lang]);
+	}
+	return s;
+},
 
 
 focusTopmost : function() {
@@ -286,6 +372,46 @@ discardElement : function(d) {
 	if (d) hs.garbageBin.appendChild(d);
 	hs.garbageBin.innerHTML = '';
 },
+dim : function(exp) {
+	if (!hs.dimmer) {
+		hs.dimmer = hs.createElement ('div', {
+				className: 'highslide-dimming highslide-viewport-size',
+				owner: '',
+				onclick: function() {
+					
+						hs.close();
+				}
+			}, {
+                visibility: 'visible',
+				opacity: 0
+			}, hs.container, true);
+	}
+
+	hs.dimmer.style.display = '';
+
+	hs.dimmer.owner += '|'+ exp.key;
+	if (hs.geckoMac && hs.dimmingGeckoFix)
+		hs.setStyles(hs.dimmer, {
+			background: 'url('+ hs.graphicsDir + 'geckodimmer.png)',
+			opacity: 1
+		});
+	else
+		hs.animate(hs.dimmer, { opacity: exp.dimmingOpacity }, hs.dimmingDuration);
+},
+undim : function(key) {
+	if (!hs.dimmer) return;
+	if (typeof key != 'undefined') hs.dimmer.owner = hs.dimmer.owner.replace('|'+ key, '');
+
+	if (
+		(typeof key != 'undefined' && hs.dimmer.owner != '')
+		|| (hs.upcoming && hs.getParam(hs.upcoming, 'dimmingOpacity'))
+	) return;
+
+	if (hs.geckoMac && hs.dimmingGeckoFix) hs.dimmer.style.display = 'none';
+	else hs.animate(hs.dimmer, { opacity: 0 }, hs.dimmingDuration, null, function() {
+		hs.dimmer.style.display = 'none';
+	});
+},
 transit : function (adj, exp) {
 	var last = exp = exp || hs.getExpander();
 	if (hs.upcoming) return false;
@@ -297,6 +423,7 @@ transit : function (adj, exp) {
 		hs.last = hs.upcoming = null;
 	}
 	try {
+		if (!adj || exp.transitions[1] != 'crossfade')
 		exp.close();
 	} catch (e) {}
 	return false;
@@ -328,6 +455,8 @@ keyHandler : function(e) {
 			if (exp) exp.doFullExpand();
 			return true;
 		case 32: // Space
+			op = 2;
+			break;
 		case 34: // Page Down
 		case 39: // Arrow right
 		case 40: // Arrow down
@@ -343,7 +472,7 @@ keyHandler : function(e) {
 		case 13: // Enter
 			op = 0;
 	}
-	if (op !== null) {hs.removeEventListener(document, window.opera ? 'keypress' : 'keydown', hs.keyHandler);
+	if (op !== null) {if (op != 2)hs.removeEventListener(document, window.opera ? 'keypress' : 'keydown', hs.keyHandler);
 		if (!hs.enableKeyListener) return true;
 		
 		if (e.preventDefault) e.preventDefault();
@@ -351,7 +480,10 @@ keyHandler : function(e) {
     	if (exp) {
 			if (op == 0) {
 				exp.close();
+			} else if (op == 2) {
+				if (exp.slideshow) exp.slideshow.hitSpace();
 			} else {
+				if (exp.slideshow) exp.slideshow.pause();
 				hs.previousOrNext(exp.key, op);
 			}
 			return false;
@@ -366,11 +498,26 @@ registerOverlay : function (overlay) {
 },
 
 
+addSlideshow : function (options) {
+	var sg = options.slideshowGroup;
+	if (typeof sg == 'object') {
+		for (var i = 0; i < sg.length; i++) {
+			var o = {};
+			for (var x in options) o[x] = options[x];
+			o.slideshowGroup = sg[i];
+			hs.push(hs.slideshows, o);
+		}
+	} else {
+		hs.push(hs.slideshows, options);
+	}
+},
+
 getWrapperKey : function (element, expOnly) {
 	var el, re = /^highslide-wrapper-([0-9]+)$/;
 	// 1. look in open expanders
 	el = element;
 	while (el.parentNode)	{
+		if (el.hsKey !== undefined) return el.hsKey;
 		if (el.id && re.test(el.id)) return el.id.replace(re, "$1");
 		el = el.parentNode;
 	}
@@ -607,6 +754,12 @@ init : function () {
 			}, hs.container
 		);
 		hs.garbageBin = hs.createElement('div', null, { display: 'none' }, hs.container);
+		hs.viewport = hs.createElement('div', {
+				className: 'highslide-viewport highslide-viewport-size'
+			}, {
+				visibility: (hs.safari && hs.uaVersion < 525) ? 'visible' : 'hidden'
+			}, hs.container, 1
+		);
 		
 		// http://www.robertpenner.com/easing/ 
 		Math.linearTween = function (t, b, c, d) {
@@ -614,6 +767,9 @@ init : function () {
 		};
 		Math.easeInQuad = function (t, b, c, d) {
 			return c*(t/=d)*t + b;
+		};
+		Math.easeOutQuad = function (t, b, c, d) {
+			return -c *(t/=d)*(t-2) + b;
 		};
 		
 		hs.hideSelects = hs.ieLt7;
@@ -891,6 +1047,8 @@ get : function(key) {
 	switch (key) {
 		case 'loadingPos':
 			return this.tpos + this.tb + (this.t - hs.loading['offset'+ this.ucwh]) / 2;
+		case 'loadingPosXfade':
+			return this.pos + this.cb+ this.p1 + (this.size - hs.loading['offset'+ this.ucwh]) / 2;
 		case 'wsize':
 			return this.size + 2 * this.cb + this.p1 + this.p2;
 		case 'fitsize':
@@ -925,6 +1083,11 @@ calcExpanded: function() {
 	var exp = this.exp;
 	this.justify = 'auto';
 	
+	// get alignment
+	if (exp.align == 'center') this.justify = 'center';
+	else if (new RegExp(this.lt).test(exp.anchor)) this.justify = null;
+	else if (new RegExp(this.rb).test(exp.anchor)) this.justify = 'max';
+	
 	
 	// size and position
 	this.pos = this.tpos - this.cb + this.tb;
@@ -940,6 +1103,7 @@ calcExpanded: function() {
 		this.imgSize = this.full;
 	}
 	if (this.dim == 'x' && hs.padToMinWidth) this.minSize = exp.minWidth;
+	this.target = exp['target'+ this.dim.toUpperCase()];
 	this.marginMin = hs['margin'+ this.uclt];
 	this.scroll = hs.page['scroll'+ this.uclt];
 	this.clientSize = hs.page[this.wh];
@@ -957,6 +1121,10 @@ setSize: function(i) {
 	exp.wrapper.style[this.wh] = this.get('wsize') +'px';
 	if (exp.outline) exp.outline.setPosition();
 	if (this.dim == 'x' && exp.overlayBox) exp.sizeOverlayBox(true);
+	if (this.dim == 'x' && exp.slideshow && exp.isImage) {
+		if (i == this.full) exp.slideshow.disable('full-expand');
+		else exp.slideshow.enable('full-expand');
+	}
 },
 setPos: function(i) {
 	this.pos = i;
@@ -981,6 +1149,8 @@ hs.Expander = function(a, params, custom, contentType) {
 	
 	hs.continuePreloading = false;
 	this.overlays = [];
+	this.last = hs.last;
+	hs.last = null;
 	hs.init();
 	var key = this.key = hs.expanders.length;
 	// override inline parameters
@@ -998,7 +1168,8 @@ hs.Expander = function(a, params, custom, contentType) {
 	
 	// check if already open
 	for (var i = 0; i < hs.expanders.length; i++) {
-		if (hs.expanders[i] && hs.expanders[i].a == a) {
+		if (hs.expanders[i] && hs.expanders[i].a == a 
+			&& !(this.last && this.transitions[1] == 'crossfade')) {
 			hs.expanders[i].focus();
 			return false;
 		}
@@ -1040,7 +1211,8 @@ hs.Expander = function(a, params, custom, contentType) {
 		this.outlineWhileAnimating = 0;
 	
 	// get the outline
-	if (!this.outlineType) {
+	if (!this.outlineType 
+		|| (this.last && this.isImage && this.transitions[1] == 'crossfade')) {
 		this[this.contentType +'Create']();
 	
 	} else if (hs.pendingOutlines[this.outlineType]) {
@@ -1084,6 +1256,13 @@ showLoading : function() {
 	var exp = this, 
 		l = this.x.get('loadingPos') +'px',
 		t = this.y.get('loadingPos') +'px';
+	if (!tgt && this.last && this.transitions[1] == 'crossfade') 
+		var tgt = this.last; 
+	if (tgt) {
+		l = tgt.x.get('loadingPosXfade') +'px';
+		t = tgt.y.get('loadingPosXfade') +'px';
+		this.loading.style.zIndex = hs.zIndexCounter++;
+	}
 	setTimeout(function () { 
 		if (exp.loading) hs.setStyles(exp.loading, { left: l, top: t, zIndex: hs.zIndexCounter++ })}
 	, 100);
@@ -1144,6 +1323,9 @@ contentLoaded : function() {
 			left: (x.tpos + x.tb - x.cb) +'px',
 			top: (y.tpos + x.tb - y.cb) +'px'
 		});
+		
+		
+		this.initSlideshow();
 		this.getOverlays();
 		
 		var ratio = x.full / y.full;
@@ -1157,6 +1339,23 @@ contentLoaded : function() {
 		
 		if (this.allowSizeReduction) {
 				this.correctRatio(ratio);
+			var ss = this.slideshow;			
+			if (ss && this.last && ss.controls && ss.fixedControls) {
+				var pos = ss.overlayOptions.position || '', p;
+				for (var dim in hs.oPos) for (var i = 0; i < 5; i++) {
+					p = this[dim];
+					if (pos.match(hs.oPos[dim][i])) {
+						p.pos = this.last[dim].pos 
+							+ (this.last[dim].p1 - p.p1)
+							+ (this.last[dim].size - p.size) * [0, 0, .5, 1, 1][i];
+						if (ss.fixedControls == 'fit') {
+							if (p.pos + p.size + p.p1 + p.p2 > p.scroll + p.clientSize - p.marginMax)
+								p.pos = p.scroll + p.clientSize - p.size - p.marginMin - p.marginMax - p.p1 - p.p2;
+							if (p.pos < p.scroll + p.marginMin) p.pos = p.scroll + p.marginMin; 
+						} 
+					}
+				}
+			}
 			if (this.isImage && this.x.full > (this.x.imgSize || this.x.size)) {
 				this.createFullExpand();
 				if (this.overlays.length == 1) this.sizeOverlayBox();
@@ -1172,9 +1371,24 @@ contentLoaded : function() {
 justify : function (p, moveOnly) {
 	var tgtArr, tgt = p.target, dim = p == this.x ? 'x' : 'y';
 	
+	if (tgt && tgt.match(/ /)) {
+		tgtArr = tgt.split(' ');
+		tgt = tgtArr[0];
+	}
+	if (tgt && hs.$(tgt)) {
+		p.pos = hs.getPosition(hs.$(tgt))[dim];
+		if (tgtArr && tgtArr[1] && tgtArr[1].match(/^[-]?[0-9]+px$/)) 
+			p.pos += parseInt(tgtArr[1]);
+		if (p.size < p.minSize) p.size = p.minSize;
+		
+	} else if (p.justify == 'auto' || p.justify == 'center') {
+	
 		var hasMovedMin = false;
 		
 		var allowReduce = p.exp.allowSizeReduction;
+		if (p.justify == 'center')
+			p.pos = Math.round(p.scroll + (p.clientSize + p.marginMin - p.marginMax - p.get('wsize')) / 2);
+		else
 			p.pos = Math.round(p.pos - ((p.get('wsize') - p.t) / 2));
 		if (p.pos < p.scroll + p.marginMin) {
 			p.pos = p.scroll + p.marginMin;
@@ -1200,6 +1414,10 @@ justify : function (p, moveOnly) {
 			allowReduce = false;
 		}
 		
+	
+	} else if (p.justify == 'max') {
+		p.pos = Math.floor(p.pos - p.size + p.t);
+	}
 	
 		
 	if (p.pos < p.marginMin) {
@@ -1275,6 +1493,7 @@ fitOverlayBox : function(ratio, changed) {
 show : function () {
 	var x = this.x, y = this.y;
 	this.doShowHide('hidden');
+	if (this.slideshow && this.slideshow.thumbstrip) this.slideshow.thumbstrip.selectThumb();
 	
 	// Apply size change
 	this.changeSize(
@@ -1297,6 +1516,17 @@ show : function () {
 },
 
 changeSize : function(up, to, dur) {
+	// transition
+	var trans = this.transitions,
+	other = up ? (this.last ? this.last.a : null) : hs.upcoming,
+	t = (trans[1] && other 
+			&& hs.getParam(other, 'transitions')[1] == trans[1]) ?
+		trans[1] : trans[0];
+		
+	if (this[t] && t != 'expand') {
+		this[t](up, to);
+		return;
+	}
 	
 	if (this.outline && !this.outlineWhileAnimating) {
 		if (up) this.outline.setPosition();
@@ -1356,10 +1586,204 @@ changeSize : function(up, to, dur) {
 
 
 
+fade : function(up, to) {
+	this.outlineWhileAnimating = false;
+	var exp = this,	t = up ? hs.expandDuration : 0;
+	
+	if (up) {
+		hs.animate(this.wrapper, to.wrapper, 0);
+		hs.setStyles(this.wrapper, { opacity: 0, visibility: 'visible' });
+		hs.animate(this.content, to.content, 0);
+		this.content.style.visibility = 'visible';
+
+		hs.animate(this.wrapper, { opacity: 1 }, t, null, 
+			function() { exp.afterExpand(); });
+	}
+	
+	if (this.outline) {
+		this.outline.table.style.zIndex = this.wrapper.style.zIndex;
+		var dir = up || -1, 
+			offset = this.outline.offset,
+			startOff = up ? 3 : offset,
+			endOff = up? offset : 3;
+		for (var i = startOff; dir * i <= dir * endOff; i += dir, t += 25) {
+			(function() {
+				var o = up ? endOff - i : startOff - i;
+				setTimeout(function() {
+					exp.outline.setPosition(0, o, 1);
+				}, t);
+			})();
+		}
+	}
+	
+	
+	if (up) {}//setTimeout(function() { exp.afterExpand(); }, t+50);
+	else {
+		setTimeout( function() {
+			if (exp.outline) exp.outline.destroy(exp.preserveContent);
+			
+			exp.destroyOverlays();
+	
+			hs.animate( exp.wrapper, { opacity: 0 }, hs.restoreDuration, null, function(){
+				exp.afterClose();
+			});
+		}, t);		
+	}
+},
+crossfade : function (up, to, from) {
+	if (!up) return;
+	var exp = this, 
+		last = this.last,
+		x = this.x,
+		y = this.y,
+		lastX = last.x,
+		lastY = last.y,
+		wrapper = this.wrapper,
+		content = this.content,
+		overlayBox = this.overlayBox;
+	hs.removeEventListener(document, 'mousemove', hs.dragHandler);
+	
+	hs.setStyles(content, { 
+		width: (x.imgSize || x.size) +'px', 
+		height: (y.imgSize || y.size) +'px'		
+	});
+	if (overlayBox) overlayBox.style.overflow = 'visible';
+	this.outline = last.outline;
+	if (this.outline) this.outline.exp = exp;
+	last.outline = null;
+	var fadeBox = hs.createElement('div', {
+			className: 'highslide-image'
+		}, { 
+			position: 'absolute', 
+			zIndex: 4,
+			overflow: 'hidden',
+			display: 'none'
+		}
+	);
+	var names = { oldImg: last, newImg: this };
+	for (var n in names) { 	
+		this[n] = names[n].content.cloneNode(1);
+		hs.setStyles(this[n], {
+			position: 'absolute',
+			border: 0,
+			visibility: 'visible'
+		});
+		fadeBox.appendChild(this[n]);
+	}
+	wrapper.appendChild(fadeBox);
+	if (overlayBox) {
+		overlayBox.className = '';
+		wrapper.appendChild(overlayBox);
+	}
+	fadeBox.style.display = '';
+	last.content.style.display = 'none';
+	
+	
+	if (hs.safari) {
+		var match = navigator.userAgent.match(/Safari\/([0-9]{3})/);
+		if (match && parseInt(match[1]) < 525) this.wrapper.style.visibility = 'visible';
+	}
+	hs.animate(wrapper, {
+		width: x.size
+	}, {
+		duration: hs.transitionDuration, 
+		step: function(val, args) {
+			var pos = args.pos,
+				invPos = 1 - pos;
+			var prop,
+				size = {}, 
+				props = ['pos', 'size', 'p1', 'p2'];
+			for (var n in props) {
+				prop = props[n];
+				size['x'+ prop] = Math.round(invPos * lastX[prop] + pos * x[prop]);
+				size['y'+ prop] = Math.round(invPos * lastY[prop] + pos * y[prop]);
+				size.ximgSize = Math.round(
+					invPos * (lastX.imgSize || lastX.size) + pos * (x.imgSize || x.size));
+				size.ximgPad = Math.round(invPos * lastX.get('imgPad') + pos * x.get('imgPad'));
+				size.yimgSize = Math.round(
+					invPos * (lastY.imgSize || lastY.size) + pos * (y.imgSize || y.size));
+				size.yimgPad = Math.round(invPos * lastY.get('imgPad') + pos * y.get('imgPad'));
+			}
+			if (exp.outline) exp.outline.setPosition({ 
+				x: size.xpos, 
+				y: size.ypos, 
+				w: size.xsize + size.xp1 + size.xp2 + 2 * x.cb, 
+				h: size.ysize + size.yp1 + size.yp2 + 2 * y.cb
+			});
+			last.wrapper.style.clip = 'rect('
+				+ (size.ypos - lastY.pos)+'px, '
+				+ (size.xsize + size.xp1 + size.xp2 + size.xpos + 2 * lastX.cb - lastX.pos) +'px, '
+				+ (size.ysize + size.yp1 + size.yp2 + size.ypos + 2 * lastY.cb - lastY.pos) +'px, '
+				+ (size.xpos - lastX.pos)+'px)';
+				
+			hs.setStyles(content, {
+				top: (size.yp1 + y.get('imgPad')) +'px',
+				left: (size.xp1 + x.get('imgPad')) +'px',
+				marginTop: (y.pos - size.ypos) +'px',
+				marginLeft: (x.pos - size.xpos) +'px'
+			});
+			hs.setStyles(wrapper, {
+				top: size.ypos +'px',
+				left: size.xpos +'px',
+				width: (size.xp1 + size.xp2 + size.xsize + 2 * x.cb)+ 'px',
+				height: (size.yp1 + size.yp2 + size.ysize + 2 * y.cb) + 'px'
+			});
+			hs.setStyles(fadeBox, {
+				width: (size.ximgSize || size.xsize) + 'px',
+				height: (size.yimgSize || size.ysize) +'px',
+				left: (size.xp1 + size.ximgPad)  +'px',
+				top: (size.yp1 + size.yimgPad) +'px',
+				visibility: 'visible'
+			});
+			
+			hs.setStyles(exp.oldImg, {
+				top: (lastY.pos - size.ypos + lastY.p1 - size.yp1 + lastY.get('imgPad') - size.yimgPad)+'px',
+				left: (lastX.pos - size.xpos + lastX.p1 - size.xp1 + lastX.get('imgPad') - size.ximgPad)+'px'
+			});		
+			
+			hs.setStyles(exp.newImg, {
+				opacity: pos,
+				top: (y.pos - size.ypos + y.p1 - size.yp1 + y.get('imgPad') - size.yimgPad) +'px',
+				left: (x.pos - size.xpos + x.p1 - size.xp1 + x.get('imgPad') - size.ximgPad) +'px'
+			});
+			if (overlayBox) hs.setStyles(overlayBox, {
+				width: size.xsize + 'px',
+				height: size.ysize +'px',
+				left: (size.xp1 + x.cb)  +'px',
+				top: (size.yp1 + y.cb) +'px'
+			});
+		},
+		complete: function () {
+			wrapper.style.visibility = content.style.visibility = 'visible';
+			content.style.display = 'block';
+			fadeBox.style.display = 'none';
+			exp.a.className += ' highslide-active-anchor';
+			exp.afterExpand();
+			last.afterClose();
+			exp.last = null;
+		}
+		
+	});
+},
+reuseOverlay : function(o, el) {
+	if (!this.last) return false;
+	for (var i = 0; i < this.last.overlays.length; i++) {
+		var oDiv = hs.$('hsId'+ this.last.overlays[i]);
+		if (oDiv && oDiv.hsId == o.hsId) {
+			this.genOverlayBox();
+			oDiv.reuse = this.key;
+			hs.push(this.overlays, this.last.overlays[i]);
+			return true;
+		}
+	}
+	return false;
+},
+
 
 afterExpand : function() {
 	this.isExpanded = true;	
 	this.focus();
+	if (this.dimmingOpacity) hs.dim(this);
 	if (hs.upcoming && hs.upcoming == this.a) hs.upcoming = null;
 	this.prepareNextOutline();
 	var p = hs.page, mX = hs.mouse.x + p.scrollLeft, mY = hs.mouse.y + p.scrollTop;
@@ -1406,13 +1830,57 @@ getAnchorIndex : function() {
 },
 
 
+getNumber : function() {
+	if (this[this.numberPosition]) {
+		var arr = hs.anchors.groups[this.slideshowGroup || 'none'];
+		if (arr) {
+			var s = hs.lang.number.replace('%1', this.getAnchorIndex() + 1).replace('%2', arr.length);
+			this[this.numberPosition].innerHTML = 
+				'<div class="highslide-number">'+ s +'</div>'+ this[this.numberPosition].innerHTML;
+		}
+	}
+},
+initSlideshow : function() {
+	if (!this.last) {
+		for (var i = 0; i < hs.slideshows.length; i++) {
+			var ss = hs.slideshows[i], sg = ss.slideshowGroup;
+			if (typeof sg == 'undefined' || sg === null || sg === this.slideshowGroup) 
+				this.slideshow = new hs.Slideshow(this.key, ss);
+		} 
+	} else {
+		this.slideshow = this.last.slideshow;
+	}
+	var ss = this.slideshow;
+	if (!ss) return;
+	var key = ss.expKey = this.key;
+	
+	ss.checkFirstAndLast();
+	ss.disable('full-expand');
+	if (ss.controls) {
+		var o = ss.overlayOptions || {};
+		o.overlayId = ss.controls;
+		o.hsId = 'controls';		
+		this.createOverlay(o);
+	}
+	if (ss.thumbstrip) ss.thumbstrip.add(this);
+	if (!this.last && this.autoplay) ss.play(true);
+	if (ss.autoplay) {
+		ss.autoplay = setTimeout(function() {
+			hs.next(key);
+		}, (ss.interval || 500));
+	}
+},
+
 cancelLoading : function() {
 	hs.discardElement (this.wrapper);
 	hs.expanders[this.key] = null;
+	if (hs.upcoming == this.a) hs.upcoming = null;
+	hs.undim(this.key);
 	if (this.loading) hs.loading.style.left = '-9999px';
 },
 
 writeCredits : function () {
+	if (this.credits) return;
 	this.credits = hs.createElement('a', {
 		href: hs.creditsHref,
 		target: hs.creditsTarget,
@@ -1422,7 +1890,8 @@ writeCredits : function () {
 	});
 	this.createOverlay({ 
 		overlayId: this.credits, 
-		position: this.creditsPosition || 'top left' 
+		position: this.creditsPosition || 'top left', 
+		hsId: 'credits' 
 	});
 },
 
@@ -1452,6 +1921,7 @@ getInline : function(types, addOverlay) {
 				}
 			}
 		}
+		if (!this[type] && !s && this.numberPosition == type) s = '\n';
 		
 		if (!this[type] && s) this[type] = hs.createElement('div', 
 				{ className: 'highslide-'+ type, innerHTML: s } );
@@ -1488,12 +1958,13 @@ showHideElements : function (tagName, visibility) {
 				var elPos = hs.getPosition(els[i]);
 				elPos.w = els[i].offsetWidth;
 				elPos.h = els[i].offsetHeight;
-			
+				if (!this.dimmingOpacity) { // hide all if dimming
 				
 					var clearsX = (elPos.x + elPos.w < this.x.get('opos') 
 						|| elPos.x > this.x.get('opos') + this.x.get('osize'));
 					var clearsY = (elPos.y + elPos.h < this.y.get('opos') 
 						|| elPos.y > this.y.get('opos') + this.y.get('osize'));
+				}
 				var wrapperKey = hs.getWrapperKey(els[i]);
 				if (!clearsX && !clearsY && wrapperKey != this.key) { // element falls behind image
 					if (!hiddenBy) {
@@ -1567,7 +2038,12 @@ resizeTo: function(w, h) {
 
 close : function() {
 	if (this.isClosing || !this.isExpanded) return;
+	if (this.transitions[1] == 'crossfade' && hs.upcoming) {
+		hs.getExpander(hs.upcoming).cancelLoading();
+		hs.upcoming = null;
+	}
 	this.isClosing = true;
+	if (this.slideshow && !hs.upcoming) this.slideshow.pause();
 	
 	hs.removeEventListener(document, window.opera ? 'keypress' : 'keydown', hs.keyHandler);
 	
@@ -1593,11 +2069,14 @@ close : function() {
 },
 
 createOverlay : function (o) {
-	var el = o.overlayId;
+	var el = o.overlayId, 
+		relToVP = (o.relativeTo == 'viewport' && !/panel$/.test(o.position));
 	if (typeof el == 'string') el = hs.getNode(el);
 	if (o.html) el = hs.createElement('div', { innerHTML: o.html });
 	if (!el || typeof el == 'string') return;
 	el.style.display = 'block';
+	o.hsId = o.hsId || o.overlayId; 
+	if (this.transitions[1] == 'crossfade' && this.reuseOverlay(o, el)) return;
 	this.genOverlayBox();
 	var width = o.width && /^[0-9]+(px|%)$/.test(o.width) ? o.width : 'auto';
 	if (/^(left|right)panel$/.test(o.position) && !/^[0-9]+px$/.test(o.width)) width = '200px';
@@ -1611,9 +2090,11 @@ createOverlay : function (o) {
 			width: width,
 			direction: hs.lang.cssDirection || '',
 			opacity: 0
-		},this.overlayBox,
+		},
+		relToVP ? hs.viewport :this.overlayBox,
 		true
 	);
+	if (relToVP) overlay.hsKey = this.key;
 	
 	overlay.appendChild(el);
 	hs.extend(overlay, {
@@ -1633,8 +2114,15 @@ createOverlay : function (o) {
 },
 positionOverlay : function(overlay) {
 	var p = overlay.position || 'middle center',
+		relToVP = (overlay.relativeTo == 'viewport'),
 		offX = overlay.offsetX,
 		offY = overlay.offsetY;
+	if (relToVP) {
+		hs.viewport.style.display = 'block';
+		overlay.hsKey = this.key;
+		if (overlay.offsetWidth > overlay.parentNode.offsetWidth)
+			overlay.style.width = '100%';
+	} else
 	if (overlay.parentNode != this.overlayBox) this.overlayBox.appendChild(overlay);
 	if (/left$/.test(p)) overlay.style.left = offX +'px'; 
 	
@@ -1665,6 +2153,10 @@ positionOverlay : function(overlay) {
 		});
 		this.x.p2 = overlay.offsetWidth;
 	}
+	var parOff = overlay.parentNode.offsetHeight;
+	overlay.style.height = 'auto';
+	if (relToVP && overlay.offsetHeight > parOff)
+		overlay.style.height = hs.ieLt7 ? parOff +'px' : '100%';
 
 	if (/^top/.test(p)) overlay.style.top = offY +'px'; 
 	if (/^middle/.test(p))	hs.setStyles (overlay, { 
@@ -1698,6 +2190,7 @@ positionOverlay : function(overlay) {
 
 getOverlays : function() {	
 	this.getInline(['heading', 'caption'], true);
+	this.getNumber();
 	if (this.heading && this.dragByHeading) this.heading.className += ' highslide-move';
 	if (hs.showCredits) this.writeCredits();
 	for (var i = 0; i < hs.overlays.length; i++) {
@@ -1779,7 +2272,7 @@ showOverlays : function() {
 	this.wrapper.appendChild (b);
 	for (var i = 0; i < this.overlays.length; i++) {
 		var o = hs.$('hsId'+ this.overlays[i]);
-		o.style.zIndex = 4;
+		o.style.zIndex = o.hsId == 'controls' ? 5 : 4;
 		if (!o.hideOnMouseOut || this.mouseIsOver) {
 			o.style.visibility = 'visible';
 			hs.setStyles(o, { visibility: 'visible', display: '' });
@@ -1790,12 +2283,24 @@ showOverlays : function() {
 
 destroyOverlays : function() {
 	if (!this.overlays.length) return;
+	if (this.slideshow) {
+		var c = this.slideshow.controls;
+		if (c && hs.getExpander(c) == this) c.parentNode.removeChild(c);
+	}
+	for (var i = 0; i < this.overlays.length; i++) {
+		var o = hs.$('hsId'+ this.overlays[i]);
+		if (o && o.parentNode == hs.viewport && hs.getExpander(o) == this) hs.discardElement(o);
+	}
 	hs.discardElement(this.overlayBox);
 },
 
 
 
 createFullExpand : function () {
+	if (this.slideshow && this.slideshow.controls) {
+		this.slideshow.enable('full-expand');
+		return;
+	}
 	this.fullExpandLabel = hs.createElement(
 		'a', {
 			href: 'javascript:hs.expanders['+ this.key +'].doFullExpand();',
@@ -1839,11 +2344,237 @@ afterClose : function () {
 		if (this.outline && this.outlineWhileAnimating) this.outline.destroy();
 	
 		hs.discardElement(this.wrapper);
+	this.destroyOverlays();
+	if (!hs.viewport.childNodes.length) hs.viewport.style.display = 'none';
 	
+	if (this.dimmingOpacity) hs.undim(this.key);
 	hs.expanders[this.key] = null;		
 	hs.reOrder();
 }
 
+};
+
+
+hs.Slideshow = function (expKey, options) {
+	if (hs.dynamicallyUpdateAnchors !== false) hs.updateAnchors();
+	this.expKey = expKey;
+	for (var x in options) this[x] = options[x];
+	if (this.useControls) this.getControls();
+	if (this.thumbstrip) this.thumbstrip = hs.Thumbstrip(this);
+};
+hs.Slideshow.prototype = {
+getControls: function() {
+	this.controls = hs.createElement('div', { innerHTML: hs.replaceLang(hs.skin.controls) }, 
+		null, hs.container);
+	
+	var buttons = ['play', 'pause', 'previous', 'next', 'move', 'full-expand', 'close'];
+	this.btn = {};
+	var pThis = this;
+	for (var i = 0; i < buttons.length; i++) {
+		this.btn[buttons[i]] = hs.getElementByClass(this.controls, 'li', 'highslide-'+ buttons[i]);
+		this.enable(buttons[i]);
+	}
+	this.btn.pause.style.display = 'none';
+	//this.disable('full-expand');
+},
+checkFirstAndLast: function() {
+	if (this.repeat || !this.controls) return;
+	var exp = hs.expanders[this.expKey],
+		cur = exp.getAnchorIndex(), 
+		re = /disabled$/;
+	if (cur == 0) 
+		this.disable('previous');
+	else if (re.test(this.btn.previous.getElementsByTagName('a')[0].className))
+		this.enable('previous');
+	if (cur + 1 == hs.anchors.groups[exp.slideshowGroup || 'none'].length) {
+		this.disable('next');
+		this.disable('play');
+	} else if (re.test(this.btn.next.getElementsByTagName('a')[0].className)) {
+		this.enable('next');
+		this.enable('play');
+	}
+},
+enable: function(btn) {
+	if (!this.btn) return;
+	var sls = this, a = this.btn[btn].getElementsByTagName('a')[0], re = /disabled$/;
+	a.onclick = function() {
+		sls[btn]();
+		return false;
+	};
+	if (re.test(a.className)) a.className = a.className.replace(re, '');
+},
+disable: function(btn) {
+	if (!this.btn) return;
+	var a = this.btn[btn].getElementsByTagName('a')[0];
+	a.onclick = function() { return false; };
+	if (!/disabled$/.test(a.className)) a.className += ' disabled';
+},
+hitSpace: function() {
+	if (this.autoplay) this.pause();
+	else this.play();
+},
+play: function(wait) {
+	if (this.btn) {
+		this.btn.play.style.display = 'none';
+		this.btn.pause.style.display = '';
+	}
+	
+	this.autoplay = true;	
+	if (!wait) hs.next(this.expKey);
+},
+pause: function() {
+	if (this.btn) {
+		this.btn.pause.style.display = 'none';
+		this.btn.play.style.display = '';
+	}
+	
+	clearTimeout(this.autoplay);
+	this.autoplay = null;
+},
+previous: function() {
+	this.pause();
+	hs.previous(this.btn.previous);
+},
+next: function() {
+	this.pause();
+	hs.next(this.btn.next);
+},
+move: function() {},
+'full-expand': function() {
+	hs.getExpander().doFullExpand();
+},
+close: function() {
+	hs.close(this.btn.close);
+}
+};
+hs.Thumbstrip = function(slideshow) {
+	function add (exp) {
+		hs.extend(options || {}, {
+			overlayId: dom,
+			hsId: 'thumbstrip',
+			className: 'highslide-thumbstrip-'+ mode +'-overlay ' + (options.className || '')
+		});
+		if (hs.ieLt7) options.fade = 0;
+		exp.createOverlay(options);
+		hs.setStyles(dom.parentNode, { overflow: 'hidden' });
+	};
+	
+	function scroll (delta) {	
+		selectThumb(undefined, Math.round(delta * dom[isX ? 'offsetWidth' : 'offsetHeight'] * 0.7));
+	};
+	
+	function selectThumb (i, scrollBy) {
+		if (i === undefined) for (var j = 0; j < group.length; j++) {
+			if (group[j] == hs.expanders[slideshow.expKey].a) {
+				i = j;
+				break;
+			}
+		}
+		if (i === undefined) return;
+		var as = dom.getElementsByTagName('a'),
+			active = as[i],
+			cell = active.parentNode,
+			left = isX ? 'Left' : 'Top',
+			right = isX ? 'Right' : 'Bottom',
+			width = isX ? 'Width' : 'Height',
+			offsetLeft = 'offset' + left,
+			offsetWidth = 'offset' + width,
+			overlayWidth = div.parentNode.parentNode[offsetWidth],
+			minTblPos = overlayWidth - table[offsetWidth],
+			curTblPos = parseInt(table.style[isX ? 'left' : 'top']) || 0,
+			tblPos = curTblPos,
+			mgnRight = 20;
+		if (scrollBy !== undefined) {
+			tblPos = curTblPos - scrollBy;
+			
+			if (minTblPos > 0) minTblPos = 0;
+			if (tblPos > 0) tblPos = 0;
+			if (tblPos < minTblPos) tblPos = minTblPos;
+			
+	
+		} else {
+			for (var j = 0; j < as.length; j++) as[j].className = '';
+			active.className = 'highslide-active-anchor';
+			var activeLeft = i > 0 ? as[i - 1].parentNode[offsetLeft] : cell[offsetLeft],
+				activeRight = cell[offsetLeft] + cell[offsetWidth] + 
+					(as[i + 1] ? as[i + 1].parentNode[offsetWidth] : 0);
+			if (activeRight > overlayWidth - curTblPos) tblPos = overlayWidth - activeRight;
+			else if (activeLeft < -curTblPos) tblPos = -activeLeft;
+		}
+		var markerPos = cell[offsetLeft] + (cell[offsetWidth] - marker[offsetWidth]) / 2 + tblPos;
+		hs.animate(table, isX ? { left: tblPos } : { top: tblPos }, null, 'easeOutQuad');
+		hs.animate(marker, isX ? { left: markerPos } : { top: markerPos }, null, 'easeOutQuad');
+		scrollUp.style.display = tblPos < 0 ? 'block' : 'none';
+		scrollDown.style.display = (tblPos > minTblPos)  ? 'block' : 'none';
+		
+	};
+	
+
+	// initialize
+	var group = hs.anchors.groups[hs.expanders[slideshow.expKey].slideshowGroup || 'none'],
+		options = slideshow.thumbstrip,
+		mode = options.mode || 'horizontal',
+		floatMode = (mode == 'float'),
+		tree = floatMode ? ['div', 'ul', 'li', 'span'] : ['table', 'tbody', 'tr', 'td'],
+		isX = (mode == 'horizontal'),
+		dom = hs.createElement('div', {
+				className: 'highslide-thumbstrip highslide-thumbstrip-'+ mode,
+				innerHTML:
+					'<div class="highslide-thumbstrip-inner">'+
+					'<'+ tree[0] +'><'+ tree[1] +'></'+ tree[1] +'></'+ tree[0] +'></div>'+
+					'<div class="highslide-scroll-up"><div></div></div>'+
+					'<div class="highslide-scroll-down"><div></div></div>'+
+					'<div class="highslide-marker"><div></div></div>'
+			}, {
+				display: 'none'
+			}, hs.container),
+		domCh = dom.childNodes,
+		div = domCh[0],
+		scrollUp = domCh[1],
+		scrollDown = domCh[2],
+		marker = domCh[3],
+		table = div.firstChild,
+		tbody = dom.getElementsByTagName(tree[1])[0],
+		tr;
+	for (var i = 0; i < group.length; i++) {
+		if (i == 0 || !isX) tr = hs.createElement(tree[2], null, null, tbody);
+		(function(){
+			var a = group[i],
+				cell = hs.createElement(tree[3], null, null, tr),
+				pI = i;
+			hs.createElement('a', {
+				href: a.href,
+				onclick: function() {
+					hs.getExpander(this).focus();
+					return hs.transit(a);
+				},
+				innerHTML: hs.stripItemFormatter ? hs.stripItemFormatter(a) : a.innerHTML
+			}, null, cell);
+		})();
+	}
+	if (!floatMode) {
+		scrollUp.onclick = function () { scroll(-1); };
+		scrollDown.onclick = function() { scroll(1); };
+		hs.addEventListener(tbody, document.onmousewheel !== undefined ? 
+				'mousewheel' : 'DOMMouseScroll', function(e) {        
+			var delta = 0;
+	        e = e || window.event;
+	        if (e.wheelDelta) {
+				delta = e.wheelDelta/120;
+				if (hs.opera) delta = -delta;
+	        } else if (e.detail) {
+				delta = -e.detail/3;
+	        }
+	        if (delta) scroll(-delta * 0.2);
+			if (e.preventDefault) e.preventDefault();
+			e.returnValue = false;
+		});
+	}
+	
+	return {
+		add: add,
+		selectThumb: selectThumb
+	}
 };
 hs.langDefaults = hs.lang;
 // history
@@ -1864,7 +2595,7 @@ hs.addEventListener(window, 'load', hs.ready);
 
 // set handlers
 hs.addEventListener(document, 'ready', function() {
-	if (hs.expandCursor) {
+	if (hs.expandCursor || hs.dimmingOpacity) {
 		var style = hs.createElement('style', { type: 'text/css' }, null, 
 			document.getElementsByTagName('HEAD')[0]);
 			
@@ -1882,10 +2613,24 @@ hs.addEventListener(document, 'ready', function() {
 		}
 		if (hs.expandCursor) addRule ('.highslide img', 
 			'cursor: url('+ hs.graphicsDir + hs.expandCursor +'), pointer !important;');
+		addRule ('.highslide-viewport-size',
+			hs.ie && (hs.uaVersion < 7 || document.compatMode == 'BackCompat') ?
+				'position: absolute; '+
+				'left:'+ fix('scrollLeft') +
+				'top:'+ fix('scrollTop') +
+				'width:'+ fix('clientWidth') +
+				'height:'+ fix('clientHeight') :
+				'position: fixed; width: 100%; height: 100%; left: 0; top: 0');
 	}
 });
 hs.addEventListener(window, 'resize', function() {
 	hs.getPageSize();
+	if (hs.viewport) for (var i = 0; i < hs.viewport.childNodes.length; i++) {
+		var node = hs.viewport.childNodes[i],
+			exp = hs.getExpander(node);
+		exp.positionOverlay(node);
+		if (node.hsId == 'thumbstrip') exp.slideshow.thumbstrip.selectThumb();
+	}
 });
 hs.addEventListener(document, 'mousemove', function(e) {
 	hs.mouse = { x: e.clientX, y: e.clientY	};
