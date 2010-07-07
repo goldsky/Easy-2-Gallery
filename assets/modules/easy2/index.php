@@ -98,7 +98,7 @@ if (!is_dir( MODX_BASE_PATH . $e2g['dir']) ) {
         require_once E2G_MODULE_PATH . 'install/index.php';
         exit();
     } else {
-    $_SESSION['easy2err'][] = '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
+        $_SESSION['easy2err'][] = '<b style="color:red">'.$lng['dir'].' &quot;'.$e2g['dir'].'&quot; '.$lng['empty'].'</b>';
 //    exit;
     }
 } elseif (!is_dir( MODX_BASE_PATH . $e2g['dir'] . '_thumbnails' ) ) {
@@ -118,7 +118,7 @@ $e2gmod_cfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
 $e2gmod_cfg['path'] = ( isset($path) ? $path : '' );
 $e2gmod_cfg['parent_id'] = ( isset( $_GET['pid'] ) && is_numeric( $_GET['pid'] ) ) ? (int) $_GET['pid'] : 1;
 
-/*
+/**
  * SYSTEM VARS
  */
 // Easy 2 Gallery's debug parameter
@@ -131,22 +131,56 @@ $e2gmod_cfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
 $e2gmod_cfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
 // MODx's module ID
 $e2gmod_cfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
+// E2G's module ID
+$e2gmod_cfg['mod_id'] = !empty($e2g['mod_id'])? $e2g['mod_id'] : $_GET['id'];
+
+/**
+ * If Easy 2 Gallery is included inside another module,
+ * append its params into the address bar
+ */
+$alienarray = array();
+$alienparams = '';
+if ($e2g['mod_id']!=$_GET['id']) {
+    // exclude ALL e2g's internal $_GET params to identify other module's $_GET params
+    $diff = array(
+        'a'=>$_GET['a']
+        , 'id'=>$_GET['id']
+        , 'pid'=>$_GET['pid']
+        , 'file_id'=>$_GET['file_id']
+        , 'lang'=>$_GET['lang']
+        , 'langfile'=>$_GET['langfile']
+        , 'dir_path'=>$_GET['dir_path']
+        , 'file_path'=>$_GET['file_path']
+        , 'path'=>$_GET['path']
+        , 'act'=>$_GET['act']
+        , 'page'=>$_GET['page']
+        , 'ip'=>$_GET['ip']
+        , 'u'=>$_GET['u']
+        , 'e'=>$_GET['e']
+        );
+    $aliendiff = array_diff_key ( $_GET , $diff );
+    foreach ($aliendiff as $k => $v) {
+        $alienparams .= '&'.$k.'='.$v;
+    }
+}
+
 // module's href
-$e2gmod_cfg['index'] = ( isset($index) ? $index : 'index.php?a='.$e2gmod_cfg['_a'].'&id='.$e2gmod_cfg['_i'] );
+$e2gmod_cfg['index'] = ( isset($index) ? $index : 'index.php?a='.$e2gmod_cfg['_a'].'&id='.$e2gmod_cfg['_i'] )
+        .( $alienparams!='' ? $alienparams : '' );
 
 // ERROR REPORTING
 if ($e2gmod_cfg['e2g_debug'] == 1) {
 //    error_reporting(E_ALL);
 //    $old_error_handler = set_error_handler("error_handler");
 }
-/*
+/**
  * To handle error
  * @param int      $errno error number
  * @param string   $errmsg error message
  * @param string   $filename filename
  * @param int      $linenum line number
  * @param string   $vars ???
-*/
+ */
 function error_handler ($errno, $errmsg, $filename, $linenum, $vars) {
     echo '<p>Error '.$errno.': '.$errmsg.'<br>File: '.$filename.' <b>Line:'.$linenum.'</b></p>';
 }
@@ -157,9 +191,9 @@ if (is_dir( E2G_MODULE_PATH . 'install')) {
     exit();
 }
 
-/*
+/**
  * EXECUTE MODULE
-*/
+ */
 
 if(!class_exists('e2g_pub')) {
     include_once(E2G_MODULE_PATH . "includes/classes/e2g.public.class.php");

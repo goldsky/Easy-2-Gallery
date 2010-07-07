@@ -6,21 +6,21 @@ $show_group = $this->e2gsnip_cfg['show_group'];
 $glibs = array(
         // first array will be the VALUE for &glib parameter of snippet call
         'colorbox' => array (
-        // 'alias' will be the VALUE for the library parameter inside module
-                'alias' => 'colorbox (jq)',
-                // 'regclient will be use for run library files inside <head></head> tag of MODx document
+        // 'alias' is the VALUE for the library's options inside module
+                'alias' => 'colorbox 1.3.8 (jq)',
+                // 'regclient will be used to run library files inside <head></head> tag of MODx document
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/colorbox/colorbox.css' )),
                         'JS' => array (
                                 MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js',
-//                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
                                 MODX_BASE_URL . 'assets/libs/colorbox/jquery.colorbox-min.js',
                                 MODX_BASE_URL . 'assets/libs/colorbox/e2g.colorbox.js'
                         )
                 ),
 
-                // 'glibact' is used as slide show parameter of image pop-up
-                // eg: if ($glib == 'shadowbox') {$l['glibact']='rel="shadowbox['.$show_group.'];player=img"';}
+                // 'glibact' is used as slideshow parameter of image pop-up
+                // remember the template:
+                // <a href="[+easy2:link+]fid=[+easy2:id+]" title="[+easy2:title+]-[+easy2:summary+]" [+easy2:glibact+]>
                 'glibact' => 'rel="lightbox['.$show_group.']"',
 
                 // 'comments' part will be use for library's comment pop-up iframe
@@ -30,23 +30,42 @@ $glibs = array(
                 'comments' => 'class="iframe"'
         ),
         'fancybox' => array (
-                'alias' => 'fancybox (jq)',
+                'alias' => 'fancybox 1.3.1 (jq)',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (
-                                        MODX_BASE_URL . 'assets/libs/fancybox/fancybox.css'
+                                        MODX_BASE_URL . 'assets/libs/fancybox/jquery.fancybox-1.3.1.css'
                                 )
                         ),
                         'JS' => array (
-                                'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
-                                MODX_BASE_URL . 'assets/libs/fancybox/jquery.js',
-                                MODX_BASE_URL . 'assets/libs/fancybox/fancybox.js',
+                                "http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js",
+                                MODX_BASE_URL . 'assets/libs/fancybox/jquery.fancybox-1.3.1.pack.js',
+                                MODX_BASE_URL . 'assets/libs/fancybox/jquery.easing-1.3.pack.js',
+                                MODX_BASE_URL . 'assets/libs/fancybox/jquery.mousewheel-3.0.2.pack.js',
+                                MODX_BASE_URL . 'assets/libs/fancybox/e2g.fancybox.js'
+                        ),
+                        'htmlblock' => array ('
+                            <script type="text/javascript">
+                            $(document).ready(function() {
+                                $("a[rel='.$show_group.']").fancybox({
+                                    \'padding\'         : 10,
+                                    \'margin\'          : 0,
+                                    \'transitionIn\'    : \'elastic\',
+                                    \'transitionOut\'   : \'elastic\',
+                                    \'titlePosition\'   : \'over\',
+                                    \'type\'            : \'image\',
+                                    \'titleFormat\'     : function(title, currentArray, currentIndex, currentOpts) {
+                                        return \'<span id="fancybox-title-over">Image \' + (currentIndex + 1) + \' / \' + currentArray.length + (title.length ? \' &nbsp; \' + title : \'\') + \'</span>\';
+                                    }
+                                });
+                            });
+                             </script>'
                         )
                 ),
-                'glibact' => 'class="'.$show_group.'" rel="lightbox['.$show_group.']"',
-                'comments' => 'class="iframe"'
+                'glibact' => 'class="'.$show_group.'" rel="'.$show_group.'"',
+                'comments' => 'class="comment"'
         ),
         'floatbox' => array (
-                'alias' => 'floatbox',
+                'alias' => 'floatbox 3.52.2',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array ( MODX_BASE_URL .'assets/libs/floatbox/floatbox.css' )),
                         'JS' => array (
@@ -54,22 +73,40 @@ $glibs = array(
                         )
                 ),
                 'glibact' => 'class="floatbox" rev="doSlideshow:false group:'.$show_group.'"',
-                'comments' => 'rel="floatbox" rev="type:iframe width:400 height:250 enableDragResize:true controlPos:tr innerBorder:0"'
+                'comments' => 'rel="floatbox" rev="type:iframe width:400 height:320 enableDragResize:true controlPos:tr innerBorder:0"'
         ),
         'highslide' => array (
-                'alias' => 'highslide',
+                'alias' => 'highslide 4.1.8',
                 'regClient' => array (
-                        'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/highslide/highslide.css' )),
+                        'CSS' => array ( 'screen' => array (
+                                        MODX_BASE_URL . 'assets/libs/highslide/highslide.css'
+                                )
+                        ),
                         'JS' => array (
-                                MODX_BASE_URL . 'assets/libs/highslide/highslide.js',
-                                MODX_BASE_URL . 'assets/libs/highslide/highslide-settings.js'
+                                MODX_BASE_URL . 'assets/libs/highslide/highslide-full.js',
+                                MODX_BASE_URL . 'assets/libs/highslide/e2g.highslide.js'
+                        ),
+                        'htmlblock' => array ('
+                            <script type="text/javascript">
+                                hs.addSlideshow({
+                                    slideshowGroup: \''.$show_group.'\',
+                                    interval: 5000,
+                                    repeat: false,
+                                    useControls: true,
+                                    fixedControls: \'fit\',
+                                    overlayOptions: {
+                                        opacity: .6,
+                                        position: \'bottom center\'
+                                    }
+                                });
+                             </script>'
                         )
                 ),
-                'glibact' => 'class="highslide" onclick="return hs.expand(this, {slideshowGroup: \'mygroup\'})"',
-                'comments' => 'onclick="return hs.htmlExpand(this, { objectType: \'iframe\'} )"'
+                'glibact' => 'class="highslide" onclick="return hs.expand(this, {slideshowGroup: \''.$show_group.'\'})"',
+                'comments' => 'onclick="return hs.htmlExpand(this, { objectType: \'iframe\' } )"'
         ),
         'lightwindow' => array (
-                'alias' => 'lightwindow (pt)',
+                'alias' => 'lightwindow 2.0 (pt)',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/lightwindow/css/lightwindow.css' )),
                         'JS' => array (
@@ -84,19 +121,19 @@ $glibs = array(
                 'comments' => 'class="lightwindow" params="lightwindow_type=external,lightwindow_width=400,lightwindow_height=250"'
         ),
         'shadowbox' => array (
-                'alias' => 'shadowbox',
+                'alias' => 'shadowbox 3.0.3 (base)',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (MODX_BASE_URL . 'assets/libs/shadowbox/shadowbox.css' )),
                         'JS' => array (
                                 MODX_BASE_URL . 'assets/libs/shadowbox/shadowbox.js',
-                                MODX_BASE_URL . 'assets/libs/shadowbox/shadowbox-settings.js'
+                                MODX_BASE_URL . 'assets/libs/shadowbox/e2g.shadowbox.js'
                         )
                 ),
                 'glibact' => 'rel="shadowbox['.$show_group.'];player=img"',
                 'comments' => 'rel="shadowbox;width=400;height=250;player=iframe"'
         ),
         'slimbox' => array (
-                'alias' => 'slimbox (mt)',
+                'alias' => 'slimbox 1.71 (mt)',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (
                                         MODX_BASE_URL . 'assets/libs/slimbox/css/slimbox.css',
@@ -114,7 +151,7 @@ $glibs = array(
                 'comments' => 'onclick="return hs.htmlExpand(this, { objectType: \'iframe\'} )"'
         ),
         'slimbox2' => array (
-                'alias' => 'slimbox2 (jq)',
+                'alias' => 'slimbox2 2.04 (jq)',
                 'regClient' => array (
                         'CSS' => array ( 'screen' => array (
                                         MODX_BASE_URL . 'assets/libs/slimbox/css/slimbox.css' ,

@@ -4,7 +4,7 @@ $debug = 0;                             // MODx's debug variable
 $_t = $modx->config['manager_theme'];   // MODx's manager theme
 $_a = (int) $_GET['a'];                 // MODx's action ID
 $_i = (int) $_GET['id'];                // MODx's module ID
-$index = 'index.php?a='.$_a.'&id='.$_i;
+$index = 'index.php?a='.$_a.'&id='.$_i.($e2g['mod_id']!=$_GET['id'] ? '&e2g_id='.$e2g['mod_id'] : '');
 
 if (file_exists('../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php')) {
     include '../assets/modules/easy2/includes/langs/'.$modx->config['manager_language'].'.inst.inc.php';
@@ -32,21 +32,26 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
 
     // CHECK/CREATE DIRS
-    $_POST['path'] = preg_replace('/^\/?(.+)$/', '\\1', $_POST['path']);
-    $dirs = explode('/', substr($_POST['path'], 0, -1));
-    $npath = '..';
-    foreach ($dirs as $dir) {
-        $npath .= '/'.$dir;
-        if (is_dir($npath) || empty($dir)) continue;
-
-        if(!mkdir($npath, 0777)) {
-            $_SESSION['easy2err'][] = $lngi['create_dir_err'].' "'.$npath."'";
-            chref($index);
-        }
+    if (is_dir('../'.$_POST['path'])) {
+        $_SESSION['easy2suc'][] = $lngi['dir_exists'].': '.$_POST['path'];
+        $_SESSION['easy2dir'] = $_POST['path'];
     }
+    else {
+        $_POST['path'] = preg_replace('/^\/?(.+)$/', '\\1', $_POST['path']);
+        $dirs = explode('/', substr($_POST['path'], 0, -1));
+        $npath = '..';
+        foreach ($dirs as $dir) {
+            $npath .= '/'.$dir;
+            if (is_dir($npath) || empty($dir)) continue;
 
-    $_SESSION['easy2dir'] = substr($npath, 3).'/';
-    $_SESSION['easy2suc'][] = $lngi['dir_created'].': '.$_POST['path'];
+            if(!mkdir($npath, 0777)) {
+                $_SESSION['easy2err'][] = $lngi['create_dir_err'].' "'.$npath."'";
+                chref($index);
+            }
+        }
+        $_SESSION['easy2dir'] = substr($npath, 3).'/';
+        $_SESSION['easy2suc'][] = $lngi['dir_created'].': '.$_POST['path'];
+    }
 
     // CHECK/CREATE TABLES
     // mysql_list_fields()
@@ -327,6 +332,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
 
     $e2g['dir'] = $_SESSION['easy2dir'];
+    $e2g['mod_id'] = $_POST['mod_id'];
+    ksort($e2g);
     $c = "<?php\r\n\$e2g = array (\r\n";
     foreach($e2g as $k => $v) {
         $c .= "        '$k' => ".(is_numeric($v)?$v:"'".addslashes($v)."'").",\r\n";
@@ -383,18 +390,20 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         <table cellspacing="0" cellpadding="0">
                             <tr>
                                 <td width="50"><b><?php echo $lngi['path'];?>:</b></td>
-                                <td><input name="path" type="text" style="width:100%" value="<?php echo $e2g['dir'];?>"></td>
+                                <td><input name="path" type="text" style="width:100%" value="<?php echo $e2g['dir'];?>">
+                                    <input type="hidden" name="mod_id" value="<?php echo (!empty($e2g['mod_id'])? $e2g['mod_id'] : $_GET['id']);?>" />
+                                </td>
                             </tr>
                         </table>
                         <p><?php echo htmlspecialchars_decode($lngi['comment1']);?></p>
                         <p><?php echo htmlspecialchars_decode($lngi['comment']);?></p>
                         <div style="color:green; font-weight: bold; font-size: 1.5em;">
-                            <?php echo htmlspecialchars_decode($lngi['system_check']);?> :
+                                    <?php echo htmlspecialchars_decode($lngi['system_check']);?> :
                         </div>
                         <ul>
-                            <?php
-                            system_check($lngi);
-                            ?>
+                                    <?php
+                                    system_check($lngi);
+                                    ?>
                         </ul>
                     </form>
                             <?php
@@ -498,10 +507,10 @@ function system_check($lngi) {
     }
 
     if ($disabled == 'disabled') $style='style="color:gray;"';
-?>
-    <br />
-    <input type="submit" <?php echo $style;?> value="<?php echo htmlspecialchars_decode($lngi['ok']);?>" <?php echo $disabled;?>>
-<?php
+    ?>
+<br />
+<input type="submit" <?php echo $style;?> value="<?php echo htmlspecialchars_decode($lngi['ok']);?>" <?php echo $disabled;?>>
+    <?php
 }
 
 /*

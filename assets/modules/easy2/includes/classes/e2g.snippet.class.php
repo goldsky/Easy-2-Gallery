@@ -1191,6 +1191,12 @@ class e2g_snip extends e2g_pub {
             foreach ( $glibs[$glib]['regClient']['JS'] as $vRegClientJS ) {
                 $modx->regClientStartupScript($vRegClientJS);
             }
+            // HTMLBLOCK
+            if ( isset($glibs[$glib]['regClient']['htmlblock']) && $glibs[$glib]['regClient']['htmlblock']!='') {
+                foreach ( $glibs[$glib]['regClient']['htmlblock'] as $vRegClientHtmlBlock ) {
+                    $modx->regClientStartupHTMLBlock($vRegClientHtmlBlock);
+                }
+            }
             unset($glib);
         }
     }
