@@ -1269,7 +1269,7 @@ class e2g_snip extends e2g_pub {
                 $row['comments'] = '<a href="' . E2G_SNIPPET_URL . 'comments.easy2gallery.php?id='.$row['id'].'" '.$glibs[$glib]['comments'].'>'.$row['comments'].'</a>';
             }
         } else {
-            $row['comments'] = '';
+            $row['comments'] = '&nbsp;';
             $row['com'] = 'not_display';
         }
         if (isset($glib)) unset($glib);
@@ -1600,7 +1600,7 @@ class e2g_snip extends e2g_pub {
                 $l['com'] = 'e2gcom'.($l['comments']==0?0:1);
                 $l['comments'] = $this->_comments($fileid);
             } else {
-                $l['comments'] = '';
+                $l['comments'] = '&nbsp;';
                 $l['com'] = 'not_display';
             }
         }

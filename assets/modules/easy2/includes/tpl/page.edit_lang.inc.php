@@ -146,7 +146,7 @@ else {
                                 } else {
                                     $textareaheight = (strlen($eng['value'])/5);
                                     echo '<textarea rows="2" cols="" style="width : 94%;'
-                                            . ( $textareaheight<50 ? '' : 'height: '.$textareaheight.'px;"' )
+                                            . ( $textareaheight<50 ? '"' : 'height: '.$textareaheight.'px;"' )
                                             . ( strpos($eng['key'],'js_')===false ? ' class="mceEditor"' : '' )
                                             .' name="'.$engs[$eng['key']]['key'].'" >';
                                     echo $others[$eng['key']]['value'];
