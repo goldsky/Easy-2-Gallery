@@ -1733,7 +1733,7 @@ class e2g_snip extends e2g_pub {
                  * + WATERMARK-ing
                  */
                 if(!isset($lp_w) || !isset($lp_h)) {
-                    $img_size = getimagesize($this->_e2g_decode($path.$fetch['filename']));
+                    $img_size = getimagesize($gdir.$this->_e2g_decode($path.$fetch['filename']));
                     if (!isset($lp_w)) $lp_w = $img_size[0];
                     if (!isset($lp_h)) $lp_h = $img_size[1];
                     $img_size = array();
