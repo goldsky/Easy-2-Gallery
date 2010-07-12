@@ -15,7 +15,7 @@ $e2g_lang['english'] = array (
         'cache_clean' => 'Cache is cleared',
         'cache_clean_err' => 'There was an error while trying to clean cache',
         'cancel' => 'Cancel',
-        'captcha_desc' => 'If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;',
+        'captcha_desc' => '&lt;p&gt;If you does not have the API keys yet, get it from here: &lt;a href=&quot;http://recaptcha.net/&quot; target=&quot;_blank&quot;&gt;http://recaptcha.net/&lt;/a&gt;&lt;/p&gt;',
         'cat_name_len' => 'max folder name length',
         'cat_name_len_cfg_desc' => 'Max folder name length',
         'center' => 'center',
@@ -47,7 +47,7 @@ $e2g_lang['english'] = array (
         'credit_lang_file_author' => 'Cx2, Temus, goldsky',
         'credit_lang_file_date' => 'June 17, 2010',
         'credit_lang_file_version' => '2.0',
-        'crumbs_usage_cfg_desc' => 'Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.',
+        'crumbs_usage_cfg_desc' => '&lt;p&gt;Crumbs will use the selected text. If one of the folders&#039; Alias is empty, it will automatically use its name instead.&lt;/p&gt;',
         'css' => 'CSS',
         'custom' => 'Custom',
         'date' => 'Date',
@@ -59,7 +59,7 @@ $e2g_lang['english'] = array (
         'dir' => 'Folder',
         'dir_add_err' => 'There was an error while trying to create a folder',
         'dir_added' => 'Folder created',
-        'dir_cfg_desc' => 'Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.',
+        'dir_cfg_desc' => '&lt;p&gt;Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.&lt;/p&gt;',
         'dir_create' => 'Create folder',
         'dir_create_err' => 'Could not create folder',
         'dir_created' => 'folder created',
@@ -135,7 +135,7 @@ $e2g_lang['english'] = array (
         'grid_class' => 'Grid&#039;s class',
         'grid_class_cfg_desc' => 'CSS class name for the grid.',
         'h' => 'Height',
-        'h_cfg_desc' => 'Max height in pixels, larger images will be resized automatically.&lt;br /&gt;&lt;strong&gt;0 - no limit&lt;/strong&gt;.',
+        'h_cfg_desc' => '&lt;p&gt;Max height in pixels, larger images will be resized automatically. &lt;strong&gt;0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
         'h_thumb_cfg_desc' => 'Thumbnail height, px',
         'help' => 'Help',
         'help_advance_content' => '&lt;h2&gt;Nested easy2 with MODx API&lt;/h2&gt;
@@ -168,12 +168,18 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;rgid &lt;/strong&gt;- gallery id for random thumbnail output&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;tag&lt;/strong&gt; - image&#039;s/folder&#039;s tag (this parameter will ignore the &amp;amp;gid parameter, but can accompanied by &amp;amp;showonly). Options: word/string.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;showonly&lt;/strong&gt; - images | folders, to show only those spesific type&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;img_src&lt;/strong&gt; - the image source for pop-up  iframe:  `original` | `generated` (using show.easy2gallery.php file to create the WATERMARK, &lt;em&gt;default&lt;/em&gt;).&lt;/p&gt;
+&lt;h2&gt;
+&lt;hr /&gt;
+Examples&lt;/h2&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?fid=`2,3`!]&lt;/strong&gt;&lt;br /&gt;Will show images ID# 2 &lt;strong&gt;and &lt;/strong&gt;3&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?gid=`20,57` &amp;amp;showonly=`images`!]&lt;/strong&gt;&lt;br /&gt;Will show &lt;strong&gt;only &lt;/strong&gt;images from folder ID 20 &lt;strong&gt;and &lt;/strong&gt;57 (excluding directory&#039;s thumbnails).&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?rgid=`102,138`!]&lt;/strong&gt;&lt;br /&gt;Will show random image from folder ID 102 &lt;strong&gt;and &lt;/strong&gt;138, inside &lt;strong&gt;one &lt;/strong&gt;thumbnail.&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2?tag=`dogs, puppies` &amp;amp;showonly=`images`!]&lt;/strong&gt;&lt;br /&gt;Will show all images (only) which have dogs OR puppies tag.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;If you want to apply changes to added images you should clean cache.&lt;/strong&gt;&lt;/p&gt;
-&lt;h2&gt;Thumbnail&lt;/h2&gt;
+&lt;h2&gt;
+&lt;hr /&gt;
+Thumbnail&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt; Folder _thumbnails in root of gallery.&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/p&gt;
@@ -193,13 +199,6 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s landing page.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;for the slideshow: if there is an &#039;open image&#039; pop up, but there are no &amp;amp;landingpage is set up, then the image will be opened directly inside the page, replacing the slideshow box.&lt;/li&gt;
-&lt;li&gt;for the thumbnail, it will open the javascript iframe pop up.&lt;/li&gt;
-&lt;li&gt;At the landing page, the snippet should be called again with its own docID:&lt;br /&gt;[ ! easy2? &amp;amp;landingpage=`__own_ID__` ! ]&lt;/li&gt;
-&lt;li&gt;options: document ID. &lt;/li&gt;
-&lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;gal_desc=`1`&lt;/strong&gt; (on) to see the Gallery&#039;s information (title &amp;amp; description) above the gallery template.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;showonly &lt;/strong&gt;- &#039;images&#039; | &#039;folders&#039; under the &amp;amp;gid parameter&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;css &lt;/strong&gt;- path to the customized CSS file&lt;/p&gt;
@@ -208,10 +207,35 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_classCurrent &lt;/strong&gt;- CSS classname for the current crumb&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;back_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the back button&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;pagenum_class&lt;/strong&gt;&lt;strong&gt; &lt;/strong&gt;- CSS classname for the pagination&lt;/p&gt;
-&lt;h2&gt;Comments&lt;/h2&gt;
+&lt;h2&gt;
+&lt;hr /&gt;
+Landing Page&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s  landing page.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;for the slideshow: if there is an &#039;open image&#039; pop up, but there are  no &amp;amp;landingpage is set up, then the image will be opened directly  inside the page, replacing the slideshow box.&lt;/li&gt;
+&lt;li&gt;for the thumbnail, it will open the javascript iframe pop up.&lt;/li&gt;
+&lt;li&gt;At the landing page, the snippet should be called again with its own  docID:&lt;br /&gt;[ ! easy2? &amp;amp;landingpage=`__own_ID__` ! ]&lt;/li&gt;
+&lt;li&gt;options: document ID. &lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;lp_img_src - &lt;/strong&gt;the image source for landingpage:  `original` | `generated` (using thumb creator, &lt;em&gt;default&lt;/em&gt;).&lt;br /&gt; If it&#039;s &lt;strong&gt;`generated`&lt;/strong&gt;, these below will be applied like the thumbnail:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The watermark&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_w&lt;/strong&gt; - landingpage width box, default: will be retrieved from the original size&lt;strong&gt; &lt;br /&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_h&lt;/strong&gt; - landingpage height box, default: will be retrieved from the original size&lt;strong&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_thq&lt;/strong&gt; -  default: thumbnail config setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_resize_type&lt;/strong&gt; - default: `inner`&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_red=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_green=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_blue=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;
+&lt;hr /&gt;
+Comments&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecm&lt;/strong&gt; - comments on / off, 1 / 0 correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ecl&lt;/strong&gt; - Comments per page.&lt;/p&gt;
-&lt;h2&gt;Breadcrumbs parameters&lt;/h2&gt;
+&lt;h2&gt;
+&lt;hr /&gt;
+Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_separator&lt;/strong&gt; - Separator. default is &#039;/&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showHome&lt;/strong&gt; - This toggles the root crumb to be added to the beginning of the trail. default is 0&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_showAsLinks&lt;/strong&gt; - If you want breadcrumbs to be text and not links, set to 0. default is 1&lt;/p&gt;
@@ -244,7 +268,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic          
+&lt;li&gt;galleriffic                       
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -252,7 +276,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery          
+&lt;li&gt;smoothgallery                       
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -266,7 +290,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview          
+&lt;li&gt;galleryview                       
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
@@ -276,7 +300,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow          
+&lt;li&gt;contentflow                       
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -284,10 +308,18 @@ $e2g_lang['english'] = array (
 &lt;/ul&gt;
 &lt;p&gt;The typical snippet call of using one of these slideshows is&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;[!easy2?slideshow=`smoothgallery` &amp;amp;ss_config=`fullgallery`!]&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;br /&gt;&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from &lt;strong&gt;assets/modules/easy2/slideshows/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;.php&lt;/strong&gt;&lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default = 400 (in px)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default = 300 (in px)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_img_src&lt;/strong&gt; - the image source for slideshow: `original` | `generated` (using thumb creator, &lt;em&gt;default&lt;/em&gt;).&lt;br /&gt;If it&#039;s &lt;strong&gt;`generated`&lt;/strong&gt;, these below will be applied like the thumbnail:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The watermark&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default = 400 (in px)&lt;strong&gt;&amp;nbsp;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default = 300 (in px)&lt;strong&gt; &lt;br /&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_thq&lt;/strong&gt; - default: thumbnail config setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_resize_type&lt;/strong&gt; - default: `inner`&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_red=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_green=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_blue=`255`&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default = white&lt;br /&gt;To use the RGB color: &lt;strong&gt;&amp;amp;ss_bg=`rgb` &amp;amp;thbg_red=`255`&lt;/strong&gt; &lt;strong&gt; &amp;amp;thbg_green=`255` &lt;/strong&gt;&lt;strong&gt; &amp;amp;thbg_blue=`255`&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt; - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).&lt;br /&gt; Options:&lt;/p&gt;
 &lt;ul&gt;
@@ -340,7 +372,7 @@ $e2g_lang['english'] = array (
         'ignore' => 'Ignore',
         'image' => 'image',
         'img_old_resize' => 'Resize existing images',
-        'img_old_resize_cfg_desc' => 'Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.',
+        'img_old_resize_cfg_desc' => '&lt;p&gt;Set this option &#039;Yes&#039; if the change should also apply to ALL existing images. Click the &#039;Synchronize&#039; button to run the process.&lt;/p&gt;',
         'indexfile' => '&lt;h2&gt;Unauthorized access&lt;/h2&gt;
 &lt;p&gt;You&#039;re not allowed to access file folder&lt;/p&gt;',
         'info' => 'Info',
@@ -385,15 +417,15 @@ $e2g_lang['english'] = array (
         'random' => 'random',
         'recaptcha' => 'recaptcha',
         'recaptcha_key_private' => 'Private key',
-        'recaptcha_key_private_desc' => 'This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.',
+        'recaptcha_key_private_desc' => '&lt;p&gt;This is used when communicating between your server and recaptcha&#039;s server. Be sure to keep it a secret.&lt;/p&gt;',
         'recaptcha_key_public' => 'Public key',
-        'recaptcha_key_public_desc' => 'This is used in the JavaScript code that is served to your users',
+        'recaptcha_key_public_desc' => '&lt;p&gt;This is used in the JavaScript code that is served to your users&lt;/p&gt;',
         'red' => 'Red',
         'remove' => 'Remove',
         'resize' => 'resize',
         'resize_err' => 'Could not resize file',
         'resize_type' => 'Thumbnail Resize',
-        'resize_type_cfg_desc' => 'Inner: cropped | Shrink: shrink | Resize: proportional autofit',
+        'resize_type_cfg_desc' => '&lt;p&gt;Inner: cropped | Shrink: shrink | Resize: proportional autofit&lt;/p&gt;',
         'restore_err' => 'There was an error while trying to restore',
         'restore_suc' => 'Gallery&#039;s names restored',
         'right' => 'right',
@@ -427,7 +459,8 @@ $e2g_lang['english'] = array (
         'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.&lt;/p&gt;',
         'theme' => 'Theme',
         'theme_custom' => 'Custom theme',
-        'theme_custom_recaptcha_desc' => 'Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;)',
+        'theme_custom_recaptcha_desc' => '&lt;p&gt;Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;)&lt;/p&gt;',
         'theme_recaptcha_desc' => 'Theme selection for reCaptcha',
         'thq' => 'Compression level',
         'thq_cfg_desc' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
@@ -438,7 +471,7 @@ $e2g_lang['english'] = array (
         'tofolder' => 'to folder',
         'top' => 'top',
         'tpl' => 'Templates',
-        'tpl_comments_cfg_desc' => 'chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;',
+        'tpl_comments_cfg_desc' => '&lt;p&gt;chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;&lt;/p&gt;',
         'tpl_css_path_cfg_desc' => 'Path to CSS file',
         'tpl_lp' => 'Landing page tpl',
         'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
@@ -463,7 +496,8 @@ $e2g_lang['english'] = array (
         'use' => 'Use',
         'version' => 'Version',
         'w' => 'Width',
-        'w_cfg_desc' => 'Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;.',
+        'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;.&lt;/p&gt;',
         'w_thumb_cfg_desc' => 'Thumbnail width, px.',
         'watermark_horpos' => 'Horizontal position',
         'watermark_horpos_cfg_desc' => 'horisontal position of watermark',
