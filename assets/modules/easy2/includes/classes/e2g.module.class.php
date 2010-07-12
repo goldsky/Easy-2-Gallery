@@ -1471,6 +1471,7 @@ class e2g_mod extends e2g_pub {
     private function _delete_all ($path) {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
         if (!$this->_is_validfolder($path)) return $res;
+        $fs = array();
         $fs = glob($path.'*');
         if ($fs!=FALSE) {
             foreach ($fs as $f) {
@@ -1499,7 +1500,7 @@ class e2g_mod extends e2g_pub {
     private function _move_all ($oldpath, $newpath) {
         $res = array('d'=>0, 'f'=>0, 'e'=>array());
         if (!$this->_is_validfolder($oldpath)) return $res;
-
+        $fs = array();
         $fs = glob($oldpath.'/*');
         if ($fs!=FALSE) {
             foreach ($fs as $f) {
@@ -1567,8 +1568,10 @@ class e2g_mod extends e2g_pub {
          */
         $this->_creates_indexhtml($path, $lng);
 
+        $fs = array();
         $fs = @glob($path.'*');
-        if (is_array($fs)) natsort($fs);
+        natsort($fs);
+        
         // goldsky -- alter the maximum execution time
         set_time_limit(0);
         if ($fs!=FALSE)
@@ -1733,20 +1736,18 @@ class e2g_mod extends e2g_pub {
      */
     private function _count_files ($path) {
         $cnt = 0;
-        /**
-         * @todo : create more reliable process on file filtering
-         *         don't use array_diff
-         */
-        $excludefiles = array(
-                $path.'/index.htm',
-                $path.'/index.html',
-                $path.'/Thumbs.db',
-                $path.'/index.php'
-        );
-        if (glob($path.'/*.*')!=FALSE) $cnt = count(array_diff(glob($path.'/*.*'), $excludefiles));
+        $fs = array();
+        $fs = glob($path.'/*.*');
+        if ($fs!=FALSE) {
+            foreach ( $fs as $f ) {
+                if ($this->_is_validfile($f)) $cnt ++;
+                else continue;
+            }
+        }
+        $sd = array();
         $sd = glob($path.'/*');
         if ($sd!=FALSE)
-            foreach(glob($path.'/*') as $d) {
+            foreach( $sd as $d) {
                 $cnt += $this->_count_files($d);
             }
         return $cnt;
@@ -1802,8 +1803,10 @@ class e2g_mod extends e2g_pub {
          */
         $this->_creates_indexhtml($path, $lng);
 
+        $fs = array();
         $fs = @glob($path.'*'); // goldsky -- DO NOT USE a slash here!
-        if (is_array($fs)) natsort($fs);
+        natsort($fs);
+
         /**
          * READ the real physical objects, store into database
          */

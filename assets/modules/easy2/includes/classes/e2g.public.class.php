@@ -142,8 +142,7 @@ class e2g_pub { // public/protected class
     } // protected function e2g_decode($text)
 
     /**
-     * function get_dir_info
-     * function to get directory's information
+     * To get directory's information
      * @param int    $dirid  gallery's ID
      * @param string $field  database field
      */
@@ -163,6 +162,29 @@ class e2g_pub { // public/protected class
         mysql_free_result($res);
         if (empty($dirinfo[$field])) return null;
         return htmlspecialchars_decode($dirinfo[$field], ENT_QUOTES);
+    }
+
+    /**
+     * To get file's information
+     * @param int    $fileid  file's ID
+     * @param string $field  database field
+     */
+    protected function get_file_info($fileid,$field) {
+        global $modx;
+
+        $fileinfo = array();
+
+        $q = 'SELECT '.$field.' FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                . 'WHERE id='.$fileid.' '
+        ;
+
+        if (!($res = mysql_query($q))) return ('Wrong field.');
+        while ($l = mysql_fetch_array($res)) {
+            $fileinfo[$field] = $l[$field];
+        }
+        mysql_free_result($res);
+        if (empty($fileinfo[$field])) return null;
+        return htmlspecialchars_decode($fileinfo[$field], ENT_QUOTES);
     }
 
     /**

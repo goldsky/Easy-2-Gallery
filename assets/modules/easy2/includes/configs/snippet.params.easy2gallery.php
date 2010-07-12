@@ -16,6 +16,11 @@ if (isset($_GET)) {
     }
 }
 
+// grab the E2G's snippet instance IDs from the plugin
+$instance_id = $_SESSION['e2g_instances']++;
+$e2gsnip_cfg['e2g_instances'] = (!empty($_GET['sid'])) ? $_GET['sid'] : $instance_id;
+$e2gsnip_cfg['e2g_static_instances'] = $instance_id;
+
 /**
  * GALLERY / ALBUM Selection Parameters
  */
@@ -175,7 +180,21 @@ $e2gsnip_cfg['glib'] = (!empty($glib)) ? $glib : $e2g['glib'];
 if (isset($static_gid)) $group_suffix = $modx->stripAlias($static_gid);
 elseif (isset($static_tag)) $group_suffix = $modx->stripAlias($static_tag);
 else $group_suffix='1'; // root &gid
-$e2gsnip_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery_'.$group_suffix;
+$e2gsnip_cfg['show_group'] = isset($show_group) ? $show_group : 'Gallery_'.$group_suffix.'_'.$e2gsnip_cfg['e2g_static_instances'];
+
+/**
+ * WATERMARKS
+ */
+// ON/OFF = 0/1
+$e2gsnip_cfg['ewm'] = isset($ewm) ? $ewm : $e2g['ewm'];
+// type: text | image
+$e2gsnip_cfg['wmtype'] = isset($ewmtype) ? $ewmtype : $e2g['wmtype'];
+// the watermark's text | image path
+$e2gsnip_cfg['wmt'] = isset($ewmt) ? $ewmt : $e2g['wmt'];
+// horizontal: 1=left | 2=center | 3=right
+$e2gsnip_cfg['wmpos1'] = (isset($ewmpos1) && is_numeric($ewmpos1)) ? $ewmpos1 : $e2g['wmpos1'];
+// vertical : 1=top | 2=center | 3=bottom
+$e2gsnip_cfg['wmpos2'] = (isset($ewmpos2) && is_numeric($ewmpos2)) ? $ewmpos2 : $e2g['wmpos2'];
 
 /**
  * COMMENTS
@@ -194,17 +213,49 @@ $e2gsnip_cfg['recaptcha_theme'] = $e2g['recaptcha_theme'];
 $e2gsnip_cfg['recaptcha_theme_custom'] = $e2g['recaptcha_theme_custom'];
 
 /**
+ * Image Source
+ * Because of the polemic between the size of the server's capacity,
+ * and the image effect in slideshows and landingpage,
+ * the image source can be selected between options: 'original' | 'generated'
+ * The 'generated' images uses thumbnail creator to make a new file under
+ * the _thumbnails folder.
+ * WATERMARK (if ON) can be applied for the 'generated' images.
+ */
+// thumbnails
+$e2gsnip_cfg['img_src'] = (isset($img_src) ? $img_src : 'generated');
+// slideshow
+$e2gsnip_cfg['ss_img_src'] = (isset($ss_img_src) ? $ss_img_src : 'generated');
+// landingpage
+$e2gsnip_cfg['lp_img_src'] = (isset($lp_img_src) ? $lp_img_src : 'generated');
+
+/**
  * STAND ALONE SLIDESHOW PARAMETERS
  */
 // SLIDESHOW TYPE
 $e2gsnip_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
 // SLIDESHOW PROCESSOR FILE. IF NOT EXIST, WILL USE DEFAULT.
 $e2gsnip_cfg['ss_indexfile'] = isset($ss_indexfile) ? $ss_indexfile : NULL;
-// SLIDESHOW'S BOX DIMENSION, NOT THUMBNAIL
+/**
+ * IF, the image source =`generated`, use these more options
+ * SLIDESHOW'S BOX DIMENSION, NOT THUMBNAIL
+ */
 $e2gsnip_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
 $e2gsnip_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
-$e2gsnip_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // slideshow background color
-// additional configuration options, if this is empty, only as an holder.
+$e2gsnip_cfg['ss_thq'] = (!empty($ss_thq) && $ss_thq<=100 && $ss_thq>=0) ? (int) $ss_thq : $e2g['thq'];
+/**
+ * generating the 'resize-type'
+ * @param string settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
+ */
+$e2gsnip_cfg['ss_resize_type'] = isset($ss_resize_type) ? $ss_resize_type : 'inner';
+// image's BACKGROUND COLOR
+$e2gsnip_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // image's background color
+// OR, if &ss_bg=`rgb` , use below:
+$e2gsnip_cfg['ss_red'] = isset($ss_red) ? $ss_red : $e2g['thbg_red'];
+$e2gsnip_cfg['ss_green'] = isset($ss_green) ? $ss_green : $e2g['thbg_green'];
+$e2gsnip_cfg['ss_blue'] = isset($ss_blue) ? $ss_blue : $e2g['thbg_blue'];
+/**
+ * additional configuration options, if this is empty, only as an holder.
+ */
 $e2gsnip_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 /**
  * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
@@ -231,6 +282,23 @@ $e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
  * @options: document ID.
  */
 $e2gsnip_cfg['landingpage'] = (isset($landingpage) ? $landingpage : (!empty($_GET['lp']) ? $_GET['lp'] : NULL)) ;
+/**
+ * IF, the image source =`generated`, use these more options
+ */
+$e2gsnip_cfg['lp_w'] = isset($lp_w) ? $lp_w : null; // width -> null: will be retrieved from the getimagesize() function
+$e2gsnip_cfg['lp_h'] = isset($lp_h) ? $lp_h : null; // height -> null: will be retrieved from the getimagesize() function
+$e2gsnip_cfg['lp_thq'] = (!empty($lp_thq) && $lp_thq<=100 && $lp_thq>=0) ? (int) $lp_thq : $e2g['thq'];
+/**
+ * landingpage's 'resize-type'
+ * @param string settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
+ */
+$e2gsnip_cfg['lp_resize_type'] = isset($lp_resize_type) ? $lp_resize_type : 'inner';
+// image's BACKGROUND COLOR
+$e2gsnip_cfg['lp_bg'] = isset($lp_bg) ? $lp_bg : 'white'; // image's background color
+// OR, if &lp_bg=`rgb` , use below:
+$e2gsnip_cfg['lp_red'] = isset($lp_red) ? $lp_red : $e2g['thbg_red'];
+$e2gsnip_cfg['lp_green'] = isset($lp_green) ? $lp_green : $e2g['thbg_green'];
+$e2gsnip_cfg['lp_blue'] = isset($lp_blue) ? $lp_blue : $e2g['thbg_blue'];
 
 /**
  * CRUMBS

@@ -55,9 +55,9 @@ while ($l = mysql_fetch_row($res)) {
 $fp = '../../../'.$e2g['dir'].$path.$filename2send;
 $fp = utf8_decode($fp);
 
-/*
+/**
  *  WATERMARK
-*/
+ */
 if ($e2g['ewm'] != 0) {
     $inf = getimagesize($fp);
 

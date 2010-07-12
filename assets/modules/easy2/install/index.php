@@ -279,45 +279,94 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // MODULE
 
-    $mod = 'include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';';
-    $res = mysql_query('UPDATE '.$GLOBALS['table_prefix'].'site_modules SET modulecode = \''.mysql_escape_string($mod).'\' WHERE id =\''.$_GET['id'].'\'');
-    if ($res) {
-        $_SESSION['easy2suc'][] = $lngi['mod_updated'];
-    } else {
-        $_SESSION['easy2err'][] = $lngi['mod_update_err'].'<br />'.mysql_error();
-        chref($index);
+    if (empty($e2g['mod_id']) || $e2g['mod_id']=='') {
+        $mod = 'include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';';
+        $res = mysql_query('UPDATE '.$GLOBALS['table_prefix'].'site_modules SET modulecode = \''.mysql_escape_string($mod).'\' WHERE id =\''.$_GET['id'].'\'');
+        if ($res) {
+            $_SESSION['easy2suc'][] = $lngi['mod_updated'];
+        } else {
+            $_SESSION['easy2err'][] = $lngi['mod_update_err'].'<br />'.mysql_error();
+            chref($index);
+        }
     }
+    else $mod_id = $e2g['mod_id'];
 
     // SNIPPET
 
-    $snippet = 'include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
-    $res = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
-    if (mysql_num_rows($res) > 0) {
-        $sql = 'UPDATE '.$GLOBALS['table_prefix'].'site_snippets SET snippet=\''.mysql_escape_string($snippet).'\' WHERE name =\'easy2\' LIMIT 1';
-        if (mysql_query($sql)) {
-            $_SESSION['easy2suc'][] = $lngi['snippet_updated'];
-        } else {
-            $_SESSION['easy2err'][] = $lngi['snippet_update_err'];
-            chref($index);
-        }
-    } else {
-        $sql = "INSERT INTO ".$GLOBALS['table_prefix']."site_snippets "
-                ."(name, description, snippet, moduleguid, locked, properties, category) "
-                ."VALUES('easy2', 'Easy 2 Gallery', '".mysql_escape_string($snippet)."', '', '1','', '0');";
+    if ( empty($snippet_id) || $snippet_id == '') {
+        $res = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
+        $snippet = 'include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
+        if (mysql_num_rows($res) == 0) {
+            $sql = "INSERT INTO ".$GLOBALS['table_prefix']."site_snippets "
+                    . "(name, description, snippet, moduleguid, locked, properties, category) "
+                    . "VALUES('easy2', 'Easy 2 Gallery', '".mysql_escape_string($snippet)."', '', '1','', '0')";
 
-        if (mysql_query($sql)) {
-            $_SESSION['easy2suc'][] = $lngi['snippet_added'];
-        } else {
-            $_SESSION['easy2err'][] = $lngi['snippet_add_err'];
-            chref($index);
+            if (mysql_query($sql)) {
+                $snippet_id = mysql_insert_id();
+                $_SESSION['easy2suc'][] = $lngi['snippet_added'];
+            } else {
+                $_SESSION['easy2err'][] = $lngi['snippet_add_err'];
+                chref($index);
+            }
         }
+        else {
+            $select = mysql_query('SELECT snippet FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
+            $result = mysql_result($select, 0, 0);
+            if ($result != $snippet) {
+                $sql = 'UPDATE '.$GLOBALS['table_prefix'].'site_snippets SET snippet=\''.mysql_escape_string($snippet).'\' WHERE name =\'easy2\' LIMIT 1';
+                if (mysql_query($sql)) {
+                    $_SESSION['easy2suc'][] = $lngi['snippet_updated'];
+                } else {
+                    $_SESSION['easy2err'][] = $lngi['snippet_update_err'];
+                    chref($index);
+                }
+            }
+        }
+    }
+    else $snippet_id = $e2g['snippet_id'];
+
+    // PLUGIN
+    if ( empty($plugin_id) || $plugin_id == '') {
+        $select = 'SELECT id FROM '.$GLOBALS['table_prefix'].'site_plugins WHERE name=\'easy2\'';
+        $query = mysql_query($select);
+        if (mysql_num_rows($query) == 0) {
+            $plugin = 'include MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\';';
+            $insert = 'INSERT INTO '.$GLOBALS['table_prefix'].'site_plugins '
+                    . '(name,description,plugincode) '
+                    . "VALUES ('easy2', 'Easy 2 Gallery plugin','".mysql_escape_string($plugin)."')"
+            ;
+            if (mysql_query($insert)) {
+                $plugin_id = mysql_insert_id();
+                $_SESSION['easy2suc'][] = $lngi['plugin_added'];
+            } else {
+                $_SESSION['easy2err'][] = $lngi['plugin_add_err'];
+                chref($index);
+            }
+        }
+        else $plugin_id = mysql_result($query, 0, 0);
+    }
+    else $plugin_id = $e2g['plugin_id'];
+
+    // PLUGIN EVENTS
+    if (!empty($plugin_id)) {
+        $nEvtIds = array('90','94'); // Plugin event's IDs. Will be added more later.
+        $delete = mysql_query('DELETE FROM '.$GLOBALS['table_prefix'].'site_plugin_events WHERE pluginid=\''.$plugin_id.'\'');
+        if ($delete) {
+            foreach ($nEvtIds as $nEvtId) {
+                mysql_query('INSERT INTO '.$GLOBALS['table_prefix'].'site_plugin_events '
+                        . '(pluginid, evtid, priority) '
+                        . "VALUES ('$plugin_id','$nEvtId','0')"
+                );
+            }
+        } else $_SESSION['easy2err'][] = __LINE__.' Error: '. mysql_error();
     }
 
     /*
      * goldsky -- add the file's/folder's names restoration from the previous installation version.
     */
     if(restore( MODX_BASE_PATH . $e2g['dir'],1)) {
-        $_SESSION['easy2suc'][] = $lngi['restore_suc'];
+        if ($_restore['d']!=0 || $_restore['f']!=0)
+            $_SESSION['easy2suc'][] = $lngi['restore_suc'];
     } else {
         $_SESSION['easy2err'][] = $lngi['restore_err'];
         chref($index);
@@ -333,6 +382,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     $e2g['dir'] = $_SESSION['easy2dir'];
     $e2g['mod_id'] = $_POST['mod_id'];
+    $e2g['snippet_id'] = $_POST['snippet_id'];
+    $e2g['plugin_id'] = $_POST['plugin_id'];
     ksort($e2g);
     $c = "<?php\r\n\$e2g = array (\r\n";
     foreach($e2g as $k => $v) {
@@ -349,6 +400,22 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     chref($index);
 
 } else {
+
+    // SNIPPET
+    if (empty($e2g['snippet_id']) || $e2g['snippet_id']=='') {
+        $select = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_snippets WHERE name =\'easy2\'');
+        if (mysql_num_rows($select) > 0) $snippet_id = mysql_result($select, 0, 0);
+        mysql_free_result($select);
+    }
+    else $snippet_id = $e2g['snippet_id'];
+
+    // PLUGIN
+    if (empty($e2g['plugin_id']) || $e2g['plugin_id']=='') {
+        $select = mysql_query('SELECT id FROM '.$GLOBALS['table_prefix'].'site_plugins WHERE name=\'easy2\'');
+        if (mysql_num_rows($select) > 0) $plugin_id = mysql_result($select, 0, 0);
+        mysql_free_result($select);
+    }
+    else $plugin_id = $e2g['plugin_id'];
 
     ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
@@ -392,6 +459,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                                 <td width="50"><b><?php echo $lngi['path'];?>:</b></td>
                                 <td><input name="path" type="text" style="width:100%" value="<?php echo $e2g['dir'];?>">
                                     <input type="hidden" name="mod_id" value="<?php echo (!empty($e2g['mod_id'])? $e2g['mod_id'] : $_GET['id']);?>" />
+                                    <input type="hidden" name="plugin_id" value="<?php echo $plugin_id;?>" />
+                                    <input type="hidden" name="snippet_id" value="<?php echo $snippet_id;?>" />
                                 </td>
                             </tr>
                         </table>
@@ -522,6 +591,8 @@ function system_check($lngi) {
 
 function restore ($path, $pid) {
     global $modx;
+    $_restore['d'] = 0;
+    $_restore['f'] = 0;
 
     if (file_exists( E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php' )) {
         require E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
@@ -572,15 +643,9 @@ function restore ($path, $pid) {
         return FALSE;
     }
 
-    // goldsky -- adding some files exclusion
-    $excludefiles = array(
-            $path.'index.htm',
-            $path.'index.html',
-            $path.'Thumbs.db',
-            $path.'index.php'
-    );
-
-    $fs = array_diff( glob( $path.'*' ) , $excludefiles ); // goldsky -- do not add a slash again!
+    $fs = array();
+    $fs = @glob($path.'*'); // goldsky -- DO NOT USE a slash here!
+    natsort($fs);
 
     /*
      * READ the real physical objects, renaming them back
@@ -609,6 +674,7 @@ function restore ($path, $pid) {
                     $nf = MODX_BASE_PATH.$e2g['dir'].$obasename;
                     if (!rename( $f, $nf )) $_SESSION['easy2err'][] = "Could not rename path ".$f;
                     else {
+                        $_restore['d']++;
                         @chmod( $nf, 0755 );
                         $_SESSION['easy2suc'][] = 'Successful on renaming path " '.$name.' " to be " '.$obasename.' "';
                     }
@@ -642,6 +708,7 @@ function restore ($path, $pid) {
                 ) {
                     if (!rename($f, $nfilename )) $_SESSION['easy2err'][] = $lngi['rename_file_err'];
                     else {
+                        $_restore['f']++;
                         @chmod($nfilename, 0644);
                         $_SESSION['easy2suc'][] = 'Successful on renaming file " '.$fbasename.' " to be " '.$ofiles[$trimmedname]['name'].' "';
                     }
@@ -660,9 +727,11 @@ function restore ($path, $pid) {
 
     $time_end = microtime(TRUE);
     $time = $time_end - $time_start;
-    $_SESSION['easy2suc'][] = "Restored $path in $time seconds\n";
 
-    return TRUE;
+    if ($_restore['d']!=0 || $_restore['f']!=0)
+        $_SESSION['easy2suc'][] = "Restored $path in $time seconds\n";
+
+    return $_restore;
 }
 
 function delete_all ($path) {
@@ -816,14 +885,19 @@ function restore_all ($path, $pid) {
     if (!is_validfolder($path)) {
         return FALSE;
     }
-    // goldsky -- add some files exclusion
-    $excludefiles = array(
-            $path.'index.htm',
-            $path.'index.html',
-            $path.'Thumbs.db',
-            $path.'index.php'
-    );
-    $fs = array_diff(glob($path.'*'), $excludefiles);
+//    // goldsky -- add some files exclusion
+//    $excludefiles = array(
+//            $path.'index.htm',
+//            $path.'index.html',
+//            $path.'Thumbs.db',
+//            $path.'index.php'
+//    );
+//    $fs = array_diff(glob($path.'*'), $excludefiles);
+
+    $fs = array();
+    $fs = @glob($path.'*'); // goldsky -- DO NOT USE a slash here!
+    natsort($fs);
+
     if ( FALSE !== $fs )
     // goldsky -- alter the maximum execution time
         set_time_limit(0);
@@ -841,6 +915,7 @@ function restore_all ($path, $pid) {
                 $nf = $path.$obasename;
                 if (!rename( $f, $nf )) $_SESSION['easy2err'][] = "Could not rename path ".$f;
                 else {
+                    $_restore['d']++;
                     @chmod( $nf, 0755 );
                     $_SESSION['easy2suc'][] = 'Successful on renaming path " '.$name.' " to be " '.$obasename.' "';
                 }
@@ -869,14 +944,16 @@ function restore_all ($path, $pid) {
             }
             if (!rename($f, $nfilename )) $_SESSION['easy2err'][] = $lngi['rename_file_err'];
             else {
+                $_restore['f']++;
                 @chmod($nfilename, 0644);
                 $_SESSION['easy2suc'][] = 'Successful on renaming file " '.$fbasename.' " to be " '.$ofiles[$trimmedname]['name'].' "';
             }
         }
+        else continue;
         // goldsky -- adds output buffer to avoid PHP's memory limit
         ob_end_clean();
     }
-    return TRUE;
+    return $_restore;
 }
 
 /**

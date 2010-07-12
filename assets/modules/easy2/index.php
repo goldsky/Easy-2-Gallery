@@ -133,6 +133,8 @@ $e2gmod_cfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
 $e2gmod_cfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
 // E2G's module ID
 $e2gmod_cfg['mod_id'] = !empty($e2g['mod_id'])? $e2g['mod_id'] : $_GET['id'];
+// E2G's plugin ID
+$e2gmod_cfg['plugin_id'] = !empty($e2g['plugin_id'])? $e2g['plugin_id'] : null;
 
 /**
  * If Easy 2 Gallery is included inside another module,
@@ -140,28 +142,29 @@ $e2gmod_cfg['mod_id'] = !empty($e2g['mod_id'])? $e2g['mod_id'] : $_GET['id'];
  */
 $alienarray = array();
 $alienparams = '';
-if ($e2g['mod_id']!=$_GET['id']) {
+if ($e2gmod_cfg['mod_id']!=$_GET['id']) {
     // exclude ALL e2g's internal $_GET params to identify other module's $_GET params
     $diff = array(
-        'a'=>$_GET['a']
-        , 'id'=>$_GET['id']
-        , 'pid'=>$_GET['pid']
-        , 'file_id'=>$_GET['file_id']
-        , 'lang'=>$_GET['lang']
-        , 'langfile'=>$_GET['langfile']
-        , 'dir_path'=>$_GET['dir_path']
-        , 'file_path'=>$_GET['file_path']
-        , 'path'=>$_GET['path']
-        , 'act'=>$_GET['act']
-        , 'page'=>$_GET['page']
-        , 'ip'=>$_GET['ip']
-        , 'u'=>$_GET['u']
-        , 'e'=>$_GET['e']
+        'a'=>(isset($_GET['a'])?$_GET['a']:null)
+        , 'id'=>(isset($_GET['id'])?$_GET['id']:null)
+        , 'pid'=>(isset($_GET['pid'])?$_GET['pid']:null)
+        , 'file_id'=>(isset($_GET['file_id'])?$_GET['file_id']:null)
+        , 'lang'=>(isset($_GET['lang'])?$_GET['lang']:null)
+        , 'langfile'=>(isset($_GET['langfile'])?$_GET['langfile']:null)
+        , 'dir_path'=>(isset($_GET['dir_path'])?$_GET['dir_path']:null)
+        , 'file_path'=>(isset($_GET['file_path'])?$_GET['file_path']:null)
+        , 'path'=>(isset($_GET['path'])?$_GET['path']:null)
+        , 'act'=>(isset($_GET['act'])?$_GET['act']:null)
+        , 'page'=>(isset($_GET['page'])?$_GET['page']:null)
+        , 'ip'=>(isset($_GET['ip'])?$_GET['ip']:null)
+        , 'u'=>(isset($_GET['u'])?$_GET['u']:null)
+        , 'e'=>(isset($_GET['e'])?$_GET['e']:null)
         );
     $aliendiff = array_diff_key ( $_GET , $diff );
     foreach ($aliendiff as $k => $v) {
         $alienparams .= '&'.$k.'='.$v;
     }
+    $diff = array();
 }
 
 // module's href
