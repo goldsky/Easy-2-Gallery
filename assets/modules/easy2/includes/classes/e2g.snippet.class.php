@@ -864,10 +864,6 @@ class e2g_snip extends e2g_pub {
                     $l['link'] = $gdir.$path.$l['filename'];
                 }
             }
-            if ($l['description']!='') {
-                $l['description'] = htmlspecialchars_decode('test', ENT_QUOTES);
-            } else $l['description']='';
-
             // whether configuration setting is set with or without table, the template will adjust it
             $_e2g['content'] .= (($grid == 'css') ?  $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ) : '<td>'. $this->_filler( $this->_thumb_tpl(), $this->_thumb_libs($l) ).'</td>');
             $i++;
@@ -1443,7 +1439,7 @@ class e2g_snip extends e2g_pub {
                 $_ssfile['filename'][] = $fetch['filename'];
                 $_ssfile['title'][] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $_ssfile['name'][] = $fetch['name'];
-                $_ssfile['description'][] = $fetch['description'];
+                $_ssfile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -1492,7 +1488,7 @@ class e2g_snip extends e2g_pub {
                 $_ssfile['filename'][] = $fetch['filename'];
                 $_ssfile['title'][] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $_ssfile['name'][] = $fetch['name'];
-                $_ssfile['description'][] = $fetch['description'];
+                $_ssfile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -1539,7 +1535,7 @@ class e2g_snip extends e2g_pub {
                 $_ssfile['filename'][] = $fetch['filename'];
                 $_ssfile['title'][] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $_ssfile['name'][] = $fetch['name'];
-                $_ssfile['description'][] = $fetch['description'];
+                $_ssfile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
@@ -1639,7 +1635,7 @@ class e2g_snip extends e2g_pub {
 
                 $l['title'] = ($fetch['name']!='' ? $fetch['name'] : $fetch['filename']);
                 $l['name'] = $fetch['name'];
-                $l['description'] = $fetch['description'];
+                $l['description'] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
                 $path = $this->_get_path($fetch['dir_id']);
                 if (count($path) > 1) {
                     unset($path[1]);
