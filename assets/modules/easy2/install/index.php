@@ -498,10 +498,10 @@ function system_check($lngi) {
     $disabled = '';
 
     // PHP version
-    if (PHP_VERSION<'5') {
+    if (version_compare(PHP_VERSION, '5.2.0','<')) {
         $disabled = 'disabled';
         echo '<li>';
-        echo $icon_bad.'PHP version '.PHP_VERSION;
+        echo $icon_bad.'PHP version '.PHP_VERSION.' (Min: 5.2.0)';
         echo '</li>';
     }
     else {
