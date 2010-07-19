@@ -123,6 +123,7 @@ class e2g_snip extends e2g_pub {
         // PAGINATION
         $pagination = $this->e2gsnip_cfg['pagination'];
 
+        // EXECUTE THE JAVASCRIPT LIBRARY'S HEADERS
         $this->_libs();
 
 
@@ -312,7 +313,7 @@ class e2g_snip extends e2g_pub {
                                                 . $modx->makeUrl($modx->documentIdentifier
                                                 , $modx->aliases
                                                 , 'sid='.$e2g_static_instances)
-                                                . '&gid='.$k
+                                                . '&amp;gid='.$k
                                                 . '#'.$e2g_static_instances.'_'.$k
                                                 . '">'.$v.'</a>' : $v);
                             else $breadcrumbs .= $crumbs_separator.'<span class="'.$crumbs_classCurrent.'">'.$v.'</span>';
@@ -455,7 +456,7 @@ class e2g_snip extends e2g_pub {
                     else $l['permalink'] = $e2g_static_instances.'_'.$l['cat_id'];
 
                     if ( isset($tag) ) {
-                        $l['cat_tag'] = '&tag='.$static_tag;
+                        $l['cat_tag'] = '&amp;tag='.$static_tag;
                     } else {
                         $l['cat_tag'] = '';
                     }
@@ -481,7 +482,13 @@ class e2g_snip extends e2g_pub {
                     }
 
                     // Populate the grid with folder's thumbnails
-                    if ( ( $i > 0 ) && ( $i % $colls == 0 ) && $grid == 'table' ) $_e2g['content'] .= '</tr><tr>';
+                    if ( $dir_num_rows > 0
+                            && ( $i > 0 )
+                            && ( $i % $colls == 0 )
+                            && $grid == 'table'
+                            ) {
+                        $_e2g['content'] .= '</tr><tr>';
+                    }
 
                     $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] ) ;
                     if ($l['title'] == '') $l['title'] = '&nbsp;';
@@ -505,7 +512,7 @@ class e2g_snip extends e2g_pub {
                     // making flexible FURL or not
                     $l['link'] =  $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
-                            ,'sid='.$e2g_static_instances).'&gid='
+                            ,'sid='.$e2g_static_instances).'&amp;gid='
                     ;
 
                     // fill up the dir list with content
@@ -605,7 +612,12 @@ class e2g_snip extends e2g_pub {
             $i = 0;
 
             // checking the $dir_num_rows first
-            if ( $dir_num_rows % $colls == 0 && $grid == 'table' ) $_e2g['content'] .= '</tr><tr>';
+            if ( $dir_num_rows > 0 
+                    && $dir_num_rows % $colls == 0
+                    && $grid == 'table'
+                    ) {
+                $_e2g['content'] .= '</tr><tr>';
+            }
 
             while ($l = mysql_fetch_array($file_query_result, MYSQL_ASSOC)) {
                 /**
@@ -630,7 +642,7 @@ class e2g_snip extends e2g_pub {
                 if ( isset($landingpage) ) {
                     $l['link'] = $modx->makeUrl($landingpage
                             , $modx->aliases
-                            , 'lp=' . $landingpage) .'&fid='.$l['id']
+                            , 'lp=' . $landingpage) .'&amp;fid='.$l['id']
                     ;
                 } else {
                     if ($img_src=='generated') {
@@ -681,8 +693,8 @@ class e2g_snip extends e2g_pub {
                     . $modx->makeUrl($modx->documentIdentifier
                     , $modx->aliases
                     , 'sid='.$e2g_static_instances)
-                    . '&gid='.$_e2g['parent_id']
-                    . (isset($static_tag) ? '&tag='.$static_tag : '' )
+                    . '&amp;gid='.$_e2g['parent_id']
+                    . (isset($static_tag) ? '&amp;tag='.$static_tag : '' )
                     . '#'.$e2g_static_instances.'_'
                     . (isset($static_tag) ? $static_tag : $_e2g['parent_id'] )
                     . '">'.$_e2g['parent_name'].'</a></p>';
@@ -755,9 +767,9 @@ class e2g_snip extends e2g_pub {
                                     . $modx->makeUrl($modx->documentIdentifier
                                     , $modx->aliases
                                     , 'sid='.$e2g_static_instances)
-                                    . '&tag='.$static_tag
-                                    . ( isset($_GET['gid']) ? '&gid='.$_GET['gid'] : '' )
-                                    . '&gpn='.$i.$customgetparams
+                                    . '&amp;tag='.$static_tag
+                                    . ( isset($_GET['gid']) ? '&amp;gid='.$_GET['gid'] : '' )
+                                    . '&amp;gpn='.$i.$customgetparams
                                     . '#'.$e2g_static_instances.'_'. $static_tag
                                     . '">'.($i+1).'</a> ';
                         }
@@ -775,9 +787,9 @@ class e2g_snip extends e2g_pub {
                                     , 'sid='.$e2g_static_instances)
                                     . ( ( isset($static_gid)
                                             && ( $this->_check_gid_decendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $static_gid)==true ) )
-                                    ? '&gid='.$gid
-                                    : '&gid='.$static_gid )
-                                    . '&gpn='.$i
+                                    ? '&amp;gid='.$gid
+                                    : '&amp;gid='.$static_gid )
+                                    . '&amp;gpn='.$i
                                     . $customgetparams
                                     . '#'.$e2g_static_instances.'_'
                                     . ( ( isset($static_gid)
@@ -792,6 +804,10 @@ class e2g_snip extends e2g_pub {
                 $_e2g['pages'] .= '</div>';
             }
         }
+
+        // MULTIPLE INSTANCES id
+        $_e2g['sid'] = $e2g_static_instances;
+        
         return $this->_filler($this->_gal_tpl(), $_e2g);
     }
 
@@ -840,7 +856,7 @@ class e2g_snip extends e2g_pub {
             if ( isset($landingpage) ) {
                 $l['link'] = $modx->makeUrl($landingpage
                         , $modx->aliases
-                        , 'lp=' . $landingpage) . '&fid='.$l['id']
+                        , 'lp=' . $landingpage) . '&amp;fid='.$l['id']
                 ;
             } else {
                 if ($img_src=='generated') {
@@ -926,7 +942,7 @@ class e2g_snip extends e2g_pub {
             if ( isset($landingpage) ) {
                 $l['link'] = $modx->makeUrl($landingpage
                         , $modx->aliases
-                        , 'lp=' . $landingpage) .'&fid='.$l['id']
+                        , 'lp=' . $landingpage) .'&amp;fid='.$l['id']
                 ;
             } else {
                 if ($img_src=='generated') {
@@ -1584,7 +1600,7 @@ class e2g_snip extends e2g_pub {
             $redirect_url = $modx->makeUrl($landingpage
                     , $modx->aliases
                     , 'sid='.$e2g_static_instances)
-                    . '&lp='.$landingpage.'&fid='.$_GET['fid'];
+                    . '&amp;lp='.$landingpage.'&amp;fid='.$_GET['fid'];
             $modx->sendRedirect(htmlspecialchars_decode($redirect_url));
         }
         elseif ( isset($_GET['fid']) && !isset($landingpage) ) {
@@ -1906,7 +1922,7 @@ class e2g_snip extends e2g_pub {
                     . $modx->makeUrl($modx->documentIdentifier
                     , $modx->aliases
                     , 'sid='.$e2g_static_instances)
-                    . '&lp='.$landingpage.'&fid='.$fileid.'&cpn='.$cpn.'#lpcmtnm'.$l['id']
+                    . '&amp;lp='.$landingpage.'&amp;fid='.$fileid.'&amp;cpn='.$cpn.'#lpcmtnm'.$l['id']
                     .'">'.$l['author'].'</a> ';
             if (!empty($l['email'])) $l['name_w_mail'] = '<a href="mailto:'.$l['email'].'">'.$l['author'].'</a>';
             else $l['name_w_mail'] = $l['author'];
@@ -1931,7 +1947,7 @@ class e2g_snip extends e2g_pub {
                             . $modx->makeUrl($modx->documentIdentifier
                             , $modx->aliases
                             , 'sid='.$e2g_static_instances)
-                            . '&lp='.$landingpage.'&fid='.$fileid.'&cpn='.$i.'#lpcmtpg'.$i
+                            . '&amp;lp='.$landingpage.'&amp;fid='.$fileid.'&amp;cpn='.$i.'#lpcmtpg'.$i
                             . '">'.($i+1).'</a> ';
                 $i++;
             }
