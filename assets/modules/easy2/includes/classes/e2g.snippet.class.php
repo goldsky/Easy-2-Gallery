@@ -1262,6 +1262,8 @@ class e2g_snip extends e2g_pub {
         global $modx;
         $css = $this->e2gsnip_cfg['css'];
         $glib = $this->e2gsnip_cfg['glib'];
+        // SLIDESHOW
+        $show_group = $this->e2gsnip_cfg['show_group'];
 
         // GLOBAL e2g CSS styles
         if (file_exists($css)) {
