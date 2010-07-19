@@ -1630,7 +1630,7 @@ class e2g_snip extends e2g_pub {
                 // @todo : need review!
                 if ($ss_img_src == 'original') {
                     if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                        $l['src'] = rawurldecode($this->_e2g_decode($src));
+                        $l['src'] = rawurldecode(str_replace('%2F','/',rawurlencode($src)));
                     } else $l['src'] = $src;
                 }
                 elseif ($ss_img_src == 'generated') {
@@ -1647,7 +1647,7 @@ class e2g_snip extends e2g_pub {
                     $filePath= $this->_get_thumb($gdir, $path.$fetch['filename'], $lp_w, $lp_h, $lp_thq, $lp_resize_type,
                             $lp_red, $lp_green, $lp_blue, 1);
                     if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                        $l['src'] = rawurldecode($this->_e2g_decode($filePath));
+                        $l['src'] = rawurldecode(str_replace('%2F','/',rawurlencode($filePath)));
                     } else $l['src'] = $filePath;
                 }
 
@@ -1740,7 +1740,7 @@ class e2g_snip extends e2g_pub {
             if ($lp_img_src == 'original') {
                 $filePath = $gdir.$path.$fetch['filename'];
                 if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                    $l['src'] = rawurldecode($filePath);
+                    $l['src'] = rawurldecode(str_replace('%2F','/',rawurlencode($filePath)));
                 } else $l['src'] = $filePath;
             }
             elseif ($lp_img_src == 'generated') {
@@ -1757,7 +1757,7 @@ class e2g_snip extends e2g_pub {
                 $filePath= $this->_get_thumb($gdir, $path.$fetch['filename'], $lp_w, $lp_h, $lp_thq, $lp_resize_type,
                         $lp_red, $lp_green, $lp_blue, 1);
                 if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                    $l['src'] = rawurldecode($this->_e2g_decode($filePath));
+                    $l['src'] = rawurldecode(str_replace('%2F','/',rawurlencode($filePath)));
                 } else $l['src'] = $filePath;
             }
 
