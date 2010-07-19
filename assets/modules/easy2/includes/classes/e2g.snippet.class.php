@@ -1630,7 +1630,7 @@ class e2g_snip extends e2g_pub {
                 // @todo : need review!
                 if ($ss_img_src == 'original') {
                     if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                        $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($src)));
+                        $l['src'] = rawurldecode($this->_e2g_decode($src));
                     } else $l['src'] = $src;
                 }
                 elseif ($ss_img_src == 'generated') {
@@ -1647,7 +1647,7 @@ class e2g_snip extends e2g_pub {
                     $filePath= $this->_get_thumb($gdir, $path.$fetch['filename'], $lp_w, $lp_h, $lp_thq, $lp_resize_type,
                             $lp_red, $lp_green, $lp_blue, 1);
                     if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                        $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($filePath)));
+                        $l['src'] = rawurldecode($this->_e2g_decode($filePath));
                     } else $l['src'] = $filePath;
                 }
 
@@ -1738,9 +1738,10 @@ class e2g_snip extends e2g_pub {
             // goldsky -- only to switch between localhost and live site.
             // @todo : need review!
             if ($lp_img_src == 'original') {
+                $filePath = $gdir.$path.$fetch['filename'];
                 if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                    $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($gdir.$path.$fetch['filename'])));
-                } else $l['src'] = $gdir.$path.$fetch['filename'];
+                    $l['src'] = rawurldecode($filePath);
+                } else $l['src'] = $filePath;
             }
             elseif ($lp_img_src == 'generated') {
                 /**
@@ -1756,7 +1757,7 @@ class e2g_snip extends e2g_pub {
                 $filePath= $this->_get_thumb($gdir, $path.$fetch['filename'], $lp_w, $lp_h, $lp_thq, $lp_resize_type,
                         $lp_red, $lp_green, $lp_blue, 1);
                 if ( strpos($_SERVER['DOCUMENT_ROOT'],'/') === (int)0 ) {
-                    $l['src'] = str_replace('%2F','/',rawurlencode($this->_e2g_decode($filePath)));
+                    $l['src'] = rawurldecode($this->_e2g_decode($filePath));
                 } else $l['src'] = $filePath;
             }
 
