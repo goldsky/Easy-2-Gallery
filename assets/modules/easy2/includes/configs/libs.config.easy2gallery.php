@@ -143,14 +143,14 @@ $glibs = array(
                 'alias' => 'slimbox 1.71 (mt)'
                 , 'regClient' => array (
                         'CSS' => array ( 'screen' => array (
-                                        MODX_BASE_URL . 'assets/libs/slimbox/css/slimbox.css'
+                                        MODX_BASE_URL . 'assets/libs/slimbox-1.71/css/slimbox.css'
                                         , MODX_BASE_URL . 'assets/libs/highslide/highslide.css' // for comments
                                 )
                         )
                         , 'JS' => array (
 //                            'http://ajax.googleapis.com/ajax/libs/mootools/1.2.2/mootools-yui-compressed.js',
-                                MODX_BASE_URL . 'assets/libs/slimbox/js/mootools.js'
-                                , MODX_BASE_URL . 'assets/libs/slimbox/js/slimbox.js'
+                                MODX_BASE_URL . 'assets/libs/slimbox-1.71/js/mootools.js'
+                                , MODX_BASE_URL . 'assets/libs/slimbox-1.71/js/slimbox.js'
                                 , MODX_BASE_URL . 'assets/libs/highslide/highslide-iframe.js' // for comments
                         )
                 )
@@ -161,14 +161,13 @@ $glibs = array(
                 'alias' => 'slimbox2 2.04 (jq)'
                 , 'regClient' => array (
                         'CSS' => array ( 'screen' => array (
-                                        MODX_BASE_URL . 'assets/libs/slimbox/css/slimbox.css'
+                                        MODX_BASE_URL . 'assets/libs/slimbox-2.04/css/slimbox2.css'
                                         , MODX_BASE_URL . 'assets/libs/highslide/highslide.css' // for comments
                                 )
                         )
                         , 'JS' => array (
-//                            'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
-                                MODX_BASE_URL . 'assets/libs/slimbox/js/jquery.js'
-                                , MODX_BASE_URL . 'assets/libs/slimbox/js/slimbox2.js'
+                                MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js'
+                                , MODX_BASE_URL . 'assets/libs/slimbox-2.04/js/slimbox2.js'
                                 , MODX_BASE_URL . 'assets/libs/highslide/highslide-iframe.js' // for comments
                         )
                 )
