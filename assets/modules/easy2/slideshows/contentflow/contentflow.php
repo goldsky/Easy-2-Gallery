@@ -53,7 +53,16 @@ else {
         $j=0;
         for ($i=0;$i<$count;$i++) {
             $ss_display .= '
-                <img class="item" src="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'"/>';
+                <div class="item" href="'
+                    // making flexible FURL or not
+                    . $modx->makeUrl(
+                            $modx->documentIdentifier
+                            , $modx->aliases
+                            , 'fid='.$_ssfile['id'][$i])
+                    .'">
+                    <img class="content" src="'.$_ssfile['src'][$i].'" title="'.$_ssfile['title'][$i].'" alt="" />
+                </div>
+                ';
             $j++;
             if ($j==$ss_limit) break;
         }
