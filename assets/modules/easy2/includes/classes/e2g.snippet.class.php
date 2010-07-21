@@ -1807,7 +1807,7 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
-     *
+     * Comment function for a page (landingpage or galley)
      * @param string $fileid File ID of the comment's owner
      */
     private function _comments($fileid) {
