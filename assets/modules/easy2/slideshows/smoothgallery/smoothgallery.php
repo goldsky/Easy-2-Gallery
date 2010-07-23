@@ -327,7 +327,7 @@ else {
                     $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                             . 'WHERE dir_id = ' . $k . ' '
                             . 'AND status = 1 '
-                            . 'ORDER BY ' . $orderby . ' ' . $order . ' '
+                            . 'ORDER BY ' . $ss_orderby . ' ' . $ss_order . ' '
                             . ( $ss_limit == 'none' ? '' : 'LIMIT 0,'.$ss_limit.' ' )
                     ;
                     $query = mysql_query($select) or die(__LINE__.' '.mysql_error().'<br />'.$select);

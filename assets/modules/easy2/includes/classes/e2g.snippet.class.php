@@ -990,7 +990,7 @@ class e2g_snip extends e2g_pub {
      *          'resize' = autofit the thumbnail
      *
      */
-    private function _get_thumb ( $gdir, $path, $w, $h, $thq, $resize_type='inner', $red=255, $green=255, $blue=255, $wmtrigger = 0 ) {
+    private function _get_thumb ( $gdir, $path, $w, $h, $thq, $resize_type=null, $red=null, $green=null, $blue=null, $wmtrigger = 0 ) {
         global $modx;
         // decoding UTF-8
         $gdir = $this->_e2g_decode($gdir);
@@ -1000,10 +1000,10 @@ class e2g_snip extends e2g_pub {
         $w = !empty($w) ? $w : $this->e2gsnip_cfg['w'];
         $h =  !empty($h) ? $h : $this->e2gsnip_cfg['h'];
         $thq = !empty($thq) ? $thq : $this->e2gsnip_cfg['thq'];
-        $resize_type = !empty($this->e2gsnip_cfg['resize_type']) ? $this->e2gsnip_cfg['resize_type'] : $resize_type;
-        $red =  !empty($this->e2gsnip_cfg['thbg_red']) ? $this->e2gsnip_cfg['thbg_red'] : $red;
-        $green = !empty($this->e2gsnip_cfg['thbg_green']) ? $this->e2gsnip_cfg['thbg_green'] : $green;
-        $blue = !empty($this->e2gsnip_cfg['thbg_blue']) ? $this->e2gsnip_cfg['thbg_blue'] : $blue;
+        $resize_type = isset($resize_type) ? $resize_type : $this->e2gsnip_cfg['resize_type'];
+        $red =  isset($red) ? $red : $this->e2gsnip_cfg['thbg_red'];
+        $green = isset($green) ? $green : $this->e2gsnip_cfg['thbg_green'];
+        $blue = isset($blue) ? $blue : $this->e2gsnip_cfg['thbg_blue'];
 
 //        $thumb_path = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_'.$w.'x'.$h.'.jpg';
         /**
