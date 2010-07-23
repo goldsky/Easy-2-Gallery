@@ -21,7 +21,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="12%"><b><?php echo $lng['e2g_debug']; ?>:</b></td>
+                        <td width="100"><b><?php echo $lng['e2g_debug']; ?>:</b></td>
                         <td>
                             <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug']=='0' ? 'checked="checked"' : '');?>> <?php echo $lng['no'];?>
                             <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug']=='1' ? 'checked="checked"' : '');?>> <?php echo $lng['yes'];?>
@@ -32,14 +32,14 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['path']; ?>:</b></td>
-                        <td width="88%"><input name="dir" type="text" value="<?php echo $e2g['dir']; ?>"></td>
+                        <td><input name="dir" type="text" value="<?php echo $e2g['dir']; ?>"></td>
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['dir_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['e2g_encode']; ?>:</b></td>
-                        <td width="88%">
+                        <td>
                             <select name="e2g_encode">
                                 <option value="none"<?php echo ($e2g['e2g_encode']=='none'?' selected':''); ?>><?php echo $lng['none']; ?></option>
                                 <option value="UTF-8"<?php echo ($e2g['e2g_encode']=='UTF-8'?' selected':''); ?>><?php echo 'UTF-8 (PHP)'; ?></option>
@@ -69,7 +69,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="15%"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td width="150"><b><?php echo $lng['w']; ?>:</b></td>
                         <td><input name="maxw" type="text" value="<?php echo $e2g['maxw']; ?>" size="4"></td>
                     </tr>
                     <tr>
@@ -108,7 +108,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="20%"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
                         <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4"></td>
                     </tr>
                     <tr>
@@ -122,6 +122,13 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thq']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
                         <td><b><?php echo $lng['resize_type']; ?>:</b></td>
                         <td><span style="color:green;">&amp;resize_type=</span>
                             <select name="resize_type">
@@ -132,10 +139,12 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?></td>
+                        <td colspan="2">
+                                <?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?>
+                            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/e2g_resize_proportions.png" alt="e2g_resize_proportions.png" />
+
+                        </td>
                     </tr>
-
-
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
                         <td>
@@ -146,15 +155,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
-                    </tr>
-
-
-                    <tr class="gridAltItem">
-                        <td><b><?php echo $lng['thq']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['glib']; ?>:</b></td>
@@ -295,6 +295,130 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                 </table>
             </div>
+            <div class="tab-page" id="tabSlideshowSettings">
+                <h2 class="tab"><?php echo $lng['settings_slideshow']; ?></h2>
+                <script type="text/javascript">
+                    tpResources2.addTabPage( document.getElementById( 'tabSlideshowSettings') );
+                </script>
+
+
+
+                <table cellspacing="0" cellpadding="2" width="100%">
+                    <tr class="gridAltItem">
+                        <td width="180"><b><?php echo $lng['ss_img_src_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_img_src=</span>
+                            <select name="ss_img_src">
+                                <option value="original"<?php echo ($e2g['ss_img_src']=='original'?' selected':''); ?>><?php echo $lng['original']; ?></option>
+                                <option value="generated"<?php echo ($e2g['ss_img_src']=='generated'?' selected':''); ?>><?php echo $lng['generated']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_img_src_cfg_desc']); ?></td>
+                    </tr>
+
+
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_order_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_orderby=</span>
+                            <select size="1" name="ss_orderby">
+                                <option value="date_added"<?php echo ($e2g['ss_orderby']=='date_added'?' selected':''); ?>><?php echo $lng['date_added']; ?></option>
+                                <option value="last_modified"<?php echo ($e2g['ss_orderby']=='last_modified'?' selected':''); ?>><?php echo $lng['last_modified']; ?></option>
+                                <option value="comments"<?php echo ($e2g['ss_orderby']=='comments'?' selected':''); ?>><?php echo $lng['comments_cnt']; ?></option>
+                                <option value="filename"<?php echo ($e2g['ss_orderby']=='filename'?' selected':''); ?>><?php echo $lng['filename']; ?></option>
+                                <option value="name"<?php echo ($e2g['ss_orderby']=='name'?' selected':''); ?>><?php echo $lng['name']; ?></option>
+                                <option value="random"<?php echo ($e2g['ss_orderby']=='random'?' selected':''); ?>><?php echo $lng['random']; ?></option>
+                            </select>
+                            <span style="color:green;">&amp;ss_order=</span>
+                            <select size="1" name="ss_order">
+                                <option value="ASC"<?php echo ($e2g['ss_order']=='ASC'?' selected':''); ?>><?php echo $lng['asc']; ?></option>
+                                <option value="DESC"<?php echo ($e2g['ss_order']=='DESC'?' selected':''); ?>><?php echo $lng['desc']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['order_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_limit_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_limit=</span> <input name="ss_limit" type="text" value="<?php echo $e2g['ss_limit']; ?>" size="4"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_limit_cfg_desc']); ?></td>
+                    </tr>
+
+
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_w_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_w=</span> <input name="ss_w" type="text" value="<?php echo $e2g['ss_w']; ?>" size="4">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_w_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_h_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_h=</span> <input name="ss_h" type="text" value="<?php echo $e2g['ss_h']; ?>" size="4">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_h_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_thq_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_thq=</span> <input name="ss_thq" type="text" value="<?php echo $e2g['ss_thq']; ?>" size="4">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_thq_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_resize_type_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_resize_type=</span>
+                            <select name="ss_resize_type">
+                                <option value="inner"<?php echo ($e2g['ss_resize_type']=='inner'?' selected':''); ?>><?php echo $lng['inner']; ?></option>
+                                <option value="shrink"<?php echo ($e2g['ss_resize_type']=='shrink'?' selected':''); ?>><?php echo $lng['shrink']; ?></option>
+                                <option value="resize"<?php echo ($e2g['ss_resize_type']=='resize'?' selected':''); ?>><?php echo $lng['resize']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_resize_type_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_bg_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_bg=</span> <input name="ss_bg" type="text" value="<?php echo $e2g['ss_bg']; ?>" size="10">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_bg_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_rgb_cfg']; ?>:</b></td>
+                        <td>
+                            R: <span style="color:green;">&amp;ss_red=</span> <input name="ss_red" type="text" value="<?php echo $e2g['ss_red']; ?>" size="3">
+                            G: <span style="color:green;">&amp;ss_green=</span> <input name="ss_green" type="text" value="<?php echo $e2g['ss_green']; ?>" size="3">
+                            B: <span style="color:green;">&amp;ss_blue=</span> <input name="ss_blue" type="text" value="<?php echo $e2g['ss_blue']; ?>" size="3">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_rgb_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['ss_allowedratio_cfg']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;ss_allowedratio=</span> <input name="ss_allowedratio" type="text" value="<?php echo $e2g['ss_allowedratio']; ?>" size="10">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['ss_allowedratio_cfg_desc']); ?></td>
+                    </tr>
+
+
+                </table>
+
+                
+
+            </div>
             <div class="tab-page" id="tabTemplatesSettings">
                 <h2 class="tab"><?php echo $lng['tpl']; ?></h2>
                 <script type="text/javascript">
@@ -302,7 +426,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="25%"><b><?php echo $lng['css']; ?>:</b></td>
+                        <td width="190"><b><?php echo $lng['css']; ?>:</b></td>
                         <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70"></td>
                     </tr>
                     <tr>
@@ -428,7 +552,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         </td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="20%"><b><?php echo $lng['type']; ?>:</b></td>
+                        <td width="150"><b><?php echo $lng['type']; ?>:</b></td>
                         <td><select size="1" name="wmtype">
                                 <option value="text"<?php echo ($e2g['wmtype']=='text'?' selected':''); ?>><?php echo $lng['text']; ?></option>
                                 <option value="image"<?php echo ($e2g['wmtype']=='image'?' selected':''); ?>><?php echo $lng['image']; ?></option>

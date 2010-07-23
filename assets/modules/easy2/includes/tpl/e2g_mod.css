@@ -1,3 +1,16 @@
+h2 {
+    margin-top: 0.5em;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 1em;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: maroon;
+}
+
 .e2g_grayedHeader a, .e2g_grayedHeader a:link {
 	margin: 10px;
 	padding: 5px 10px;

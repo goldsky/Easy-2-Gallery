@@ -233,49 +233,53 @@ $e2gsnip_cfg['lp_img_src'] = (isset($lp_img_src) ? $lp_img_src : 'generated');
  */
 // SLIDESHOW TYPE
 $e2gsnip_cfg['slideshow'] = isset($slideshow) ? $slideshow : NULL;
+// additional configuration options, if this is empty, only as an holder.
+$e2gsnip_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
 // SLIDESHOW PROCESSOR FILE. IF NOT EXIST, WILL USE DEFAULT.
 $e2gsnip_cfg['ss_indexfile'] = isset($ss_indexfile) ? $ss_indexfile : NULL;
+// set the slideshow's CSS path
+$e2gsnip_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
+// set the slideshow's CSS path
+$e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
+
 /**
  * IF, the image source =`generated`, use these more options
  * SLIDESHOW'S BOX DIMENSION, NOT THUMBNAIL
  */
-$e2gsnip_cfg['ss_w'] = isset($ss_w) ? $ss_w : '400'; // width
-$e2gsnip_cfg['ss_h'] = isset($ss_h) ? $ss_h : '300'; // mandatory existence height
-$e2gsnip_cfg['ss_thq'] = (!empty($ss_thq) && $ss_thq<=100 && $ss_thq>=0) ? (int) $ss_thq : $e2g['thq'];
+$e2gsnip_cfg['ss_w'] = isset($ss_w) ? $ss_w : $e2g['ss_w']; // width
+$e2gsnip_cfg['ss_h'] = isset($ss_h) ? $ss_h : $e2g['ss_h']; // mandatory existence height
+$e2gsnip_cfg['ss_thq'] = (!empty($ss_thq) && $ss_thq<=100 && $ss_thq>=0) ? (int) $ss_thq : $e2g['ss_thq'];
 /**
  * generating the 'resize-type'
  * @param string settings: 'inner' (cropped) | 'resize' (autofit) | 'shrink' (shrink)
  */
-$e2gsnip_cfg['ss_resize_type'] = isset($ss_resize_type) ? $ss_resize_type : 'inner';
+$e2gsnip_cfg['ss_resize_type'] = isset($ss_resize_type) ? $ss_resize_type : $e2g['ss_resize_type'];
 // image's BACKGROUND COLOR
-$e2gsnip_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : 'white'; // image's background color
+$e2gsnip_cfg['ss_bg'] = isset($ss_bg) ? $ss_bg : $e2g['ss_bg']; // image's background color
 // OR, if &ss_bg=`rgb` , use below:
-$e2gsnip_cfg['ss_red'] = isset($ss_red) ? $ss_red : $e2g['thbg_red'];
-$e2gsnip_cfg['ss_green'] = isset($ss_green) ? $ss_green : $e2g['thbg_green'];
-$e2gsnip_cfg['ss_blue'] = isset($ss_blue) ? $ss_blue : $e2g['thbg_blue'];
-/**
- * additional configuration options, if this is empty, only as an holder.
- */
-$e2gsnip_cfg['ss_config'] = isset($ss_config) ? $ss_config : NULL ;
+$e2gsnip_cfg['ss_red'] = isset($ss_red) ? $ss_red : $e2g['ss_red'];
+$e2gsnip_cfg['ss_green'] = isset($ss_green) ? $ss_green : $e2g['ss_green'];
+$e2gsnip_cfg['ss_blue'] = isset($ss_blue) ? $ss_blue : $e2g['ss_blue'];
 /**
  * &ss_allowedratio is an allowance ratio of width/height to help distinguishing
  * too tall/wide images while the &ss_w and &ss_h are limited.
  * the format is 'minfloatnumber-maxfloatnumber', eg: '1.0-2.0'
  * to disable this restriction, set &ss_allowedratio=`none`
  */
-$e2gsnip_cfg['ss_allowedratio'] = isset($ss_allowedratio) ? $ss_allowedratio :
-        (0.75*$e2gsnip_cfg['ss_w']/$e2gsnip_cfg['ss_h']).'-'.(1.25*$e2gsnip_cfg['ss_w']/$e2gsnip_cfg['ss_h']);
+$e2gsnip_cfg['ss_allowedratio'] = (isset($ss_allowedratio) || $ss_allowedratio!='') ? $ss_allowedratio : $e2g['ss_allowedratio'];
+
+// ORDER BY
+$ss_orderby = (!empty($ss_orderby)) ? $ss_orderby : $e2g['ss_orderby'];
+$e2gsnip_cfg['ss_orderby'] = preg_replace('/[^_a-z]/i', '', $ss_orderby);
+// ORDER
+$ss_order = (!empty($ss_order)) ? $ss_order : $e2g['ss_order'];
+$e2gsnip_cfg['ss_order'] = preg_replace('/[^a-z]/i', '', $ss_order);
 /**
  * to set how many images the slide show should retrieve from the gallery ID.
  * more images mean longer page loading!
  * @options : int | 'none'
- * @default : (int)6
  */
-$e2gsnip_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : '6' ;
-// set the slideshow's CSS path
-$e2gsnip_cfg['ss_css'] = isset($ss_css) ? $ss_css : NULL ;
-// set the slideshow's CSS path
-$e2gsnip_cfg['ss_js'] = isset($ss_js) ? $ss_js : NULL ;
+$e2gsnip_cfg['ss_limit'] = isset($ss_limit) ? $ss_limit : $e2g['ss_limit'] ;
 
 /**
  * set the slideshow's or thumbnail's landing page.

@@ -124,7 +124,8 @@ class e2g_snip extends e2g_pub {
         $pagination = $this->e2gsnip_cfg['pagination'];
 
         // EXECUTE THE JAVASCRIPT LIBRARY'S HEADERS
-        $this->_libs();
+        $jslibs = $this->_libs();
+        if ($jslibs===false) return 'Javascript library error.';
 
 
         /**********************************************************************/
@@ -989,23 +990,31 @@ class e2g_snip extends e2g_pub {
      *          'resize' = autofit the thumbnail
      *
      */
-    private function _get_thumb ( $gdir, $path, $w = 150, $h = 150, $thq=80, $resize_type = 'inner', $red = 255, $green = 255, $blue = 255, $wmtrigger = 0 ) {
+    private function _get_thumb ( $gdir, $path, $w, $h, $thq, $resize_type='inner', $red=255, $green=255, $blue=255, $wmtrigger = 0 ) {
         global $modx;
         // decoding UTF-8
         $gdir = $this->_e2g_decode($gdir);
         $path = $this->_e2g_decode($path);
-
-        $w = ( ( !empty($w) && $w!=$this->e2gsnip_cfg['w'] ) ? $w : $this->e2gsnip_cfg['w'] );
-        $h =  ( ( !empty($h) && $h!=$this->e2gsnip_cfg['h'] ) ? $h : $this->e2gsnip_cfg['h'] );
-        $thq = $this->e2gsnip_cfg['thq'];
-        $resize_type = $this->e2gsnip_cfg['resize_type'];
-        $red = isset($this->e2gsnip_cfg['thbg_red']) ? $this->e2gsnip_cfg['thbg_red'] : $red ;
-        $green = isset($this->e2gsnip_cfg['thbg_green']) ? $this->e2gsnip_cfg['thbg_green'] : $green ;
-        $blue = isset($this->e2gsnip_cfg['thbg_blue']) ? $this->e2gsnip_cfg['thbg_blue'] : $blue ;
-
         if (empty($path)) return false;
 
-        $thumb_path = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_'.$w.'x'.$h.'.jpg';
+        $w = !empty($w) ? $w : $this->e2gsnip_cfg['w'];
+        $h =  !empty($h) ? $h : $this->e2gsnip_cfg['h'];
+        $thq = !empty($thq) ? $thq : $this->e2gsnip_cfg['thq'];
+        $resize_type = !empty($this->e2gsnip_cfg['resize_type']) ? $this->e2gsnip_cfg['resize_type'] : $resize_type;
+        $red =  !empty($this->e2gsnip_cfg['thbg_red']) ? $this->e2gsnip_cfg['thbg_red'] : $red;
+        $green = !empty($this->e2gsnip_cfg['thbg_green']) ? $this->e2gsnip_cfg['thbg_green'] : $green;
+        $blue = !empty($this->e2gsnip_cfg['thbg_blue']) ? $this->e2gsnip_cfg['thbg_blue'] : $blue;
+
+//        $thumb_path = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_'.$w.'x'.$h.'.jpg';
+        /**
+         * Use document ID and session ID to separate between
+         * different snippet calls
+         * on the same/different page(s) with different settings
+         * but unfortunately with the same dimension.
+         */
+        $e2g_static_instances = $this->e2gsnip_cfg['e2g_static_instances'];
+        $docid = $modx->documentIdentifier;
+        $thumb_path = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_id'.$docid.'_sid'.$e2g_static_instances.'_'.$w.'x'.$h.'.jpg';
 
         /**
          * CREATE THUMBNAIL
@@ -1068,10 +1077,10 @@ class e2g_snip extends e2g_pub {
             elseif ($resize_type == 'shrink') {
                 /**
                  * $resize_type == 'shrink'
-                 * shrink to default dimensions
+                 * ugly shrink to default dimensions
                  */
-                if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0], 2);
-                else $w = round($i[0] * $h / $i[1], 2);
+//                if ($i[0] > $i[1]) $h = round($i[1] * $w / $i[0], 2);
+//                else $w = round($i[0] * $h / $i[1], 2);
 
                 $pic = imagecreatetruecolor($w, $h);
                 $bgc = imagecolorallocate($pic, $red, $green, $blue);
@@ -1081,7 +1090,7 @@ class e2g_snip extends e2g_pub {
             elseif ($resize_type == 'resize') {
                 /**
                  * $resize_type == 'resize'
-                 * proportionally reduce to default dimensions
+                 * resize image with original proportional dimensions
                  */
                 // Shifts
                 $x = 0;
@@ -1307,6 +1316,7 @@ class e2g_snip extends e2g_pub {
             }
             unset($glib);
         }
+        else return false;
     }
 
     /**
@@ -1391,14 +1401,31 @@ class e2g_snip extends e2g_pub {
      */
     private function _slideshow() {
         global $modx;
-        $slideshow = $this->e2gsnip_cfg['slideshow'];
+        // database selection
         $gdir = $this->e2gsnip_cfg['gdir'];
         $gid = $this->e2gsnip_cfg['gid'];
         $fid = $this->e2gsnip_cfg['fid'];
         $rgid = $this->e2gsnip_cfg['rgid'];
         $gpn = $this->e2gsnip_cfg['gpn'];
-        $orderby = $this->e2gsnip_cfg['orderby'];
-        $order = $this->e2gsnip_cfg['order'];
+
+        if ($this->e2gsnip_cfg['ss_orderby']=='random') {
+            $ss_orderby = 'rand()';
+            $ss_order = '';
+        } else {
+            $ss_orderby = $this->e2gsnip_cfg['ss_orderby'];
+            $ss_order = $this->e2gsnip_cfg['ss_order'];
+        }
+
+        $ss_limit = $this->e2gsnip_cfg['ss_limit'];
+
+        // initial slideshow's controller and headers
+        $slideshow = $this->e2gsnip_cfg['slideshow'];
+        $ss_config = $this->e2gsnip_cfg['ss_config'];
+        $ss_indexfile = $this->e2gsnip_cfg['ss_indexfile'];
+        $ss_css = $this->e2gsnip_cfg['ss_css'];
+        $ss_js = $this->e2gsnip_cfg['ss_js'];
+
+        // thumbnail settings
         $w = $this->e2gsnip_cfg['w'];
         $h = $this->e2gsnip_cfg['h'];
         $thq = $this->e2gsnip_cfg['thq'];
@@ -1407,10 +1434,7 @@ class e2g_snip extends e2g_pub {
         $thbg_green = $this->e2gsnip_cfg['thbg_green'];
         $thbg_blue = $this->e2gsnip_cfg['thbg_blue'];
 
-        $css = $this->e2gsnip_cfg['css'];
-        $landingpage = $this->e2gsnip_cfg['landingpage'];
-
-        $ss_indexfile = $this->e2gsnip_cfg['ss_indexfile'];
+        // slideshow's image settings
         $ss_img_src = $this->e2gsnip_cfg['ss_img_src'];
         $ss_w = $this->e2gsnip_cfg['ss_w'];
         $ss_h = $this->e2gsnip_cfg['ss_h'];
@@ -1421,18 +1445,20 @@ class e2g_snip extends e2g_pub {
         $ss_green = $this->e2gsnip_cfg['ss_green'];
         $ss_blue = $this->e2gsnip_cfg['ss_blue'];
 
+        // landscape/portrait image's ratio for the slideshow box
         $ss_allowedratio = $this->e2gsnip_cfg['ss_allowedratio'];
-        $ss_limit = $this->e2gsnip_cfg['ss_limit'];
-        $ss_config = $this->e2gsnip_cfg['ss_config'];
-        $ss_css = $this->e2gsnip_cfg['ss_css'];
-        $ss_js = $this->e2gsnip_cfg['ss_js'];
+
+        // self landingpage
+        $css = $this->e2gsnip_cfg['css'];
+        $js = $this->e2gsnip_cfg['js'];
+        $landingpage = $this->e2gsnip_cfg['landingpage'];
 
         $_ssfile = array();
         if (!empty($gid) && $modx->documentIdentifier!=$landingpage ) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE dir_id IN (' . $gid . ') '
                     . 'AND status = 1 '
-                    . 'ORDER BY ' . $orderby . ' ' . $order . ' '
+                    . 'ORDER BY ' . $ss_orderby . ' ' . $ss_order . ' '
                     . ( $ss_limit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ss_limit ) . ', ' . $ss_limit )
             ;
             $query = mysql_query($select);
@@ -1481,7 +1507,7 @@ class e2g_snip extends e2g_pub {
                  */
             }
         }
-
+        
         if (!empty($fid)) {
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE id IN ('.$fid.') '
@@ -1579,11 +1605,11 @@ class e2g_snip extends e2g_pub {
         /**
          * Filtering the slideshow size ratio
          */
-        if ($ss_allowedratio != 'none') {
+        if ($ss_allowedratio != 'all') {
             // create min-max slideshow width/height ratio
             $ss_exratio = explode('-', $ss_allowedratio);
-            $ss_minratio = $ss_exratio[0];
-            $ss_maxratio = $ss_exratio[1];
+            $ss_minratio = trim($ss_exratio[0]);
+            $ss_maxratio = trim($ss_exratio[1]);
         }
 
         /**
@@ -1605,9 +1631,15 @@ class e2g_snip extends e2g_pub {
         }
         elseif ( isset($_GET['fid']) && !isset($landingpage) ) {
             /**
-             * SELF landingpage
+             * self landingpage
              */
-            $modx->regClientCSS($css,'screen');
+            if (!empty($css)) {
+                $modx->regClientCSS($css,'screen');
+            }
+            if (!empty($js)) {
+                $modx->regClientStartupScript($js);
+            }
+
             $select = 'SELECT * FROM '.$modx->db->config['table_prefix'].'easy2_files '
                     . 'WHERE id = '.$_GET['fid'].' '
             ;

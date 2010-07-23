@@ -125,6 +125,7 @@ $e2g_lang['english'] = array (
         'fpath_err' => 'path or id of image is undefined',
         'gallery' => 'Gallery',
         'general' => 'General',
+        'generated' => 'generated',
         'glib' => 'JS Library',
         'glib_cfg_desc' => 'Graphic library',
         'go' => 'Go',
@@ -183,7 +184,11 @@ Thumbnail&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt; Folder _thumbnails in root of gallery.&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100%. (100 - max)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100, without %. (100 - max)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;resize_type&lt;/strong&gt; - type of thumbnail resizing:  &#039;inner&#039; (cropped) | &#039;resize&#039; (autofit) | &#039;shrink&#039; (shrink)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in  RGB&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN  in RGB&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in  RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;name_len&lt;/strong&gt; - Max length of thumbnail name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;cat_name_len&lt;/strong&gt; - Max length of folder name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;colls&lt;/strong&gt; - images per column&lt;/p&gt;
@@ -193,10 +198,6 @@ Thumbnail&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;order&lt;/strong&gt; - Sort ASCENDING or DESCENDING, ASC / DESC correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;cat_orderby&lt;/strong&gt; - Field by which folders will be sorted out: cat_id, cat_name, random.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;cat_order&lt;/strong&gt; - Sort folders ASCENDING or DESCENDING, ASC / DESC correspondingly&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;resize_type&lt;/strong&gt; - type of thumbnail resizing: &#039;inner&#039; (cropped) | &#039;resize&#039; (autofit) | &#039;shrink&#039; (shrink)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN in RGB&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in RGB&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;gal_desc=`1`&lt;/strong&gt; (on) to see the Gallery&#039;s information (title &amp;amp; description) above the gallery template.&lt;/p&gt;
@@ -222,7 +223,7 @@ Landing Page&lt;/h2&gt;
 &lt;li&gt;The watermark&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&amp;amp;lp_w&lt;/strong&gt; - landingpage width box, default: will be retrieved from the original size&lt;strong&gt; &lt;br /&gt;&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&amp;amp;lp_h&lt;/strong&gt; - landingpage height box, default: will be retrieved from the original size&lt;strong&gt;&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;lp_thq&lt;/strong&gt; -  default: thumbnail config setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;lp_thq&lt;/strong&gt; -  default: thumbnail config&#039;s setting&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&amp;amp;lp_resize_type&lt;/strong&gt; - default: `inner`&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&amp;amp;lp_red=`255`&lt;/strong&gt;&lt;/li&gt;
 &lt;li&gt;&lt;strong&gt;&amp;amp;lp_green=`255`&lt;/strong&gt;&lt;/li&gt;
@@ -257,6 +258,17 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;The plugin&#039;s name is followed by a path to a customized index file after an @ (ampersand) sign, if there is any.&lt;/p&gt;',
         'help_plugins_title' => 'Plugins',
         'help_slideshow_content' => '&lt;h2&gt;Slideshow parameters&lt;/h2&gt;
+&lt;h3&gt;Database selection&lt;/h3&gt;
+&lt;p&gt;Like the default gallery thumbnails, slideshows use these options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;gid&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;fid&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;rgid&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_limit&lt;/strong&gt; - default: config\'s setting&lt;br /&gt;to set how many images the slide show should retrieve from the gallery  ID.&lt;br /&gt; More images mean longer page loading!&lt;br /&gt; Options&amp;nbsp;: int | &#039;none&#039;&lt;br /&gt; Default&amp;nbsp;: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_orderby&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_order&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Initial slideshow&#039;s controller and headers&lt;/h3&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;slideshow&lt;/strong&gt; - slideshow types&lt;br /&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;simple&lt;/li&gt;
@@ -268,7 +280,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                       
+&lt;li&gt;galleriffic                                  
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -276,7 +288,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                       
+&lt;li&gt;smoothgallery                                  
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -290,7 +302,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                       
+&lt;li&gt;galleryview                                  
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
@@ -300,7 +312,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;panel&lt;br /&gt;[! easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300` !]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                       
+&lt;li&gt;contentflow                                  
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -309,30 +321,51 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;The typical snippet call of using one of these slideshows is&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;[!easy2?slideshow=`smoothgallery` &amp;amp;ss_config=`fullgallery`!]&lt;/strong&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from &lt;strong&gt;assets/modules/easy2/slideshows/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;.php&lt;/strong&gt;&lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_img_src&lt;/strong&gt; - the image source for slideshow: `original` | `generated` (using thumb creator, &lt;em&gt;default&lt;/em&gt;).&lt;br /&gt;If it&#039;s &lt;strong&gt;`generated`&lt;/strong&gt;, these below will be applied like the thumbnail:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The watermark&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default = 400 (in px)&lt;strong&gt;&amp;nbsp;&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default = 300 (in px)&lt;strong&gt; &lt;br /&gt;&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_thq&lt;/strong&gt; - default: thumbnail config setting&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_resize_type&lt;/strong&gt; - default: `inner`&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_red=`255`&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_green=`255`&lt;/strong&gt;&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;&amp;amp;ss_blue=`255`&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default = white&lt;br /&gt;To use the RGB color: &lt;strong&gt;&amp;amp;ss_bg=`rgb` &amp;amp;thbg_red=`255`&lt;/strong&gt; &lt;strong&gt; &amp;amp;thbg_green=`255` &lt;/strong&gt;&lt;strong&gt; &amp;amp;thbg_blue=`255`&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt; - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&amp;amp;ss_w/&amp;amp;ss_h) - 1.25*(&amp;amp;ss_w/&amp;amp;ss_h).&lt;br /&gt; Options:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&#039;minimumfloatnumber-maximumfloatnumber&#039;, eg: `1.0-2.0`&lt;/li&gt;
-&lt;li&gt;&#039;none&#039; - disable this ratio, all landscape/portrait images will be shown&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_limit&lt;/strong&gt; - to set how many images the slide show should retrieve from the gallery ID.&lt;br /&gt; More images mean longer page loading!&lt;br /&gt; Options&amp;nbsp;: int | &#039;none&#039;&lt;br /&gt; Default&amp;nbsp;: (int)6&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_css&lt;/strong&gt; - set the slideshow&#039;s CSS path.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_js&lt;/strong&gt; - set the slideshow&#039;s JS path.&lt;/p&gt;
+&lt;h3&gt;Thumbnail settings for the slideshows&lt;/h3&gt;
+&lt;p&gt;Use the same parameters with the gallery&#039;s parameters:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;w&lt;/strong&gt; - thumbnail width, px.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;h&lt;/strong&gt; - thumbnail height, px.&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;thq&lt;/strong&gt; - Level of jpeg-compression. 0 to 100,  without %. (100 - max) &lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;resize_type&lt;/strong&gt; - type of thumbnail resizing:  &#039;inner&#039; (cropped) | &#039;resize&#039; (autofit) | &#039;shrink&#039; (shrink)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;thbg_red&lt;/strong&gt; - thumbnail background color: RED in  RGB&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;thbg_green&lt;/strong&gt; - thumbnail background color: GREEN  in RGB&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;thbg_blue&lt;/strong&gt; - thumbnail background color: BLUE in  RGB&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Slideshow&#039;s image settings&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_img_src&lt;/strong&gt; - the image source for slideshow: `original` | `generated` (default : config&#039;s setting).&lt;br /&gt;If it&#039;s &lt;strong&gt;`generated`&lt;/strong&gt;, these below will be applied like the thumbnail:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The watermark&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_w&lt;/strong&gt; - slideshow width box, default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_h&lt;/strong&gt; - slideshow height box, default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_thq&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_resize_type&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_bg&lt;/strong&gt; - box background color, default: config\'s setting&lt;br /&gt;To  use the RGB colors below, set: &lt;strong&gt;&amp;amp;ss_bg=`rgb`&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_red&lt;/strong&gt;&lt;strong&gt;&amp;nbsp;&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_green&lt;/strong&gt;&lt;strong&gt;&amp;nbsp;&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;ss_blue&lt;/strong&gt;&lt;strong&gt;&amp;nbsp;&lt;/strong&gt; - default: config\'s setting&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Image&#039;s ratio for the slideshow box&lt;/h3&gt;
+&lt;ul&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_allowedratio&lt;/strong&gt; - allowed width/height ratio of image dimension inside slideshow box, default : config\'s setting&lt;br /&gt; Options:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&#039;minimum-maximum&#039; (floatnumber), eg: `1.0-2.0`&lt;/li&gt;
+&lt;li&gt;&#039;&lt;strong&gt;all&lt;/strong&gt;&#039; - disable this ratio, all landscape/portrait images will be displayed&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Landingpage&lt;/h3&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - if this is not set, the images will  be opened on the self page.&lt;/p&gt;
+&lt;p&gt;Add these additional parameters if the images opened on the self page :&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;css&lt;/strong&gt; - path to CSS file&lt;strong&gt;&lt;br /&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;&amp;amp;js&lt;/strong&gt;&lt;strong&gt;&amp;nbsp;&lt;/strong&gt; - path to JS file&lt;strong&gt;&amp;nbsp;&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;hr /&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.&lt;/p&gt;
-&lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt; Will show slideshow with all images under folder ID 2 and 4, with box dimension 600x200px, with image ratio allowance (width/height) is between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
+&lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt; Will show slideshow with all images under folder ID 2 and 4, with box dimension 600px x 200px, with image ratio allowance (width/height) is between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
 &lt;p&gt;Images height will be adjusted automatically.&lt;/p&gt;
 &lt;p&gt;&amp;nbsp;&lt;/p&gt;
 &lt;hr /&gt;
@@ -412,6 +445,7 @@ Breadcrumbs parameters&lt;/h2&gt;
         'order2' => 'Folders order by',
         'order2_cfg_desc' => 'Folder sorting method',
         'order_cfg_desc' => 'Sorting method',
+        'original' => 'original',
         'path' => 'Path',
         'post' => 'Post',
         'random' => 'random',
@@ -437,12 +471,32 @@ Breadcrumbs parameters&lt;/h2&gt;
         'setlocale' => 'setlocale( LC_ALL ,&#039;en_US.utf8&#039; )',
         'settings_crumbs' => 'Breadcrumbs Settings',
         'settings_display' => 'Display settings',
-        'settings_img' => 'Images settings',
+        'settings_img' => 'Images',
         'settings_pagination' => 'Pagination',
         'settings_recaptcha' => 'reCaptcha Settings',
-        'settings_thumb' => 'Thumbnails settings',
+        'settings_slideshow' => 'Slideshow',
+        'settings_thumb' => 'Thumbnails',
         'shrink' => 'shrink',
         'size' => 'Size',
+        'ss_allowedratio_cfg' => 'Allowed image&#039;s ratio',
+        'ss_allowedratio_cfg_desc' => '&lt;p&gt;Allowed images with the range ( minimum-maximum, in float number ) of the specified width/height dimension ratio to be selected (e.g.: 0.75-1.25). This is useful for filtering landscape/portrait images. Input &lt;strong&gt;&#039;all&#039;&lt;/strong&gt; to allow all.&lt;/p&gt;',
+        'ss_bg_cfg' => 'Background color in text/hex',
+        'ss_bg_cfg_desc' => '&lt;p&gt;It&#039;s only the resized generated image that contains margin gap to the slideshow box. To use RGB below, input &lt;strong&gt;&#039;rgb&#039;&lt;/strong&gt;.&lt;/p&gt;',
+        'ss_h_cfg' => 'Slideshow box height',
+        'ss_h_cfg_desc' => 'For the div&#039;s class parameter',
+        'ss_img_src_cfg' => 'Image source',
+        'ss_img_src_cfg_desc' => '&lt;p&gt;Watermarked images will be created under the `generated` option&lt;/p&gt;',
+        'ss_limit_cfg' => 'Images amount limit',
+        'ss_limit_cfg_desc' => '&lt;p&gt;Limit the images amount, use integer, or (string) &#039;all&#039;. Use this wisely, too many images can slow down the page rendering.&lt;/p&gt;',
+        'ss_order_cfg' => 'Slideshows order by',
+        'ss_resize_type_cfg' => 'Generated image&#039;s Resize',
+        'ss_resize_type_cfg_desc' => '&lt;p&gt;Inner: cropped | Shrink: shrink | Resize: proportional autofit&lt;/p&gt;',
+        'ss_rgb_cfg' => 'Background color in RGB',
+        'ss_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0.',
+        'ss_thq_cfg' => 'Generated image&#039;s quality',
+        'ss_thq_cfg_desc' => '&lt;p&gt;If the image source is the generated one, please input: 0-100, without %&lt;/p&gt;',
+        'ss_w_cfg' => 'Slideshow box width',
+        'ss_w_cfg_desc' => 'For the div&#039;s class parameter',
         'stay_here' => 'stay here',
         'summary' => 'Summary',
         'synchro' => 'Synchronize',
@@ -456,14 +510,13 @@ Breadcrumbs parameters&lt;/h2&gt;
         'tag_suc_new' => 'New tag is applied',
         'text' => 'text',
         'thbg_rgb' => 'Thumbnail background color',
-        'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only resized thumbnail that contains margin gap with default thumb size.&lt;/p&gt;',
+        'thbg_rgb_cfg_desc' => '&lt;p&gt;White is 255 255 255, black is 0 0 0. It&#039;s only the resized thumbnail that contains margin gap to the thumbnail&#039;s box size.&lt;/p&gt;',
         'theme' => 'Theme',
         'theme_custom' => 'Custom theme',
-        'theme_custom_recaptcha_desc' => '&lt;p&gt;Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;)&lt;/p&gt;',
+        'theme_custom_recaptcha_desc' => '&lt;p&gt;Custom theme name for reCaptcha (&lt;a href=&quot;http://wiki.recaptcha.net/index.php/Overview#Custom_Theming&quot; target=&quot;_blank&quot;&gt;Custom Theming&lt;/a&gt;)&lt;/p&gt;',
         'theme_recaptcha_desc' => 'Theme selection for reCaptcha',
         'thq' => 'Compression level',
-        'thq_cfg_desc' => 'Level of jpeg compression of thumbnails , from 0 to 100%.',
+        'thq_cfg_desc' => '&lt;p&gt;Level of jpeg compression of thumbnails from 0 to 100, without %.&lt;/p&gt;',
         'thumb' => 'thumbnail',
         'tinymce_path' => 'Tiny MCE path',
         'tinymce_path_desc' => 'Path to tiny_mce.js file',
@@ -496,8 +549,7 @@ Breadcrumbs parameters&lt;/h2&gt;
         'use' => 'Use',
         'version' => 'Version',
         'w' => 'Width',
-        'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt;&lt;br /&gt;0 - no limit&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;.&lt;/p&gt;',
+        'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt; 0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
         'w_thumb_cfg_desc' => 'Thumbnail width, px.',
         'watermark_horpos' => 'Horizontal position',
         'watermark_horpos_cfg_desc' => 'horisontal position of watermark',
