@@ -213,6 +213,8 @@ Thumbnail&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;order&lt;/strong&gt; - Sort ASCENDING or DESCENDING, ASC / DESC correspondingly.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;cat_orderby&lt;/strong&gt; - Field by which folders will be sorted out: cat_id, cat_name, random.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;cat_order&lt;/strong&gt; - Sort folders ASCENDING or DESCENDING, ASC / DESC correspondingly&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;cat_thumb_orderby&lt;/strong&gt;&amp;nbsp;- file&#039;s database field which the folder&#039;s thumbnail will be sorted out.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;&lt;/strong&gt;&lt;strong&gt;cat_thumb_order&lt;/strong&gt;&amp;nbsp;- Sort folders ASCENDING or DESCENDING, ASC / DESC correspondingly&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;grid &lt;/strong&gt;- options of thumbnail&#039;s grid arrangement, &#039;css&#039; or &#039;table&#039;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;show_group&lt;/strong&gt; - slideshow group name&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;gal_desc=`1`&lt;/strong&gt; (on) to see the Gallery&#039;s information (title &amp;amp; description) above the gallery template.&lt;/p&gt;
@@ -295,7 +297,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                                     
+&lt;li&gt;galleriffic                                      
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -303,7 +305,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                                     
+&lt;li&gt;smoothgallery                                      
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -317,7 +319,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                                     
+&lt;li&gt;galleryview                                      
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -327,7 +329,7 @@ Breadcrumbs parameters&lt;/h2&gt;
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                                     
+&lt;li&gt;contentflow                                      
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -543,11 +545,11 @@ Breadcrumbs parameters&lt;/h2&gt;
     'tpl' => 'Templates',
     'tpl_comments_cfg_desc' => '&lt;p&gt;chunk name or path to file, &lt;strong class=&quot;warning&quot;&gt;relative to comments.easy2gallery.php&lt;/strong&gt;&lt;/p&gt;',
     'tpl_css_path_cfg_desc' => 'Path to CSS file',
+    'tpl_jsdisabled' => 'JS disabled tpl',
     'tpl_lp' => 'Landing page tpl',
     'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
     'tpl_lp_cmt_path_cfg_desc' => 'Chunk name or path to landingpage&#039;s comment tpl file',
     'tpl_lp_cmt_row' => 'Landingpage&#039;s comment row tpl',
-    'tpl_jsdisabled' => 'JS disabled tpl',
     'tpl_lp_css' => 'Landing page CSS',
     'tpl_lp_path_cfg_desc' => '&lt;p&gt;chunk name or path to template file of a single landing page&lt;/p&gt;',
     'tpl_path_cfg_desc' => 'Chunk name or path to tpl file',
