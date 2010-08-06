@@ -1,3 +1,13 @@
+.jsdisabled {
+    position: relative;
+    text-align: center;
+    border: 1px dotted #F4F4F4;
+    padding: 10px;
+    vertical-align: middle;
+}
+
+.jsdisabled img {vertical-align: middle;}
+
 /* for gallery.htm template */
 .e2gtitle {
     font:bold 14px Tahoma;

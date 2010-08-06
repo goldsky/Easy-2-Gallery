@@ -20,6 +20,7 @@ if (isset($_GET)) {
 $instance_id = $_SESSION['e2g_instances']++;
 $e2gsnip_cfg['e2g_instances'] = (!empty($_GET['sid'])) ? $_GET['sid'] : $instance_id;
 $e2gsnip_cfg['e2g_static_instances'] = $instance_id;
+$e2gsnip_cfg['e2g_wrapper'] = $e2g['e2g_wrapper'];
 
 /**
  * GALLERY / ALBUM Selection Parameters
@@ -99,16 +100,28 @@ $e2gsnip_cfg['showonly'] = (!empty($showonly)) ? $showonly : NULL ;
 // PAGE NUMBER
 //$gpn = (!empty($gpn) && is_numeric($gpn)) ? $gpn : 0;
 $e2gsnip_cfg['gpn'] = (!empty($_GET['gpn']) && is_numeric($_GET['gpn'])) ? (int) $_GET['gpn'] : ((!empty($gpn) && is_numeric($gpn)) ? $gpn : 0);
-// ORDER BY
+
+// Thumbnail's ORDER BY
 $orderby = (!empty($orderby)) ? $orderby : $e2g['orderby'];
 $e2gsnip_cfg['orderby'] = preg_replace('/[^_a-z]/i', '', $orderby);
-$cat_orderby = (!empty($cat_orderby)) ? $cat_orderby : $e2g['cat_orderby'];
-$e2gsnip_cfg['cat_orderby'] = preg_replace('/[^_a-z]/i', '', $cat_orderby);
-// ORDER
+// Thumbnail's ORDER
 $order = (!empty($order)) ? $order : $e2g['order'];
 $e2gsnip_cfg['order'] = preg_replace('/[^a-z]/i', '', $order);
+
+// Folder's / directory's ORDER BY
+$cat_orderby = (!empty($cat_orderby)) ? $cat_orderby : $e2g['cat_orderby'];
+$e2gsnip_cfg['cat_orderby'] = preg_replace('/[^_a-z]/i', '', $cat_orderby);
+// Folder's / directory's ORDER
 $cat_order = (!empty($cat_order)) ? $cat_order : $e2g['cat_order'];
 $e2gsnip_cfg['cat_order'] = preg_replace('/[^a-z]/i', '', $cat_order);
+
+// Folder's thumbnail ORDER BY
+$cat_thumb_orderby = (!empty($cat_thumb_orderby)) ? $cat_thumb_orderby : $e2g['cat_thumb_orderby'];
+$e2gsnip_cfg['cat_thumb_orderby'] = preg_replace('/[^_a-z]/i', '', $cat_thumb_orderby);
+// Folder's thumbnail ORDER
+$cat_thumb_order = (!empty($cat_thumb_order)) ? $cat_thumb_order : $e2g['cat_thumb_order'];
+$e2gsnip_cfg['cat_thumb_order'] = preg_replace('/[^a-z]/i', '', $cat_thumb_order);
+
 
 /**
  * GALLERY'S DESCRIPTION OPTION
@@ -222,9 +235,9 @@ $e2gsnip_cfg['recaptcha_theme_custom'] = $e2g['recaptcha_theme_custom'];
  * WATERMARK (if ON) can be applied for the 'generated' images.
  */
 // thumbnails
-$e2gsnip_cfg['img_src'] = (isset($img_src) ? $img_src : 'generated');
+$e2gsnip_cfg['img_src'] = (isset($img_src) ? $img_src : $e2g['img_src']);
 // slideshow
-$e2gsnip_cfg['ss_img_src'] = (isset($ss_img_src) ? $ss_img_src : 'generated');
+$e2gsnip_cfg['ss_img_src'] = (isset($ss_img_src) ? $ss_img_src : $e2g['ss_img_src']);
 // landingpage
 $e2gsnip_cfg['lp_img_src'] = (isset($lp_img_src) ? $lp_img_src : 'generated');
 
@@ -309,11 +322,11 @@ $e2gsnip_cfg['lp_blue'] = isset($lp_blue) ? $lp_blue : $e2g['thbg_blue'];
  */
 $e2gsnip_cfg['crumbs'] = ( isset($crumbs) && is_numeric($crumbs) ) ? $crumbs : $e2g['crumbs'] ;
 $e2gsnip_cfg['crumbs_use'] = ( isset($crumbs_use) ) ? $crumbs_use : $e2g['crumbs_use'] ;
-$e2gsnip_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : ' / ';
-$e2gsnip_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : 0;
-$e2gsnip_cfg['crumbs_showAsLinks'] = isset($crumbs_showAsLinks) ? $crumbs_showAsLinks : 1;
-$e2gsnip_cfg['crumbs_showCurrent'] = isset($crumbs_showCurrent) ? $crumbs_showCurrent : 1;
-$e2gsnip_cfg['crumbs_showPrevious'] = isset($crumbs_showPrevious) ? $crumbs_showPrevious : 0;
+$e2gsnip_cfg['crumbs_separator'] = isset($crumbs_separator) ? $crumbs_separator : $e2g['crumbs_separator'];
+$e2gsnip_cfg['crumbs_showHome'] = isset($crumbs_showHome) ? $crumbs_showHome : $e2g['crumbs_showHome'];
+$e2gsnip_cfg['crumbs_showAsLinks'] = isset($crumbs_showAsLinks) ? $crumbs_showAsLinks : $e2g['crumbs_showAsLinks'];
+$e2gsnip_cfg['crumbs_showCurrent'] = isset($crumbs_showCurrent) ? $crumbs_showCurrent : $e2g['crumbs_showCurrent'];
+$e2gsnip_cfg['crumbs_showPrevious'] = isset($crumbs_showPrevious) ? $crumbs_showPrevious : $e2g['crumbs_showPrevious'];
 
 /**
  * mbstring
