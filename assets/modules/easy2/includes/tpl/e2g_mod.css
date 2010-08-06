@@ -1,0 +1,50 @@
+h2 {
+    margin-top: 0.5em;
+    font-size: 1.8em;
+    font-weight: bold;
+}
+
+h3 {
+    margin-top: 1em;
+    font-size: 1.4em;
+    font-weight: bold;
+    color: maroon;
+}
+
+.e2g_grayedHeader a, .e2g_grayedHeader a:link {
+	margin: 10px;
+	padding: 5px 10px;
+	color: #bbb;
+	border: 1px solid #e3e3e3;
+	border-bottom:none;
+	background: #EFEFEF url(images/misc/fade.gif) repeat-x top;
+    text-decoration: none;
+}
+.e2g_grayedHeader a:hover {
+    color: #000;
+    text-decoration: none;
+}
+
+ul.actionButtons li {
+    padding-right: 1em;
+    border-right: 1px solid #cccccc;
+}
+
+div.imPreview {
+    display: block;
+    width: 100%;
+    margin: 5px;
+}
+
+div.imPreview img {
+    display: block;
+}
+
+div.imPreview2 {
+    display: block;
+}
+
+div.imPreview2 img {
+    display: block;
+    width: 200px;
+}

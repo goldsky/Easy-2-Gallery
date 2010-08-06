@@ -1,0 +1,52 @@
+<?php
+if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
+?>
+<p><?php echo $lng['editing']; ?> <?php echo $lng['files']; ?> <b><?php echo $row['filename']; ?> </b> (<?php echo $row['comments'].' '. strtolower($lng['comments']); ?>)
+    &nbsp; &nbsp; &nbsp;
+    <a href="<?php echo $index; ?>&pid=<?php echo $parent_id; ?>"><?php echo $lng['back']; ?></a>
+</p>
+
+<table cellspacing="0" cellpadding="0" width="100%">
+    <tr>
+        <td valign="top">
+            <form name="list" action="" method="post">
+                <table cellspacing="0" cellpadding="2" class="aForm">
+                    <tr>
+                        <td nowrap="nowrap"><b><?php echo $lng['file_rename'] ; ?> :</b></td>
+                        <td><input name="newfilename" type="text" value="<?php echo $filename; ?>" size="30" style="text-align:right;"> <?php echo $ext; ?></td>
+                    </tr>
+                    <tr>
+                        <td><b><?php echo $lng['name']; ?> :</b></td>
+                        <td><input name="name" type="text" value="<?php echo $row['name']; ?>" size="30"></td>
+                    </tr>
+                    <tr>
+                        <td><b><?php echo $lng['summary']; ?> :</b></td>
+                        <td><input name="summary" type="text" value="<?php echo $row['summary']; ?>" size="95"></td>
+                    </tr>
+                    <tr>
+                        <td><b><?php echo $lng['tag']; ?> :</b></td>
+                        <td><input name="tag" type="text" value="<?php echo $row['tag']; ?>" size="95"></td>
+                    </tr>
+                    <tr>
+                        <td valign="top" style="width:200px;"><b><?php echo $lng['description']; ?> :</b>
+                            <div style="padding:2px;background-color: #eee;font-weight: bold;">
+                                <a href="javascript:void(0);" onclick="imPreview4('<?php echo $gdir.$row['filename']; ?>');void(0);">
+                                <?php echo $lng['uim_preview']; ?>
+                                </a>
+                            </div>
+                            <div class="imPreview2" id="pElt4"></div>
+                        </td>
+                        <td valign="top" >
+                            <textarea name="description" style="width:500px" class="mceEditor" cols="" rows=""><?php echo $row['description']; ?></textarea>
+                        </td>
+                    </tr>
+                    <tr><td></td>
+                        <td><input type="submit" value="<?php echo $lng['save']; ?>">
+                            <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="javascript:document.location.href='<?php echo $index; ?>&pid=<?php echo $parent_id; ?>'">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </td>
+    </tr>
+</table>

@@ -1,0 +1,160 @@
+ ____   __   ____  _  _    ____     ___   __   __    __    ____  ____  _  _ 
+(  __) / _\ / ___)( \/ )  (___ \   / __) / _\ (  )  (  )  (  __)(  _ \( \/ )
+ ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
+(____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/  
+
+********** 1.4.0-Release Candidate 1 **********
++ Many bug fixings
++ Folders are restructured
++ Many changes on variable names for new updates
++ Using assets/images/gallery for its default folder of the fresh installation.
+  But still use the old path (assets/gallery) if this is an upgrade.
+
+MODULE
++ Added move folders option
++ Download option
++ Added translation page
++ More options in config area
+
+SNIPPET
++ Added &tag parameter
++ Added &plugin for thumbnails, gallery, and landingpage
++ Restrictive descendant of specified gallery's call: restrict the address bar, and crumbs
++ Added permalink to the gallery template
++ &landingpage option is now applied to the original gallery's thumbnail, too
+
+********** 1.4.0-Beta 4 **********
++ UTF 8 Bug Fix
++ Filenaming bug fix
++ Simple slideshow is turned to be independent from the core code.
++ Slideshow Galleriffic (http://www.twospy.com/galleriffic/) was added.
++ Slideshow SmoothGallery (http://smoothgallery.jondesign.net) was added.
++ Slideshow GalleryView (http://spaceforaname.com/galleryview) was added.
++ Slideshow ContentFlow (http://www.jacksasylum.eu/ContentFlow) was added.
++ Added &landingpage parameter, to be used as a single page template of slideshow's hyperlink.
+--+ inside the landing page, the snippet call is : [!easy2? &landingpage=`-its own pageID number-`!]
+--+ the landingpage template is 'page.htm'
+--+ this still can be applied the &css and &js parameter, if it's needed.
+
+Available parameters for the slideshow:
+
+    * &gid
+      Gallery ID
+    * &fid
+      File ID
+    * &rgid
+      Random file from the specified Gallery ID
+    * &slideshow=`galleriffic`
+      this is the mandatory call to this slideshow type
+    * &ss_config
+      Each of slideshow can have different options or types.
+      Eg Options in galleriffic slideshow:
+          o `example-1`
+          o `example-2`
+          o `example-3`
+          o `example-5`
+    * &ss_w : the width of the slideshow box (image size)
+      Default: 400px
+    * &ss_h : the height of it
+      Default: 300px
+    * &w : the width of the thumbnail images
+      Default: whatever you've set in the module's config
+    * &h : the height of it
+      Default: whatever you've set in the module's config
+    * &ss_bg
+      background color of the slideshow, not for the thumbnail
+    * &ss_limit
+      the SQL limitation when selecting the images. Only applied to gallery ID and random gallery ID.
+      Options:
+          o integers
+          o `none` : you don't make any limit, show all images under the directory.
+      Default: (int) 6
+    * &ss_indexfile : the index file path of your own slideshow's generator.
+    * &ss_css : the CSS path of your own styling, which will override the default styles.
+    * &ss_js : the JS path of your own Javascript, which will override the default JS.
+
+Available parameters for your own slideshow:
+    * $_ssfile['id'] : image ID.
+    * $_ssfile['dirid'] : directory ID.
+    * $_ssfile['src'] : image's source path.
+    * $_ssfile['filename'] : image filename (basename).
+    * $_ssfile['title'] : image's title (if name doesn't exist, it'll use filename).
+    * $_ssfile['name'] : image's name (only).
+    * $_ssfile['description'] : image's description.
+    * $_ssfile['thumbsrc'] : thumbnail's path.
+    * $_ssfile['resizedimg'] : resized image's path (resized by restricting width + height of slideshow's box).
+    
+********** 1.4.0-Beta 3 **********
++ Fixed small bug in pagination calculation, again...
++ Introducing additional parameters:
+--+ &slideshow : simple (more type of slideshow will be added soon)
+----+ &ss_w - slideshow width box, default = 400 (in px)
+----+ &ss_h - slideshow height box, default = 300 (in px)
+----+ &ss_bg - box background color, default = white
+----+ &ss_allowedratio - allowed width/height ratio of image dimension inside slideshow box, default 0.75*(&ss_w/&ss_h) - 1.25*(&ss_w/&ss_h).
+Options:
+
+    * 'minimumfloatnumber-maximumfloatnumber', eg: `1.0-2.0`
+    * 'none' - disable this ratio, all landscape/portrait images will be shown
+
+----+ &ss_limit - limit number of images for the slideshow, default NULL.
+More images mean slower page loading.
++ UTF-8
++ Invalid characters checking
++ Numbering on duplication
+
+********** 1.4.0-Beta 2 **********
++ Fixed small bug in pagination calculation
+
+********** 1.4.0-Beta 1 **********
++ Many bug fixing
++ Additional tab inside module: Comments Manager
++ Introducing additional parameters:
+--+ &resize_type : inner | shrink | resize
+--+ &thbg_red (Red in RGB background color)
+--+ &thbg_green (Green in RGB background color)
+--+ &thbg_blue (Blue in RGB background color)
++ All textarea now supports TinyMCE
++ Directory database now includes Description.
++ Comment system now has IP Address ignoring
+--> when you're ignoring an IP Address, comment hyperlink will be hidden from the specified IP Address
++ Fixed the SQL upgrade code
+
+********** 1.3.6-Beta 3 **********
++ Critical Update on Javascript
++ Now you can have multi IDs, for &fid, &gid, &rgid
++ Introducing some parameters:
+--+ &showonly : images | folders
+--+ $customgetparams (for nesting with other snippets)
++ Directory & images share same pagination
++ English libraries, except lightwindow (author's site is dead)
++ Broken down Module into classes and templates, will be very useful for further development of any additional PHP functions or Module's interface.
++ See the help page
++ Libraries arguments now have been merged in one file only: includes/config.libs.easy2gallery.php
+
+IMPORTANT UPGRADE step:
+you must change your module code as:
+include(MODX_BASE_PATH.'assets/modules/easy2/index.php');
+
+********** 1.3.6-Beta 2 **********
+
+MODULE
+1. file's/folder's name will not be renamed again
+2. the original folder's & file's names restoration in the upgrading installation process
+3. each of folders will have index.html (Unautorized Direct Access to folder), each time of directory creation or each time synchro action finds a folder doesn't have index.html.
+4. as #3, this time synchro will exclude index.html, index.htm, index.php, Thumbs.db for the database synchronization.
+5. editing directory name will also rename the real folder's name.
+6. change the default installation language.
+7. add output buffering to avoid PHP's memory limit.
+8. add natural sort order of gallery's list
+
+SNIPPET
+1. Now with PHP classes.
+2. Directories and files are now sharing the same Grid and Pagination. The &limit parameter applies as the joined result.
+3. Comment with email validation.
+
+LANGUAGE
+1. English
+2. Russian
+3. Spanish ( credit: redstormj (Jose R. Lopez) )
+4. Dutch ( credit: DNA )
