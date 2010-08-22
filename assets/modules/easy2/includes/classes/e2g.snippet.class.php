@@ -818,7 +818,7 @@ class e2g_snip extends e2g_pub {
 
         // Gallery's wrapper ID
         $_e2g['wrapper'] = $e2g_wrapper;
-        
+
         // MULTIPLE INSTANCES id
         $_e2g['sid'] = $e2g_static_instances;
 
@@ -905,7 +905,7 @@ class e2g_snip extends e2g_pub {
 
         // Gallery's wrapper ID
         $_e2g['wrapper'] = $e2g_wrapper;
-        
+
         // END the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
@@ -995,7 +995,7 @@ class e2g_snip extends e2g_pub {
 
         // Gallery's wrapper ID
         $_e2g['wrapper'] = $e2g_wrapper;
-        
+
         // END the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
@@ -1195,9 +1195,9 @@ class e2g_snip extends e2g_pub {
         }
         // goldsky -- only to switch between localhost and live site.
         if (strpos($_SERVER['DOCUMENT_ROOT'], '/') === (int) 0) {
-            $urlencoding = str_replace('%2F', '/', rawurlencode($gdir . $thumb_path));
+            $urlencoding = $gdir . str_replace('%2F', '/', rawurlencode($thumb_path));
         } else
-            $urlencoding = $this->_e2g_encode($gdir . $thumb_path);
+            $urlencoding = $gdir . $this->_e2g_encode($thumb_path);
         return $urlencoding;
     }
 
@@ -1777,11 +1777,11 @@ class e2g_snip extends e2g_pub {
         unset($_ssfile);
 
         // wrapping the slideshow with E2G's internal ID
-        $output = '<div id="'.$e2g_wrapper.'">';
+        $output = '<div id="' . $e2g_wrapper . '">';
 
         // return the slideshow
         $output .= $ss_display;
-        
+
         $output .= '</div>';
         return $output;
     }

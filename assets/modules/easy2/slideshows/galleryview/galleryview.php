@@ -272,9 +272,10 @@ else {
 
         // ------------- start the images looping ------------- //
         $j=0;
+        $landingpage = $landingpage!='' ? $landingpage : $modx->documentIdentifier;
         for ($i=0;$i<$count;$i++) {
             $ss_display .= '
-            <li><a target="_self" href="'.$modx->makeUrl($landingpage).'&fid='.$_ssfile['id'][$i].'&lp='.$landingpage.'">
+            <li><a target="_self" href="'.$modx->makeUrl($landingpage,null,'fid='.$_ssfile['id'][$i]).'&lp='.$landingpage.'">
                     <img src="'.$_ssfile['thumbsrc'][$i].'" alt="'.$_ssfile['name'][$i].'" title="'.$_ssfile['title'][$i].'" />
                 </a>
             </li>';
