@@ -1,9 +1,10 @@
 <?php
-// disable for a reason:
+// disabled for:
 // http://modxcms.com/forums/index.php/topic,23177.msg308887.html#msg308887
 //header('content-type: text/html;' . $lng['charset']);
-$setlocale = @explode(',', trim(trim($lng['setlocale'], "setlocale("), ')'));
-call_user_func_array('setlocale', array(constant(trim($setlocale[0])), trim($setlocale[1])));
+// http://modxcms.com/forums/index.php/topic,23177.msg309172.html#msg309172
+// $setlocale = @explode(',', trim(trim($lng['setlocale'], "setlocale("), ')'));
+// call_user_func_array('setlocale', array(constant(trim($setlocale[0])), trim($setlocale[1])));
 
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
@@ -265,7 +266,7 @@ $_t = $this->e2gmod_cfg['_t'];
                 <?php include_once 'pane.imageupload.inc.php'; ?>
                 <?php include_once 'pane.comments.inc.php'; ?>
                 <?php include_once 'pane.config.inc.php'; ?>
-<?php include_once 'pane.help.inc.php'; ?>
+                <?php include_once 'pane.help.inc.php'; ?>
             </div>
         </div>
     </body>
