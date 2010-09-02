@@ -16,5 +16,3 @@ $e2g_lang['russian-UTF8'] = array (
         'title' => 'Комментарии',
         'usercomment' => 'Комментарий',
 );
-?>
-

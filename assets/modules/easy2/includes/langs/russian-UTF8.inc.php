@@ -500,4 +500,3 @@ $e2g_lang['russian-UTF8'] = array (
         'zip_open_err' => 'Не удалось открыть zip файл',
         'zip_select_none' => 'Выберите папку или файл для загрузки',
 );
-?>

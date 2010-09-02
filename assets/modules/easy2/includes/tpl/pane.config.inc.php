@@ -356,7 +356,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['crumbs_showCurrent_cfg']; ?>:</b></td>
                         <td>
-                            <span style="color:green;">&amp;crumbs_showAsLinks= 0 | 1</span>
+                            <span style="color:green;">&amp;crumbs_showCurrent= 0 | 1</span>
                             <input name="crumbs_showCurrent" type="radio" value="0"<?php echo ($e2g['crumbs_showCurrent']==0?' checked="checked"':''); ?> style="border:0" />
                                 <b><?php echo $lng['off']; ?></b>
                             <input name="crumbs_showCurrent" type="radio" value="1"<?php echo ($e2g['crumbs_showCurrent']==1?' checked="checked"':''); ?> style="border:0" />
@@ -369,7 +369,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['crumbs_showPrevious_cfg']; ?>:</b></td>
                         <td>
-                            <span style="color:green;">&amp;crumbs_showAsLinks= 0 | 1</span>
+                            <span style="color:green;">&amp;showPrevious= 0 | 1</span>
                             <input name="crumbs_showPrevious" type="radio" value="0"<?php echo ($e2g['crumbs_showPrevious']==0?' checked="checked"':''); ?> style="border:0" />
                                 <b><?php echo $lng['off']; ?></b>
                             <input name="crumbs_showPrevious" type="radio" value="1"<?php echo ($e2g['crumbs_showPrevious']==1?' checked="checked"':''); ?> style="border:0" />

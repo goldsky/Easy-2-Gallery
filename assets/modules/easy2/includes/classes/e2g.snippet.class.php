@@ -1,8 +1,5 @@
 <?php
 
-//header('Content-Type: text/html; charset=UTF-8');
-//set_ini('display_errors', '1');
-
 /**
  * EASY 2 GALLERY
  * Gallery Snippet Class for Easy 2 Gallery Module for MODx Evolution
@@ -11,7 +8,6 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-//require_once E2G_SNIPPET_PATH . 'includes/utf8/utf8.php';
 
 class e2g_snip extends e2g_pub {
 
@@ -27,6 +23,7 @@ class e2g_snip extends e2g_pub {
     private $_e2g = array();
 
     public function __construct($e2gsnip_cfg) {
+        parent::__construct($e2gsnip_cfg, $e2g, $lng);
         $this->e2gsnip_cfg = $e2gsnip_cfg;
         $this->_e2g = $_e2g;
     }

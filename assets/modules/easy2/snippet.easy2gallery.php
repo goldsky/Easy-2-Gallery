@@ -29,7 +29,7 @@ if (file_exists(E2G_SNIPPET_PATH . 'includes/configs/config.easy2gallery.php')) 
 echo '
 <noscript>
     <style type="text/css">
-        #' . $e2g['e2g_wrapper'] . ' {display:none;}
+        .' . $e2g['e2g_wrapper'] . ' {display:none;}
     </style>';
 if (file_exists($e2g['jsdisabled_tpl']))
     include_once $e2g['jsdisabled_tpl'];

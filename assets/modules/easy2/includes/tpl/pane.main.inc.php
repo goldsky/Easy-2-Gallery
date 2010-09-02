@@ -1,7 +1,7 @@
 <?php
 // disabled for:
 // http://modxcms.com/forums/index.php/topic,23177.msg308887.html#msg308887
-//header('content-type: text/html;' . $lng['charset']);
+// header('content-type: text/html;' . $lng['charset']);
 // http://modxcms.com/forums/index.php/topic,23177.msg309172.html#msg309172
 // $setlocale = @explode(',', trim(trim($lng['setlocale'], "setlocale("), ')'));
 // call_user_func_array('setlocale', array(constant(trim($setlocale[0])), trim($setlocale[1])));

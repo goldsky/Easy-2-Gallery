@@ -9,7 +9,6 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-//require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
 class e2g_mod extends e2g_pub {
     /**
@@ -29,6 +28,7 @@ class e2g_mod extends e2g_pub {
     public $lng;
 
     public function  __construct($e2gmod_cfg, $e2g, $lng) {
+        parent::__construct($e2gmod_cfg, $e2g, $lng);
         $this->e2gmod_cfg = $e2gmod_cfg;
         $this->e2g = $e2g;
 //        $this->lng = $lng;

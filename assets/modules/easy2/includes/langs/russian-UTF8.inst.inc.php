@@ -32,4 +32,3 @@ $e2g_lang['russian-UTF8'] = array (
         'table' => 'Таблица',
         'upgraded' => 'Обновление завершено.',
 );
-?>

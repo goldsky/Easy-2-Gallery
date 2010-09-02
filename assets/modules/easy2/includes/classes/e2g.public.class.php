@@ -1,8 +1,5 @@
 <?php
 
-//header('Content-Type: text/html; charset=UTF-8');
-//set_ini('display_errors', '1');
-
 /**
  * EASY 2 GALLERY
  * Gallery Snippet Class for Easy 2 Gallery Module for MODx Evolution
@@ -11,7 +8,6 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-//require_once MODX_BASE_PATH . 'assets/modules/easy2/includes/utf8/utf8.php';
 
 class e2g_pub { // public/protected class
     /**
