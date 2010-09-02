@@ -9,4 +9,6 @@ switch ($e->name) {
     case 'OnWebPageComplete':
         $_SESSION['e2g_instances'] = 0;
         break;
+    default :
+        break;
 }
