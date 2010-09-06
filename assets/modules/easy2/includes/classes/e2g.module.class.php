@@ -501,55 +501,6 @@ class e2g_mod extends e2g_pub {
                 // MOVING IMAGES
                 if (!empty($_POST['im']) && !empty($_POST['newparent'])) {
                     foreach ($_POST['im'] as $k => $v) {
-                        // update the database
-                        if (is_numeric($k)) {
-                            $files = array();
-                            $files_res = mysql_query(
-                                    'SELECT id, dir_id '
-                                    .'FROM '.$modx->db->config['table_prefix'].'easy2_files '
-                                    .'WHERE id='.(int) $k
-                            );
-                            while ($l = mysql_fetch_array($files_res)) {
-                                $files[$l['id']]['dir_id'] = $l['dir_id'];
-                            }
-                            mysql_free_result($files_res);
-
-                            // reject moving to the same new parent
-                            if ( $_POST['newparent'] == $files[$k]['dir_id'] ) {
-                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_to_same_dir_err'];
-                                continue;
-                            }
-
-                            // reject overwrite
-                            $files_check_s = 'SELECT A.id ai, B.filename bf '
-                                    .'FROM '.$modx->db->config['table_prefix'].'easy2_files A, '
-                                    .$modx->db->config['table_prefix'].'easy2_files B '
-                                    .'WHERE A.filename=B.filename '
-                                    .'AND A.id='.(int) $k .' '
-                                    .'AND B.dir_id='.(int) $_POST['newparent']
-                            ;
-                            $files_check_q = mysql_query($files_check_s);
-                            while ($f = mysql_fetch_array($files_check_q)) {
-                                $files_check[$f['ai']]['filename'] = $f['bf'];
-                            }
-                            mysql_free_result($files_check_q);
-                            if ( isset( $files_check[$k]['filename'] ) ) {
-                                $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_move_err']
-                                        .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
-                                continue;
-                            }
-
-                            $updatefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
-                                    .' SET dir_id='.$_POST['newparent'].' '
-                                    .' WHERE id='.(int) $k;
-
-                            if (mysql_query($updatefile)) {
-                                $res['fdb'][0]++;
-                            } else {
-                                $res['fdb'][1]++;
-                            }
-                            mysql_free_result($updatefile);
-                        }
                         // move the file
                         if (!empty($v)) {
                             $v = str_replace('../', '', $this->_e2g_decode($v));
@@ -562,7 +513,7 @@ class e2g_mod extends e2g_pub {
                             unset ($newparent[1]);
                             $newdir = $this->e2gmod_cfg['gdir'];
                             if (!empty($newparent)) $newdir .= implode( '/', $newparent ) .'/' ;
-                            $newfile['origin'] = $newdir.$this->_basename_safe($v);
+                            $newfile['origin'] = $newdir.$this->_basename_safe($this->_e2g_encode($v));
                             $newfile['basename'] = $this->_basename_safe($newfile['origin']);
                             $newfile['decoded'] = $this->_e2g_decode($newfile['origin']);
                             $newfile['chmod'] = chmod( MODX_BASE_PATH . $newfile['decoded'] , 0755 );
@@ -572,10 +523,63 @@ class e2g_mod extends e2g_pub {
                                         .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
                                 continue;
                             } else {
-                                $movefile =  @rename('../'.$oldfile['decoded'], '../' . $newfile['decoded'] ) ;
+                                $movefile =  @rename('../'.$oldfile['origin'], '../' . $newfile['decoded'] ) ;
                                 if ($movefile) {
+                                    // update the database
+                                    if (is_numeric($k)) {
+                                        $files = array();
+                                        $files_res = mysql_query(
+                                                'SELECT id, dir_id '
+                                                .'FROM '.$modx->db->config['table_prefix'].'easy2_files '
+                                                .'WHERE id='.(int) $k
+                                        );
+                                        while ($l = mysql_fetch_array($files_res)) {
+                                            $files[$l['id']]['dir_id'] = $l['dir_id'];
+                                        }
+                                        mysql_free_result($files_res);
+
+                                        // reject moving to the same new parent
+                                        if ( $_POST['newparent'] == $files[$k]['dir_id'] ) {
+                                            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_to_same_dir_err'];
+                                            continue;
+                                        }
+
+                                        // reject overwrite
+                                        $files_check_s = 'SELECT A.id ai, B.filename bf '
+                                                .'FROM '.$modx->db->config['table_prefix'].'easy2_files A, '
+                                                .$modx->db->config['table_prefix'].'easy2_files B '
+                                                .'WHERE A.filename=B.filename '
+                                                .'AND A.id='.(int) $k .' '
+                                                .'AND B.dir_id='.(int) $_POST['newparent']
+                                        ;
+                                        $files_check_q = mysql_query($files_check_s);
+                                        while ($f = mysql_fetch_array($files_check_q)) {
+                                            $files_check[$f['ai']]['filename'] = $f['bf'];
+                                        }
+                                        mysql_free_result($files_check_q);
+                                        if ( isset( $files_check[$k]['filename'] ) ) {
+                                            $_SESSION['easy2err'][] = __LINE__.' : '. $lng['file_move_err']
+                                                    .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
+                                            continue;
+                                        }
+
+                                        $updatefile = 'UPDATE '.$modx->db->config['table_prefix'].'easy2_files '
+                                                .' SET dir_id='.$_POST['newparent'].' '
+                                                .' WHERE id='.(int) $k;
+
+                                        if (mysql_query($updatefile)) {
+                                            $res['fdb'][0]++;
+                                        } else {
+                                            $res['fdb'][1]++;
+                                        }
+                                        mysql_free_result($updatefile);
+                                    }
                                     $res['ffp'][0]++;
                                 } else {
+                                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err']
+                                            .' <span style="color:red;">' . $this->_basename_safe($v).'</span>';
+                                    $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldfile['origin'];
+                                    $_SESSION['easy2err'][] = __LINE__ . ' : to : ' . $newfile['decoded'];
                                     $res['ffp'][1]++;
                                 }
                             }
