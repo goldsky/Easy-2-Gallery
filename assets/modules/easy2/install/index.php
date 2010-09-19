@@ -524,7 +524,7 @@ function system_check($lngi) {
     }
 
     // PHP Multibyte String
-    if (is_array(mb_get_info())) {
+    if (is_array(@mb_get_info())) {
         echo '<li>';
         echo $icon_ok.'PHP Multibyte String enabled';
         echo '</li>';

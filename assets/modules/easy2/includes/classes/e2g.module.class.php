@@ -503,7 +503,7 @@ class e2g_mod extends e2g_pub {
                     foreach ($_POST['im'] as $k => $v) {
                         // move the file
                         if (!empty($v)) {
-                            $v = str_replace('../', '', $this->_e2g_decode($v));
+
                             $oldfile['origin'] = str_replace('../', '', $v );
                             $oldfile['basename'] = $this->_basename_safe($v);
                             $oldfile['decoded'] = str_replace('../', '', $this->_e2g_decode($v) );
@@ -523,7 +523,7 @@ class e2g_mod extends e2g_pub {
                                         .' <span style="color:red;">'.$this->_basename_safe($v).'</span>, '. $lng['file_exists'] .'.';
                                 continue;
                             } else {
-                                $movefile =  @rename('../'.$oldfile['origin'], '../' . $newfile['decoded'] ) ;
+                                $movefile =  @rename('../'.$oldfile['decoded'], '../' . $newfile['decoded'] ) ;
                                 if ($movefile) {
                                     // update the database
                                     if (is_numeric($k)) {
@@ -576,8 +576,7 @@ class e2g_mod extends e2g_pub {
                                     }
                                     $res['ffp'][0]++;
                                 } else {
-                                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err']
-                                            .' <span style="color:red;">' . $this->_basename_safe($v).'</span>';
+                                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err'];
                                     $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldfile['origin'];
                                     $_SESSION['easy2err'][] = __LINE__ . ' : to : ' . $newfile['decoded'];
                                     $res['ffp'][1]++;
