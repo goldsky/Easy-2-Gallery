@@ -1573,7 +1573,12 @@ class e2g_mod extends e2g_pub {
         $nameAlias = $modx->stripAlias($name);
         if ($name!=$nameAlias) {
             $basepath = dirname($path);
-            rename($path, $basepath.'/'.$this->_e2g_decode($nameAlias)) or die(__LINE__.'');
+            $rename = rename($path, $basepath . '/' . $this->_e2g_decode($nameAlias));
+            if (!$rename) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . htmlspecialchars_decode($lng['dir_rename_err']);
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path . ' => ' . $basepath . '/' . $this->_e2g_decode($nameAlias);
+                return FALSE;
+            }
             @chmod($basepath.'/'.$this->_e2g_decode($nameAlias), 0755);
             // glue them back
             $path = $basepath.'/'.$this->_e2g_decode($nameAlias).'/';
@@ -1667,7 +1672,12 @@ class e2g_mod extends e2g_pub {
             if ($n!=$fnameAlias) {
                 // converting foldername using TransAlias plugin
                 $basefpath = dirname($f);
-                rename($f, $basefpath.'/'.$this->_e2g_decode($fnameAlias)) or die(__LINE__.'');
+                $rename = rename($f, $basefpath . '/' . $this->_e2g_decode($fnameAlias));
+                if (!$rename) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_rename_err'];
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $f . ' => ' . $basefpath . '/' . $this->_e2g_decode($fnameAlias);
+                    return FALSE;
+                }
                 @chmod($basefpath.'/'.$this->_e2g_decode($fnameAlias), 0644);
                 $f = $basefpath.'/'.$this->_e2g_decode($fnameAlias);
                 $n = $fnameAlias;
@@ -1699,35 +1709,125 @@ class e2g_mod extends e2g_pub {
      */
     private function _resize_img ($f, $inf, $w, $h, $thq) {
         $e2g = $this->e2g;
-        if ( ( ($e2g['maxw'] > 0) && ($inf[0] > $e2g['maxw']) )
-                || ( ($e2g['maxh'] > 0) && ($inf[1] > $e2g['maxh']) ) ) {
-            // OPEN
-            if ($inf[2] == 1) $im = imagecreatefromgif ($f);
-            elseif ($inf[2] == 2) $im = imagecreatefromjpeg ($f);
-            elseif ($inf[2] == 3) $im = imagecreatefrompng ($f);
-            else {
-                $_SESSION['easy2err'][] = __LINE__.' : '.$f;
-                return FALSE;
+        $lng = $this->lng;
+
+        // if both configs are not zeros
+        if ( $w + $h != 0 ) {
+
+            // fixing the zero values to get a proportional dimension
+            if ($w == 0 && $h != 0){
+                $w = round( $h * $inf[0] / $inf[1] );
+            }
+            elseif ($w != 0 && $h == 0) {
+                $h = round( $w * $inf[1] / $inf[0] );
             }
 
-            // RESIZE
-            if ($inf[0] > $inf[1]) $h = round($inf[1] * $w / $inf[0]);
-            else $w = round($inf[0] * $h / $inf[1]);
-            // CREATE NEW IMG
-            $pic = imagecreatetruecolor($w, $h);
-            $bgc = imagecolorallocate($pic, 255, 255, 255);
-            imagefill($pic, 0, 0, $bgc);
-            imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
+            // width / height
+            $src_ratio = round ( $inf[0] / $inf[1], 2 );
+            $dst_ratio = round ( $w / $h, 2 );
+            // height / width
+            $src_flip_ratio = round ( $inf[1] / $inf[0], 2 );
+            $dst_flip_ratio = round ( $h / $w, 2 );
 
-            // SAVE
-            if ($inf[2] == 1) imagegif ($pic, $f);
-            elseif ($inf[2] == 2) imagejpeg($pic, $f, $thq);
-            elseif ($inf[2] == 3) imagepng ($pic, $f);
-            @chmod($f, 0644);
-            imagedestroy($pic);
-            imagedestroy($im);
-            return TRUE;
+            if ( $src_ratio >= 1 && $dst_ratio >= 1           // both are landscape ratios
+                    or $src_ratio <= 1 && $dst_ratio <= 1 ) { // both are portrait ratios
+                // thinner ratio
+                if ( $src_ratio < $dst_ratio ) {
+                    // taller height source image
+                    if ( $inf[1] > $h ) {
+                        $w = round( $h * $inf[0] / $inf[1], 2 );
+                    }
+                } else {
+                    // wider width source image
+                    if ( $inf[0] > $w ) {
+                        $h = round( $w * $inf[1] / $inf[0], 2 );
+                    }
+                }
+            }
+
+            if ($e2g['resize_orientated_img'] == 1) {
+
+                // the source image is the same or smaller than the destination on width AND height
+                if ( $inf[1] <= $w && $inf[0] <= $h ) {
+                    return FALSE;
+                }
+
+                if ( $src_ratio < 1 && $dst_ratio > 1           // source is portrait, destination is landscape
+                        or $src_ratio > 1 && $dst_ratio < 1 ) { // source is landscape, destination is portrait
+                    // thinner ratio
+                    if ( $src_ratio < $dst_flip_ratio ) {
+                        $h = $w;
+                        $w = round( $h * $inf[0] / $inf[1], 2 );
+                    }
+                    // thicker ratio
+                    else {
+                        $w = $h;
+                        $h = round( $w * $inf[1] / $inf[0], 2 );
+                    }
+                 }
+            } // if ($e2g['resize_orientated_img'] == 1)
+            else {
+
+                // the source image is smaller than the destination on width AND height
+                if ( $inf[0] <= $w && $inf[1] <= $h ) {
+                    return FALSE;
+                }
+
+                // source is portrait, destination is landscape
+                if ( $src_ratio < 1 && $dst_ratio > 1 ) {
+                    if ( $inf[1] > $h ) {
+                        if ( $src_ratio < $dst_ratio ) {
+                            $w = round( $h * $inf[0] / $inf[1], 2 );
+                        } else {
+                            $h = round( $w * $inf[1] / $inf[0], 2 );
+                        }
+                    }
+
+                    // if the source as same as the destination, do nothing and return back
+                    if ( $inf[1] == $h ) {
+                        return FALSE;
+                    }
+
+                 } // if ( $src_ratio < 1 && $dst_ratio > 1 )
+                // source is landscape, destination is portrait
+                elseif ( $src_ratio > 1 && $dst_ratio < 1) {
+                    $h = round( $w * $inf[1] / $inf[0], 2 );
+                }
+
+            } // else if not oriented
+
+        } // if ( $w + $h !== 0 )
+
+        // OPEN
+        if ($inf[2] == 1)
+            $im = imagecreatefromgif($f);
+        elseif ($inf[2] == 2)
+            $im = imagecreatefromjpeg($f);
+        elseif ($inf[2] == 3)
+            $im = imagecreatefrompng($f);
+        else {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_create_err'] . ' ' . $f;
+            return FALSE;
         }
+
+        // CREATE NEW IMG
+        $pic = imagecreatetruecolor($w, $h);
+        $bgc = imagecolorallocate($pic, 255, 255, 255);
+        imagefill($pic, 0, 0, $bgc);
+        imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
+
+        // SAVE
+        if ($inf[2] == 1)
+            imagegif($pic, $f);
+        elseif ($inf[2] == 2)
+            imagejpeg($pic, $f, $thq);
+        elseif ($inf[2] == 3)
+            imagepng($pic, $f);
+        @chmod($f, 0644);
+        imagedestroy($pic);
+        imagedestroy($im);
+
+        return TRUE;
     }
 
     /**

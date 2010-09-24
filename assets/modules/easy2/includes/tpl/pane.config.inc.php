@@ -78,7 +78,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="150"><b><?php echo $lng['img_src_cfg']; ?>:</b></td>
+                        <td width="180"><b><?php echo $lng['img_src_cfg']; ?>:</b></td>
                         <td><span style="color:green;">&amp;img_src=</span>
                             <select name="img_src">
                                 <option value="original"<?php echo ($e2g['img_src']=='original'?' selected="selected"':''); ?>>original (<?php echo $lng['original']; ?>)</option>
@@ -90,7 +90,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['img_src_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td width="150"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td><b><?php echo $lng['w']; ?>:</b></td>
                         <td><input name="maxw" type="text" value="<?php echo $e2g['maxw']; ?>" size="4" /></td>
                     </tr>
                     <tr>
@@ -102,6 +102,16 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['img_orientation_follow']; ?>:</b></td>
+                        <td>
+                            <input type="radio" name="resize_orientated_img" value="0"<?php echo ($e2g['resize_orientated_img'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['no']; ?>
+                            <input type="radio" name="resize_orientated_img" value="1"<?php echo ($e2g['resize_orientated_img'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes']; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['img_orientation_follow_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['thq']; ?>:</b></td>

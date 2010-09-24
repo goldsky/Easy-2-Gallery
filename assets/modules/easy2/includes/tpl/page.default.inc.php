@@ -95,6 +95,8 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <th><?php echo $lng['tag']; ?></th>
                         <th width="80"><?php echo $lng['modified']; ?></th>
                         <th width="40"><?php echo $lng['size']; ?></th>
+                        <th width="40">W (px)</th>
+                        <th width="40">H (px)</th>
                         <th width="60" align="right"><?php echo $lng['options']; ?></th>
                     </tr>
 
@@ -161,7 +163,9 @@ while ($l = mysql_fetch_array($resultdesc)) {
                                     ?>
                         </td>
                         <td><?php echo @date($e2g['mdate_format'], $time); ?></td>
-                        <td>---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
                         <td align="right" nowrap>
                                     <?php echo $buttons; ?>
                             <a href="<?php echo $index; ?>&act=delete_dir&dir_path=<?php echo $gdir.$name.(empty($id)?'':'&dir_id='.$id); ?>"
@@ -184,9 +188,11 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/folder_delete.png" width="16" height="16" border="0" alt="" /></td>
                         <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td><?php echo $alias; ?></td>
-                        <td>---</td>
-                        <td>---</td>
-                        <td>---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
                         <td align="right">
                             <a href="<?php echo $index; ?>&act=delete_dir&dir_id=<?php echo $v['id']; ?>"
                                onclick="return confirmDeleteFolder();">
@@ -215,7 +221,8 @@ while ($l = mysql_fetch_array($resultdesc)) {
                         foreach ($files as $f) {
                             if ($this->is_validfolder($f)) continue;
                             if (!$this->is_validfile($f)) continue;
-                            $size = round(filesize($f)/1024);
+                            $size = round(filesize($f) / 1024);
+                            list($width, $height) = @getimagesize($f);
                             $time = filemtime($f);
                             $name = $this->_basename_safe($f);
                             $name = $this->_e2g_encode($name);
@@ -275,7 +282,9 @@ while ($l = mysql_fetch_array($resultdesc)) {
                                     ?>
                         </td>
                         <td valign="top"><?php echo @date($e2g['mdate_format'], $time); ?></td>
-                        <td valign="top"><?php echo $size; ?>Kb</td>
+                        <td valign="top" style="text-align:right;"><?php echo $size; ?>Kb</td>
+                        <td valign="top" style="text-align:right;"><?php echo $width; ?></td>
+                        <td valign="top" style="text-align:right;"><?php echo $height; ?></td>
                         <td align="right" nowrap valign="top">
                         <?php echo $buttons; ?>
                             <a href="<?php echo $index; ?>&act=delete_file&file_path=<?php echo $gdir.$name.(empty($id)?'':'&file_id='.$id); ?>"
@@ -298,11 +307,13 @@ while ($l = mysql_fetch_array($resultdesc)) {
                     <tr<?php echo $cl[$i%2]; ?>>
                         <td><input name="im[<?php echo $v['id']; ?>]" value="" type="checkbox" style="border:0;padding:0"></td>
                         <td><img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/picture_delete.png" width="16" height="16" border="0" alt="" /></td>
-                        <td><b style="color:red;"><u><?php echo $v['filename']; ?></u></b> [<?php echo $v['id']; ?>]</td>
-                        <td><?php echo $v['name']; ?></td>
+                        <td><b style="color:red;"><u><?php echo $v['name']; ?></u></b> [<?php echo $v['id']; ?>]</td>
                         <td><?php echo $alias; ?></td>
-                        <td>---</td>
-                        <td>---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
+                        <td style="text-align:center;">---</td>
                         <td align="right" nowrap>
                             <a href="<?php echo $index; ?>&page=comments&file_id=<?php echo $v['id']; ?>&pid=<?php echo $parent_id; ?>">
                                 <img src="<?php echo E2G_MODULE_URL ; ?>includes/icons/comments.png" width="16" height="16"

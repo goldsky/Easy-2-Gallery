@@ -52,6 +52,7 @@ $def_e2g = array (
         'recaptcha_key_public' => '',
         'recaptcha_theme' => 'white',
         'recaptcha_theme_custom' => '',
+        'resize_orientated_img' => 0,
         'resize_type' => 'inner',
         'resizeoldimg' => 0,
         'ss_allowedratio' => '0.75-1.25',
