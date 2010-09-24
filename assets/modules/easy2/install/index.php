@@ -4,7 +4,7 @@ $debug = 0;                             // MODx's debug variable
 $_t = $modx->config['manager_theme'];   // MODx's manager theme
 $_a = (int) $_GET['a'];                 // MODx's action ID
 $_i = (int) $_GET['id'];                // MODx's module ID
-$index = 'index.php?a=' . $_a . '&id=' . $_i . ($e2g['mod_id'] != $_GET['id'] ? '&e2g_id=' . $e2g['mod_id'] : '');
+$index = 'index.php?a=' . $_a . '&id=' . $_i . ( !empty($e2g['mod_id']) ? '&e2g_id=' . $e2g['mod_id'] : '');
 
 if (file_exists('../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php')) {
     include '../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php';
