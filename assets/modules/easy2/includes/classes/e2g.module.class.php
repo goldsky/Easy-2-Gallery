@@ -418,6 +418,8 @@ class e2g_mod extends e2g_pub {
                                 continue;
 //                                exit;
                             } else {
+                                // initiate the variables inside _move_all function.
+                                $movedir = $this->_move_all(MODX_BASE_PATH . $oldpath['decoded'], MODX_BASE_PATH . $newpath['decoded']);
 
                                 //************* DATABASE UPDATE *************//
                                 if (is_numeric($k)) {
@@ -425,7 +427,7 @@ class e2g_mod extends e2g_pub {
                                     // goldsky -- the same result with this:
                                     // $ids = $tree->update((int) $k, $this->_basename_safe($v), (int) $_POST['newparent']);
                                     if (!$ids) {
-                                        if (!empty($res['e'])) $_SESSION['easy2err'] = $res['e'];
+                                        if (!empty($movedir['e'])) $_SESSION['easy2err'] = $movedir['e'];
                                         $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_move_err'].'
                                             from: <span style="color:blue;">'.$oldpath['origin'].'</span>
                                             to: <span style="color:blue;">'.$newpath['origin'].'</span>';
@@ -449,7 +451,6 @@ class e2g_mod extends e2g_pub {
                                 } // if (is_numeric($k))
 
                                 //************* CONTINUE FILE SYSTEM UPDATE *************//
-                                $movedir = $this->_move_all( MODX_BASE_PATH.$oldpath['decoded'], MODX_BASE_PATH.$newpath['decoded'] );
                                 if(!$movedir) {
                                     $_SESSION['easy2err'][] = __LINE__.' : '. $lng['dir_move_err'].' "'.$newpath['origin']."'";
                                 } else {
@@ -487,12 +488,12 @@ class e2g_mod extends e2g_pub {
                     }
 
                     // ****************** list names ****************** //
-                    if ( !empty($res['dir']) || !empty($res['file']) ) {
-                        for ($i=0;$i<count($res['dir']);$i++) {
-                            $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' dir: '. $res['dir'][$i];
+                    if ( !empty($movedir['dir']) || !empty($movedir['file']) ) {
+                        for ($i=0;$i<count($movedir['dir']);$i++) {
+                            $_SESSION['easy2suc'][] = __LINE__.' : dir: '. $movedir['dir'][$i];
                         }
-                        for ($i=0;$i<count($res['file']);$i++) {
-                            $_SESSION['easy2suc'][] = __LINE__.' : '. __LINE__.' file: '. $res['file'][$i];
+                        for ($i=0;$i<count($movedir['file']);$i++) {
+                            $_SESSION['easy2suc'][] = __LINE__.' : file: '. $movedir['file'][$i];
                         }
                     }
                     // ****************** list names ****************** //
@@ -525,6 +526,8 @@ class e2g_mod extends e2g_pub {
                             } else {
                                 $movefile =  @rename('../'.$oldfile['decoded'], '../' . $newfile['decoded'] ) ;
                                 if ($movefile) {
+                                    $res['file'][] = $newfile['decoded'];
+
                                     // update the database
                                     if (is_numeric($k)) {
                                         $files = array();
@@ -587,6 +590,24 @@ class e2g_mod extends e2g_pub {
                             unset($oldfile,$newfile);
                         }
                     }
+
+                    if ($res['ffp'][0] == 0 && $res['fdb'][0] == 0) {
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['files_move_err'];
+                    } elseif ($res['ffp'][0] == $res['fdb'][0]) {
+                        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['ffp'][0] . ' ' . $lng['files_moved'] . '.';
+                    } else {
+                        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['fdb'][0] . ' ' . $lng['files_moved_fdb'] . '.';
+                        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['ffp'][0] . ' ' . $lng['files_moved_fhdd'] . '.';
+                    }
+
+                    // ****************** list names ****************** //
+                    if (!empty($res['file'])) {
+                        for ($i = 0; $i < count($res['file']); $i++) {
+                            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['file'][$i];
+                        }
+                    }
+                    // ****************** list names ****************** //
+
                 } // if (!empty($_POST['im']))
 
                 $this->_clean_cache($e2g, $lng);
