@@ -38,6 +38,7 @@ $e2g_lang['english'] = array (
     'charset' => 'UTF-8',
     'chmod_err' => 'Unable to change the permission',
     'chown_err' => 'Unable to change the owner/group',
+    'chown_err_disabled' => 'function is disabled',
     'classname' => 'Class name',
     'clean' => 'Clean',
     'clean_cache' => 'Clear cache',

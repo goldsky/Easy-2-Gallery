@@ -4360,6 +4360,11 @@ class e2g_mod extends e2g_pub {
         $ownerOld = $oldStat['uid'];
         $groupOld = $oldStat['gid'];
 
+        if (!function_exist('chown')) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' ' .  $lng['chown_err_disabled'];
+            return FALSE;
+        }
+
         if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
             // Set the user
             $newOwner = @chown($fullPath, $ownerCore);

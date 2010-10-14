@@ -592,7 +592,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // additional field for 1.4.0 RC1
     // cat_summary
     addField('easy2_dirs', 'cat_summary', 'VARCHAR(255) NULL DEFAULT NULL', 'AFTER cat_alias');
-    
+
     if (checkField($GLOBALS['table_prefix'] . 'easy2_dirs', 'cat_summary') === FALSE) {
         mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs ADD cat_summary varchar(255) default NULL AFTER cat_alias');
         $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_summary ' . $lngi['created'];
@@ -867,7 +867,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     );
 
     for ($i = 0; $i < count($updateSlideShows); $i++) {
-        updateTableContent($lngi, 'easy2_slideshows', 'WHERE name=\''.  $updateSlideShows[$i]['name'] . '\'', $updateSlideShows[$i]['script']);
+        updateTableContent($lngi, 'easy2_slideshows', 'WHERE name=\'' . $updateSlideShows[$i]['name'] . '\'', $updateSlideShows[$i]['script']);
     }
 
     // adding easy2_users_mgr table for 1.4.0 RC2
@@ -970,7 +970,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     );
 
     for ($i = 0; $i < count($updateViewers); $i++) {
-        updateTableContent($lngi, 'easy2_viewers', 'WHERE name=\''. $updateViewers[$i]['name'] . '\'', $updateViewers[$i]['script']);
+        updateTableContent($lngi, 'easy2_viewers', 'WHERE name=\'' . $updateViewers[$i]['name'] . '\'', $updateViewers[$i]['script']);
     }
 
     // adding easy2_webgroup_access table for 1.4.0 RC2
@@ -1140,114 +1140,114 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         <script type="text/javascript">
                             tpResources.addTabPage(document.getElementById("install"));
                         </script>
-                    <?php
-                    if (count($_SESSION['easy2err']) > 0 || count($_SESSION['easy2suc']) > 0) {
-                        $suc = $err = '';
-                        if (count($_SESSION['easy2err']) > 0) {
-                            $err = '<p class="warning">' . implode('<br />', $_SESSION['easy2err']) . '</p>';
-                            $_SESSION['easy2err'] = array();
-                            $err .= '<br /><br /><a href="#" onclick="document.location.href=\'' . $index . '\'"><b>' . $lngi['back'] . '</b></a>';
-                        }
-                        if (count($_SESSION['easy2suc']) > 0) {
-                            $suc = '<p class="success">' . implode('<br />', $_SESSION['easy2suc']) . '</p>';
-                            $_SESSION['easy2suc'] = array();
-                        }
-                        echo $suc . $err;
+<?php
+    if (count($_SESSION['easy2err']) > 0 || count($_SESSION['easy2suc']) > 0) {
+        $suc = $err = '';
+        if (count($_SESSION['easy2err']) > 0) {
+            $err = '<p class="warning">' . implode('<br />', $_SESSION['easy2err']) . '</p>';
+            $_SESSION['easy2err'] = array();
+            $err .= '<br /><br /><a href="#" onclick="document.location.href=\'' . $index . '\'"><b>' . $lngi['back'] . '</b></a>';
+        }
+        if (count($_SESSION['easy2suc']) > 0) {
+            $suc = '<p class="success">' . implode('<br />', $_SESSION['easy2suc']) . '</p>';
+            $_SESSION['easy2suc'] = array();
+        }
+        echo $suc . $err;
+    } else {
+?> <br />
+                    <form method="post" action="">
+                        <table cellspacing="0" cellpadding="0">
+                            <tr>
+                                <td><b><?php echo $lngi['path']; ?>:</b></td>
+                                <td><input name="path" type="text" style="width: 100%"
+                                           value="<?php echo $e2g['dir']; ?>" /> <input type="hidden"
+                                           name="mod_id"
+                                           value="<?php echo (!empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id']); ?>" />
+                                    <input type="hidden" name="plugin_id"
+                                           value="<?php echo $pluginId; ?>" /> <input type="hidden"
+                                           name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
+                            </tr>
+                        </table>
+                        <div><?php echo htmlspecialchars_decode($lngi['comment1'], ENT_QUOTES); ?></div>
+                        <div><?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?></div>
+                        <div style="color: green; font-weight: bold; font-size: 1.5em;"><?php echo htmlspecialchars_decode($lngi['system_check']); ?> :</div>
+
+<?php
+                    $iconOk = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_check.png" alt="" /> ';
+                    $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
+                    $disabled = '';
+                    echo '<ul>';
+                    // PHP version
+                    if (version_compare(PHP_VERSION, '5.2.0', '<')) {
+                        $disabled = 'disabled="disabled"';
+                        echo '<li>';
+                        echo $iconBad . 'PHP version ' . PHP_VERSION . ' (Min: 5.2.0)';
+                        echo '</li>';
                     } else {
-                    ?> <br />
-                        <form method="post" action="">
-                            <table cellspacing="0" cellpadding="0">
-                                <tr>
-                                    <td><b><?php echo $lngi['path']; ?>:</b></td>
-                                    <td><input name="path" type="text" style="width: 100%"
-                                               value="<?php echo $e2g['dir']; ?>" /> <input type="hidden"
-                                               name="mod_id"
-                                               value="<?php echo (!empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id']); ?>" />
-                                        <input type="hidden" name="plugin_id"
-                                               value="<?php echo $pluginId; ?>" /> <input type="hidden"
-                                               name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
-                                </tr>
-                            </table>
-                            <div><?php echo htmlspecialchars_decode($lngi['comment1'], ENT_QUOTES); ?></div>
-                            <div><?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?></div>
-                            <div style="color: green; font-weight: bold; font-size: 1.5em;"><?php echo htmlspecialchars_decode($lngi['system_check']); ?> :</div>
+                        echo '<li>';
+                        echo $iconOk . 'PHP version ' . PHP_VERSION;
+                        echo '</li>';
+                    }
 
-                        <?php
-                        $iconOk = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_check.png" alt="" /> ';
-                        $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
-                        $disabled = '';
-                        echo '<ul>';
-                        // PHP version
-                        if (version_compare(PHP_VERSION, '5.2.0', '<')) {
-                            $disabled = 'disabled="disabled"';
-                            echo '<li>';
-                            echo $iconBad . 'PHP version ' . PHP_VERSION . ' (Min: 5.2.0)';
-                            echo '</li>';
-                        } else {
-                            echo '<li>';
-                            echo $iconOk . 'PHP version ' . PHP_VERSION;
-                            echo '</li>';
-                        }
-
-                        // PHP magic_quotes_gpc()
+                    // PHP magic_quotes_gpc()
 //    if (function_exist('get_magic_quotes_gpc')) {
-                        if (get_magic_quotes_gpc ()) {
+                    if (get_magic_quotes_gpc ()) {
 //        $disabled = 'disabled="disabled"';
-                            echo '<li>';
-                            echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
-                            echo '</li>';
-                        } else {
-                            echo '<li>';
-                            echo $iconOk . 'PHP magic_quotes_gpc()=OFF';
-                            echo '</li>';
-                        }
+                        echo '<li>';
+                        echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
+                        echo '</li>';
+                    } else {
+                        echo '<li>';
+                        echo $iconOk . 'PHP magic_quotes_gpc()=OFF';
+                        echo '</li>';
+                    }
 
-                        // PHP Multibyte String
-                        if (function_exists('mb_get_info') && is_array(mb_get_info())) {
-                            echo '<li>';
-                            echo $iconOk . 'PHP Multibyte String enabled';
-                            echo '</li>';
-                        } else {
-                            $disabled = 'disabled="disabled"';
-                            echo '<li>';
-                            echo $iconBad . 'PHP Multibyte String disabled';
-                            echo '</li>';
-                        }
+                    // PHP Multibyte String
+                    if (function_exists('mb_get_info') && is_array(mb_get_info())) {
+                        echo '<li>';
+                        echo $iconOk . 'PHP Multibyte String enabled';
+                        echo '</li>';
+                    } else {
+                        $disabled = 'disabled="disabled"';
+                        echo '<li>';
+                        echo $iconBad . 'PHP Multibyte String disabled';
+                        echo '</li>';
+                    }
 
-                        // PHP Zipclass
-                        if (class_exists(ZipArchive)) {
-                            echo '<li>';
-                            echo $iconOk . 'PHP ZipArchive';
-                            echo '</li>';
-                        } else {
+                    // PHP Zipclass
+                    if (class_exists(ZipArchive)) {
+                        echo '<li>';
+                        echo $iconOk . 'PHP ZipArchive';
+                        echo '</li>';
+                    } else {
 //        $disabled = 'disabled="disabled"';
-                            echo '<li>';
-                            echo $iconBad . 'PHP ZipArchive';
-                            echo '</li>';
-                        }
+                        echo '<li>';
+                        echo $iconBad . 'PHP ZipArchive';
+                        echo '</li>';
+                    }
 
-                        // Easy 2 javascript library folders
-                        if (is_dir('../assets/libs')) {
-                            echo '<li>';
-                            echo $iconOk . 'assets/libs';
-                            echo '</li>';
-                        } else {
-                            $disabled = 'disabled="disabled"';
-                            echo '<li>';
-                            echo $iconBad . 'assets/libs';
-                            echo '</li>';
-                        }
+                    // Easy 2 javascript library folders
+                    if (is_dir('../assets/libs')) {
+                        echo '<li>';
+                        echo $iconOk . 'assets/libs';
+                        echo '</li>';
+                    } else {
+                        $disabled = 'disabled="disabled"';
+                        echo '<li>';
+                        echo $iconBad . 'assets/libs';
+                        echo '</li>';
+                    }
 
-                        if ($disabled == 'disabled="disabled"')
-                            $style = 'style="color:gray;"';
+                    if ($disabled == 'disabled="disabled"')
+                        $style = 'style="color:gray;"';
 
-                        echo '</ul>';
-                        ?>
+                    echo '</ul>';
+?>
                         <input type="submit" <?php echo $style; ?> value="<?php echo htmlspecialchars_decode($lngi['ok']); ?>" <?php echo $disabled; ?> />
                     </form>
-                    <?php
+<?php
                     }
-                    ?></div>
+?></div>
             </div>
         </div>
     </body>
