@@ -46,7 +46,9 @@ if (!empty($ssJs)) {
 }
 
 // start create the slideshow box
-$ssDisplay = '<div id="slideshow"><div>';
+$ssDisplay = '
+    <div id="slideshow">
+        <div>';
 $j = 0;
 for ($i = 0; $i < $countSlideshowFiles; $i++) {
     $dim = getimagesize($_ssFile['src'][$i]);
@@ -56,11 +58,8 @@ for ($i = 0; $i < $countSlideshowFiles; $i++) {
 
 //        echo $ssW/$ssH .'=>'. $imageRatio[$i].'<br />';
     $ssDisplay .= '
-                <img src="' . utf8_encode($_ssFile['src'][$i]) . '" alt="" title="' . $_ssFile['title'][$i] . '" '
+            <img src="' . utf8_encode($_ssFile['resizedimg'][$i]) . '" alt="" title="' . $_ssFile['title'][$i] . '" '
             . ( $i == 0 ? 'class="active" ' : '' )
-            . ( ( ($ssW / $ssH) < $imageRatio[$i] ) ?
-                    'height="' . $ssH . 'px" style="left:' . (($ssW - ($width[$i] * $ssH / $height[$i])) / 2) . 'px;" ' :
-                    'width="' . $ssW . 'px" style="top:' . (($ssH - ($height[$i] * $ssW / $width[$i])) / 2) . 'px;" ' )
             . '/>';
 
     // if there is a image number limitation
@@ -69,5 +68,7 @@ for ($i = 0; $i < $countSlideshowFiles; $i++) {
         break;
 }
 // end the slideshow box
-$ssDisplay .= '</div></div>';
+$ssDisplay .= '
+        </div>
+    </div>';
 echo $ssDisplay;
