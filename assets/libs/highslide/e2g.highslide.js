@@ -1,0 +1,10 @@
+hs.graphicsDir = "assets/libs/highslide/graphics/";
+hs.showCredits = false;
+hs.transitions = ['expand', 'crossfade'];
+hs.outlineType = "rounded-white";
+hs.allowSizeReduction = false;
+hs.outlineWhileAnimating = true;
+hs.captionEval = "this.a.title";
+hs.align = "center";
+hs.blockRightClick = true;
+hs.dimmingOpacity = 0.75;
