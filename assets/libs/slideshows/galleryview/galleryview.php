@@ -279,10 +279,10 @@ else {
 
         // ------------- start the images looping ------------- //
         $j = 0;
-        $landingpage = $landingpage != '' ? $landingpage : $modx->documentIdentifier;
+        $landingPage = $landingPage != '' ? $landingPage : $modx->documentIdentifier;
         for ($i = 0; $i < $countSlideshowFiles; $i++) {
             $ssDisplay .= '
-            <li><a target="_self" href="' . $modx->makeUrl($landingpage, null, 'fid=' . $_ssFile['id'][$i]) . '&lp=' . $landingpage . '">
+            <li><a target="_self" href="' . $modx->makeUrl($landingPage, null, 'fid=' . $_ssFile['id'][$i]) . '&lp=' . $landingPage . '">
                     <img src="' . $_ssFile['thumbsrc'][$i] . '" alt="' . $_ssFile['name'][$i] . '" title="' . $_ssFile['title'][$i] . '" />
                 </a>
             </li>';
