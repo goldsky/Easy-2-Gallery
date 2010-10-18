@@ -1215,7 +1215,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                     }
 
                     // PHP Zipclass
-                    if (class_exists(ZipArchive)) {
+                    if (class_exists('ZipArchive')) {
                         echo '<li>';
                         echo $iconOk . 'PHP ZipArchive';
                         echo '</li>';
@@ -1238,6 +1238,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         echo '</li>';
                     }
 
+                    $style = '';
                     if ($disabled == 'disabled="disabled"')
                         $style = 'style="color:gray;"';
 

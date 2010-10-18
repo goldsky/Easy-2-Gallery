@@ -303,7 +303,7 @@ div.com_action a:hover {
     TOP MENU NAVIGATION
 **/
 
-.navigation {
+span.navigation {
     position: relative;
     float: right;
     top: -15px;
@@ -311,7 +311,7 @@ div.com_action a:hover {
     letter-spacing: 2px;
 }
 
-.navigation span.navigationTitle {
+span.navigation span.navigationTitle {
     border: 1px solid #DDDDDD;
     background-color: #EEEEEE;
     margin-left: 3px;
@@ -322,31 +322,33 @@ div.com_action a:hover {
     font-weight: bold;
 }
 
-.navigation {
+span.navigation {
 /*    position: relative;*/
     display: block;
     text-align: right;
 }
 
-.navigation .navigationTree {
+span.navigation span.navigationTree {
     position: absolute;
+    right: 0;
+    top: 20px;
     display: none;
 }
 
-.navigation:hover {
+span.navigation:hover {
     cursor: pointer;
 }
 
-.navigation:hover .navigationBranch .active {
+span.navigation:hover span.navigationBranch .active {
     cursor: auto;
 }
 
-.navigation:hover .navigationTree {
+span.navigation:hover span.navigationTree {
     display: block;
     right: 1px;
 }
 
-.navigation .navigationBranch {
+span.navigation span.navigationBranch {
     display: block;
     border: 1px solid #DDDDDD;
     background-color: #FFFFFF;
@@ -354,21 +356,21 @@ div.com_action a:hover {
     font-weight: bold;
 }
 
-.navigation .navigationBranch a,
-.navigation .navigationBranch a:link {
+span.navigation span.navigationBranch a,
+span.navigation span.navigationBranch a:link {
     color: black;
     text-decoration: none;
 }
 
-.navigation .navigationBranch span {
+span.navigation span.navigationBranch span {
     display: block;
     padding: 2px 6px;
 }
 
-.navigation .navigationBranch:hover {
+span.navigation span.navigationBranch:hover {
     background-color: #EEEEEE;
 }
 
-.navigation .navigationBranch .active {
+span.navigation span.navigationBranch .active {
     background-color: #EEEEEE;
 }

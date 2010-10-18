@@ -1,5 +1,8 @@
 <?php
 
+$_a = isset($_a) ? $_a : $this->e2gmod_cfg['_a'];
+$_i = isset($_i) ? $_i : $this->e2gmod_cfg['_i'];
+
 $e2gPages = array(
     'dashboard' => array(
         'e2gpg' => '1'

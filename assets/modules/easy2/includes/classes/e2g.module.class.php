@@ -1908,7 +1908,7 @@ class e2g_mod extends e2g_pub {
                 if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->_e2gDecode($gdir . $filteredName))) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . '../' . $this->_e2gDecode($gdir . $filteredName);
                 }
-                $this->_changeModOwnGrp('file', '../' . $this->_e2gDecode($gdir . $filteredName));
+                $this->_changeModOwnGrp('file', '../' . $this->_e2gDecode($gdir . $filteredName), FALSE);
 
                 // invoke the plugin
                 $this->_plugin('OnE2GFileUpload', array(
@@ -2637,7 +2637,6 @@ class e2g_mod extends e2g_pub {
                             $res['ffp'][0]++;
 
                             $this->_changeModOwnGrp('file', MODX_BASE_PATH . $newFile['decoded']);
-                            
                         } else {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err'];
                             $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldFile['origin'];
@@ -4325,56 +4324,69 @@ class e2g_mod extends e2g_pub {
             return TRUE;
     }
 
-    private function _changeModOwnGrp($type, $fullPath) {
+    /**
+     * Change chmod and chown
+     * @param string    $type           dir/file
+     * @param string    $fullPath       dir/file path
+     * @param bool      $changeMode     TRUE|FALSE to initiate chmod
+     * @param bool      $changeGroup    TRUE|FALSE to initiate chown
+     * @return bool     TRUE|FALSE
+     */
+    private function _changeModOwnGrp($type, $fullPath, $changeMode = TRUE, $changeGroup = TRUE) {
         $lng = $this->lng;
 
-        $path = MODX_BASE_PATH . "index.php";
-        $stat = stat($path);
-        $ownerCore = $stat['uid'];
-        $groupCore = $stat['gid'];
+        if ($changeMode) {
+            clearstatcache();
+            $oldPermission = substr(sprintf('%o', fileperms($fullPath)), -4);
 
-        $oldPermission = substr(sprintf('%o', fileperms($fullPath)), -4);
-        clearstatcache();
+            if ($type == 'dir' && $oldPermission != '0755') {
+                $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0755);
+                if (!$newPermission) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
+                    $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+                    return FALSE;
+                }
+            }
 
-        if ($type == 'dir' && $oldPermission != '0755') {
-            $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0755);
-            if (!$newPermission) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
-                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
-                return FALSE;
+            if ($type == 'file' && $oldPermission != '0644') {
+                $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0644);
+                if (!$newPermission) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
+                    $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+                    return FALSE;
+                }
             }
         }
 
-        if ($type == 'file' && $oldPermission != '0644') {
-            $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0644);
-            if (!$newPermission) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
-                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+        if ($changeGroup) {
+            $modxPath = MODX_BASE_PATH . "index.php";
+            clearstatcache();
+            $modxStat = stat($modxPath);
+            $ownerCore = $modxStat['uid'];
+            $groupCore = $modxStat['gid'];
+            $oldFullPath = MODX_BASE_PATH . $fullPath;
+            clearstatcache();
+            $oldStat = stat($oldFullPath);
+            clearstatcache();
+            $ownerOld = $oldStat['uid'];
+            $groupOld = $oldStat['gid'];
+
+            if (!function_exists('chown')) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' ' . $lng['chown_err_disabled'];
                 return FALSE;
             }
-        }
 
-        $oldFullPath = MODX_BASE_PATH . 'index.php';
-        $oldStat = stat($oldFullPath);
-        clearstatcache();
-        $ownerOld = $oldStat['uid'];
-        $groupOld = $oldStat['gid'];
-
-        if (!function_exist('chown')) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' ' .  $lng['chown_err_disabled'];
-            return FALSE;
-        }
-
-        if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
-            // Set the user
-            $newOwner = @chown($fullPath, $ownerCore);
-            if (!$newOwner) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' fullPath = ' . $fullPath;
-                $_SESSION['easy2err'][] = __LINE__ . ' : old Owner/Group = ' . $ownerOld . '/' . $groupOld;
-                return FALSE;
+            if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
+                // Set the user
+                $newOwner = @chown($fullPath, $ownerCore);
+                if (!$newOwner) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' fullPath = ' . $fullPath;
+                    $_SESSION['easy2err'][] = __LINE__ . ' : old Owner/Group = ' . $ownerOld . '/' . $groupOld;
+                    return FALSE;
+                }
             }
         }
-
+        
         return TRUE;
     }
 

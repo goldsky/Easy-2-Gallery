@@ -42,7 +42,6 @@ class e2g_pub { // public/protected class
         $this->e2gpub_cfg = $e2gpub_cfg;
         $this->e2gpub_e2g = $e2g;
         $this->e2gpub_lng = $lng;
-        $this->_e2g = $_e2g;
     }
 
     /**
