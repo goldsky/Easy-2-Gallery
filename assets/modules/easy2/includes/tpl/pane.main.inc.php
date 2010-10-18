@@ -10,12 +10,19 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 $_t = $this->e2gmod_cfg['_t'];
 $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
+
+// loading the hyperlinks ($e2gPages)
+require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+$e2gpg = $this->e2gmod_cfg['e2gpg'];
+foreach ($e2gPages as $k => $v) {
+    $e2gPage[$v['e2gpg']] = $e2gPages[$k];
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>        
-        <title>Easy 2 Gallery <?php echo E2G_VERSION; ?></title>
+        <title>Easy 2 Gallery <?php echo E2G_VERSION; ?> | <?php echo $e2gPage[$e2gpg]['lng']; ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lng['charset']; ?>" />
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css" />
@@ -294,10 +301,6 @@ $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
         if (($count_suc + $count_err) == 0)
             $suc = '&nbsp;';
 
-        // loading the hyperlinks ($e2gPages)
-        require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
-        $e2gpg = $this->e2gmod_cfg['e2gpg'];
-
         $this->_checkConfigCompletion();
 
         if (empty($_SESSION['e2gMgr']))
@@ -345,31 +348,24 @@ $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
                     tpEasy2 = new WebFXTabPane(document.getElementById('easy2Pane'));
                 </script>
                 <?php
-                    foreach ($e2gPages as $k => $v) {
-                        // $userRole == '1' is a Supreme Administrator role
-                        if ($userRole == '1'
-                                || in_array($v['access'], $userPermissionsArray)
-                                || $v['title'] == 'dashboard'
-                        ) {
-                            if ($e2gpg == $v['e2gpg']) {
+                    // $userRole == '1' is a Supreme Administrator role
+                    if ($userRole == '1'
+                            || in_array($e2gPage[$e2gpg]['access'], $userPermissionsArray)
+                            || $e2gPage[$e2gpg]['title'] == 'dashboard'
+                    ) {
                 ?>
-                                <div class="pageTitle"><span><?php echo $v['lng']; ?></span></div>
+                        <div class="pageTitle"><span><?php echo $e2gPage[$e2gpg]['lng']; ?></span></div>
                 <?php
-                            }
-                        }
                     }
                 ?>
                     <div style="clear:both;"></div>
                 <?php
-                    foreach ($e2gPages as $k => $v) {
-                        // $userRole == '1' is a Supreme Administrator role
-                        if ($userRole == '1'
-                                || in_array($v['access'], $userPermissionsArray)
-                                || $v['title'] == 'dashboard'
-                        ) {
-                            if ($e2gpg == $v['e2gpg'])
-                                include_once $v['file'];
-                        }
+                    // $userRole == '1' is a Supreme Administrator role
+                    if ($userRole == '1'
+                            || in_array($e2gPage[$e2gpg]['access'], $userPermissionsArray)
+                            || $e2gPage[$e2gpg]['title'] == 'dashboard'
+                    ) {
+                        include_once $e2gPage[$e2gpg]['file'];
                     }
                 ?>
                 </div>

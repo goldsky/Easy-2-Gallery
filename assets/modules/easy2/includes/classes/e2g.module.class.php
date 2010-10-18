@@ -55,6 +55,7 @@ class e2g_mod extends e2g_pub {
         $_a = $this->e2gmod_cfg['_a'];
         $_i = $this->e2gmod_cfg['_i'];
         $index = $this->e2gmod_cfg['index'];
+        $blankIndex = $this->e2gmod_cfg['blank_index'];
         $gdir = $this->e2gmod_cfg['gdir'];
         $lng = $this->lng;
 
@@ -4335,12 +4336,12 @@ class e2g_mod extends e2g_pub {
     private function _changeModOwnGrp($type, $fullPath, $changeMode = TRUE, $changeGroup = TRUE) {
         $lng = $this->lng;
 
-        if ($changeMode) {
+        if ($changeMode === TRUE) {
             clearstatcache();
             $oldPermission = substr(sprintf('%o', fileperms($fullPath)), -4);
 
             if ($type == 'dir' && $oldPermission != '0755') {
-                $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0755);
+                $newPermission = @chmod($fullPath, 0755);
                 if (!$newPermission) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
                     $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
@@ -4349,7 +4350,7 @@ class e2g_mod extends e2g_pub {
             }
 
             if ($type == 'file' && $oldPermission != '0644') {
-                $newPermission = @chmod(MODX_BASE_PATH . $fullPath, 0644);
+                $newPermission = @chmod($fullPath, 0644);
                 if (!$newPermission) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
                     $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
@@ -4358,13 +4359,13 @@ class e2g_mod extends e2g_pub {
             }
         }
 
-        if ($changeGroup) {
-            $modxPath = MODX_BASE_PATH . "index.php";
+        if ($changeGroup === TRUE) {
+            $modxPath = "index.php";
             clearstatcache();
             $modxStat = stat($modxPath);
             $ownerCore = $modxStat['uid'];
             $groupCore = $modxStat['gid'];
-            $oldFullPath = MODX_BASE_PATH . $fullPath;
+            $oldFullPath = $fullPath;
             clearstatcache();
             $oldStat = stat($oldFullPath);
             clearstatcache();
@@ -4386,7 +4387,7 @@ class e2g_mod extends e2g_pub {
                 }
             }
         }
-        
+
         return TRUE;
     }
 
