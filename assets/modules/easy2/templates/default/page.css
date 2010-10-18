@@ -1,0 +1,58 @@
+div.e2com_container,
+div.row0,
+div.row1 {
+    margin:0 0 10px 0;
+    padding:2px;
+    border:1px solid #E4E4E4;
+}
+
+div.image img{
+    max-width: 600px;
+}
+
+textarea {
+    width:100%
+}
+
+.row0 {
+    color:#FFFFFF;
+}
+
+.row1 {
+    background:#F7F7F7;
+    color:#535353;
+}
+
+.pnums {
+    font:11px Tahoma;
+    color:gray;
+    text-align:center;
+    margin-top:10px;
+}
+
+.pnums a {
+    background:#F4F4F4;
+    border:1px solid #E8E8E8;
+    color:gray;
+    text-decoration:none;
+    color:#7D7D7D;
+}
+
+.pnums a:hover {
+    background:#B3EC6C;
+    border:1px solid #83D71C;
+    color:white;
+    text-decoration:none
+}
+
+.pnums a, .pnums b {
+    padding:2px 4px;
+}
+
+.captcha_cell {
+    vertical-align:top;
+}
+
+.captcha_cell img {
+    position:relative;
+}
