@@ -1839,6 +1839,12 @@ class e2g_mod extends e2g_pub {
         return parent::plugin($e2gEvtName, $e2gEvtParams);
     }
 
+    /**
+     * Upload multiple files
+     * @param string    $post   file's information
+     * @param string    $files  file's or zipfile's object
+     * @return mized    FALSE on failure or return report string on succeed
+     */
     private function _uploadAll($post, $files) {
         $modx = $this->modx;
         $e2g = $this->e2g;
@@ -4333,25 +4339,28 @@ class e2g_mod extends e2g_pub {
      * @param bool      $changeGroup    TRUE|FALSE to initiate chown
      * @return bool     TRUE|FALSE
      */
-    private function _changeModOwnGrp($type, $fullPath, $changeMode = TRUE, $changeGroup = TRUE) {
+    private function _changeModOwnGrp($type, $fullPath, $checkPreviousMode = TRUE, $changeGroup = TRUE) {
         $lng = $this->lng;
+        $e2gDebug = $this->e2gmod_cfg['e2g_debug'];
 
-        if ($changeMode === TRUE) {
+        if ($checkPreviousMode === TRUE) {
             clearstatcache();
             $oldPermission = substr(sprintf('%o', fileperms($fullPath)), -4);
+        }
 
-            if ($type == 'dir' && $oldPermission != '0755') {
-                $newPermission = @chmod($fullPath, 0755);
-                if (!$newPermission) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
-                    $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
-                    return FALSE;
-                }
+        if ($type == 'dir' && $oldPermission != '0755') {
+            $newPermission = @chmod($fullPath, 0755);
+            if (!$newPermission && $e2gDebug == 1) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
+                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+                return FALSE;
             }
+        }
 
-            if ($type == 'file' && $oldPermission != '0644') {
-                $newPermission = @chmod($fullPath, 0644);
-                if (!$newPermission) {
+        if ($type == 'file') {
+            $newPermission = @chmod($fullPath, 0644);
+            if ($checkPreviousMode === TRUE && $oldPermission != '0644') {
+                if (!$newPermission && $e2gDebug == 1) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chmod_err'] . ' fullPath = ' . $fullPath;
                     $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
                     return FALSE;
@@ -4380,7 +4389,7 @@ class e2g_mod extends e2g_pub {
             if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
                 // Set the user
                 $newOwner = @chown($fullPath, $ownerCore);
-                if (!$newOwner) {
+                if (!$newOwner && $e2gDebug == 1) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['chown_err'] . ' fullPath = ' . $fullPath;
                     $_SESSION['easy2err'][] = __LINE__ . ' : old Owner/Group = ' . $ownerOld . '/' . $groupOld;
                     return FALSE;

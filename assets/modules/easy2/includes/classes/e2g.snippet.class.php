@@ -1779,8 +1779,9 @@ class e2g_snip extends e2g_pub {
         $gid = $this->e2gsnip_cfg['gid'];
         $fid = $this->e2gsnip_cfg['fid'];
         $rgid = $this->e2gsnip_cfg['rgid'];
-        $gpn = $this->e2gsnip_cfg['gpn'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
+
+        $whereDir = $this->e2gsnip_cfg['where_dir'];
+        $whereFile = $this->e2gsnip_cfg['where_file'];
 
         if ($this->e2gsnip_cfg['orderby'] == 'random') {
             $orderBy = 'rand()';
@@ -1806,6 +1807,9 @@ class e2g_snip extends e2g_pub {
         }
 
         $ssLimit = $this->e2gsnip_cfg['ss_limit'];
+
+        $gpn = $this->e2gsnip_cfg['gpn'];
+        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
 
         // initial slideshow's controller and headers
         $slideshow = $this->e2gsnip_cfg['slideshow'];
@@ -1854,14 +1858,26 @@ class e2g_snip extends e2g_pub {
 
         $_ssFile = array();
         if (!empty($gid) && $modx->documentIdentifier != $landingPage) {
-            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE dir_id IN (' . $gid . ') ';
+            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
 
-            if ($ssAllowedRatio != 'all') {
-                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' AND width/height<=' . floatval($ssMaxRatio) .' ';
+            if ($gid != '*') {
+                $select .= 'dir_id IN (' . $gid . ') AND ';
             }
 
-            $select .= 'AND status = 1 '
+            if (isset($whereFile)) {
+                $where = $this->_whereClause($whereFile);
+                if ($where === FALSE)
+                    return FALSE;
+                else {
+                    $select .= $where . ' AND ';
+                }
+            }
+
+            if ($ssAllowedRatio != 'all') {
+                $select .= 'width/height >=' . floatval($ssMinRatio) . ' AND width/height<=' . floatval($ssMaxRatio) . ' AND ';
+            }
+
+            $select .= 'status = 1 '
                     . 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' '
                     . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ', ' . $ssLimit )
             ;
@@ -1904,8 +1920,12 @@ class e2g_snip extends e2g_pub {
                      */
                     $_ssFile['resizedimg'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $ssThq,
                                     $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
-                } elseif ($ssImgSrc == 'original')
+                } elseif ($ssImgSrc == 'original') {
                     $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
+                }
+
+                $_ssFile['tag'][] = $fetch['tag'];
+                $_ssFile['summary'][] = $fetch['summary'];
                 /**
                  * TODO: Making a work around if _imgShaper returns an empty result
                  */
@@ -1917,7 +1937,7 @@ class e2g_snip extends e2g_pub {
                     . 'WHERE id IN (' . $fid . ') ';
 
             if ($ssAllowedRatio != 'all') {
-                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) .' ';
+                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) . ' ';
             }
 
             $select .= 'AND status = 1 '
@@ -1957,8 +1977,12 @@ class e2g_snip extends e2g_pub {
                      */
                     $_ssFile['resizedimg'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $ssThq,
                                     $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
-                } elseif ($ssImgSrc == 'original')
+                } elseif ($ssImgSrc == 'original') {
                     $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
+                }
+
+                $_ssFile['tag'][] = $fetch['tag'];
+                $_ssFile['summary'][] = $fetch['summary'];
             }
         }
 
@@ -1968,7 +1992,7 @@ class e2g_snip extends e2g_pub {
                     . 'AND dir_id IN (' . $rgid . ') ';
 
             if ($ssAllowedRatio != 'all') {
-                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) .' ';
+                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) . ' ';
             }
 
             $select .= 'ORDER BY RAND() '
@@ -2011,6 +2035,9 @@ class e2g_snip extends e2g_pub {
                 } elseif ($ssImgSrc == 'original') {
                     $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
                 }
+
+                $_ssFile['tag'][] = $fetch['tag'];
+                $_ssFile['summary'][] = $fetch['summary'];
             }
         }
 
