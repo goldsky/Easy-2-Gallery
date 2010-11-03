@@ -471,7 +471,7 @@ class E2gPub { // public/protected class
                 . 'AND A.cat_left >= B.cat_left '
                 . 'AND A.cat_right <= B.cat_right '
                 . 'AND A.cat_level >= B.cat_level '
-                . 'AND A.cat_visible = 1'
+//                . 'AND A.cat_visible = 1'
                 . ') '
                 . 'ORDER BY A.cat_level ASC '
                 . ') '

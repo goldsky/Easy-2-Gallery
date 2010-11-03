@@ -56,6 +56,7 @@ class E2gMod extends E2gPub {
         $_i = $this->e2gModCfg['_i'];
         $index = $this->e2gModCfg['index'];
         $blankIndex = $this->e2gModCfg['blank_index'];
+        $e2gPages = $this->e2gModCfg['e2gPages'];
 //        $gdir = $this->e2gModCfg['gdir'];
         $gdir = $this->e2gModCfg['dir'];
         $rootDir = $gdir;
@@ -464,7 +465,7 @@ class E2gMod extends E2gPub {
         $page = empty($_GET['page']) ? '' : $_GET['page'];
         switch ($page) {
             case 'create_dir':
-                //the page content is rendered in ../tpl/pages/page.create_dir.inc.php
+                //the page content is rendered in ../tpl/pages/page.file.create_dir.inc.php
                 break;
 
             case 'edit_dir' :
@@ -478,7 +479,7 @@ class E2gMod extends E2gPub {
                 $res = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs WHERE cat_id=' . (int) $_GET['dir_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
                 mysql_free_result($res);
-                //the page content is rendered in ../tpl/pages/page.edit_dir.inc.php
+                //the page content is rendered in ../tpl/pages/page.file.edit_dir.inc.php
                 break;
 
             case 'edit_file':
@@ -497,7 +498,7 @@ class E2gMod extends E2gPub {
                 $ext = substr($row['filename'], strrpos($row['filename'], '.'));
                 $filename = substr($row['filename'], 0, -(strlen($ext)));
 
-                //the page content is rendered in ../tpl/pages/page.edit_file.inc.php
+                //the page content is rendered in ../tpl/pages/page.file.edit_file.inc.php
                 break;
 
             case 'comments':
@@ -510,7 +511,7 @@ class E2gMod extends E2gPub {
                 $res = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $_GET['file_id']);
                 $row = mysql_fetch_array($res, MYSQL_ASSOC);
                 mysql_free_result($res);
-                //the page content is rendered in ../tpl/pages/page.comments.inc.php
+                //the page content is rendered in ../tpl/pages/page.file.comments.inc.php
                 break;
 
             case 'openexplorer':
@@ -520,65 +521,8 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
-            case 'tag':
-                // display list by tag
-                if (isset($_GET['tag'])) {
-                    $tag = trim($_GET['tag']);
-
-                    //******************************************************************/
-                    //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
-                    //******************************************************************/
-                    $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
-                            . 'WHERE cat_tag LIKE \'%' . $tag . '%\' '
-                            . 'ORDER BY cat_name ASC';
-                    $querySelectDirs = mysql_query($selectDirs);
-                    $mdirs = array();
-                    if (!$querySelectDirs) {
-                        $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-                        return FALSE;
-                    }
-                    while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-                        // goldsky -- store the array to be connected between db <--> fs
-                        $mdirs[$l['cat_name']]['parent_id'] = $l['parent_id'];
-                        $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
-                        $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
-                        $mdirs[$l['cat_name']]['alias'] = $l['cat_alias'];
-                        $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
-                        $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
-                        $mdirs[$l['cat_name']]['date_added'] = $l['date_added'];
-                        $mdirs[$l['cat_name']]['last_modified'] = $l['last_modified'];
-                    }
-                    mysql_free_result($querySelectDirs);
-
-                    //******************************************************************/
-                    //************* FILE content for the current directory *************/
-                    //******************************************************************/
-                    $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                            . 'WHERE tag LIKE \'%' . $tag . '%\' ';
-                    $querySelectFiles = mysql_query($selectFiles);
-                    $mfiles = array();
-                    if (!$querySelectFiles) {
-                        $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-                        return FALSE;
-                    }
-                    while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-                        // goldsky -- store the array to be connected between db <--> fs
-                        $mfiles[$l['filename']]['id'] = $l['id'];
-                        $mfiles[$l['filename']]['dir_id'] = $l['dir_id'];
-                        $mfiles[$l['filename']]['name'] = $l['filename'];
-                        $mfiles[$l['filename']]['alias'] = $l['alias'];
-                        $mfiles[$l['filename']]['tag'] = $l['tag'];
-                        $mfiles[$l['filename']]['date_added'] = $l['date_added'];
-                        $mfiles[$l['filename']]['last_modified'] = $l['last_modified'];
-                        $mfiles[$l['filename']]['status'] = $l['status'];
-                    }
-                    mysql_free_result($querySelectFiles);
-                }
-                //the page content is rendered in ../tpl/pages/page.default.inc.php
-                break;
-
             default:
-                //the page content is rendered in ../tpl/pages/page.default.inc.php
+                //the page content is rendered in ../tpl/pages/page.main.inc.php
                 break;
         } // switch ($page)
 
@@ -4398,11 +4342,7 @@ class E2gMod extends E2gPub {
         $modThumbThq = $this->e2gModCfg['mod_thq'];
 
         $gdir = $rootDir . $path['string'];
-        if (empty($path['string'])) {
-            $pathString = '/';
-        } else {
-            $pathString = $path['string'];
-        }
+        $pathString = $path['string'];
         $pidPath = $this->_getPath($pid);
 
         if ($pathString == $pidPath) {
@@ -4462,6 +4402,7 @@ class E2gMod extends E2gPub {
                 $dirTagLinks = $this->_createTagLinks($dirTag);
                 $dirTime = $this->_getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $dirPath);
                 $countFiles = $this->_countFiles($dirPath);
+                $dirAttributeIcons = '';
 
                 if (isset($mdirs[$dirName])) {
                     $dirId = $mdirs[$dirName]['id'];
@@ -4486,6 +4427,12 @@ class E2gMod extends E2gPub {
                     } else {
                         $dirLink = '<a href="' . $index . '&amp;pid=' . $mdirs[$dirName]['id'] . '"><i>' . $mdirs[$dirName]['name'] . '</i></a>';
                         $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
+                        $dirAttributeIcons = '
+                <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $dirId . '&amp;name=' . $dirName . '&amp;pid=' . $pid . '">
+                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16"
+                        height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
+                </a>
+                ';
                         $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
                         $dirButtons = '
                 <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $dirId . '&amp;name=' . $dirName . '&amp;pid=' . $pid . '">
@@ -4556,6 +4503,7 @@ class E2gMod extends E2gPub {
                 $row['dir']['count'][] = $countFiles;
                 $row['dir']['link'][] = $dirLink;
                 $row['dir']['attributes'][] = $dirAttributes;
+                $row['dir']['attributeIcons'][] = $dirAttributeIcons;
                 $row['dir']['href'][] = $dirHref;
                 $row['dir']['buttons'][] = $dirButtons;
                 $row['dir']['icon'][] = $dirIcon;
@@ -4761,10 +4709,7 @@ class E2gMod extends E2gPub {
                     $fileAttributes = '<i>(' . $lng['new'] . ')</i>';
                     $fileId = NULL;
                     $fileIcon .= '_error';
-                    $fileAttributeIcons = '
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/' . $fileIcon . '.png"
-                        width="16" height="16" alt="' . $lng['add_to_db'] . '" title="' . $lng['add_to_db'] . '" border="0" />
-                            ';
+                    $fileAttributeIcons = '';
                     if (empty($path['string'])) {
                         // add file
                         $fileButtons = '
@@ -4865,6 +4810,68 @@ class E2gMod extends E2gPub {
             }
         } // if (FALSE !== $files)
         ############################ FILE LIST ENDS ############################
+        // return dir and file contents
+        return $row;
+    }
+
+    /**
+     * Browsing the gallery by tagging
+     * @param   string  $tag    the tag's value
+     * @return  mixed   show the module's page
+     */
+    private function _readTag($tag) {
+        $modx = $this->modx;
+        $lng = $this->lng;
+
+        //******************************************************************/
+        //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+        //******************************************************************/
+        $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE cat_tag LIKE \'%' . $tag . '%\' '
+                . 'ORDER BY cat_name ASC';
+        $querySelectDirs = mysql_query($selectDirs);
+        if (!$querySelectDirs) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
+            return FALSE;
+        }
+        $row['dir'] = array();
+        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+            // goldsky -- store the array to be connected between db <--> fs
+            $row['dir'][$l['cat_name']]['parent_id'] = $l['parent_id'];
+            $row['dir'][$l['cat_name']]['id'] = $l['cat_id'];
+            $row['dir'][$l['cat_name']]['name'] = $l['cat_name'];
+            $row['dir'][$l['cat_name']]['alias'] = $l['cat_alias'];
+            $row['dir'][$l['cat_name']]['cat_tag'] = $l['cat_tag'];
+            $row['dir'][$l['cat_name']]['cat_visible'] = $l['cat_visible'];
+            $row['dir'][$l['cat_name']]['date_added'] = $l['date_added'];
+            $row['dir'][$l['cat_name']]['last_modified'] = $l['last_modified'];
+        }
+        mysql_free_result($querySelectDirs);
+
+        //******************************************************************/
+        //************* FILE content for the current directory *************/
+        //******************************************************************/
+        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+                . 'WHERE tag LIKE \'%' . $tag . '%\' ';
+        $querySelectFiles = mysql_query($selectFiles);
+        $row['file'] = array();
+        if (!$querySelectFiles) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+            return FALSE;
+        }
+        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+            // goldsky -- store the array to be connected between db <--> fs
+            $row['file'][$l['filename']]['id'] = $l['id'];
+            $row['file'][$l['filename']]['dir_id'] = $l['dir_id'];
+            $row['file'][$l['filename']]['name'] = $l['filename'];
+            $row['file'][$l['filename']]['alias'] = $l['alias'];
+            $row['file'][$l['filename']]['tag'] = $l['tag'];
+            $row['file'][$l['filename']]['date_added'] = $l['date_added'];
+            $row['file'][$l['filename']]['last_modified'] = $l['last_modified'];
+            $row['file'][$l['filename']]['status'] = $l['status'];
+        }
+        mysql_free_result($querySelectFiles);
+
         // return dir and file contents
         return $row;
     }
@@ -5005,7 +5012,7 @@ class E2gMod extends E2gPub {
         $countTags = count($multipleTags);
         $output = '';
         for ($c = 0; $c < $countTags; $c++) {
-            $output .= '<a href="' . $index . '&amp;page=tag&amp;tag=' . trim($multipleTags[$c]) . '">' . trim($multipleTags[$c]) . '</a>';
+            $output .= '<a href="' . $index . '&amp;tag=' . trim($multipleTags[$c]) . '">' . trim($multipleTags[$c]) . '</a>';
             if ($c < ($countTags - 1))
                 $output .= ', ';
         }
