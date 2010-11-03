@@ -232,7 +232,7 @@ if ($countDeletedFiles > 0) {
 }
 
 ob_start();
-include_once E2G_MODULE_PATH . 'includes/tpl/pages/menu.bottom.inc.php';
+include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php';
 $modBottomMenu = ob_get_contents();
 ob_end_clean();
 $galPh['table.mod_bottom_menu'] = $modBottomMenu;

@@ -192,5 +192,5 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/menu.top.inc.php';
             } // if (count($readTag['file'])>0)
         ?>
         </table>
-    <?php include_once E2G_MODULE_PATH . 'includes/tpl/pages/menu.bottom.inc.php'; ?>
+    <?php include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php'; ?>
 </form>
