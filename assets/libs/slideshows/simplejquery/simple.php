@@ -1,8 +1,16 @@
 <?php
 
-//echo __LINE__ . ': $countSlideshowFiles = ' . $countSlideshowFiles . '<br />';
+$ssParams = $this->_getSlideShowParams();
+$ssFiles = $this->_getSlideShowFiles();
+
+//echo __LINE__ . ' : $slideshow = ' . $slideshow . '<br />';
+//echo __LINE__ . ' : $ssParams = ' . $ssParams . '<br />';
 //echo '<pre>';
-//print_r($countSlideshowFiles);
+//print_r($ssParams);
+//echo '</pre>';
+//echo __LINE__ . ' : $ssFiles = ' . $ssFiles . '<br />';
+//echo '<pre>';
+//print_r($ssFiles);
 //echo '</pre>';
 //die();
 
@@ -15,23 +23,23 @@ if (!defined(E2G_SNIPPET_URL) && $slideshow != 'simple') {
     return;
 }
 // result with no images
-elseif ($countSlideshowFiles == 0) {
-    $ssDisplay = 'No image inside the gallery id ' . $gid;
+elseif ($ssFiles['count'] == 0) {
+    $output = 'No image inside the gallery id ' . $ssParams['gid'];
     // this slideshow heavily dependent on any image existence.
     return;
 }
 
-if (!empty($ssCss)) {
-    $modx->regClientCSS($ssCss, 'screen');
+if (!empty($ssParams['ss_css'])) {
+    $modx->regClientCSS($ssParams['ss_css'], 'screen');
 } else {
     $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshows/simplejquery/simple.css', 'screen');
     // amend dimension variables into CSS
     $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
         #slideshow {
-            width: ' . $ssW . 'px;
-            height: ' . $ssH . 'px;
-            background-color: ' . $ssBg . ';
+            width: ' . $ssParams['ss_w'] . 'px;
+            height: ' . $ssParams['ss_h'] . 'px;
+            background-color: ' . $ssParams['ss_bg'] . ';
          }
         </style>
             ');
@@ -39,35 +47,31 @@ if (!empty($ssCss)) {
 
 $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/jquery/jquery-1.4.2.min.js');
 
-if (!empty($ssJs)) {
-    $modx->regClientStartupScript($ssJs);
+if (!empty($ssParams['ss_js'])) {
+    $modx->regClientStartupScript($ssParams['ss_js']);
 } else {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/simplejquery/simple.js');
 }
 
 // start create the slideshow box
-$ssDisplay = '<div id="slideshow"><div>';
-$j = 0;
-for ($i = 0; $i < $countSlideshowFiles; $i++) {
-    $dim = getimagesize($_ssFile['src'][$i]);
+$output = '<div id="slideshow"><div>';
+for ($i = 0; $i < $ssFiles['count']; $i++) {
+    $dim = getimagesize($ssFiles['src'][$i]);
     $width[$i] = $dim[0];
     $height[$i] = $dim[1];
     $imageRatio[$i] = $width[$i] / $height[$i];
 
-//        echo $ssW/$ssH .'=>'. $imageRatio[$i].'<br />';
-    $ssDisplay .= '
-                <img src="' . utf8_encode($_ssFile['src'][$i]) . '" alt="" title="' . $_ssFile['title'][$i] . '" '
-            . ( $i == 0 ? 'class="active" ' : '' )
-            . ( ( ($ssW / $ssH) < $imageRatio[$i] ) ?
-                    'height="' . $ssH . 'px" style="left:' . (($ssW - ($width[$i] * $ssH / $height[$i])) / 2) . 'px;" ' :
-                    'width="' . $ssW . 'px" style="top:' . (($ssH - ($height[$i] * $ssW / $width[$i])) / 2) . 'px;" ' )
-            . '/>';
+//        echo $ssParams['ss_w']/$ssParams['ss_h'] .'=>'. $imageRatio[$i].'<br />';
+    $output .= '
+                <img src="' . utf8_encode($ssFiles['resizedimg'][$i])
+            . '" alt="' . $ssFiles['title'][$i]
+            . '" title="' . $ssFiles['title'][$i]
+            . '" ' . ( $i == 0 ? 'class="active" ' : '' )
+            . '/>
+                ';
 
     // if there is a image number limitation
-    $j++;
-    if ($j == $ssLimit)
-        break;
 }
 // end the slideshow box
-$ssDisplay .= '</div></div>';
-echo $ssDisplay;
+$output .= '</div></div>';
+echo $output;

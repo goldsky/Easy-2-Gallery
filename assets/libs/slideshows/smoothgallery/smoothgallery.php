@@ -1,5 +1,19 @@
 <?php
 
+$ssParams = $this->_getSlideShowParams();
+$ssFiles = $this->_getSlideShowFiles();
+
+//echo __LINE__ . ' : $slideshow = ' . $slideshow . '<br />';
+//echo __LINE__ . ' : $ssParams = ' . $ssParams . '<br />';
+//echo '<pre>';
+//print_r($ssParams);
+//echo '</pre>';
+//echo __LINE__ . ' : $ssFiles = ' . $ssFiles . '<br />';
+//echo '<pre>';
+//print_r($ssFiles);
+//echo '</pre>';
+//die();
+
 /**
  * @link http://smoothgallery.jondesign.net/
  */
@@ -9,8 +23,8 @@ if (!defined(E2G_SNIPPET_URL) && $slideshow != 'smoothgallery') {
 }
 
 // just making a default selection
-if (!isset($ssConfig))
-    $ssConfig = 'fullgallery';
+if (!isset($ssParams['ss_config']))
+    $ssParams['ss_config'] = 'fullgallery';
 
 //**************************************************/
 //*            PREPARE THE HTML HEADERS            */
@@ -21,27 +35,26 @@ $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/css/sm
 $modx->regClientStartupHTMLBlock('
         <style type="text/css" media="screen">
         #myGallery {
-            width: ' . $ssW . 'px !important;
-            height: ' . $ssH . 'px !important;
-            background-color: ' . ( $ssBg == 'rgb' ? 'rgb(' . $thbgRed . ',' . $thbgGreen . ',' . $thbgBlue . ')' : $ssBg ) . ';
+            width: ' . $ssParams['ss_w'] . 'px !important;
+            height: ' . $ssParams['ss_h'] . 'px !important;
+            background-color: ' . ( $ssParams['ss_bg'] == 'rgb' ? 'rgb(' . $ssParams['thbg_red'] . ',' . $ssParams['thbg_green'] . ',' . $ssParams['thbg_blue'] . ')' : $ssParams['ss_bg'] ) . ';
         }
         #myGallery img .imageElement .full {
-            max-width: ' . $ssW . 'px !important;
-            max-height: ' . $ssH . 'px !important;
+            max-width: ' . $ssParams['ss_w'] . 'px !important;
+            max-height: ' . $ssParams['ss_h'] . 'px !important;
         }
         </style>');
-if ($ssConfig == 'zoom') {
+if ($ssParams['ss_config'] == 'zoom') {
     $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/css/ReMooz.css', 'screen');
 }
-if (!empty($ssCss)) {
-    $modx->regClientCSS($ssCss, 'screen');
+if (!empty($ssParams['ss_css'])) {
+    $modx->regClientCSS($ssParams['ss_css'], 'screen');
 }
-
 
 $modx->regClientStartupHTMLBlock('
         <script type="text/javascript">jQuery.noConflict();</script>');
 
-if ($ssConfig == 'fullgallery') {
+if ($ssParams['ss_config'] == 'fullgallery') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.js');
@@ -56,7 +69,7 @@ if ($ssConfig == 'fullgallery') {
         </script>
         ');
 }
-if ($ssConfig == 'galleryset') {
+if ($ssParams['ss_config'] == 'galleryset') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.js');
@@ -73,7 +86,7 @@ if ($ssConfig == 'galleryset') {
         </script>
         ');
 }
-if ($ssConfig == 'timedgallery') {
+if ($ssParams['ss_config'] == 'timedgallery') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools.v1.11.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.v2.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.set.js');
@@ -89,7 +102,7 @@ if ($ssConfig == 'timedgallery') {
         </script>
         ');
 }
-if ($ssConfig == 'simpletimedslideshow') {
+if ($ssParams['ss_config'] == 'simpletimedslideshow') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.js');
@@ -106,7 +119,7 @@ if ($ssConfig == 'simpletimedslideshow') {
         </script>
         ');
 }
-if ($ssConfig == 'simpleshowcaseslideshow') {
+if ($ssParams['ss_config'] == 'simpleshowcaseslideshow') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools.v1.11.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/HistoryManager.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.v2.js');
@@ -127,7 +140,7 @@ if ($ssConfig == 'simpleshowcaseslideshow') {
         </script>
         ');
 }
-if ($ssConfig == 'timedimageswitchers') {
+if ($ssParams['ss_config'] == 'timedimageswitchers') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools.v1.11.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/HistoryManager.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.v2.js');
@@ -150,7 +163,7 @@ if ($ssConfig == 'timedimageswitchers') {
         </script>
         ');
 }
-if ($ssConfig == 'slidingtransition') {
+if ($ssParams['ss_config'] == 'slidingtransition') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools.v1.11.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/HistoryManager.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.v2.js');
@@ -170,7 +183,7 @@ if ($ssConfig == 'slidingtransition') {
         </script>
         ');
 }
-if ($ssConfig == 'horcontinuous') {
+if ($ssParams['ss_config'] == 'horcontinuous') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.js');
@@ -187,7 +200,7 @@ if ($ssConfig == 'horcontinuous') {
         </script>
         ');
 }
-if ($ssConfig == 'vercontinuous') {
+if ($ssParams['ss_config'] == 'vercontinuous') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/jd.gallery.js');
@@ -204,7 +217,7 @@ if ($ssConfig == 'vercontinuous') {
         </script>
         ');
 }
-if ($ssConfig == 'zoom') {
+if ($ssParams['ss_config'] == 'zoom') {
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2.1-core-yc.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/mootools-1.2-more.js');
     $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/smoothgallery/scripts/ReMooz.js');
@@ -224,8 +237,8 @@ if ($ssConfig == 'zoom') {
 }
 
 // override with own settings
-if (!empty($ssJs)) {
-    $modx->regClientStartupScript($ssJs);
+if (!empty($ssParams['ss_js'])) {
+    $modx->regClientStartupScript($ssParams['ss_js']);
 }
 
 //**************************************************/
@@ -246,76 +259,67 @@ if (!empty($ssJs)) {
 //*            THE vercontinuous CONFIG            */
 //**************************************************/
 
-if ($ssConfig == 'fullgallery'
-        || $ssConfig == 'timedgallery'
-        || $ssConfig == 'simpletimedslideshow'
-        || $ssConfig == 'simpleshowcaseslideshow'
-        || $ssConfig == 'timedimageswitchers'
-        || $ssConfig == 'slidingtransition'
-        || $ssConfig == 'horcontinuous'
-        || $ssConfig == 'vercontinuous'
+if ($ssParams['ss_config'] == 'fullgallery'
+        || $ssParams['ss_config'] == 'timedgallery'
+        || $ssParams['ss_config'] == 'simpletimedslideshow'
+        || $ssParams['ss_config'] == 'simpleshowcaseslideshow'
+        || $ssParams['ss_config'] == 'timedimageswitchers'
+        || $ssParams['ss_config'] == 'slidingtransition'
+        || $ssParams['ss_config'] == 'horcontinuous'
+        || $ssParams['ss_config'] == 'vercontinuous'
 ) {
     // result with no images
-    if ($countSlideshowFiles == 0) {
-        $ssDisplay = 'No image inside the gallery id ' . $gid;
+    if ($ssFiles['count'] == 0) {
+        $output = 'No image inside the gallery id ' . $ssParams['gid'];
         // this slideshow heavily dependent on any image existence.
         return FALSE;
     }
 
     // ------------- open slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 <div id="myGallery">';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
-    for ($i = 0; $i < $countSlideshowFiles; $i++) {
-        $ssDisplay .= '
+    for ($i = 0; $i < $ssFiles['count']; $i++) {
+        $output .= '
     <div class="imageElement">
-        <h3>' . $_ssFile['title'][$i] . '</h3>
-        <p>' . $_ssFile['description'][$i] . '</p>
+        <h3>' . $ssFiles['title'][$i] . '</h3>
+        <p>' . $ssFiles['description'][$i] . '</p>
         <a href="'
                 // making flexible FURL or not
                 . $modx->makeUrl(
                         $modx->documentIdentifier
                         , $modx->aliases
-                        , 'fid=' . $_ssFile['id'][$i])
+                        , 'fid=' . $ssFiles['id'][$i])
                 . '" title="open image" class="open"></a>
-        <img src="' . $_ssFile['resizedimg'][$i] . '" class="full" alt="" />
-        <img src="' . $_ssFile['thumbsrc'][$i] . '" class="thumbnail" alt="" />
+        <img src="' . $ssFiles['resizedimg'][$i] . '" class="full" alt="" />
+        <img src="' . $ssFiles['thumbsrc'][$i] . '" class="thumbnail" alt="" />
     </div>';
-
-        // if there is a image number limitation
-        $j++;
-        if ($j == $ssLimit)
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 </div>';
-} // if ( $ssConfig=='fullgallery' || $ssConfig=='timedgallery' )
+} // if ( $ssParams['ss_config']=='fullgallery' || $ssParams['ss_config']=='timedgallery' )
 //**************************************************/
 //*             THE galleryset CONFIG              */
 //**************************************************/
 
-if ($ssConfig == 'galleryset') {
-    $cat_orderBy = $this->e2gsnip_cfg['cat_orderby'];
-    $cat_order = $this->e2gsnip_cfg['cat_order'];
-    $_ssFile = array();
-
-    if (!empty($gid)) {
+if ($ssParams['ss_config'] == 'galleryset') {
+    $ssFiles = array();
+    if (!empty($ssParams['gid'])) {
 
         // ************** select directories ************** //
 
         $selectDir = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
-                . 'WHERE parent_id IN (' . $gid . ') '
+                . 'WHERE parent_id IN (' . $ssParams['gid'] . ') '
                 . 'AND cat_visible = 1 '
-                . 'ORDER BY ' . $cat_orderBy . ' ' . $cat_order . ' '
-                . ( $ssLimit == 'none' ? '' : 'LIMIT 0,' . $ssLimit . ' ' )
+                . 'ORDER BY ' . $ssParams['cat_orderby'] . ' ' . $ssParams['cat_order'] . ' '
+                . ( $ssParams['ss_limit'] == 'none' ? '' : 'LIMIT 0,' . $ssParams['ss_limit'] . ' ' )
         ;
         $queryDir = mysql_query($selectDir);
         if (!$queryDir)
-            return $ssDisplay = __LINE__ . ' : ' . mysql_error();
+            return $output = __LINE__ . ' : ' . mysql_error();
         $countDir = mysql_num_rows($queryDir);
         while ($fetchdir = mysql_fetch_array($queryDir)) {
             $galleries[$fetchdir['cat_id']]['cat_id'] = $fetchdir['cat_id'];
@@ -329,13 +333,13 @@ if ($ssConfig == 'galleryset') {
                 $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                         . 'WHERE dir_id = ' . $k . ' ';
 
-                if ($ssAllowedRatio != 'all') {
-                    $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' AND width/height<=' . floatval($ssMaxRatio) .' ';
+                if ($ssParams['ss_allowedratio'] != 'all') {
+                    $select .= 'AND width/height >=' . floatval($ssParams['ss_minratio']) . ' AND width/height<=' . floatval($ssParams['ss_maxratio']) . ' ';
                 }
 
                 $select .= 'AND status = 1 '
-                        . 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' '
-                        . ( $ssLimit == 'none' ? '' : 'LIMIT 0,' . $ssLimit . ' ' )
+                        . 'ORDER BY ' . $ssParams['ss_orderby'] . ' ' . $ssParams['ss_order'] . ' '
+                        . ( $ssParams['ss_limit'] == 'none' ? '' : 'LIMIT 0,' . $ssParams['ss_limit'] . ' ' )
                 ;
                 $query = mysql_query($select) or die(__LINE__ . ' ' . mysql_error() . '<br />' . $select);
                 $countImg[$k] = mysql_num_rows($query);
@@ -345,112 +349,107 @@ if ($ssConfig == 'galleryset') {
 
                 while ($fetch = mysql_fetch_array($query)) {
                     $path = $this->_getPath($fetch['dir_id']);
-                    if (count($path) > 1) {
-                        unset($path[1]);
-                        $path = implode('/', array_values($path)) . '/';
+                    $ssFiles['id'][$k][] = $fetch['id'];
+                    $ssFiles['dirid'][$k][] = $fetch['dir_id'];
+                    $ssFiles['src'][$k][] = $ssParams['gdir'] . $path . $fetch['filename'];
+                    $ssFiles['filename'][$k][] = $fetch['filename'];
+                    $ssFiles['title'][$k][] = $fetch['alias'];
+                    $ssFiles['description'][$k][] = $fetch['description'];
+                    $thumbImg = $this->_imgShaper($ssParams['gdir'], $path . $fetch['filename'], $ssParams['w'], $ssParams['h'], $ssParams['thq']);
+                    if ($thumbImg !== FALSE) {
+                        $ssFiles['thumbsrc'][$k][] = $thumbImg;
                     } else {
-                        $path = '';
+                        continue;
                     }
-                    $_ssFile['id'][$k][] = $fetch['id'];
-                    $_ssFile['dirid'][$k][] = $fetch['dir_id'];
-                    $_ssFile['src'][$k][] = $gdir . $path . $fetch['filename'];
-                    $_ssFile['filename'][$k][] = $fetch['filename'];
-                    $_ssFile['title'][$k][] = $fetch['name'];
-                    $_ssFile['description'][$k][] = $fetch['description'];
-                    $_ssFile['thumbsrc'][$k][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $w, $h, $thq);
-                    $_ssFile['resizedimg'][$k][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $thq);
+                    unset($thumbImg);
+                    $resizedImg = $this->_imgShaper($ssParams['gdir'], $path . $fetch['filename'], $ssParams['ss_w'], $ssParams['ss_h'], $ssParams['ss_thq']);
+                    if ($resizedImg !== FALSE) {
+                        $ssFiles['resizedimg'][$k][] = $resizedImg;
+                    } else {
+                        continue;
+                    }
+                    unset($resizedImg);
                 }
             }
         }
     }
     // ------------- open slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 <div id="myGallerySet">';
     // ------------- start the images looping ------------- //
     if (!is_array($galleries)) { // something wrong! escape!
-        $ssDisplay = 'There is no gallery inside ID:' . $gid;
+        $output = 'There is no gallery inside ID:' . $ssParams['gid'];
         return;
     }
     foreach ($galleries as $gk => $gv) {
-        $ssDisplay .= '
+        $output .= '
     <div id="gallery1" class="galleryElement">
         <h2>' . $gv['cat_name'] . '</h2>';
 
-        $j = 0;
         for ($i = 0; $i < $countImg[$gk]; $i++) {
-            $_ssFile['title'][$gk][$i] = ($_ssFile['title'][$gk][$i] != '' ? $_ssFile['title'][$gk][$i] : $_ssFile['filename'][$gk][$i]);
-            $ssDisplay .= '
+            $ssFiles['title'][$gk][$i] = ($ssFiles['title'][$gk][$i] != '' ? $ssFiles['title'][$gk][$i] : $ssFiles['filename'][$gk][$i]);
+            $output .= '
         <div class="imageElement">
-            <h3>' . $_ssFile['title'][$gk][$i] . '</h3>
-            <p>' . $_ssFile['description'][$gk][$i] . '</p>
+            <h3>' . $ssFiles['title'][$gk][$i] . '</h3>
+            <p>' . $ssFiles['description'][$gk][$i] . '</p>
             <a href="'
                     // making flexible FURL or not
                     . $modx->makeUrl(
                             $modx->documentIdentifier
                             , $modx->aliases
-                            , 'fid=' . $_ssFile['id'][$gk][$i])
+                            , 'fid=' . $ssFiles['id'][$gk][$i])
                     . '" title="open image" class="open"></a>
-            <img src="' . $_ssFile['resizedimg'][$gk][$i] . '" class="full" alt="" />
-            <img src="' . $_ssFile['thumbsrc'][$gk][$i] . '" class="thumbnail" alt="" />
+            <img src="' . $ssFiles['resizedimg'][$gk][$i] . '" class="full" alt="" />
+            <img src="' . $ssFiles['thumbsrc'][$gk][$i] . '" class="thumbnail" alt="" />
         </div>';
-            // if there is a image number limitation
-            $j++;
-            if ($j == $ssLimit)
-                break;
         }
 
-        $ssDisplay .= '
+        $output .= '
     </div>';
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 </div>';
-} // if ($ssConfig=='galleryset')
+} // if ($ssParams['ss_config']=='galleryset')
 //**************************************************/
 //*                 THE zoom CONFIG                */
 //**************************************************/
 
-if ($ssConfig == 'zoom') {
+if ($ssParams['ss_config'] == 'zoom') {
 
     // result with no images
-    if ($countSlideshowFiles == 0) {
-        $ssDisplay = 'No image inside the gallery';
+    if ($ssFiles['count'] == 0) {
+        $output = 'No image inside the gallery';
         // this slideshow heavily dependent on any image existence.
         return FALSE;
     }
     // ------------- open slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 <div id="myGallery">';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
-    for ($i = 0; $i < $countSlideshowFiles; $i++) {
-        $dim = getimagesize($this->_e2gDecode($_ssFile['src'][$i]));
+    for ($i = 0; $i < $ssFiles['count']; $i++) {
+        $dim = getimagesize($this->_e2gDecode($ssFiles['src'][$i]));
         $width[$i] = $dim[0];
         $height[$i] = $dim[1];
         $imageRatio[$i] = $width[$i] / $height[$i];
 
-        $ssDisplay .= '
+        $output .= '
     <div class="imageElement">
-        <h3>' . $_ssFile['title'][$i] . '</h3>
-        <p>' . $_ssFile['description'][$i] . '</p>
-        <a href="' . str_replace('%2F', '/', rawurlencode($this->_e2gDecode($_ssFile['src'][$i]))) . '" title="open image" class="open"></a>
-        <img src="' . $_ssFile['resizedimg'][$i] . '" class="full" alt="" '
-                . ( ( ($ssW / $ssH) < $imageRatio[$i] ) ? 'height="' . $ssH . 'px" ' : 'width="' . $ssW . 'px" ' )
+        <h3>' . $ssFiles['title'][$i] . '</h3>
+        <p>' . $ssFiles['description'][$i] . '</p>
+        <a href="' . str_replace('%2F', '/', rawurlencode($this->_e2gDecode($ssFiles['src'][$i]))) . '" title="open image" class="open"></a>
+        <img src="' . $ssFiles['resizedimg'][$i] . '" class="full" alt="" '
+                . ( ( ($ssParams['ss_w'] / $ssParams['ss_h']) < $imageRatio[$i] ) ? 'height="' . $ssParams['ss_h'] . 'px" ' : 'width="' . $ssParams['ss_w'] . 'px" ' )
                 . '/>
-        <img src="' . $_ssFile['thumbsrc'][$i] . '" class="thumbnail" alt="" />
+        <img src="' . $ssFiles['thumbsrc'][$i] . '" class="thumbnail" alt="" />
     </div>';
-
-        // if there is a image number limitation
-        $j++;
-        if ($j == $ssLimit)
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
-    $ssDisplay .= '
+    $output .= '
 </div>';
-} // if ($ssConfig == 'zoom')
+} // if ($ssParams['ss_config'] == 'zoom')
 
-echo $ssDisplay;
+echo $output;

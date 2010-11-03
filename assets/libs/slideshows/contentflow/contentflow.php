@@ -1,5 +1,19 @@
 <?php
 
+$ssParams = $this->_getSlideShowParams();
+$ssFiles = $this->_getSlideShowFiles();
+
+//echo __LINE__ . ' : $slideshow = ' . $slideshow . '<br />';
+//echo __LINE__ . ' : $ssParams = ' . $ssParams . '<br />';
+//echo '<pre>';
+//print_r($ssParams);
+//echo '</pre>';
+//echo __LINE__ . ' : $ssFiles = ' . $ssFiles . '<br />';
+//echo '<pre>';
+//print_r($ssFiles);
+//echo '</pre>';
+//die();
+
 /**
  * @http://www.jacksasylum.eu/ContentFlow/index.php
  */
@@ -8,29 +22,33 @@ if (!defined(E2G_SNIPPET_URL) && $slideshow != 'contentflow') {
     return;
 }
 // result with no images
-elseif ($countSlideshowFiles == 0) {
-    $ssDisplay = 'No image inside the gallery id ' . $gid;
+elseif ($ssFiles['count'] == 0) {
+    $output = 'No image inside the gallery id ' . $ssParams['gid'];
     // this slideshow heavily dependent on any image existence.
     return;
 } else {
     // just making a default selection
-    if (!isset($ssConfig))
-        $ssConfig = 'default';
+    if (!isset($ssParams['ss_config']))
+        $ssParams['ss_config'] = 'default';
 
     //**************************************************/
     //*            PREPARE THE HTML HEADERS            */
     //**************************************************/
 
-    if ($ssConfig == 'default') {
-        if (!empty($ssCss)) {
-            $modx->regClientCSS($ssCss, 'screen');
+    if ($ssParams['ss_config'] == 'default') {
+        if (!empty($ssParams['ss_css'])) {
+            $modx->regClientCSS($ssParams['ss_css'], 'screen');
         } else {
             $modx->regClientCSS(MODX_BASE_URL . 'assets/libs/slideshows/contentflow/contentflow.css', 'screen');
         }
     }
     // Javascript
-    if ($ssConfig == 'default') {
-        $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/contentflow/contentflow.js');
+    if ($ssParams['ss_config'] == 'default') {
+        if (!empty($ssParams['ss_js'])) {
+            $modx->regClientStartupScript($ssParams['ss_js']);
+        } else {
+            $modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/slideshows/contentflow/contentflow.js');
+        }
     }
 
     //**************************************************/
@@ -43,35 +61,31 @@ elseif ($countSlideshowFiles == 0) {
     //**************************************************/
     //*               THE default CONFIG               */
     //**************************************************/
-    if ($ssConfig == 'default') {
+    if ($ssParams['ss_config'] == 'default') {
 
         // ------------- open slideshow wrapper ------------- //
-        $ssDisplay = '
+        $output = '
         <div class="ContentFlow">
             <div class="loadIndicator"><div class="indicator"></div></div>
             <div class="flow">';
 
         // ------------ start the images looping ------------ //
-        $j = 0;
-        for ($i = 0; $i < $countSlideshowFiles; $i++) {
-            $ssDisplay .= '
+        for ($i = 0; $i < $ssFiles['count']; $i++) {
+            $output .= '
                 <div class="item" href="'
                     // making flexible FURL or not
                     . $modx->makeUrl(
                             $modx->documentIdentifier
                             , $modx->aliases
-                            , 'fid=' . $_ssFile['id'][$i])
+                            , 'fid=' . $ssFiles['id'][$i])
                     . '">
-                    <img class="content" src="' . $_ssFile['src'][$i] . '" title="' . $_ssFile['title'][$i] . '" alt="" />
+                    <img class="content" src="' . $ssFiles['src'][$i] . '" title="' . $ssFiles['title'][$i] . '" alt="" />
                 </div>
                 ';
-            $j++;
-            if ($j == $ssLimit)
-                break;
         }
         // ------------- end the images looping ------------- //
         // ------------- close slideshow wrapper ------------- //
-        $ssDisplay .= '
+        $output .= '
             </div>
             <div class="globalCaption"></div>
             <div class="scrollbar"><div class="slider"><div class="position"></div></div></div>
@@ -79,5 +93,5 @@ elseif ($countSlideshowFiles == 0) {
 ';
     }
 
-    echo $ssDisplay;
+    echo $output;
 }
