@@ -181,7 +181,7 @@ div.clear {
     line-height: 0;
 }
 
-div.h2title {
+.h2title {
     font-size: 1.2em;
     font-weight: bold;
     padding: 5px;
@@ -438,6 +438,7 @@ span.navigation span.navigationBranch .active {
 .thumb .boxcontent .attributes {
     position: absolute;
     visibility: visible;
+    background: url('../img/bg-white-opac70.png') repeat;
 /*    background: url('../img/bg-red-opac70.png') repeat;*/
     z-index: 1;
     bottom: 0;
