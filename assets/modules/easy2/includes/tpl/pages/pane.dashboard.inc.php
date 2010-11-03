@@ -41,13 +41,13 @@ $icon_bad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/ic
                                     ?>
                                     (
                                     <?php
-                                    $space_sizes = $modx->db->makeArray($modx->db->query('SELECT size FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '));
+                                    $fileSizeArray = $modx->db->makeArray($modx->db->query('SELECT size FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '));
                                     $capacity = (int) 0;
-                                    foreach ($space_sizes as $k => $v) {
+                                    foreach ($fileSizeArray as $k => $v) {
                                         $capacity += (int) $v['size'];
                                     }
                                     if ($capacity < 1024)
-                                        echo $capacity . " bytes";
+                                        echo $capacity . ' bytes';
                                     elseif ($capacity < 1048576)
                                         echo round($capacity / 1024, 2) . ' ' . $lng['kilobytes'];
                                     else
@@ -65,9 +65,9 @@ $icon_bad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/ic
                                     ?>
                                     (
                                     <?php
-                                    $space_sizes = $modx->db->makeArray($modx->db->query('SELECT size FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE status=\'0\''));
+                                    $fileSizeArray = $modx->db->makeArray($modx->db->query('SELECT size FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE status=\'0\''));
                                     $capacity = (int) 0;
-                                    foreach ($space_sizes as $k => $v) {
+                                    foreach ($fileSizeArray as $k => $v) {
                                         $capacity += (int) $v['size'];
                                     }
                                     if ($capacity < 1024)

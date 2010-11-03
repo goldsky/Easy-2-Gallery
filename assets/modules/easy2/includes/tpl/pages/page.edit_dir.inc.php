@@ -7,6 +7,9 @@ if (IN_MANAGER_MODE != 'true')
     <a href="<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>"><?php echo $lng['back']; ?></a>
 </p>
 <form name="list" action="<?php echo $index . '&amp;act=save_dir'; ?>" method="post">
+    <?php // This 'pid' hidden input is for page returning ?>
+    <input type="hidden" name="pid" value="<?php echo $_GET['pid']; ?>" />
+    <input type="hidden" name="parent_id" value="<?php echo $row['parent_id']; ?>" />
     <input type="hidden" name="cat_id" value="<?php echo $row['cat_id']; ?>" />
     <input type="hidden" name="cat_name" value="<?php echo $row['cat_name']; ?>" />
 
@@ -19,7 +22,7 @@ if (IN_MANAGER_MODE != 'true')
         <div>
             <span><b><?php echo $lng['enter_new_dirname']; ?></b></span>
             <span><b>:</b></span>
-            <span><input name="newdirname" type="text" value="<?php echo $row['cat_name']; ?>" size="30" /></span>
+            <span><input name="new_cat_name" type="text" value="<?php echo $row['cat_name']; ?>" size="30" /></span>
         </div>
     <?php
     }

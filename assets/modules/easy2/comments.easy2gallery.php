@@ -45,7 +45,7 @@ $res = mysql_query('SELECT * FROM ' . $table_prefix . "system_settings");
 while ($row = mysql_fetch_assoc($res))
     $settings[$row['setting_name']] = $row['setting_value'];
 
-if (file_exists('includes/langs/' . $settings['manager_language'] . '.comments.php')) {
+if (file_exists(realpath('includes/langs/' . $settings['manager_language'] . '.comments.php'))) {
     include 'includes/langs/' . $settings['manager_language'] . '.comments.php';
     $lng = $e2g_lang[$settings['manager_language']];
 } else {
@@ -133,7 +133,7 @@ if ($_POST && empty($_POST['name']) && empty($_POST['comment'])) {
 
 // COMMENT ROW TEMPLATE
 
-if (file_exists($e2g['comments_row_tpl'])) {
+if (file_exists(realpath($e2g['comments_row_tpl']))) {
     $row_tpl = file_get_contents($e2g['comments_row_tpl']);
 } elseif (!($row_tpl = getChunk($e2g['comments_row_tpl']))) {
     die('Comments row template not found!');
@@ -174,7 +174,7 @@ mysql_close();
 
 // COMMENT TEMPLATE
 
-if (file_exists($e2g['comments_tpl'])) {
+if (file_exists(realpath($e2g['comments_tpl']))) {
     $tpl = file_get_contents($e2g['comments_tpl']);
 } elseif (!($tpl = getChunk($e2g['comments_tpl']))) {
     die('Comments template not found!');

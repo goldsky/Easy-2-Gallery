@@ -18,17 +18,7 @@ if (IN_MANAGER_MODE != 'true')
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
                     <tr class="gridAltItem">
-                        <td width="140"><b><?php echo $lng['e2g_debug']; ?>:</b></td>
-                        <td>
-                            <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['no']; ?>
-                            <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes']; ?>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_debug_cfg_desc']); ?></td>
-                    </tr>
-                    <tr class="gridAltItem">
-                        <td><b><?php echo $lng['path']; ?>:</b></td>
+                        <td width="140"><b><?php echo $lng['path']; ?>:</b></td>
                         <td><input name="dir" type="text" value="<?php echo $e2g['dir']; ?>" /></td>
                     </tr>
                     <tr>
@@ -50,6 +40,38 @@ if (IN_MANAGER_MODE != 'true')
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_encode_cfg_desc']); ?></td>
                     </tr>
+                    <tr>
+                        <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['mod_options']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['e2g_debug']; ?>:</b></td>
+                        <td>
+                            <input type="radio" name="e2g_debug" value="0" <?php echo ($e2g['e2g_debug'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['no']; ?>
+                            <input type="radio" name="e2g_debug" value="1" <?php echo ($e2g['e2g_debug'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes']; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_debug_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['mod_view']; ?>:</b></td>
+                        <td>
+                            <input type="radio" name="mod_view" value="list" <?php echo ($e2g['mod_view'] == 'list' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['list']; ?>
+                            <input type="radio" name="mod_view" value="thumbnails" <?php echo ($e2g['mod_view'] == 'thumbnails' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['thumbnails']; ?>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['mod_view_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['mod_date_format']; ?>:</b></td>
+                        <td>
+                            <input name="mod_date_format" size="30" type="text" value="<?php echo $e2g['mod_date_format']; ?>" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['mod_date_format_cfg_desc']); ?></td>
+                    </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['tinymce_path']; ?>:</b></td>
                         <td>
@@ -59,6 +81,9 @@ if (IN_MANAGER_MODE != 'true')
                     </tr>
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['tinymce_path_desc']); ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['snip_options']; ?></b></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['e2g_wrapper_cfg']; ?>:</b></td>
@@ -148,6 +173,57 @@ if (IN_MANAGER_MODE != 'true')
                     tpConfig.addTabPage( document.getElementById( 'tabThumbnailsSettings') );
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
+                    <tr>
+                        <td colspan="2"><b class="success" style="font-size:120%"><?php echo $lng['mod_options']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
+                        <td><input name="mod_w" type="text" value="<?php echo $e2g['mod_w']; ?>" size="4" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['h']; ?>:</b></td>
+                        <td><input name="mod_h" type="text" value="<?php echo $e2g['mod_h']; ?>" size="4" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thq']; ?>:</b></td>
+                        <td><input name="mod_thq" type="text" value="<?php echo $e2g['mod_thq']; ?>" size="3" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['resize_type']; ?>:</b></td>
+                        <td>
+                            <select name="mod_resize_type">
+                                <option value="inner"<?php echo ($e2g['mod_resize_type'] == 'inner' ? ' selected="selected"' : ''); ?>><?php echo $lng['inner']; ?></option>
+                                <option value="shrink"<?php echo ($e2g['mod_resize_type'] == 'shrink' ? ' selected="selected"' : ''); ?>><?php echo $lng['shrink']; ?></option>
+                                <option value="resize"<?php echo ($e2g['mod_resize_type'] == 'resize' ? ' selected="selected"' : ''); ?>><?php echo $lng['resize']; ?></option>
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
+                        <td>
+                            R: <input name="mod_thbg_red" type="text" value="<?php echo $e2g['mod_thbg_red']; ?>" size="3" />
+                            G: <input name="mod_thbg_green" type="text" value="<?php echo $e2g['mod_thbg_green']; ?>" size="3" />
+                            B: <input name="mod_thbg_blue" type="text" value="<?php echo $e2g['mod_thbg_blue']; ?>" size="3" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['snip_options']; ?></b></td>
+                    </tr>
                     <tr class="gridAltItem">
                         <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
                         <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4" /></td>
@@ -180,26 +256,24 @@ if (IN_MANAGER_MODE != 'true')
                         </td>
                     </tr>
                     <tr>
-                        <td colspan="2">
-                            <?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?>
-                                <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/img/e2g_resize_proportions.png" alt="e2g_resize_proportions.png" />
-
-                            </td>
-                        </tr>
-                        <tr class="gridAltItem">
-                            <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
-                            <td>
-                                R: <span style="color:green;">&amp;thbg_red=</span> <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3" />
-                                G: <span style="color:green;">&amp;thbg_green=</span> <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3" />
-                                B: <span style="color:green;">&amp;thbg_blue=</span> <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3" />
-                            </td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
-                        </tr>
-                        <tr class="gridAltItem">
-                            <td><b><?php echo $lng['glib']; ?>:</b></td>
-                            <td><span style="color:green;">&amp;glib=</span> <select name="glib">
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?>
+                            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/img/e2g_resize_proportions.png" alt="e2g_resize_proportions.png" />
+                        </td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
+                        <td>
+                            R: <span style="color:green;">&amp;thbg_red=</span> <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3" />
+                            G: <span style="color:green;">&amp;thbg_green=</span> <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3" />
+                            B: <span style="color:green;">&amp;thbg_blue=</span> <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['glib']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;glib=</span> <select name="glib">
                                 <?php
                                 $selectGlibs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_viewers ';
 
@@ -341,8 +415,8 @@ if (IN_MANAGER_MODE != 'true')
                         <td><b><?php echo $lng['use']; ?>:</b></td>
                         <td><span style="color:green;">&amp;crumbs_use=</span>
                             <select size="1" name="crumbs_use">
-                                <option value="foldername"<?php echo ($e2g['crumbs_use'] == 'foldername' ? ' selected="selected"' : ''); ?>>foldername (<?php echo $lng['dir_name']; ?>)</option>
-                                <option value="alias"<?php echo ($e2g['crumbs_use'] == 'alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias'] . ' / ' . $lng['title']; ?>)</option>
+                                <option value="cat_name"<?php echo ($e2g['crumbs_use'] == 'cat_name' ? ' selected="selected"' : ''); ?>>foldername (<?php echo $lng['dir_name']; ?>)</option>
+                                <option value="cat_alias"<?php echo ($e2g['crumbs_use'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias'] . ' / ' . $lng['title']; ?>)</option>
                             </select>
                         </td>
                     </tr>
@@ -451,21 +525,6 @@ if (IN_MANAGER_MODE != 'true')
                     <tr>
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_nextSymbol_cfg_desc']); ?></td>
                     </tr>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                     <tr>
                         <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['settings_pagination']; ?></b></td>
                     </tr>
@@ -604,12 +663,53 @@ if (IN_MANAGER_MODE != 'true')
                     tpConfig.addTabPage( document.getElementById( 'tabTemplatesSettings') );
                 </script>
                 <table cellspacing="0" cellpadding="2" width="100%">
+                    <tr>
+                        <td colspan="2"><b class="success" style="font-size:120%"><?php echo $lng['mod_options']; ?></b></td>
+                    </tr><?php $disabled = ' disabled="disabled"';?>
                     <tr class="gridAltItem">
-                        <td width="190"><b><?php echo $lng['css']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70" /></td>
+                        <td width="190"><b><?php echo $lng['mod_tpl_table']; ?>:</b></td>
+                        <td><input name="mod_tpl_table" type="text" value="<?php echo $e2g['mod_tpl_table']; ?>" size="70" /></td>
                     </tr>
                     <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['mod_tpl_table_row_dir']; ?>:</b></td>
+                        <td><input name="mod_tpl_table_row_dir" type="text" value="<?php echo $e2g['mod_tpl_table_row_dir']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['mod_tpl_table_row_file']; ?>:</b></td>
+                        <td><input name="mod_tpl_table_row_file" type="text" value="<?php echo $e2g['mod_tpl_table_row_file']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['gallery']; ?>:</b></td>
+                        <td><input name="mod_tpl_gal" type="text" value="<?php echo $e2g['mod_tpl_gal']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['dir']; ?>:</b></td>
+                        <td><input name="mod_tpl_dir" type="text" value="<?php echo $e2g['mod_tpl_dir']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['thumb']; ?>:</b></td>
+                        <td><input name="mod_tpl_thumb" type="text" value="<?php echo $e2g['mod_tpl_thumb']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['snip_options']; ?></b></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['gallery']; ?>:</b></td>
@@ -661,13 +761,6 @@ if (IN_MANAGER_MODE != 'true')
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_lp_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
-                        <td><b><?php echo $lng['tpl_lp_css']; ?>:</b></td>
-                        <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70" /></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
-                    </tr>
-                    <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_lp_cmt']; ?>:</b></td>
                         <td><span style="color:green;">&amp;page_comments_tpl=</span> <input name="page_comments_tpl" type="text" value="<?php echo $e2g['page_comments_tpl']; ?>" size="70" /></td>
                     </tr>
@@ -682,6 +775,13 @@ if (IN_MANAGER_MODE != 'true')
                         <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
+                        <td><b><?php echo $lng['tpl_slideshow']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;slideshow_tpl=</span> <input name="ss_tpl" type="text" value="<?php echo $e2g['ss_tpl']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
                         <td><b><?php echo $lng['tpl_jsdisabled']; ?>:</b></td>
                         <td><input name="jsdisabled_tpl" type="text" value="<?php echo $e2g['jsdisabled_tpl']; ?>" size="70" /></td>
                     </tr>
@@ -690,6 +790,20 @@ if (IN_MANAGER_MODE != 'true')
                     </tr>
                     <tr>
                         <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td width="190"><b><?php echo $lng['css']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
+                    </tr>
+                    <tr class="gridAltItem">
+                        <td><b><?php echo $lng['tpl_lp_css']; ?>:</b></td>
+                        <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $e2g['page_tpl_css']; ?>" size="70" /></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><?php echo htmlspecialchars_decode($lng['tpl_css_path_cfg_desc']); ?></td>
                     </tr>
                     <tr class="gridAltItem">
                         <td><b><?php echo $lng['grid_class']; ?>:</b></td>

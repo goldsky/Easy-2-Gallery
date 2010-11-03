@@ -133,12 +133,10 @@
 .boxcontent {
     position: relative;
     padding: 8px;
-/*    margin: 8px;*/
 }
 
 .thumb .boxcontent img {
     position: relative;
-    margin-bottom: 10px;
     border-top: 2px solid #E5E5E5;
     border-right: 2px solid #FFFFFF;
     border-bottom: 2px solid #FFFFFF;
@@ -147,35 +145,25 @@
 
 .dir .boxcontent img {
     position: relative;
-    margin-bottom: 10px;
     border-top: 2px solid #EEDFCC;
     border-right: 2px solid #FEF9ED;
     border-bottom: 2px solid #FEF9ED;
     border-left: 2px solid #EEDFCC;
 }
 
-/*.boxcontent div {
-    width:100%;
-    text-align:center;
-}*/
-
 .thumb .boxcontent {
     background-color: #F7F7F7;
     border: 1px solid #E0E0E0;
-    padding-bottom: 1em;
 }
 
 .dir .boxcontent {
     background-color: #FCF8DC;
     border: 1px solid #FEEECD;
-    padding-bottom: 1em;
 }
 
-/*.boxcontent {
-    border-left:1px solid #E0E0E0;
-    border-right:1px solid #E0E0E0;
-    display:block;
-}*/
+.thumbinfo {
+    display: block;
+}
 
 .dir,
 .thumb {
@@ -223,39 +211,10 @@
     clear: both;
 }
 
-.e2g_gallery {
-}
-
-.e2g_gallery table {
-}
-
+.e2g_gallery {}
+.e2g_gallery table {}
 .e2g_gallery tr {}
 .e2g_gallery td {}
-
-/* for notables */
-/*div.e2g .thumb,
-div.e2g .dir {
-    float: left;
-    margin:7px;
-    width:154px;
-}*/
-
-/*div.e2g:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-}*/
-
-/* hasLayout */
-/*div.e2g {
-    display:inline-block;
-}
-
-div.e2g {
-    display:block;
-}*/
 
 /* crumbs */
 .e2g_crumbs {
@@ -267,12 +226,6 @@ div.e2g {
 div.image {
     width: auto;
 }
-
-/*.image img {
-    border: 1px solid gray;
-    padding: 6px;
-    background-color: white;
-}*/
 
 div.imagetitle {
     margin-top: 10px;

@@ -36,7 +36,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/delete.png" alt="" /> <?php echo $lng['delete']; ?>
             </a>
         </li>
-        <?php if(class_exists(ZipArchive)) { ?>
+        <?php if(class_exists('ZipArchive')) { ?>
         <li id="downloadActions" style="display: none;">
             <a name="download" href="javascript:;" onclick="submitform(6)">
                 <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/page_white_compressed.png" alt="" /> <?php echo $lng['download']; ?>

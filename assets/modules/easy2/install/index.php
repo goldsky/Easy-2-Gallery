@@ -6,7 +6,7 @@ $_a = (int) $_GET['a'];                 // MODx's action ID
 $_i = (int) $_GET['id'];                // MODx's module ID
 $index = 'index.php?a=' . $_a . '&id=' . $_i . (!empty($e2g['mod_id']) ? '&amp;e2g_id=' . $e2g['mod_id'] : '');
 
-if (file_exists('../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php')) {
+if (file_exists(realpath('../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php'))) {
     include '../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php';
     $lngi = $e2g_lang[$modx->config['manager_language']];
 } else {
@@ -40,7 +40,7 @@ function restore($path, $pid) {
     $_restore['d'] = 0;
     $_restore['f'] = 0;
 
-    if (file_exists(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php')) {
+    if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
         require E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
     } else {
         require E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
@@ -159,7 +159,9 @@ function restore($path, $pid) {
                     else {
                         $_restore['f']++;
                         @chmod($newFilename, 0644);
-                        $_SESSION['easy2suc'][] = __LINE__ . ': ' . 'Successful on renaming file " ' . $fbasename . ' " to be " ' . $oldFiles[$trimmedName]['name'] . ' "';
+                        $_SESSION['easy2suc'][] = __LINE__ . ': '
+                                . 'Successful on renaming file " '
+                                . $fbasename . ' " to be " ' . $oldFiles[$trimmedName]['name'] . ' "';
                     }
                 }
             } // if (validFile($f))
@@ -214,10 +216,13 @@ function deleteAll($path) {
     return $res;
 }
 
-/* * *
- * goldsky -- use this for debuging with: die(validFile($filename, 1));
+/**
+ *
+ * To check the specified resource is a valid file.<br />
+ * It will be checked against the folder validation first.
+ * @author goldsky <goldsky@modx-id.com>
+ * @param string $filename the filename
  */
-
 function validFile($filename, $e2g_debug=0) {
     $f = basename($filename);
     if (validFolder($filename)) {
@@ -228,7 +233,7 @@ function validFile($filename, $e2g_debug=0) {
             return FALSE;
     }
     elseif ($f != '' && !validFolder($filename)) {
-        if (file_exists($filename)) {
+        if (file_exists(realpath($filename))) {
             $size = getimagesize($filename);
             $fp = fopen($filename, "rb");
             $allowedExt = array(
@@ -265,7 +270,9 @@ function validFile($filename, $e2g_debug=0) {
 }
 
 /**
- * goldsky -- use this for debuging with: die(validFolder($folderName, 1));
+ * To check the specified resource is a valid folder, although it has a DOT in it.
+ * @author goldsky <goldsky@modx-id.com>
+ * @param string $foldername the folder's name
  */
 function validFolder($folderName, $e2g_debug=0) {
     $openFolder = @opendir($folderName);
@@ -299,12 +306,11 @@ function validFolder($folderName, $e2g_debug=0) {
         return TRUE;
 }
 
-/* * *
+/**
  * To LOOP restore file's and folder's name of previous version's installation
  * @param string $path path to file or folder
  * @param int $pid current parent ID
  */
-
 function restoreAll($path, $pid) {
     global $modx;
 
@@ -446,8 +452,10 @@ function checkField($table, $field, $data=null) {
 
 function addField($table, $fieldName, $fieldInfo, $position=null) {
     if (checkField($GLOBALS['table_prefix'] . $table, $fieldName) === FALSE) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . $table . ' ADD `' . $fieldName . '` ' . $fieldInfo . ' ' . $position);
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . $table . '.' . $fieldName . ' ' . $lngi['created'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . $table . ' ADD `' . $fieldName . '` ' . $fieldInfo . ' ' . $position))
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . $table . '.' . $fieldName . ' ' . $lngi['created_err'];
+        else
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . $table . '.' . $fieldName . ' ' . $lngi['created'];
     }
 }
 
@@ -529,7 +537,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // easy2_dirs CREATE
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_dirs'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_dirs (
+        $createDirTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_dirs (
                         `parent_id` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
                         `cat_id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                         `cat_left` INT(10) NOT NULL DEFAULT \'0\',
@@ -547,12 +555,21 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `cat_visible` TINYINT(4) NOT NULL DEFAULT \'1\',
                         PRIMARY KEY (`cat_id`),
                         INDEX `cat_left` (`cat_left`)
-                        ) TYPE=MyISAM')) {
-            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs ' . $lngi['created'];
-        } else {
-            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs ' . $lngi['create_err']
-                    . '<br />' . mysql_error();
+                        ) TYPE=MyISAM';
+        $queryCreateDirTable = mysql_query($createDirTable);
+        if (!$queryCreateDirTable) {
+            $_SESSION['easy2err'][] = __LINE__ . ': '
+                    . $lngi['table'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs '
+                    . $lngi['create_err']
+                    . '<br />' . mysql_error()
+                    . '<br />' . $createTable;
             chref($index);
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': '
+                    . $lngi['table'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs '
+                    . $lngi['created'];
         }
     }
 
@@ -574,15 +591,30 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     if (checkField($GLOBALS['table_prefix'] . 'easy2_dirs', 'cat_left') !== FALSE
             && checkField($GLOBALS['table_prefix'] . 'easy2_dirs', 'cat_left', 'Type') === 'int(10) unsigned'
     ) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs CHANGE cat_left cat_left INT(10) default \'0\' NOT NULL');
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_left ' . $lngi['upgraded'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs CHANGE cat_left cat_left INT(10) default \'0\' NOT NULL')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': '
+                    . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_left '
+                    . $lngi['upgrade_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_left '
+                    . $lngi['upgraded'];
+        }
     }
 
     // rename field for 1.4.0 RC1
     // cat_tag
     if (checkField($GLOBALS['table_prefix'] . 'easy2_dirs', 'cat_tags') !== FALSE) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs CHANGE `cat_tags` `cat_tag` VARCHAR(255) DEFAULT NULL NULL');
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_tag ' . $lngi['upgraded'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs CHANGE `cat_tags` `cat_tag` VARCHAR(255) DEFAULT NULL NULL')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_tag '
+                    . $lngi['upgrade_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_tag '
+                    . $lngi['upgraded'];
+        }
     }
 
     // additional field for 1.4.0 RC1
@@ -594,8 +626,15 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     addField('easy2_dirs', 'cat_summary', 'VARCHAR(255) NULL DEFAULT NULL', 'AFTER cat_alias');
 
     if (checkField($GLOBALS['table_prefix'] . 'easy2_dirs', 'cat_summary') === FALSE) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs ADD cat_summary varchar(255) default NULL AFTER cat_alias');
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_summary ' . $lngi['created'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_dirs ADD cat_summary varchar(255) default NULL AFTER cat_alias')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_summary '
+                    . $lngi['created_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_dirs.cat_summary '
+                    . $lngi['created'];
+        }
     }
 
     // rearrange field for 1.4.0 RC1
@@ -619,19 +658,20 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     $res = mysql_query('SELECT cat_right FROM ' . $GLOBALS['table_prefix'] . 'easy2_dirs WHERE cat_id=1');
     if (mysql_num_rows($res) == 0) {
-        if (mysql_query(
-                        'INSERT INTO ' . $GLOBALS['table_prefix'] . 'easy2_dirs '
-                        . '(parent_id, cat_id, cat_left, cat_right, cat_level, cat_name, cat_alias, cat_description, last_modified, cat_visible) '
-                        . 'VALUES (0,1,1,2,0,\'Easy 2\',\'\',\'\',\'\',1)')) {
-            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['data'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs ' . $lngi['added'];
-        } else {
+        $insertData = 'INSERT INTO ' . $GLOBALS['table_prefix'] . 'easy2_dirs '
+                . '(parent_id, cat_id, cat_left, cat_right, cat_level, cat_name, cat_visible) '
+                . 'VALUES (0,1,1,2,0,\'Easy 2\',1)';
+        if (!mysql_query($insertData)) {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['data'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs ' . $lngi['add_err']
-                    . '<br />' . mysql_error();
+                    . '<br />' . mysql_error()
+                    . '<br />' . $insertData;
             chref($index);
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['data'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_dirs ' . $lngi['added'];
         }
     }
 
-    // easy2_comments CHECK
+    // easy2_comments renaming
     if (isset($tab['easy2_comments'])) {
         if (!mysql_query('RENAME TABLE easy2_comments TO ' . $GLOBALS['table_prefix'] . 'easy2_comments')) {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_comments ' . $lngi['rename_err']
@@ -640,9 +680,9 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         }
     }
 
+    // easy2_comments
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_comments'])) {
-        // easy2_comments CREATE
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_comments (
+        $createCommentTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_comments (
                         `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                         `file_id` INT(10) UNSIGNED NULL DEFAULT NULL,
                         `author` VARCHAR(64) NOT NULL DEFAULT \'\',
@@ -658,12 +698,18 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `edited_by` TINYINT(10) UNSIGNED NULL DEFAULT NULL,
                         PRIMARY KEY (`id`),
                         KEY file_id (file_id)
-                        ) TYPE=MyISAM')) {
-            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_comments ' . $lngi['created'];
-        } else {
-            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_comments ' . $lngi['create_err']
-                    . '<br />' . mysql_error();
+                        ) TYPE=MyISAM';
+        if (!mysql_query($createCommentTable)) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_comments '
+                    . $lngi['create_err']
+                    . '<br />' . mysql_error()
+                    . '<br />' . $createCommentTable;
             chref($index);
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_comments '
+                    . $lngi['created'];
         }
     }
 
@@ -671,8 +717,15 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // additional field for 1.4.0 Beta1
     // ip_address
     if (checkField($GLOBALS['table_prefix'] . 'easy2_comments', 'ip_address') === FALSE) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_comments ADD ip_address char(16) NOT NULL AFTER email');
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_comments.ip_address ' . $lngi['created'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_comments ADD ip_address char(16) NOT NULL AFTER email')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_comments.ip_address '
+                    . $lngi['created_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_comments.ip_address '
+                    . $lngi['created'];
+        }
     }
 
     #************************************************
@@ -700,14 +753,14 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_files'])) {
         // easy2_files CREATE
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_files (
+        $createFileTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_files (
                         `id` INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
                         `dir_id` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
                         `filename` VARCHAR(255) NOT NULL DEFAULT \'\',
                         `size` VARCHAR(32) NOT NULL DEFAULT \'\',
                         `width` INT(10) UNSIGNED NULL DEFAULT NULL,
                         `height` INT(10) UNSIGNED NULL DEFAULT NULL,
-                        `name` VARCHAR(255) NOT NULL DEFAULT \'\',
+                        `alias` VARCHAR(255) NOT NULL DEFAULT \'\',
                         `summary` VARCHAR(255) NOT NULL DEFAULT \'\',
                         `tag` VARCHAR(255) NULL DEFAULT \'\',
                         `description` TEXT NULL,
@@ -718,20 +771,29 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `comments` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
                         `status` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'1\',
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM')) {
-            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_files ' . $lngi['created'];
-        } else {
+                        ) TYPE=MyISAM';
+        if (!mysql_query($createFileTable)) {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_files ' . $lngi['create_err']
-                    . '<br />' . mysql_error();
+                    . '<br />' . mysql_error()
+                    . '<br />' . $createFileTable;
             chref($index);
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_files ' . $lngi['created'];
         }
     }
 
     // rename field for 1.4.0 RC1
     // tag
     if (checkField($GLOBALS['table_prefix'] . 'easy2_files', 'tags') !== FALSE) {
-        mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_files CHANGE `tags` `tag` VARCHAR(255) DEFAULT NULL NULL');
-        $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_files.tag ' . $lngi['upgraded'];
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_files CHANGE `tags` `tag` VARCHAR(255) DEFAULT NULL NULL')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_files.tags '
+                    . $lngi['upgrade_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_files.tag '
+                    . $lngi['upgraded'];
+        }
     }
 
     // additional field for 1.4.0 RC1
@@ -756,7 +818,22 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     #********************************************
     # ENDS UPDATING FILES TABLE FOR 1.4.0 RC-2 **
     #********************************************
-    //
+
+    // rename field for 1.4.0 RC4
+    // name => alias
+    if (checkField($GLOBALS['table_prefix'] . 'easy2_files', 'name') !== FALSE) {
+        if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . 'easy2_files CHANGE `name` `alias` VARCHAR(255) DEFAULT NULL NULL')) {
+            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_files.name '
+                    . $lngi['upgrade_err'];
+        } else {
+            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['field'] . ' '
+                    . $GLOBALS['table_prefix'] . 'easy2_files.alias '
+                    . $lngi['upgraded'];
+        }
+    }
+
+
     // adding ignore IP table for 1.4.0 Beta4
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_ignoredip'])) {
         if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_ignoredip (
@@ -1140,115 +1217,115 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         <script type="text/javascript">
                             tpResources.addTabPage(document.getElementById("install"));
                         </script>
-<?php
-    if (count($_SESSION['easy2err']) > 0 || count($_SESSION['easy2suc']) > 0) {
-        $suc = $err = '';
-        if (count($_SESSION['easy2err']) > 0) {
-            $err = '<p class="warning">' . implode('<br />', $_SESSION['easy2err']) . '</p>';
-            $_SESSION['easy2err'] = array();
-            $err .= '<br /><br /><a href="#" onclick="document.location.href=\'' . $index . '\'"><b>' . $lngi['back'] . '</b></a>';
-        }
-        if (count($_SESSION['easy2suc']) > 0) {
-            $suc = '<p class="success">' . implode('<br />', $_SESSION['easy2suc']) . '</p>';
-            $_SESSION['easy2suc'] = array();
-        }
-        echo $suc . $err;
-    } else {
-?> <br />
-                    <form method="post" action="">
-                        <table cellspacing="0" cellpadding="0">
-                            <tr>
-                                <td><b><?php echo $lngi['path']; ?>:</b></td>
-                                <td><input name="path" type="text" style="width: 100%"
-                                           value="<?php echo $e2g['dir']; ?>" /> <input type="hidden"
-                                           name="mod_id"
-                                           value="<?php echo (!empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id']); ?>" />
-                                    <input type="hidden" name="plugin_id"
-                                           value="<?php echo $pluginId; ?>" /> <input type="hidden"
-                                           name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
-                            </tr>
-                        </table>
-                        <div><?php echo htmlspecialchars_decode($lngi['comment1'], ENT_QUOTES); ?></div>
-                        <div><?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?></div>
-                        <div style="color: green; font-weight: bold; font-size: 1.5em;"><?php echo htmlspecialchars_decode($lngi['system_check']); ?> :</div>
-
-<?php
-                    $iconOk = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_check.png" alt="" /> ';
-                    $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
-                    $disabled = '';
-                    echo '<ul>';
-                    // PHP version
-                    if (version_compare(PHP_VERSION, '5.2.0', '<')) {
-                        $disabled = 'disabled="disabled"';
-                        echo '<li>';
-                        echo $iconBad . 'PHP version ' . PHP_VERSION . ' (Min: 5.2.0)';
-                        echo '</li>';
+                    <?php
+                    if (count($_SESSION['easy2err']) > 0 || count($_SESSION['easy2suc']) > 0) {
+                        $suc = $err = '';
+                        if (count($_SESSION['easy2err']) > 0) {
+                            $err = '<p class="warning">' . implode('<br />', $_SESSION['easy2err']) . '</p>';
+                            $_SESSION['easy2err'] = array();
+                            $err .= '<br /><br /><a href="#" onclick="document.location.href=\'' . $index . '\'"><b>' . $lngi['back'] . '</b></a>';
+                        }
+                        if (count($_SESSION['easy2suc']) > 0) {
+                            $suc = '<p class="success">' . implode('<br />', $_SESSION['easy2suc']) . '</p>';
+                            $_SESSION['easy2suc'] = array();
+                        }
+                        echo $suc . $err;
                     } else {
-                        echo '<li>';
-                        echo $iconOk . 'PHP version ' . PHP_VERSION;
-                        echo '</li>';
-                    }
+                    ?> <br />
+                        <form method="post" action="">
+                            <table cellspacing="0" cellpadding="0">
+                                <tr>
+                                    <td><b><?php echo $lngi['path']; ?>:</b></td>
+                                    <td><input name="path" type="text" style="width: 100%"
+                                               value="<?php echo $e2g['dir']; ?>" /> <input type="hidden"
+                                               name="mod_id"
+                                               value="<?php echo (!empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id']); ?>" />
+                                        <input type="hidden" name="plugin_id"
+                                               value="<?php echo $pluginId; ?>" /> <input type="hidden"
+                                               name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
+                                </tr>
+                            </table>
+                            <div><?php echo htmlspecialchars_decode($lngi['comment1'], ENT_QUOTES); ?></div>
+                            <div><?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?></div>
+                            <div style="color: green; font-weight: bold; font-size: 1.5em;"><?php echo htmlspecialchars_decode($lngi['system_check']); ?> :</div>
 
-                    // PHP magic_quotes_gpc()
+                        <?php
+                        $iconOk = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_check.png" alt="" /> ';
+                        $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
+                        $disabled = '';
+                        echo '<ul>';
+                        // PHP version
+                        if (version_compare(PHP_VERSION, '5.2.0', '<')) {
+                            $disabled = 'disabled="disabled"';
+                            echo '<li>';
+                            echo $iconBad . 'PHP version ' . PHP_VERSION . ' (Min: 5.2.0)';
+                            echo '</li>';
+                        } else {
+                            echo '<li>';
+                            echo $iconOk . 'PHP version ' . PHP_VERSION;
+                            echo '</li>';
+                        }
+
+                        // PHP magic_quotes_gpc()
 //    if (function_exist('get_magic_quotes_gpc')) {
-                    if (get_magic_quotes_gpc ()) {
+                        if (get_magic_quotes_gpc ()) {
 //        $disabled = 'disabled="disabled"';
-                        echo '<li>';
-                        echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
-                        echo '</li>';
-                    } else {
-                        echo '<li>';
-                        echo $iconOk . 'PHP magic_quotes_gpc()=OFF';
-                        echo '</li>';
-                    }
+                            echo '<li>';
+                            echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
+                            echo '</li>';
+                        } else {
+                            echo '<li>';
+                            echo $iconOk . 'PHP magic_quotes_gpc()=OFF';
+                            echo '</li>';
+                        }
 
-                    // PHP Multibyte String
-                    if (function_exists('mb_get_info') && is_array(mb_get_info())) {
-                        echo '<li>';
-                        echo $iconOk . 'PHP Multibyte String enabled';
-                        echo '</li>';
-                    } else {
-                        $disabled = 'disabled="disabled"';
-                        echo '<li>';
-                        echo $iconBad . 'PHP Multibyte String disabled';
-                        echo '</li>';
-                    }
+                        // PHP Multibyte String
+                        if (function_exists('mb_get_info') && is_array(mb_get_info())) {
+                            echo '<li>';
+                            echo $iconOk . 'PHP Multibyte String enabled';
+                            echo '</li>';
+                        } else {
+                            $disabled = 'disabled="disabled"';
+                            echo '<li>';
+                            echo $iconBad . 'PHP Multibyte String disabled';
+                            echo '</li>';
+                        }
 
-                    // PHP Zipclass
-                    if (class_exists('ZipArchive')) {
-                        echo '<li>';
-                        echo $iconOk . 'PHP ZipArchive';
-                        echo '</li>';
-                    } else {
+                        // PHP Zipclass
+                        if (class_exists('ZipArchive')) {
+                            echo '<li>';
+                            echo $iconOk . 'PHP ZipArchive';
+                            echo '</li>';
+                        } else {
 //        $disabled = 'disabled="disabled"';
-                        echo '<li>';
-                        echo $iconBad . 'PHP ZipArchive';
-                        echo '</li>';
-                    }
+                            echo '<li>';
+                            echo $iconBad . 'PHP ZipArchive';
+                            echo '</li>';
+                        }
 
-                    // Easy 2 javascript library folders
-                    if (is_dir('../assets/libs')) {
-                        echo '<li>';
-                        echo $iconOk . 'assets/libs';
-                        echo '</li>';
-                    } else {
-                        $disabled = 'disabled="disabled"';
-                        echo '<li>';
-                        echo $iconBad . 'assets/libs';
-                        echo '</li>';
-                    }
+                        // Easy 2 javascript library folders
+                        if (is_dir('../assets/libs')) {
+                            echo '<li>';
+                            echo $iconOk . 'assets/libs';
+                            echo '</li>';
+                        } else {
+                            $disabled = 'disabled="disabled"';
+                            echo '<li>';
+                            echo $iconBad . 'assets/libs';
+                            echo '</li>';
+                        }
 
-                    $style = '';
-                    if ($disabled == 'disabled="disabled"')
-                        $style = 'style="color:gray;"';
+                        $style = '';
+                        if ($disabled == 'disabled="disabled"')
+                            $style = 'style="color:gray;"';
 
-                    echo '</ul>';
-?>
+                        echo '</ul>';
+                        ?>
                         <input type="submit" <?php echo $style; ?> value="<?php echo htmlspecialchars_decode($lngi['ok']); ?>" <?php echo $disabled; ?> />
                     </form>
-<?php
+                    <?php
                     }
-?></div>
+                    ?></div>
             </div>
         </div>
     </body>

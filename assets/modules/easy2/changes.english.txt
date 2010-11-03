@@ -3,6 +3,23 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+********** 1.4.0-Release Candidate 4 **********
++ Bug fixing on the chmod permissions
++ Bug fixing on the directory editing
++ Moving around the class methods into separate files.
++ Added French lang files (credit: Marc)
++ Thumbnails on module page
++ Added more options for the thumbnail generator
++ Created a new method to hold the slideshow variables
++ Sliced the snippet's pagination to be shorter
++ Changed the &crumbs_use option values: 'foldername' => 'cat_name' | 'alias' => 'cat_alias'
++ Renamed the file's 'name' field to be 'alias' to distinct the term with filename
+
+********** 1.4.0-Release Candidate 3 **********
++ Bug fixings on the converted variables
++ Bug fixings on the chmod permissions
++ Updated simple slideshow
+
 ********** 1.4.0-Release Candidate 2 **********
 + Many bug fixings
 + Created individual module's internal pages

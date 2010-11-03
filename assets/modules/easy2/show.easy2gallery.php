@@ -12,7 +12,8 @@
 error_reporting(0);
 
 if (empty($_GET['fid']) || !is_numeric($_GET['fid'])) {
-    sh_err('Error :-(');
+    $text = isset($_GET['text']) ? $_GET['text'] : 'Error';
+    sh_err($text);
 }
 
 // MODx config
@@ -41,7 +42,7 @@ if (!$res)
 
 // get the filename
 $row = mysql_fetch_array($res, MYSQL_ASSOC);
-$filename2send = $row['filename'];
+$filename = $row['filename'];
 
 $res = mysql_query('SELECT A.cat_id, A.cat_name '
                 . 'FROM ' . $table_prefix . 'easy2_dirs A, ' . $table_prefix . 'easy2_dirs B '
@@ -58,7 +59,7 @@ while ($l = mysql_fetch_row($res)) {
     $path .= $l[1] . '/';
 }
 
-$fp = '../../../' . $e2g['dir'] . $path . $filename2send;
+$fp = '../../../' . $e2g['dir'] . $path . $filename;
 $fp = utf8_decode($fp);
 
 /**
@@ -94,20 +95,20 @@ if ($e2g['ewm'] != 0) {
         else
             $y = 10;
 
-        $text_color = imagecolorallocate($im, 0, 0, 0);
-        imagestring($im, 2, $x - 1, $y, $e2g['wmt'], $text_color);
-        imagestring($im, 2, $x + 1, $y, $e2g['wmt'], $text_color);
-        imagestring($im, 2, $x, $y - 1, $e2g['wmt'], $text_color);
-        imagestring($im, 2, $x, $y + 1, $e2g['wmt'], $text_color);
-        imagestring($im, 2, $x + 1, $y + 1, $e2g['wmt'], $text_color);
-        imagestring($im, 2, $x - 1, $y - 1, $e2g['wmt'], $text_color);
+        $textColor = imagecolorallocate($im, 0, 0, 0);
+        imagestring($im, 2, $x - 1, $y, $e2g['wmt'], $textColor);
+        imagestring($im, 2, $x + 1, $y, $e2g['wmt'], $textColor);
+        imagestring($im, 2, $x, $y - 1, $e2g['wmt'], $textColor);
+        imagestring($im, 2, $x, $y + 1, $e2g['wmt'], $textColor);
+        imagestring($im, 2, $x + 1, $y + 1, $e2g['wmt'], $textColor);
+        imagestring($im, 2, $x - 1, $y - 1, $e2g['wmt'], $textColor);
 
-        $text_color = imagecolorallocate($im, 255, 255, 255);
-        imagestring($im, 2, $x, $y, $e2g['wmt'], $text_color);
+        $textColor = imagecolorallocate($im, 255, 255, 255);
+        imagestring($im, 2, $x, $y, $e2g['wmt'], $textColor);
     } elseif ($e2g['wmtype'] == 'image') {
 
         $wmfp = '../../../' . str_replace('../', '', $e2g['wmt']);
-        if (!file_exists($wmfp)) {
+        if (!file_exists(realpath($wmfp))) {
             sh_err('WM file not found');
         }
 
@@ -158,7 +159,7 @@ if ($e2g['ewm'] != 0) {
     header('Last-Modified: ' . date('r'));
     header('Accept-Ranges: bytes');
     header('Content-type: image/jpeg');
-    header('Content-Disposition: inline; filename="' . $filename2send . '"');
+    header('Content-Disposition: inline; filename="' . $filename . '"');
     imagejpeg($im);
     imagedestroy($im);
     header('Content-Length: ' . ob_get_length());
@@ -170,12 +171,21 @@ if ($e2g['ewm'] != 0) {
 }
 
 function sh_err($text) {
+    $w = isset($_GET['w']) ? $_GET['w'] : 300;
+    $h = isset($_GET['h']) ? $_GET['h'] : 200;
+    $textHeight = isset($_GET['th']) ? $_GET['th'] : 5;
+
     header("Content-type: image/png");
-    $im = @imagecreate(300, 200)
+    $im = @imagecreate($w, $h)
             or die("Cannot Initialize new GD image stream");
-    $background_color = imagecolorallocate($im, 255, 255, 255);
-    $text_color = imagecolorallocate($im, 0, 0, 0);
-    imagestring($im, 5, 75, 95, $text, $text_color);
+    $bgColor = imagecolorallocate($im, 255, 255, 255);
+    $textColor = imagecolorallocate($im, 233, 14, 91);
+    $text = trim($text) != '' ? $text : "Image error";
+    $y = $h/2 - $textHeight * 4;
+    $textWidth = imagefontwidth($textHeight) * strlen($text);
+    $center = ceil($w / 2);
+    $x = $center - (ceil($textWidth / 2));
+    imagestring($im, $textHeight, $x, $y, $text, $textColor);
     imagepng($im);
     imagedestroy($im);
     exit();

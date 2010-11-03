@@ -11,8 +11,8 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 // Easy 2 Gallery version
-if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.0 - RC 3') {
-    define('E2G_VERSION', '1.4.0 - RC 3');
+if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.0 - RC 4') {
+    define('E2G_VERSION', '1.4.0 - RC 4');
 }
 
 // Easy 2 Gallery module path
@@ -27,7 +27,7 @@ if (!defined('E2G_MODULE_URL')) {
 require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
 // LANGUAGE
-if (file_exists(E2G_MODULE_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.inc.php')) {
+if (file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.inc.php'))) {
     require_once E2G_MODULE_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.inc.php';
 
     // if there is a blank language parameter, english will fill it as the default.
@@ -62,7 +62,7 @@ if (!isset($_SESSION['easy2suc']))
  * Create a smooth conversion between file based config to database base
  */
 // CONFIGURATIONS from the previous version installation
-if (file_exists(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php')) {
+if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
     require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
     foreach ($e2g as $ck => $cv) {
         $configsKey[$ck] = $ck;
@@ -86,7 +86,7 @@ if (!isset($e2g)) {
 }
 
 // the default config will replace any blank value of config's.
-if (file_exists(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php')) {
+if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php'))) {
     require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
     foreach ($e2gDefault as $dk => $dv) {
         if (!isset($configsKey[$dk])) {
@@ -117,33 +117,75 @@ if (!is_dir(MODX_BASE_PATH . $e2g['dir'])) {
 }
 
 // ENCODING
-$e2gmod_cfg['e2g_encode'] = $e2g['e2g_encode'];
+$e2gModCfg['e2g_encode'] = $e2g['e2g_encode'];
 
 // SET UP THE PATH
-$e2gmod_cfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
-$e2gmod_cfg['path'] = ( isset($path) ? $path : '' );
-$e2gmod_cfg['parent_id'] = ( isset($_GET['pid']) && is_numeric($_GET['pid']) ) ? (int) $_GET['pid'] : 1;
+$e2gModCfg['dir'] = $e2g['dir'];
+//$e2gModCfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
+$e2gModCfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
+//$e2gModCfg['path'] = ( isset($path) ? $path : '' );
+//$e2gModCfg['path'] = ( isset($_GET['path']) ? $_GET['path'] : '' );
+$e2gModCfg['parent_id'] = ( isset($_GET['pid']) && is_numeric($_GET['pid']) ) ? (int) $_GET['pid'] : 1;
 
 /**
  * SYSTEM VARS
  */
 // Easy 2 Gallery's debug parameter
-$e2gmod_cfg['e2g_debug'] = $e2g['e2g_debug'];
+$e2gModCfg['e2g_debug'] = $e2g['e2g_debug'];
 // override MODx's debug variable
 $debug = 0;
 // MODx's manager theme
-$e2gmod_cfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
+$e2gModCfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
 // MODx's action ID
-$e2gmod_cfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
+$e2gModCfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
 // MODx's module ID
-$e2gmod_cfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
+$e2gModCfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
 // E2G's module pages
-$e2gmod_cfg['e2gpg'] = ( isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1' );
+$e2gModCfg['e2gpg'] = ( isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1' );
+// E2G's module views
+$_SESSION['mod_view'] = isset($_GET['view']) ? $_GET['view'] : (isset($_SESSION['mod_view']) ? $_SESSION['mod_view'] : $e2g['mod_view']);
+
+// Gallery template
+$e2gModCfg['mod_tpl_gal'] = '../' . $e2g['mod_tpl_gal'];
+// Dir template
+$e2gModCfg['mod_tpl_dir'] = '../' . $e2g['mod_tpl_dir'];
+// Thumb template
+$e2gModCfg['mod_tpl_thumb'] = '../' . $e2g['mod_tpl_thumb'];
+// Table template
+$e2gModCfg['mod_tpl_table'] = '../' . $e2g['mod_tpl_table'];
+// Table's row template for dirs
+$e2gModCfg['mod_tpl_table_row_dir'] = '../' . $e2g['mod_tpl_table_row_dir'];
+// Table's row template for files
+$e2gModCfg['mod_tpl_table_row_file'] = '../' . $e2g['mod_tpl_table_row_file'];
+// Thumb's width
+$e2gModCfg['mod_w'] = $e2g['mod_w'];
+// Thumb's height
+$e2gModCfg['mod_h'] = $e2g['mod_h'];
+// Thumb's quality
+$e2gModCfg['mod_thq'] = $e2g['mod_thq'];
+
+/* * ********************************
+ *        thumbnails order        *
+ * ******************************** */
+// Thumbnail's ORDER BY
+$e2gModCfg['orderby'] = preg_replace('/[^_a-z]/i', '', $e2g['orderby']);
+// Thumbnail's ORDER
+$e2gModCfg['order'] = preg_replace('/[^a-z]/i', '', $e2g['order']);
+
+// Folder's / directory's ORDER BY
+$e2gModCfg['cat_orderby'] = preg_replace('/[^_a-z]/i', '', $e2g['cat_orderby']);
+// Folder's / directory's ORDER
+$e2gModCfg['cat_order'] = preg_replace('/[^a-z]/i', '', $e2g['cat_order']);
+
+// Folder's thumbnail ORDER BY
+$e2gModCfg['cat_thumb_orderby'] = preg_replace('/[^_a-z]/i', '', $e2g['cat_thumb_orderby']);
+// Folder's thumbnail ORDER
+$e2gModCfg['cat_thumb_order'] = preg_replace('/[^a-z]/i', '', $e2g['cat_thumb_order']);
 
 // E2G's module ID
-$e2gmod_cfg['mod_id'] = !empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id'];
+$e2gModCfg['mod_id'] = !empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id'];
 // E2G's plugin ID
-$e2gmod_cfg['plugin_id'] = !empty($e2g['plugin_id']) ? $e2g['plugin_id'] : null;
+$e2gModCfg['plugin_id'] = !empty($e2g['plugin_id']) ? $e2g['plugin_id'] : null;
 
 /**
  * If Easy 2 Gallery is included inside another module,
@@ -151,7 +193,7 @@ $e2gmod_cfg['plugin_id'] = !empty($e2g['plugin_id']) ? $e2g['plugin_id'] : null;
  */
 $alienarray = array();
 $alienparams = '';
-if ($e2gmod_cfg['mod_id'] != $_GET['id']) {
+if ($e2gModCfg['mod_id'] != $_GET['id']) {
     // exclude ALL e2g's internal $_GET params to identify other module's $_GET params
     $diff = array(
         'a' => (isset($_GET['a']) ? $_GET['a'] : null)
@@ -166,6 +208,7 @@ if ($e2gmod_cfg['mod_id'] != $_GET['id']) {
         , 'path' => (isset($_GET['path']) ? $_GET['path'] : null)
         , 'act' => (isset($_GET['act']) ? $_GET['act'] : null)
         , 'page' => (isset($_GET['page']) ? $_GET['page'] : null)
+        , 'view' => (isset($_GET['view']) ? $_GET['view'] : null)
         , 'e2gpg' => (isset($_GET['e2gpg']) ? $_GET['e2gpg'] : null)
         , 'group_id' => (isset($_GET['group_id']) ? $_GET['group_id'] : null)
         , 'filter' => (isset($_GET['filter']) ? $_GET['filter'] : null)
@@ -181,20 +224,20 @@ if ($e2gmod_cfg['mod_id'] != $_GET['id']) {
 }
 
 // module's href
-$e2gmod_cfg['index'] = ( isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a=' . $e2gmod_cfg['_a']
-                . '&amp;id=' . $e2gmod_cfg['_i']
-                . '&amp;e2gpg=' . $e2gmod_cfg['e2gpg']
+$e2gModCfg['index'] = ( isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
+                . '&amp;id=' . $e2gModCfg['_i']
+                . '&amp;e2gpg=' . $e2gModCfg['e2gpg']
 //        .(isset($_GET['page'])? '&amp;page='.$_GET['page']:null)
         )
         . ( $alienparams != '' ? $alienparams : '' );
 
 // blank page's href
-$e2gmod_cfg['blank_index'] = MODX_MANAGER_URL . 'index.php?a=' . $e2gmod_cfg['_a']
-        . '&amp;id=' . $e2gmod_cfg['_i']
+$e2gModCfg['blank_index'] = MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
+        . '&amp;id=' . $e2gModCfg['_i']
         . ( $alienparams != '' ? $alienparams : '' );
 
 // ERROR REPORTING
-if ($e2gmod_cfg['e2g_debug'] == 1) {
+if ($e2gModCfg['e2g_debug'] == 1) {
     error_reporting(E_ALL);
     $old_error_handler = set_error_handler("error_handler");
 }
@@ -220,20 +263,26 @@ if (is_dir(E2G_MODULE_PATH . 'install')) {
 /**
  * EXECUTE MODULE
  */
-if (!class_exists('e2g_pub')) {
-    include_once(E2G_MODULE_PATH . "includes/classes/e2g.public.class.php");
-}
-if (!class_exists('e2g_mod')) {
-    include_once(E2G_MODULE_PATH . "includes/classes/e2g.module.class.php");
-}
-if (class_exists('e2g_pub') && class_exists('e2g_mod')) {
-    $e2g_mod = new e2g_mod($modx, $e2gmod_cfg, $e2g, $lng);
-    $e2g_mod->e2gpub_cfg = $e2gmod_cfg;
-    $e2g_mod->e2gpub_e2g = $e2g;
-    $e2g_mod->e2gpub_lng = $lng;
-    $output = $e2g_mod->explore($e2g);
+$e2gPubClassFile = E2G_MODULE_PATH . 'includes/classes/e2g.public.class.php';
+if (!class_exists('E2gPub') && file_exists(realpath($e2gPubClassFile))) {
+    include_once $e2gPubClassFile;
 } else {
-    $output = "<h3>error: required class not found</h3>";
+    $output = 'Missing $e2gPubClassFile';
+}
+
+$e2gModClassFile = E2G_MODULE_PATH . 'includes/classes/e2g.module.class.php';
+if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
+    include_once $e2gModClassFile;
+} else {
+    $output = 'Missing $e2gModClassFile';
+}
+
+if (class_exists('E2gPub') && class_exists('E2gMod')) {
+    $e2gModule = new E2gMod($modx, $e2gModCfg, $e2g, $lng);
+    $e2gModule->e2gpub_cfg = $e2gModCfg;
+    $e2gModule->e2gpub_e2g = $e2g;
+    $e2gModule->e2gpub_lng = $lng;
+    $output = $e2gModule->explore($e2g);
 }
 
 return $output;

@@ -8,7 +8,7 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-class e2g_pub { // public/protected class
+class E2gPub { // public/protected class
     /**
      * Inherit MODx functions
      * @var mixed modx's API
@@ -19,29 +19,17 @@ class e2g_pub { // public/protected class
      * Parameter configuration from the snippet or module
      * @var mixed parameters' configurations
      */
-    public $e2gpub_cfg;
-    /**
-     * The default configuration from the config fils
-     * @var mixed default configuration
-     */
-    public $e2gpub_e2g;
-    /**
-     * The translation variables based on the manager's language setting
-     * @var string language translation
-     */
-    public $e2gpub_lng;
+    public $e2gPubCfg;
     /**
      * The internal variables of this class
      * @var mixed all the processing variables
      */
     private $_e2g = array();
 
-    public function __construct($modx, $e2gpub_cfg, $e2g, $lng) {
+    public function __construct($modx, $e2gPubCfg) {
         set_time_limit(0);
         $this->modx = & $modx;
-        $this->e2gpub_cfg = $e2gpub_cfg;
-        $this->e2gpub_e2g = $e2g;
-        $this->e2gpub_lng = $lng;
+        $this->e2gPubCfg = $e2gPubCfg;
     }
 
     /**
@@ -53,11 +41,11 @@ class e2g_pub { // public/protected class
      * @param  string $text the string to be encoded
      * @return string returns the encoding
      */
-    protected function e2gEncode($text, $callback=false) {
-        $e2gEncode = $this->e2gpub_cfg['e2g_encode'];
+    protected function e2gEncode($text, $callback=FALSE) {
+        $e2gEncode = $this->e2gPubCfg['e2g_encode'];
 
         if ($e2gEncode == 'none') {
-            if ($callback == false) {
+            if ($callback == FALSE) {
                 $convertedText = $text;
             }
             if ($callback == 'ucfirst') {
@@ -65,14 +53,14 @@ class e2g_pub { // public/protected class
             }
 
             // if no matching criteria, just display plain text
-            if ($convertedText == false)
+            if ($convertedText == FALSE)
                 $convertedText = $text;
 
             return $convertedText;
         }
 
         if ($e2gEncode == 'UTF-8') {
-            if ($callback == false) {
+            if ($callback == FALSE) {
                 $convertedText = utf8_encode($text);
             }
             // http://bytes.com/topic/php/answers/444382-ucfirst-utf-8-setlocale#post1693669
@@ -82,7 +70,7 @@ class e2g_pub { // public/protected class
             }
 
             // if no matching criteria, just display plain text
-            if ($convertedText == false)
+            if ($convertedText == FALSE)
                 $convertedText = $text;
 
             return $convertedText;
@@ -100,7 +88,7 @@ class e2g_pub { // public/protected class
             include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
             include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
 
-            if ($callback == false) {
+            if ($callback == FALSE) {
                 // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
                 $convertedText = UTF8::convert_to($text, mb_detect_encoding($text));
             }
@@ -109,7 +97,7 @@ class e2g_pub { // public/protected class
             }
 
             // if no matching criteria, just display plain text
-            if ($convertedText == false)
+            if ($convertedText == FALSE)
                 $convertedText = $text;
 
             return $convertedText;
@@ -125,8 +113,8 @@ class e2g_pub { // public/protected class
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    protected function e2gDecode($text, $callback=false) {
-        $e2gEncode = $this->e2gpub_cfg['e2g_encode'];
+    protected function e2gDecode($text, $callback=FALSE) {
+        $e2gEncode = $this->e2gPubCfg['e2g_encode'];
 
         if ($e2gEncode == 'none') {
             return $text;
@@ -150,13 +138,13 @@ class e2g_pub { // public/protected class
             if ($mbDetectEncoding != 'ASCII' || $mbDetectEncoding != 'UTF-8') {
                 if (!$mbDetectEncoding) {
                     $convertedText = UTF8::convert_from($text, "ASCII");
-                    if ($convertedText != false)
+                    if ($convertedText != FALSE)
                         $text = $convertedText;
                     return $text;
                 }
                 else {
                     $convertedText = UTF8::convert_from($text, $mbDetectEncoding);
-                    if ($convertedText != false)
+                    if ($convertedText != FALSE)
                         $text = $convertedText;
                     return $text;
                 }
@@ -188,7 +176,7 @@ class e2g_pub { // public/protected class
         }
         mysql_free_result($res);
         if (empty($dirInfo[$field]))
-            return null;
+            return NULL;
         return htmlspecialchars_decode($dirInfo[$field], ENT_QUOTES);
     }
 
@@ -214,7 +202,7 @@ class e2g_pub { // public/protected class
         }
         mysql_free_result($res);
         if (empty($fileInfo[$field]))
-            return null;
+            return NULL;
         return htmlspecialchars_decode($fileInfo[$field], ENT_QUOTES);
     }
 
@@ -242,17 +230,17 @@ class e2g_pub { // public/protected class
      * @param string $filename the filename
      */
     protected function validFile($filename) {
-        $e2gDebug = $this->e2gpub_cfg['e2g_debug'];
+        $e2gDebug = $this->e2gPubCfg['e2g_debug'];
 
         $f = $this->basenameSafe($filename);
         $f = $this->e2gEncode($f);
         if ($this->validFolder($filename)) {
             if ($e2gDebug == 1) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : <b style="color:red;">' . $filename . '</b> is not a file, it\'s a valid folder.';
+                echo __LINE__ . ' : <b style="color:red;">' . $filename . '</b> is not a file, it\'s a valid folder.';
             }
             return FALSE;
         } elseif ($f != '' && !$this->validFolder($filename)) {
-            if (file_exists($filename)) {
+            if (file_exists(realpath($filename))) {
                 $size = getimagesize($filename);
                 $fp = fopen($filename, "rb");
                 $allowedExt = array(
@@ -270,7 +258,6 @@ class e2g_pub { // public/protected class
                     if ($e2gDebug == 1)
                         $fileInfo = 'Filename <b style="color:red;">' . $f . '</b> is an invalid image file: ' . $size[2] . ' - ' . $size[3];
                     else {
-//                        $_SESSION['easy2err'][] = __LINE__.' : '.$filename;
                         return FALSE;
                     }
                 }
@@ -278,7 +265,6 @@ class e2g_pub { // public/protected class
                 if ($e2gDebug == 1)
                     $fileInfo .= 'Filename <b style="color:red;">' . $f . '</b> is NOT exists.<br />';
                 else {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filename . ' does not exist.';
                     return FALSE;
                 }
             }
@@ -297,12 +283,12 @@ class e2g_pub { // public/protected class
      * @param string $foldername the folder's name
      */
     protected function validFolder($foldername) {
-        $e2gDebug = $this->e2gpub_cfg['e2g_debug'];
+        $e2gDebug = $this->e2gPubCfg['e2g_debug'];
 
         $openFolder = @opendir($foldername);
         if (!$openFolder) {
             if ($e2gDebug == 1) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.';
+                echo __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.';
             }
             return FALSE;
         } else {
@@ -351,11 +337,11 @@ class e2g_pub { // public/protected class
     /**
      * to check email validation
      * @param  string $email
-     * @return bool   true/false
+     * @return bool   true/FALSE
      */
     public function checkEmailAddress($email) {
         if (!preg_match("/^([a-zA-Z0-9])+([\.a-zA-Z0-9_-])*@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-]+)*\.([a-zA-Z]{2,6})$/", $email)) {
-            return false;
+            return FALSE;
         }
         return true;
     }
@@ -368,11 +354,33 @@ class e2g_pub { // public/protected class
      * @param string $suffix placeholder's suffix
      * @return string templated data
      */
-    public function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
+    protected function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
         foreach ($data as $k => $v) {
             $tpl = str_replace($prefix . (string) $k . $suffix, (string) $v, $tpl);
         }
         return $tpl;
+    }
+
+    /**
+     * Get template
+     * @param string    $tpl Template
+     * @return string   Template's content
+     */
+    protected function getTpl($tpl) {
+        $modx = $this->modx;
+        // this parameter convert $tpl to be a path
+        $tplCfg = $this->e2gPubCfg[$tpl];
+
+        if (file_exists(realpath($tplCfg))) {
+            $tplContent = file_get_contents($tplCfg);
+            return $tplContent;
+        } elseif (!empty($modx->chunkCache[$tplCfg])) {
+            $tplContent = $modx->chunkCache[$tplCfg];
+            return $tplContent;
+        } else {
+            echo 'Template ' . $tpl . ' is not found!<br />';
+            return FALSE;
+        }
     }
 
     /**
@@ -382,14 +390,13 @@ class e2g_pub { // public/protected class
      * @param bool      $respectDisabling   using the disabled option as query filter
      * @return mixed    if TRUE, will return the indexfile. Otherwise this will return FALSE.
      */
-    protected function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = null, $respectDisabling = TRUE) {
+    protected function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
         $modx = $this->modx;
-        $lng = $this->lng;
 
         if (!$e2gEvtName)
-            return false;
-        if (!file_exists(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php'))
-            return false;
+            return FALSE;
+        if (!file_exists(realpath(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php')))
+            return FALSE;
         else {
             // include the event's names
             include MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php';
@@ -404,19 +411,19 @@ class e2g_pub { // public/protected class
                 . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_plugin_events e '
                 . 'ON p.id=e.pluginid '
                 . 'WHERE ';
-        if ($e2gPluginName != null)
+        if ($e2gPluginName != NULL)
             $selectIndexFile .= 'p.name=\'' . $e2gPluginName . '\' AND ';
         if ($respectDisabling !== FALSE) {
             $selectIndexFile .= 'p.disabled=\'0\' AND ';
         }
-        
+
         $selectIndexFile .= 'e.evtid=\'' . $evtid . '\' '
                 . 'ORDER BY priority,pluginid ASC';
 
         $queryIndexFile = mysql_query($selectIndexFile);
         if (!$queryIndexFile) {
-            return __LINE__ . ' : ' . $lng['invoke_event_err'] . '<br />' . mysql_error()
-            . '<br />' . $selectIndexFile;
+            echo __METHOD__ . ', ' . __LINE__ . ' : ' . mysql_error() . '<br />' . $selectIndexFile;
+            return FALSE;
         } else {
             while ($row = mysql_fetch_array($queryIndexFile)) {
                 $indexFiles[] = $row['indexfile'];
@@ -425,7 +432,7 @@ class e2g_pub { // public/protected class
             if (!empty($indexFiles)) {
                 ob_start();
                 foreach ($indexFiles as $indexFile) {
-                    if (file_exists(MODX_BASE_PATH . $indexFile)) {
+                    if (file_exists(realpath(MODX_BASE_PATH . $indexFile))) {
                         include MODX_BASE_PATH . $indexFile;
                     }
                 }
@@ -434,10 +441,156 @@ class e2g_pub { // public/protected class
                 return $out;
             }
             else
-                return false;
+                return FALSE;
         }
         // just for a clean exit
-        return false;
+        return FALSE;
     }
 
+    /**
+     * To get thumbnail for each folder
+     * @param int       $gid    folder's ID
+     * @param string    $gdir   gallery's ROOT path
+     * @return string image's source
+     */
+    protected function folderImg($gid, $gdir) {
+        $modx = $this->modx;
+        $catThumbOrderBy = $this->e2gPubCfg['cat_thumb_orderby'];
+        $catThumbOrder = $this->e2gPubCfg['cat_thumb_order'];
+
+        // http://modxcms.com/forums/index.php/topic,23177.msg273448.html#msg273448
+        // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
+        $selectFiles = 'SELECT F.* '
+                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_files F '
+                . 'WHERE F.dir_id IN ('
+                . 'SELECT A.cat_id FROM '
+                . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
+                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
+                . 'WHERE ('
+                . 'B.cat_id=' . $gid . ' '
+                . 'AND A.cat_left >= B.cat_left '
+                . 'AND A.cat_right <= B.cat_right '
+                . 'AND A.cat_level >= B.cat_level '
+                . 'AND A.cat_visible = 1'
+                . ') '
+                . 'ORDER BY A.cat_level ASC '
+                . ') '
+                . 'AND F.status = 1 '
+        ;
+        if ($catThumbOrderBy == 'random') {
+            $selectFiles .= 'ORDER BY rand() ';
+        } else {
+            $selectFiles .= 'ORDER BY F.' . $catThumbOrderBy . ' ' . $catThumbOrder . ' ';
+        }
+
+        $queryFiles = mysql_query($selectFiles);
+        if (!$queryFiles) {
+            $o = __LINE__ . ': __METHOD__ = ' . __METHOD__ . '<br />';
+            $o .= mysql_error() . '<br />' . $selectFiles . '<br />';
+            echo $o;
+            return FALSE;
+        }
+
+        while ($l = mysql_fetch_array($queryFiles, MYSQL_ASSOC)) {
+            $files[] = $l;
+        }
+        mysql_free_result($queryFiles);
+
+        $countFiles = count($files);
+        if ($countFiles === 0)
+            return FALSE;
+
+        /**
+         * This part is to check whether the file exists in the file
+         * system or not, and stops at which ever returns TRUE.
+         */
+        $folderImgInfos = array();
+        $folderImgInfos['count'] = $countFiles;
+        foreach ($files as $file) {
+            // search image for subdir
+            $getPath = $this->getPath($file['dir_id']);
+            $imagePath = $gdir . $getPath . $file['filename'];
+            if (!$this->validFile($imagePath)) {
+                continue;
+            } else {
+                $folderImgInfos = $file;
+                break;
+            }
+        }
+
+        /**
+         * returned as folder's thumbnail's info array
+         */
+        return $folderImgInfos;
+    }
+
+    /**
+     * To get paths from the parent directory up to the Easy 2's ROOT gallery
+     * @param int       $dirId      parent directory's ID
+     * @param string    $option     output options: cat_name | cat_alias
+     * @param mixed     $format     output formats: string | array
+     * @return string
+     */
+    protected function getPath($dirId, $option='cat_name', $format='string') {
+        $modx = $this->modx;
+
+        $selectDir = 'SELECT A.parent_id, A.cat_id,A.cat_name,A.cat_alias '
+                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
+                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
+                . 'WHERE B.cat_id=' . $dirId . ' '
+                . 'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
+                . 'ORDER BY A.cat_left ASC '
+        ;
+
+        $queryDir = mysql_query($selectDir);
+        if (!$queryDir) {
+            return NULL; // do not set FALSE here, asuming there are multiple gids
+        }
+
+        $resultArray = array();
+        $resultString = array();
+        $result = '';
+        while ($l = mysql_fetch_array($queryDir)) {
+            if (''==$l[$option])
+                $l[$option] = $l['cat_name'];
+            $resultArray[$l['cat_id']] = $l[$option];
+            $resultString[$l['parent_id']] = $l[$option];
+        }
+        mysql_free_result($queryDir);
+
+        if (empty($resultArray))
+            return NULL;
+
+        if ('array' == $format) {
+            $result = $resultArray;
+        } else {
+            // skip the value of Easy 2's ROOT gallery ID/name
+            unset($resultString['0']);
+            $result = implode('/', array_values($resultString)) . '/';
+        }
+
+        return $result;
+    }
+
+    /**
+     * Crop text by length
+     * @param   string  $charSet    character set
+     * @param   int     $nameLen    text's length
+     * @param   string  $text       text to be cropped
+     * @return  string  shorthened text
+     */
+    protected function cropName ($charSet, $nameLen, $text) {
+        if (empty($charSet) || empty($nameLen))
+            return FALSE;
+
+        if ($text == '') {
+            $croppedName = '&nbsp;';
+        } elseif ($mbstring) {
+            if (mb_strlen($text, $charSet) > $nameLen)
+                $croppedName = mb_substr($text, 0, $nameLen - 1, $charSet) . '...';
+        } elseif (strlen($text) > $nameLen) {
+            $croppedName = substr($text, 0, $nameLen - 1) . '...';
+        }
+        return $croppedName;
+    }
 }

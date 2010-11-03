@@ -374,3 +374,87 @@ span.navigation span.navigationBranch:hover {
 span.navigation span.navigationBranch .active {
     background-color: #EEEEEE;
 }
+
+/* THUMBNAILS */
+.e2g_wrapper {
+    overflow: hidden;
+    clear: both;
+}
+
+.dir,
+.thumb {
+    float: left;
+    margin:7px;
+    -o-box-shadow: 0 0 7px #B0B0B0;
+    -icab-box-shadow: 0 0 7px #B0B0B0;
+    -khtml-box-shadow: 0 0 7px #B0B0B0;
+    -moz-box-shadow: 0 0 7px #B0B0B0;
+    -webkit-box-shadow: 0 0 7px #B0B0B0;
+    box-shadow: 0 0 7px #B0B0B0;
+    behavior: url(../assets/libs/PIE-1.0beta2/PIE.htc);
+}
+
+.dir .boxcontent {
+    background-color: #FCF8DC;
+}
+
+.dir .boxcontent img,
+.thumb .boxcontent img {
+    position: relative;
+}
+
+/******************************************************************************/
+
+.dir .boxcontent .icons,
+.thumb .boxcontent .icons {
+    position: absolute;
+    z-index: 1;
+    float: left;
+    visibility: hidden;
+}
+
+.dir .boxcontent .icons .checkbox,
+.thumb .boxcontent .icons .checkbox {
+    visibility: visible;
+}
+
+.dir .boxcontent:hover .icons .buttons,
+.thumb .boxcontent:hover .icons .buttons {
+    visibility: visible;
+    background: url('../img/bg-white-opac70.png') repeat;
+}
+
+.dir .boxcontent .icons .buttons img,
+.thumb .boxcontent .icons .buttons img {
+    vertical-align: middle;
+}
+
+.dir .boxcontent .icons .buttons,
+.thumb .boxcontent .icons .buttons {
+    padding: 2px;
+}
+
+.dir .boxcontent .attributes,
+.thumb .boxcontent .attributes {
+    position: absolute;
+    visibility: visible;
+/*    background: url('../img/bg-red-opac70.png') repeat;*/
+    z-index: 1;
+    bottom: 0;
+}
+
+.dir .boxcontent .attributes img,
+.thumb .boxcontent .attributes img {
+    vertical-align: middle;
+    padding: 2px;
+}
+
+.dir .dirinfo,
+.thumb .fileinfo {
+    display: none;
+}
+
+.boxcontent {
+    position: relative;
+    padding: 5px;
+}

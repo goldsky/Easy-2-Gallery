@@ -16,9 +16,9 @@ $files_link = $e2gPages['files']['link'];
             <?php
             if (isset($_GET['page'])) {
                 if ($_GET['page'] == 'edit_file')
-                    include_once E2G_MODULE_PATH . 'includes/tpl/page.edit_file.inc.php';
+                    include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.edit_file.inc.php';
                 elseif ($_GET['page'] == 'comments')
-                    include_once E2G_MODULE_PATH . 'includes/tpl/page.comments.inc.php';
+                    include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.comments.inc.php';
             }
             // default page
             else {
@@ -68,44 +68,39 @@ $files_link = $e2gPages['files']['link'];
                                         /**
                                          * The comment rows
                                          */
-                                        $c_select = 'SELECT c.*, f.filename, f.dir_id, i.ign_ip_address '
+                                        $selectComments = 'SELECT c.*, f.filename, f.dir_id, i.ign_ip_address '
                                                 . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments AS c '
                                                 . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_files AS f '
                                                 . 'ON c.file_id=f.id '
                                                 . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip AS i '
                                                 . 'ON i.ign_ip_address=c.ip_address ';
                                         if (isset($_GET['filter'])) {
-                                            $c_select .= 'WHERE ';
+                                            $selectComments .= 'WHERE ';
                                             if ($_GET['filter'] == 'comments_approved')
-                                                $c_select .= 'c.approved=1 ';
+                                                $selectComments .= 'c.approved=1 ';
                                             if ($_GET['filter'] == 'comments_unapproved')
-                                                $c_select .= 'c.approved=0 ';
+                                                $selectComments .= 'c.approved=0 ';
                                             if ($_GET['filter'] == 'comments_visible')
-                                                $c_select .= 'c.status=1 ';
+                                                $selectComments .= 'c.status=1 ';
                                             if ($_GET['filter'] == 'comments_hidden')
-                                                $c_select .= 'c.status=0 ';
+                                                $selectComments .= 'c.status=0 ';
                                         }
-                                        $c_select .= 'ORDER BY id DESC';
-                                        $res = mysql_query($c_select);
-                                        if (!$res)
+                                        $selectComments .= 'ORDER BY id DESC';
+                                        $queryComments = mysql_query($selectComments);
+                                        if (!$queryComments)
                                             die(mysql_error());
-                                        $i = 0; // only for row coloring
-                                        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                                            $cp = $this->_pathTo($l['dir_id']);
-                                            unset($cp[1]);
-                                            $cdir = '';
-                                            if (!empty($cp))
-                                                $cdir .= implode('/', $cp) . '/';
-                                            $filepath2 = str_replace('%2F', '/', rawurlencode($gdir . $cdir . $l['filename']));
+                                        $rowNum = 0; // only for row coloring
+                                        while ($l = mysql_fetch_array($queryComments, MYSQL_ASSOC)) {
+                                            $filePath = str_replace('%2F', '/', rawurlencode($gdir . $path['string'] . $l['filename']));
                                 ?>
-                                            <tr <?php echo $cl[$i % 2]; ?> >
+                                            <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                                                 <td valign="top" width="20">
                                                     <input name="comments[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0" />
                                                 </td>
                                                 <td valign="top" width="205">
                                         <?php if (!empty($cp)) {
                                         ?>
-                                                <a href="<?php echo $files_link; ?>&amp;pid=<?php echo $l['dir_id']; ?>&amp;page=openexplorer"><?php echo $cdir; ?></a><br />
+                                                <a href="<?php echo $files_link; ?>&amp;pid=<?php echo $l['dir_id']; ?>&amp;page=openexplorer"><?php echo $path['string']; ?></a><br />
                                         <?php } ?>
                                             <a href="<?php echo $index . $filtered; ?>&amp;page=comments&amp;file_id=<?php echo $l['file_id']; ?>&amp;pid=<?php echo $l['dir_id']; ?>">
                                                 <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/comments.png" width="16" height="16"
@@ -116,11 +111,11 @@ $files_link = $e2gPages['files']['link'];
                                                      alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border="0" />
                                             </a>
                                             <b>
-                                                <a href="javascript:void(0)" onclick="imPreview2('<?php echo $filepath2; ?>', <?php echo $i; ?>);">
+                                                <a href="javascript:void(0)" onclick="imPreview2('<?php echo $filePath; ?>', <?php echo $rowNum; ?>);">
                                                 <?php echo $l['filename']; ?></a>
                                         </b>
                                         [id:<?php echo $l['file_id']; ?>]
-                                        <div class="imPreview" id="rowPreview2_<?php echo $i; ?>" style="display:none;"></div>
+                                        <div class="imPreview" id="rowPreview2_<?php echo $rowNum; ?>" style="display:none;"></div>
                                     </td>
                                     <td valign="top" class="com_row">
                                         <div>
@@ -232,10 +227,10 @@ $files_link = $e2gPages['files']['link'];
                                         </td>
                                     </tr>
                                 <?php
-                                                if (isset($cdir)) {
-                                                    unset($cdir);
+                                                if (isset($path['string'])) {
+                                                    unset($path['string']);
                                                 }
-                                                $i++;
+                                                $rowNum++;
                                             }
                                 ?>
                                         </table>
@@ -281,10 +276,10 @@ $files_link = $e2gPages['files']['link'];
                                                         'SELECT DISTINCT ign_ip_address, ign_date, ign_username, ign_email '
                                                         . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip '
                                                         . 'ORDER BY id DESC');
-                                        $i = 0; // only for row coloring
+                                        $rowNum = 0; // only for row coloring
                                         while ($ign = mysql_fetch_array($ign_ip_res, MYSQL_ASSOC)) {
                     ?>
-                                            <tr <?php echo $cl[$i % 2]; ?> >
+                                            <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                                                 <td valign="top" width="20">
                                                     <input name="unignored_ip[]" value="<?php echo $ign['ign_ip_address']; ?>" type="checkbox" style="border:0;padding:0" /></td>
                                                 <td width="20">
@@ -307,7 +302,7 @@ $files_link = $e2gPages['files']['link'];
                                      <td><?php echo $ign['ign_email']; ?></td>
                                  </tr>
                     <?php
-                                            $i++;
+                                            $rowNum++;
                                         }
                     ?>
                                     </table>

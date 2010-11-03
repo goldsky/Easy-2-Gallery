@@ -28,31 +28,35 @@ if (!isset($e2g)) {
     }
 }
 
-$_SESSION['e2g_instances'];
-// Before continue, check the browser's Javascript
-// We need the CSS selector
-$modx->regClientStartupScript(MODX_BASE_URL . 'assets/libs/sizzle/sizzle.js');
+/**
+ * Before continue, check the browser's Javascript availability
+ * Appending Style Nodes with Javascript
+ * @author Jon Raasch
+ * @link http://jonraasch.com/blog/javascript-style-node
+ */
 $modx->regClientStartupHTMLBlock('
         <style type="text/css">
-            div.' . $e2g['e2g_wrapper'] . ' {
-                display:none;
-            }
+            div.' . $e2g['e2g_wrapper'] . ' {visibility:hidden}
         </style>
         <script type="text/javascript">
             window.onload = function() {
-                var e2g_divwrapper = Sizzle(\'div[id^=' . $e2g['e2g_wrapper'] . ']\');
-                for (var i = 0; i < e2g_divwrapper.length; i++) {
-                    e2g_divwrapper[i].style.display="block";
-                }
+                var css = document.createElement(\'style\');
+                css.type = \'text/css\';
+                var styles = \'div.' . $e2g['e2g_wrapper'] . ' {visibility:visible}\';
+
+                if (css.styleSheet) css.styleSheet.cssText = styles;
+                else css.appendChild(document.createTextNode(styles));
+
+                document.getElementsByTagName("head")[0].appendChild(css);
             };
         </script>
     ');
 
-if (file_exists($e2g['jsdisabled_tpl']))
+if (file_exists(realpath($e2g['jsdisabled_tpl'])))
     include $e2g['jsdisabled_tpl'];
 
 // Start retrieving snippet's parameters
-if (file_exists(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php')) {
+if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php'))) {
     require E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php';
 } else {
     return 'Snippet\'s parameters file is missing.';
@@ -64,8 +68,8 @@ if (file_exists(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery
 $output = '';
 
 // Load the core class file
-if (!class_exists('e2g_pub')) {
-    if (file_exists(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php')) {
+if (!class_exists('E2gPub')) {
+    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php'))) {
         include E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php';
     } else {
         echo "<h3>Missing Easy 2 Gallery core's class file.</h3>";
@@ -74,8 +78,8 @@ if (!class_exists('e2g_pub')) {
 }
 
 // Load the snippet's class file
-if (!class_exists('e2g_snip')) {
-    if (file_exists(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php')) {
+if (!class_exists('E2gSnippet')) {
+    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.snippet.class.php'))) {
         include E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
     } else {
         echo "<h3>Missing Easy 2 Gallery snippet's class file.</h3>";
@@ -84,17 +88,14 @@ if (!class_exists('e2g_snip')) {
 }
 
 // run the snippet
-if (class_exists('e2g_pub') && class_exists('e2g_snip')) {
-    $e2g = new e2g_snip($modx, $e2gsnip_cfg);
-    $e2g->e2gpub_cfg = $e2gsnip_cfg;
-    $output = $e2g->display();
+if (class_exists('E2gPub') && class_exists('E2gSnippet')) {
+    $e2gSnippet = new E2gSnippet($modx, $e2gSnipCfg);
+    $e2gSnippet->e2gpub_cfg = $e2gSnipCfg;
+    $output = $e2gSnippet->display();
 }
 else {
     $output = "<b>Error: Easy 2 Gallery's snippet class not found</b>";
 }
 
-// Using a web access may result empty output.
-//if ($output == '')
-//    $output = '<b>Empty output or wrong parameter(s)</b>';
-
+// Using a web access may result an empty output.
 echo $output;

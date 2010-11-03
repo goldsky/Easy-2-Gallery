@@ -154,7 +154,6 @@ $e2g_lang['nederlands'] = array (
         'upload_err' => 'Kan bestand niet uploaden',
         'file_add_err' => 'Kan bestand niet toevoegen',
         'type_err' => 'Verboden type bestand',
-        'db_err' => 'DB fout',
         'dir_create_err' => 'Kan map niet aanmaken',
         'files_delete_err' => 'Kan bestanden niet verwijderen',
         'dirs_delete_err' => 'Kan mappen niet verwijderen',

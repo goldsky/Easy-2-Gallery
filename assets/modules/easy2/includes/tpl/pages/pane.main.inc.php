@@ -8,12 +8,12 @@
 
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-$_t = $this->e2gmod_cfg['_t'];
+$_t = $this->e2gModCfg['_t'];
 $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
 
 // loading the hyperlinks ($e2gPages)
 require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
-$e2gpg = $this->e2gmod_cfg['e2gpg'];
+$e2gpg = $this->e2gModCfg['e2gpg'];
 foreach ($e2gPages as $k => $v) {
     $e2gPage[$v['e2gpg']] = $e2gPages[$k];
 }
@@ -202,7 +202,7 @@ foreach ($e2gPages as $k => $v) {
                 else {
                     pElt.style.display = "block";
                 }
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'><\/a>";
+                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // comment preview
@@ -212,7 +212,7 @@ foreach ($e2gPages as $k => $v) {
                     pElt.style.display = "none";
                 }
                 else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'><\/a>";
+                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // ignored comment preview
@@ -222,7 +222,7 @@ foreach ($e2gPages as $k => $v) {
                     pElt.style.display = "none";
                 }
                 else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'><\/a>";
+                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // file edit page preview
@@ -232,7 +232,7 @@ foreach ($e2gPages as $k => $v) {
                     pElt.style.display = "none";
                 }
                 else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'><\/a>";
+                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // file comment page preview
@@ -242,7 +242,7 @@ foreach ($e2gPages as $k => $v) {
                     pElt.style.display = "none";
                 }
                 else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'><\/a>";
+                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
             
             // tag page preview
@@ -252,7 +252,7 @@ foreach ($e2gPages as $k => $v) {
                     pElt.style.display = "none";
                 }
                 else pElt.style.display = "block";
-                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"'>";
+                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\">";
             }
             //]]>
         </script>
@@ -266,7 +266,7 @@ foreach ($e2gPages as $k => $v) {
                 theme_advanced_toolbar_align : "left",
                 theme_advanced_statusbar_location : "bottom",
                 theme_advanced_resizing : true,
-                content_css : "<?php echo E2G_MODULE_URL; ?>includes/tpl/e2g_mod.css"
+                content_css : "<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css"
             });
         </script>
         <script type="text/javascript" src="<?php echo MODX_SITE_URL; ?>assets/libs/highslide/highslide-full.js"></script>

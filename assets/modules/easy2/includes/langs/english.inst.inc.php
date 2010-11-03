@@ -6,7 +6,7 @@ $e2g_lang['english'] = array (
     'comment' => '&lt;p&gt;Install script will automatically create snippet and all tables in db&lt;br /&gt;&lt;br /&gt;If you are upgrading from the previous version installation (&amp;lt;1.3.6-alpha2), &lt;strong style=&quot;color: red;&quot;&gt; this will also RENAME&lt;/strong&gt; all the folder&#039;s and file&#039;s names to their original names.&lt;br /&gt;Backing up your SQL&#039;s and Gallery&#039;s files &lt;strong style=&quot;color: red;&quot;&gt;BEFORE UPGRADING&lt;/strong&gt; is highly encouraged.&lt;br /&gt;You have been warned!&lt;/p&gt;',
     'comment1' => '&lt;p&gt;Path to folder, &lt;strong class=&quot;warning&quot;&gt;with trailing slash&lt;/strong&gt;, where images will be saved.&lt;br /&gt;e.g. assets/gallery/.&lt;/p&gt;',
     'create_dir_err' => 'Couldn&#039;t create folder',
-    'create_err' => 'not created.',
+    'create_err' => 'could not be created.',
     'created' => 'created successfully.',
     'credit_lang_file' => 'Language file credit',
     'credit_lang_file_author' => 'Cx2, Temus, goldsky',
@@ -25,6 +25,7 @@ $e2g_lang['english'] = array (
     'ok' => 'Install',
     'path' => 'Path',
     'plugin_added' => 'Plugin created',
+    'plugin_add_err' => 'Could not add plugin',
     'rename' => 'renamed.',
     'rename_err' => 'not renamed.',
     'restore_err' => 'There was an error while trying to restore',
@@ -37,5 +38,6 @@ $e2g_lang['english'] = array (
     'success' => 'Installed successfully',
     'system_check' => 'System check',
     'table' => 'Table',
-    'upgraded' => 'upgraded successfully.'
+    'upgraded' => 'upgraded successfully.',
+    'upgrade_err' => 'could not be upgraded.'
 );

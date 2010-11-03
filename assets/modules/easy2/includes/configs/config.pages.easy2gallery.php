@@ -1,7 +1,7 @@
 <?php
 
-$_a = isset($_a) ? $_a : $this->e2gmod_cfg['_a'];
-$_i = isset($_i) ? $_i : $this->e2gmod_cfg['_i'];
+$_a = isset($_a) ? $_a : $this->e2gModCfg['_a'];
+$_i = isset($_i) ? $_i : $this->e2gModCfg['_i'];
 
 $e2gPages = array(
     'dashboard' => array(

@@ -8,7 +8,7 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-class e2g_snip extends e2g_pub {
+class E2gSnippet extends E2gPub {
 
     /**
      * Inherit MODx functions
@@ -19,17 +19,17 @@ class e2g_snip extends e2g_pub {
      * The snippet's configurations in an array
      * @var mixed all the snippet's parameters
      */
-    public $e2gsnip_cfg = array();
+    public $e2gSnipCfg = array();
     /**
      * The internal variables of this class
      * @var mixed all the processing variables
      */
     private $_e2g = array();
 
-    public function __construct($modx, $e2gsnip_cfg) {
-        parent::__construct($modx, $e2gsnip_cfg, $e2g, $lng);
+    public function __construct($modx, $e2gSnipCfg) {
+        parent::__construct($modx, $e2gSnipCfg);
         $this->modx = & $modx;
-        $this->e2gsnip_cfg = $e2gsnip_cfg;
+        $this->e2gSnipCfg = $e2gSnipCfg;
         $this->_e2g = $_e2g;
     }
 
@@ -45,28 +45,28 @@ class e2g_snip extends e2g_pub {
          * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
          */
         $modx = $this->modx;
-//        $gid = $this->e2gsnip_cfg['gid']; // default
-//        $staticGid = $this->e2gsnip_cfg['static_gid'];
-        $fid = $this->e2gsnip_cfg['fid'];
-//        $static_fid = $this->e2gsnip_cfg['static_fid'];
-        $rgid = $this->e2gsnip_cfg['rgid'];
-        $slideshow = $this->e2gsnip_cfg['slideshow'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
+//        $gid = $this->e2gSnipCfg['gid']; // default
+//        $staticGid = $this->e2gSnipCfg['static_gid'];
+        $fid = $this->e2gSnipCfg['fid'];
+//        $static_fid = $this->e2gSnipCfg['static_fid'];
+        $rgid = $this->e2gSnipCfg['rgid'];
+        $slideshow = $this->e2gSnipCfg['slideshow'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
 
         // to avoid gallery's thumbnails display on the landingpage's page
         if ($modx->documentIdentifier != $landingPage) {
-            if (!empty($fid) && !isset($slideshow)) {
+            if (isset($fid) && !isset($slideshow)) {
                 return $this->_imgFile();
             }
-            if (!empty($rgid) && !isset($slideshow)) {
+            if (isset($rgid) && !isset($slideshow)) {
                 return $this->_imgRandom();
             }
-            if (empty($fid) && empty($rgid) && !isset($slideshow)) {
+            if (!isset($fid) && !isset($rgid) && !isset($slideshow)) {
                 return $this->_gallery(); // default
             }
         }
-        if (!empty($slideshow)) {
-            return $this->_slideshow();
+        if (isset($slideshow)) {
+            return $this->_slideshow($slideshow);
         }
         if (isset($landingPage) && isset($_GET['fid'])) {
             return $this->_landingPage($_GET['fid']);
@@ -79,76 +79,76 @@ class e2g_snip extends e2g_pub {
      */
     private function _gallery() {
         $modx = $this->modx;
-        $gdir = $this->e2gsnip_cfg['gdir'];
-        $gid = $this->e2gsnip_cfg['gid'];
-        $staticGid = $this->e2gsnip_cfg['static_gid'];
-        $e2gInstances = $this->e2gsnip_cfg['e2g_instances'];
-        $e2gStaticInstances = $this->e2gsnip_cfg['e2g_static_instances'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
+        $gdir = $this->e2gSnipCfg['gdir'];
+        $gid = $this->e2gSnipCfg['gid'];
+        $staticGid = $this->e2gSnipCfg['static_gid'];
+        $e2gInstances = $this->e2gSnipCfg['e2g_instances'];
+        $e2gStaticInstances = $this->e2gSnipCfg['e2g_static_instances'];
+        $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
-        $tag = $this->e2gsnip_cfg['tag'];
-        $staticTag = $this->e2gsnip_cfg['static_tag'];
+        $tag = $this->e2gSnipCfg['tag'];
+        $staticTag = $this->e2gSnipCfg['static_tag'];
 
-        if ($this->e2gsnip_cfg['orderby'] == 'random') {
+        if ($this->e2gSnipCfg['orderby'] == 'random') {
             $orderBy = 'rand()';
             $order = '';
         } else {
-            $orderBy = $this->e2gsnip_cfg['orderby'];
-            $order = $this->e2gsnip_cfg['order'];
+            $orderBy = $this->e2gSnipCfg['orderby'];
+            $order = $this->e2gSnipCfg['order'];
         }
-        if ($this->e2gsnip_cfg['cat_orderby'] == 'random') {
-            $cat_orderBy = 'rand()';
-            $cat_order = '';
+        if ($this->e2gSnipCfg['cat_orderby'] == 'random') {
+            $catOrderBy = 'rand()';
+            $catOrder = '';
         } else {
-            $cat_orderBy = $this->e2gsnip_cfg['cat_orderby'];
-            $cat_order = $this->e2gsnip_cfg['cat_order'];
+            $catOrderBy = $this->e2gSnipCfg['cat_orderby'];
+            $catOrder = $this->e2gSnipCfg['cat_order'];
         }
 
-        $whereDir = $this->e2gsnip_cfg['where_dir'];
-        $whereFile = $this->e2gsnip_cfg['where_file'];
-        $limit = $this->e2gsnip_cfg['limit'];
-        $gpn = $this->e2gsnip_cfg['gpn'];
+        $whereDir = $this->e2gSnipCfg['where_dir'];
+        $whereFile = $this->e2gSnipCfg['where_file'];
+        $limit = $this->e2gSnipCfg['limit'];
+        $gpn = $this->e2gSnipCfg['gpn'];
 
-        $charset = $this->e2gsnip_cfg['charset'];
-        $mbstring = $this->e2gsnip_cfg['mbstring'];
-        $catNameLen = $this->e2gsnip_cfg['cat_name_len'];
+        $charSet = $this->e2gSnipCfg['charset'];
+        $mbstring = $this->e2gSnipCfg['mbstring'];
+        $catNameLen = $this->e2gSnipCfg['cat_name_len'];
 
-//        $notables = $this->e2gsnip_cfg['notables']; // deprecated
-        $grid = $this->e2gsnip_cfg['grid'];
-        $gridClass = $this->e2gsnip_cfg['grid_class'];
-        $crumbsClassCurrent = $this->e2gsnip_cfg['crumbs_classCurrent'];
-        $backClass = $this->e2gsnip_cfg['back_class'];
-        $pageNumClass = $this->e2gsnip_cfg['pagenum_class'];
-        $colls = $this->e2gsnip_cfg['colls'];
-        $imgSrc = $this->e2gsnip_cfg['img_src'];
+//        $notables = $this->e2gSnipCfg['notables']; // deprecated
+        $grid = $this->e2gSnipCfg['grid'];
+        $gridClass = $this->e2gSnipCfg['grid_class'];
+        $crumbsClassCurrent = $this->e2gSnipCfg['crumbs_classCurrent'];
+        $backClass = $this->e2gSnipCfg['back_class'];
+        $pageNumClass = $this->e2gSnipCfg['pagenum_class'];
+        $colls = $this->e2gSnipCfg['colls'];
+        $imgSrc = $this->e2gSnipCfg['img_src'];
 
-        $showOnly = $this->e2gsnip_cfg['showonly'];
-        $customGetParams = $this->e2gsnip_cfg['customgetparams'];
-        $galDesc = $this->e2gsnip_cfg['gal_desc'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-        $plugin = $this->e2gsnip_cfg['plugin'];
+        $showOnly = $this->e2gSnipCfg['showonly'];
+        $customGetParams = $this->e2gSnipCfg['customgetparams'];
+        $galDesc = $this->e2gSnipCfg['gal_desc'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+        $plugin = $this->e2gSnipCfg['plugin'];
 
         // CRUMBS
-        $crumbs = $this->e2gsnip_cfg['crumbs'];
-        $crumbsUse = $this->e2gsnip_cfg['crumbs_use'];
-        $crumbsSeparator = $this->e2gsnip_cfg['crumbs_separator'];
-        $crumbsShowHome = $this->e2gsnip_cfg['crumbs_showHome'];
-        $crumbsShowAsLinks = $this->e2gsnip_cfg['crumbs_showAsLinks'];
-        $crumbsShowCurrent = $this->e2gsnip_cfg['crumbs_showCurrent'];
-        $crumbsShowPrevious = $this->e2gsnip_cfg['crumbs_showPrevious'];
+        $crumbs = $this->e2gSnipCfg['crumbs'];
+        $crumbsUse = $this->e2gSnipCfg['crumbs_use'];
+        $crumbsSeparator = $this->e2gSnipCfg['crumbs_separator'];
+        $crumbsShowHome = $this->e2gSnipCfg['crumbs_showHome'];
+        $crumbsShowAsLinks = $this->e2gSnipCfg['crumbs_showAsLinks'];
+        $crumbsShowCurrent = $this->e2gSnipCfg['crumbs_showCurrent'];
+        $crumbsShowPrevious = $this->e2gSnipCfg['crumbs_showPrevious'];
 
         // Previous/Up/Next Navigation
-        $navPrevUpNext = $this->e2gsnip_cfg['nav_prevUpNext'];
-        $navPrevSymbol = $this->e2gsnip_cfg['nav_prevSymbol'];
-        $navUpSymbol = $this->e2gsnip_cfg['nav_upSymbol'];
-        $navNextSymbol = $this->e2gsnip_cfg['nav_nextSymbol'];
+        $navPrevUpNext = $this->e2gSnipCfg['nav_prevUpNext'];
+        $navPrevSymbol = $this->e2gSnipCfg['nav_prevSymbol'];
+        $navUpSymbol = $this->e2gSnipCfg['nav_upSymbol'];
+        $navNextSymbol = $this->e2gSnipCfg['nav_nextSymbol'];
 
         // PAGINATION
-        $pagination = $this->e2gsnip_cfg['pagination'];
+        $pagination = $this->e2gSnipCfg['pagination'];
 
         // EXECUTE THE JAVASCRIPT LIBRARY'S HEADERS
-        $jsLibs = $this->_libs();
-        if ($jsLibs === FALSE)
+        $jsLibs = $this->_loadHeaders();
+        if (!$jsLibs)
             return 'Javascript library error.';
 
         //**********************************************************************/
@@ -157,7 +157,7 @@ class e2g_snip extends e2g_pub {
         // for the UNselected &gid snippet call when the other &gid snippet call is selected
         if (isset($staticGid)
                 && isset($_GET['gid'])
-                && $this->_checkGidDecendant($_GET['gid'], $staticGid) == FALSE
+                && !$this->_checkGidDecendant($_GET['gid'], $staticGid)
                 || $e2gInstances != $e2gStaticInstances
         ) {
             $gpn = 0;
@@ -218,27 +218,27 @@ class e2g_snip extends e2g_pub {
         $_e2g['content'] = (($grid == 'css') ? '<div class="' . $gridClass . '">' : '<table class="' . $gridClass . '"><tr>');
 
         // Store the restricted galleries
-        $excludeDirsWebAccess = $this->_excludeWebAccess('dir');
-        $excludeFilesWebAccess = $this->_excludeWebAccess('file');
+        $excludeDirWebAccess = $this->_excludeWebAccess('dir');
+        $excludeFileWebAccess = $this->_excludeWebAccess('file');
 
         //******************************************************************/
         //*                 COUNT DIRECTORY WITHOUT LIMIT!                 */
         //******************************************************************/
         // dir_count is used for pagination. random can not have this.
         // TODO: conflict with the &gid=`*` parameter. moved the limitation to the PAGINATION section instead.
-//        if ($showOnly == 'images' || $orderBy == 'rand()' || $cat_orderBy == 'rand()') {
+//        if ($showOnly == 'images' || $orderBy == 'rand()' || $catOrderBy == 'rand()') {
         if ($showOnly == 'images') {
-            $dirCount = 0;
+            $resultCountDirs = 0;
         } else {
             if (isset($staticTag)) {
-                $selectCount = 'SELECT COUNT(DISTINCT cat_id) '
+                $selectDirCount = 'SELECT COUNT(DISTINCT cat_id) '
                         . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs ';
 
                 // OPEN the selected tagged folder
                 if (isset($_GET['gid'])
                         && $staticTag == $tag
-                        && $this->_tagsIds('dir', $tag, $_GET['gid'])) {
-                    $selectCount .= 'WHERE parent_id IN (' . $_GET['gid'] . ')';
+                        && $this->_checkTaggedDirIds($tag, $_GET['gid'])) {
+                    $selectDirCount .= 'WHERE parent_id IN (' . $_GET['gid'] . ')';
                 } else {
                     // the selected tag of multiple tags on the same page
                     if ($staticTag == $tag) {
@@ -249,41 +249,42 @@ class e2g_snip extends e2g_pub {
                         $multipleTags = @explode(',', $staticTag);
                     }
 
-                    for ($i = 0; $i < count($multipleTags); $i++) {
+                    $countMultipleTags = count($multipleTags);
+                    for ($i = 0; $i < $countMultipleTags; $i++) {
                         if ($i == 0)
-                            $selectCount .= 'WHERE cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                            $selectDirCount .= 'WHERE cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                         else
-                            $selectCount .= 'OR cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                            $selectDirCount .= 'OR cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                     }
                 }
 
-                if ($excludeDirsWebAccess !== FALSE) {
-                    $selectCount .= 'AND cat_id NOT IN (' . $excludeDirsWebAccess . ')';
+                if ($excludeDirWebAccess !== FALSE) {
+                    $selectDirCount .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ')';
                 }
             }
             // original &gid parameter
             else {
-                $selectCount = 'SELECT COUNT(DISTINCT d.cat_id) '
+                $selectDirCount = 'SELECT COUNT(DISTINCT d.cat_id) '
                         . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs AS d '
                         . 'WHERE '
                 ;
                 if ($gid != '*') {
                     if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
-                        $selectCount .= 'd.parent_id IN (' . $gid . ') AND ';
+                        $selectDirCount .= 'd.parent_id IN (' . $gid . ') AND ';
                     } else {
-                        $selectCount .= 'd.parent_id IN (' . $staticGid . ') AND ';
+                        $selectDirCount .= 'd.parent_id IN (' . $staticGid . ') AND ';
                     }
                 }
 
                 if (isset($whereDir)) {
                     $where = $this->_whereClause($whereDir, 'd');
-                    if ($where === FALSE)
+                    if (!$where) {
                         return FALSE;
-                    else
-                        $selectCount .= $where . ' AND ';
+                    }
+                    $selectDirCount .= $where . ' AND ';
                 }
 
-                $selectCount .= 'd.cat_visible = 1 '
+                $selectDirCount .= 'd.cat_visible = 1 '
                         // ddim -- wrapping children folders
                         . 'AND (SELECT count(*) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files F '
                         . 'WHERE F.dir_id IN '
@@ -297,18 +298,19 @@ class e2g_snip extends e2g_pub {
                         . ')'
                         . ')<>0 ';
 
-                if ($excludeDirsWebAccess !== FALSE) {
-                    $selectCount .= 'AND d.cat_id NOT IN (' . $excludeDirsWebAccess . ')';
+                if ($excludeDirWebAccess !== FALSE) {
+                    $selectDirCount .= 'AND d.cat_id NOT IN (' . $excludeDirWebAccess . ')';
                 }
             }
 
-            $dirCountQuery = mysql_query($selectCount);
-            if (!$dirCountQuery) {
-                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectCount . '<br />';
+            $querySelectDirCount = mysql_query($selectDirCount);
+            if (!$querySelectDirCount) {
+                echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirCount . '<br />';
                 return FALSE;
             }
 
-            $dirCount = mysql_result($dirCountQuery, 0, 0);
+            $resultCountDirs = mysql_result($querySelectDirCount, 0, 0);
+            mysql_free_result($querySelectDirCount);
 
             /**
              * Add the multiple IDs capability into the &gid
@@ -326,25 +328,15 @@ class e2g_snip extends e2g_pub {
             unset($singleGid);
             foreach ($multipleGids as $singleGid) {
                 // get path from the $gid
-                $path = $this->_getPath($singleGid);
-                $crumbsPath = $this->_getPath($singleGid, $crumbsUse);
-
-                // To limit the CRUMBS paths.
-                if (($staticGid != '1') && !empty($crumbsPath) && !isset($tag)) {
-                    $staticPath = $this->_getPath($staticGid);
-                    if (!$crumbsShowPrevious) {
-                        $crumbsPath = array_slice($crumbsPath, (count($staticPath) - 1), NULL, TRUE);
-                    }
-                }
-
-                // get "category name" from $path
-                $_e2g['cat_name'] = is_array($path) ? end($path) : '';
+                $pathArray = $this->_getPath($singleGid, NULL, 'array');
+                // get "folder's name" from $pathArray
+                $_e2g['cat_name'] = is_array($pathArray) ? end($pathArray) : '';
 
                 /**
                  * Only use crumbs if it is a single gid.
                  * Otherwise, how can we make crumbs for merging directories of multiple galleries on 1 page?
                  */
-                if (isset($staticTag) && $this->_tagsIds('dir', $staticTag, $singleGid) === FALSE)
+                if (isset($staticTag) && !$this->_checkTaggedDirIds($staticTag, $singleGid))
                     continue;
                 elseif ($multipleGidsCount == 1) {
                     /**
@@ -356,28 +348,38 @@ class e2g_snip extends e2g_pub {
                     //*                             CRUMBS                             */
                     //******************************************************************/
 
+                    $crumbsPathArray = $this->_getPath($singleGid, $crumbsUse, 'array');
+
+                    // To limit the CRUMBS paths.
+                    if (($staticGid != '1') && !empty($crumbsPathArray) && !isset($tag)) {
+                        $staticPath = $this->_getPath($staticGid, NULL, 'array');
+                        if (!$crumbsShowPrevious) {
+                            $crumbsPathArray = array_slice($crumbsPathArray, (count($staticPath) - 1), NULL, TRUE);
+                        }
+                    }
+
                     if ($crumbs == 1) {
                         // reset crumbs
                         $breadcrumbs = '';
                         // if path more the none
-                        if (count($crumbsPath) > 0) {
-                            end($crumbsPath);
-                            prev($crumbsPath);
-                            $_e2g['parent_id'] = key($crumbsPath);
-                            $_e2g['parent_name'] = $crumbsPath[$_e2g['parent_id']];
+                        if (count($crumbsPathArray) > 0) {
+                            end($crumbsPathArray);
+                            prev($crumbsPathArray);
+                            $_e2g['parent_id'] = key($crumbsPathArray);
+                            $_e2g['parent_name'] = $crumbsPathArray[$_e2g['parent_id']];
 
                             // create crumbs
                             $cnt = 0;
-                            foreach ($crumbsPath as $k => $v) {
+                            foreach ($crumbsPathArray as $k => $v) {
                                 $cnt++;
                                 if ($cnt == 1 && !$crumbsShowHome) {
                                     continue;
                                 }
-                                if ($cnt == count($crumbsPath) && !$crumbsShowCurrent) {
+                                if ($cnt == count($crumbsPathArray) && !$crumbsShowCurrent) {
                                     continue;
                                 }
 
-                                if ($cnt != count($crumbsPath))
+                                if ($cnt != count($crumbsPathArray))
                                     $breadcrumbs .= $crumbsSeparator . ($crumbsShowAsLinks ?
                                                     '<a href="'
                                                     // making flexible FURL or not
@@ -392,14 +394,13 @@ class e2g_snip extends e2g_pub {
                             }
                             $breadcrumbs = substr_replace($breadcrumbs, '', 0, strlen($crumbsSeparator));
 
-                            // unset Easy 2-$crumbsPath value
-                            unset($crumbsPath[1]);
-
+//                            // unset the value of Easy 2's ROOT gallery ID/name
+//                            unset($crumbsPathArray[1]);
                             // joining many of directory paths
-                            $crumbsPath = implode('/', array_values($crumbsPath)) . '/';
+                            $crumbsPathArray = implode('/', array_values($crumbsPathArray)) . '/';
                         } else { // if not many, path is set as empty
-                            $crumbsPath = '';
-                        } // if (count($path) > 1)
+                            $crumbsPathArray = '';
+                        } // if (count($pathArray) > 1)
                         $_e2g['crumbs'] = $breadcrumbs;
                     } // if ($crumbs == 1)
                     //******************************************************************/
@@ -407,7 +408,7 @@ class e2g_snip extends e2g_pub {
                     //******************************************************************/
                     if ($navPrevUpNext == 1
                             && $orderBy != 'rand()'
-                            && $cat_orderBy != 'rand()'
+                            && $catOrderBy != 'rand()'
                     ) {
                         if (isset($staticTag)) {
                             $staticKey = $staticTag;
@@ -417,7 +418,7 @@ class e2g_snip extends e2g_pub {
                             $dynamicKey = $gid;
                         }
 
-                        $navPrev = $this->_navPrevUpNext('prev', $staticKey, $dynamicKey, $cat_orderBy, $cat_order);
+                        $navPrev = $this->_navPrevUpNext('prev', $staticKey, $dynamicKey, $catOrderBy, $catOrder);
                         if ($navPrev !== FALSE) {
                             $_e2g['prev_cat_link'] = $navPrev['link'];
                             $_e2g['prev_cat_name'] = $navPrev['cat_name'];
@@ -433,7 +434,7 @@ class e2g_snip extends e2g_pub {
                                     . '</a>';
                         }
 
-                        $navUp = $this->_navPrevUpNext('up', $staticKey, $dynamicKey, $cat_orderBy, $cat_order);
+                        $navUp = $this->_navPrevUpNext('up', $staticKey, $dynamicKey, $catOrderBy, $catOrder);
                         if ($navUp !== FALSE) {
                             $_e2g['up_cat_link'] = $navUp['link'];
                             $_e2g['up_cat_name'] = $navUp['cat_name'];
@@ -449,7 +450,7 @@ class e2g_snip extends e2g_pub {
                                     . '</a>';
                         }
 
-                        $navNext = $this->_navPrevUpNext('next', $staticKey, $dynamicKey, $cat_orderBy, $cat_order);
+                        $navNext = $this->_navPrevUpNext('next', $staticKey, $dynamicKey, $catOrderBy, $catOrder);
                         if ($navNext !== FALSE) {
                             $_e2g['next_cat_link'] = $navNext['link'];
                             $_e2g['next_cat_name'] = $navNext['cat_name'];
@@ -473,13 +474,13 @@ class e2g_snip extends e2g_pub {
             if ($showOnly != 'images') {
                 // if &tag is set
                 if (isset($staticTag)) {
-                    $dir_select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs ';
+                    $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs ';
 
                     // OPEN the selected tagged folder
                     if (isset($_GET['gid'])
                             && $staticTag == $tag
-                            && $this->_tagsIds('dir', $tag, $_GET['gid'])) {
-                        $dir_select .= 'WHERE parent_id IN (' . $_GET['gid'] . ')';
+                            && $this->_checkTaggedDirIds($tag, $_GET['gid'])) {
+                        $selectDirs .= 'WHERE parent_id IN (' . $_GET['gid'] . ')';
                     } else {
                         // the selected tag of multiple tags on the same page
                         if ($staticTag == $tag) {
@@ -489,53 +490,53 @@ class e2g_snip extends e2g_pub {
                         else {
                             $multipleTags = @explode(',', $staticTag);
                         }
-
-                        for ($i = 0; $i < count($multipleTags); $i++) {
+                        $countMultipleTags = count($multipleTags);
+                        for ($i = 0; $i < $countMultipleTags; $i++) {
                             if ($i == 0)
-                                $dir_select .= 'WHERE cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                                $selectDirs .= 'WHERE cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                             else
-                                $dir_select .= 'OR cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                                $selectDirs .= 'OR cat_tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                         }
                     }
 
-                    if ($excludeDirsWebAccess !== FALSE) {
-                        $dir_select .= 'AND cat_id NOT IN (' . $excludeDirsWebAccess . ') ';
+                    if ($excludeDirWebAccess !== FALSE) {
+                        $selectDirs .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ') ';
                     }
 
-                    $dir_select .= 'AND cat_visible = 1 ORDER BY ' . $cat_orderBy . ' ' . $cat_order . ' ';
+                    $selectDirs .= 'AND cat_visible = 1 ORDER BY ' . $catOrderBy . ' ' . $catOrder . ' ';
 
                     // to separate the multiple &gid snippet parameters on the same page
-                    $dir_select .= ( $_GET['tag'] == $staticTag) ? 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit : 'LIMIT 0, ' . $limit;
+                    $selectDirs .= ( $_GET['tag'] == $staticTag) ? 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit : 'LIMIT 0, ' . $limit;
                 }
                 // original &gid parameter
                 else {
-                    $dir_select = 'SELECT DISTINCT d.* '
+                    $selectDirs = 'SELECT DISTINCT d.* '
                             . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs AS d '
                             . 'WHERE '
                     ;
 
                     if ($gid != '*') {
                         if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
-                            $dir_select .= 'd.parent_id IN (' . $gid . ') AND ';
+                            $selectDirs .= 'd.parent_id IN (' . $gid . ') AND ';
                         } else {
-                            $dir_select .= 'd.parent_id IN (' . $staticGid . ') AND ';
+                            $selectDirs .= 'd.parent_id IN (' . $staticGid . ') AND ';
                         }
                     }
 
                     if (isset($whereDir)) {
                         $where = $this->_whereClause($whereDir, 'd');
-                        if ($where === FALSE)
+                        if (!$where) {
                             return FALSE;
-                        else
-                            $dir_select .= $where . ' AND ';
+                        }
+                        $selectDirs .= $where . ' AND ';
                     }
 
-                    if ($excludeDirsWebAccess !== FALSE) {
-                        $dir_select .= 'd.cat_id NOT IN (' . $excludeDirsWebAccess . ') AND ';
+                    if ($excludeDirWebAccess !== FALSE) {
+                        $selectDirs .= 'd.cat_id NOT IN (' . $excludeDirWebAccess . ') AND ';
                     }
 
                     // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
-                    $dir_select .= 'd.cat_visible = 1 '
+                    $selectDirs .= 'd.cat_visible = 1 '
                             . 'AND ('
                             . 'SELECT count(*) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files F '
                             . 'WHERE F.dir_id IN ('
@@ -550,32 +551,31 @@ class e2g_snip extends e2g_pub {
                             . ')'
                             . ')'
                             . ')<>0 '
-                            . 'ORDER BY ' . $cat_orderBy . ' ' . $cat_order . ' ';
-                    $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
+                            . 'ORDER BY ' . $catOrderBy . ' ' . $catOrder . ' ';
+                    $selectDirs .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
 
 //                    // to separate the multiple &gid snippet parameters on the same page
 //                    if ($this->_checkGidDecendant( (isset($_GET['gid'])? $_GET['gid'] : $gid) , $staticGid)==TRUE) {
-//                        $dir_select .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
+//                        $selectDirs .= 'LIMIT ' . ( $gpn * $limit ) . ', ' . $limit;
 //                    }
 //                    else {
-//                        $dir_select .= 'LIMIT 0, ' . $limit;
+//                        $selectDirs .= 'LIMIT 0, ' . $limit;
 //                    }
                 }
 
-                $dir_query = mysql_query($dir_select);
-                if (!$dir_query) {
-                    echo __LINE__ . ' : ' . mysql_error() . '<br />' . $dir_select . '<br />';
+                $querySelectDirs = mysql_query($selectDirs);
+                if (!$querySelectDirs) {
+                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs . '<br />';
                     return FALSE;
-//                    die(__LINE__ . ' : ' . mysql_error() . '<br />' . $dir_select);
                 }
-                $dirNumRows += mysql_num_rows($dir_query);
+                $dirNumRows += mysql_num_rows($querySelectDirs);
 
                 // gallery's permalink
                 if (isset($tag)
                         && ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE)
                 ) {
                     $permalinkName = $e2gStaticInstances . '_' . $staticTag;
-                } elseif ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == FALSE) {
+                } elseif (!$this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid)) {
                     $permalinkName = $e2gStaticInstances . '_' . $staticGid;
                 } else {
                     $permalinkName = $e2gStaticInstances . '_' . $gid;
@@ -588,15 +588,15 @@ class e2g_snip extends e2g_pub {
                         // exclude the multiple gids (comma separated)
                         && !strpos($staticGid, ',')
                 ) {
-                    $gallery_id = '';
-                    if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == FALSE) {
-                        $gallery_id = $staticGid;
+                    $galleryId = '';
+                    if (!$this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid)) {
+                        $galleryId = $staticGid;
                     } else {
-                        $gallery_id = $singleGid;
+                        $galleryId = $singleGid;
                     }
 
-                    $_e2g['cat_description'] = $this->_getDirInfo($gallery_id, 'cat_description');
-                    $_e2g['cat_title'] = $this->_getDirInfo($gallery_id, 'cat_alias');
+                    $_e2g['cat_description'] = $this->_getDirInfo($galleryId, 'cat_description');
+                    $_e2g['cat_title'] = $this->_getDirInfo($galleryId, 'cat_alias');
 
                     $_e2g['title'] = ($_e2g['cat_title'] != '' ? $_e2g['cat_title'] : $_e2g['cat_name'] );
                     if ($_e2g['title'] == '' && $_e2g['cat_description'] == '') {
@@ -610,7 +610,8 @@ class e2g_snip extends e2g_pub {
                 //******************************************************************/
 
                 $i = 0;
-                while ($l = mysql_fetch_array($dir_query, MYSQL_ASSOC)) {
+
+                while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
                     if (isset($staticTag))
                         $l['permalink'] = $e2gStaticInstances . '_' . $staticTag;
                     else
@@ -622,26 +623,16 @@ class e2g_snip extends e2g_pub {
                         $l['cat_tag'] = '';
                     }
 
-                    // search image for subdir
-                    $l1 = $this->_folderImg($l['cat_id']);
+                    $folderImgInfos = $this->_folderImg($l['cat_id'], $gdir);
+
                     // if there is an empty folder, or invalid content
-                    if (!$l1)
+                    if (!$folderImgInfos)
                         continue;
 
-                    $l['count'] = $l1['count'];
+                    $l['count'] = $folderImgInfos['count'];
 
                     // path to subdir's thumbnail
-                    $path1 = $this->_getPath($l1['dir_id']);
-
-                    // if path is more than one
-                    if (count($path1) > 1) {
-                        unset($path1[1]); // unset the 'Easy 2' root path only
-                        $path1 = implode('/', array_values($path1)) . '/';
-                    }
-                    // if path is not many
-                    else {
-                        $path1 = '';
-                    }
+                    $getPath = $this->_getPath($folderImgInfos['dir_id']);
 
                     // Populate the grid with folder's thumbnails
                     if ($dirNumRows > 0
@@ -652,21 +643,27 @@ class e2g_snip extends e2g_pub {
                         $_e2g['content'] .= '</tr><tr>';
                     }
 
-                    $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] );
-                    if ($l['title'] == '')
-                        $l['title'] = '&nbsp;';
-                    elseif ($mbstring) {
-                        if (mb_strlen($l['title'], $charset) > $catNameLen)
-                            $l['title'] = mb_substr($l['title'], 0, $catNameLen - 1, $charset) . '...';
+                    $l['w'] = $this->e2gSnipCfg['w'];
+                    $l['h'] = $this->e2gSnipCfg['h'];
+                    $thq = $this->e2gSnipCfg['thq'];
+
+                    $imgShaper = $this->_imgShaper($gdir, $getPath . $folderImgInfos['filename'], $l['w'], $l['h'], $thq);
+                    if (!$imgShaper) {
+//                        $l['src'] = '';
+                        continue;
+                    } else {
+                        $l['src'] = $imgShaper;
                     }
-                    elseif (strlen($l['title']) > $catNameLen)
+
+                    $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] );
+                    if ($l['title'] == '') {
+                        $l['title'] = '&nbsp;';
+                    } elseif ($mbstring) {
+                        if (mb_strlen($l['title'], $charSet) > $catNameLen)
+                            $l['title'] = mb_substr($l['title'], 0, $catNameLen - 1, $charSet) . '...';
+                    } elseif (strlen($l['title']) > $catNameLen) {
                         $l['title'] = substr($l['title'], 0, $catNameLen - 1) . '...';
-
-                    $l['w'] = $this->e2gsnip_cfg['w'];
-                    $l['h'] = $this->e2gsnip_cfg['h'];
-                    $thq = $this->e2gsnip_cfg['thq'];
-
-                    $l['src'] = $this->_imgShaper($gdir, $path1 . $l1['filename'], $l['w'], $l['h'], $thq);
+                    }
 
                     // making flexible FURL or not
                     $l['link'] = $modx->makeUrl(
@@ -690,10 +687,11 @@ class e2g_snip extends e2g_pub {
                     $l['dirpluginrender'] = $this->_plugin('OnE2GWebDirRender', $e2gEvtParams);
 
                     // fill up the dir list with content
-                    $_filler = $this->_filler($this->_tplDir(), $l);
+                    $_filler = $this->_filler($this->_getTpl('dir_tpl'), $l);
                     $_e2g['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
                     $i++;
-                } // while ($l = mysql_fetch_array($dir_query, MYSQL_ASSOC))
+                } // while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC))
+                mysql_free_result($querySelectDirs);
             } // if ($showOnly != 'images')
         } // else of if ($showOnly == 'images')
         //******************************************************************/
@@ -709,19 +707,19 @@ class e2g_snip extends e2g_pub {
              * goldsky -- manage the pagination limit between dirs and files
              * (join the pagination AND the table grid).
              */
-            $modulusDirCount = $dirCount % $limit;
+            $modulusDirCount = $resultCountDirs % $limit;
             $fileThumbOffset = $limit - $modulusDirCount;
-            $filePageOffset = ceil($dirCount / $limit);
+            $filePageOffset = ceil($resultCountDirs / $limit);
 
             if (isset($staticTag)) {
-                $fileSelect = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
+                $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
 
                 // OPEN the selected tagged folder
                 if (isset($_GET['gid'])
                         && $staticTag == $tag
-                        && $this->_tagsIds('dir', $tag, $_GET['gid'])
+                        && $this->_checkTaggedDirIds($tag, $_GET['gid'])
                 ) {
-                    $fileSelect .= 'WHERE dir_id IN (' . $_GET['gid'] . ') AND ';
+                    $selectFiles .= 'WHERE dir_id IN (' . $_GET['gid'] . ') AND ';
                 } else {
                     // the selected tag of multiple tags on the same page
                     if ($staticTag == $tag) {
@@ -731,70 +729,69 @@ class e2g_snip extends e2g_pub {
                     else {
                         $multipleTags = @explode(',', $staticTag);
                     }
-
-                    for ($i = 0; $i < count($multipleTags); $i++) {
+                    $countMultipleTags = count($multipleTags);
+                    for ($i = 0; $i < $countMultipleTags; $i++) {
                         if ($i == 0)
-                            $fileSelect .= 'WHERE tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                            $selectFiles .= 'WHERE tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                         else
-                            $fileSelect .= 'OR tag LIKE \'%' . $multipleTags[$i] . '%\' ';
-                        $fileSelect .= ' AND ';
+                            $selectFiles .= 'OR tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                        $selectFiles .= ' AND ';
                     }
                 }
             }
             // exclude &tag snippet call, for the &gid parameter
             else {
-                $fileSelect = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+                $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                         . 'WHERE ';
 
                 if ($gid != '*') {
                     if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
-                        $fileSelect .= 'dir_id IN (' . $gid . ') ';
+                        $selectFiles .= 'dir_id IN (' . $gid . ') ';
                     } else {
-                        $fileSelect .= 'dir_id IN (' . $staticGid . ') ';
+                        $selectFiles .= 'dir_id IN (' . $staticGid . ') ';
                     }
-                    $fileSelect .= ' AND ';
+                    $selectFiles .= ' AND ';
                 }
 
                 if (isset($whereFile)) {
                     $where = $this->_whereClause($whereFile);
-                    if ($where === FALSE)
+                    if (!$where) {
                         return FALSE;
-                    else
-                        $fileSelect .= $where . ' AND ';
+                    }
+                    $selectFiles .= $where . ' AND ';
                 }
 
-                if ($excludeFilesWebAccess !== FALSE) {
-                    $fileSelect .= 'id NOT IN (' . $excludeFilesWebAccess . ') AND ';
+                if ($excludeFileWebAccess !== FALSE) {
+                    $selectFiles .= 'id NOT IN (' . $excludeFileWebAccess . ') AND ';
                 }
             }
 
-            $fileSelect .= 'status = 1 ORDER BY ' . $orderBy . ' ' . $order . ' ';
+            $selectFiles .= 'status = 1 ORDER BY ' . $orderBy . ' ' . $order . ' ';
 
             /**
              * Calculate the available grid to be floated
              */
             if ($fileThumbOffset > 0 && $fileThumbOffset < $limit) {
-                $fileSelect .= 'LIMIT '
+                $selectFiles .= 'LIMIT '
                         . ( $dirNumRows > 0 ?
                                 ( ' 0, ' . ( $fileThumbOffset ) ) :
                                 ( ( ( $gpn - $filePageOffset) * $limit) + $fileThumbOffset ) . ', ' . $limit );
             } elseif ($fileThumbOffset != 0 || $fileThumbOffset == $limit) {
-                $fileSelect .= 'LIMIT '
+                $selectFiles .= 'LIMIT '
                         . ( $modulusDirCount > 0 ?
                                 ( ' 0, ' . ( $fileThumbOffset ) ) :
                                 ( ( ( $gpn - $filePageOffset) * $limit) ) . ', ' . $limit );
             } else { // $fileThumbOffset == 0 --> No sub directory
-                $fileSelect .= 'LIMIT ' . ( $gpn * $limit) . ', ' . $limit;
+                $selectFiles .= 'LIMIT ' . ( $gpn * $limit) . ', ' . $limit;
             }
 
-            $fileQueryResult = mysql_query($fileSelect);
-            if (!$fileQueryResult) {
-                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $fileSelect . '<br />';
+            $querySelectFiles = mysql_query($selectFiles);
+            if (!$querySelectFiles) {
+                echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles . '<br />';
                 return FALSE;
-//                die(__LINE__ . ' : ' . mysql_error() . '<br />' . $fileSelect);
             }
 
-            $fileNumRows = mysql_num_rows($fileQueryResult);
+            $fileNumRows = mysql_num_rows($querySelectFiles);
 
             /**
              * retrieve the content
@@ -809,7 +806,7 @@ class e2g_snip extends e2g_pub {
                 $_e2g['content'] .= '</tr><tr>';
             }
 
-            while ($l = mysql_fetch_array($fileQueryResult, MYSQL_ASSOC)) {
+            while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
                 /**
                  * whether configuration setting is set with or without table, the template will adjust it
                  * goldsky -- this is where the file's thumb 'float' to the dirs' in TABLE grid
@@ -820,8 +817,8 @@ class e2g_snip extends e2g_pub {
                     $_e2g['content'] .= '</tr><tr>';
                 }
 
-                $l['w'] = $this->e2gsnip_cfg['w'];
-                $l['h'] = $this->e2gsnip_cfg['h'];
+                $l['w'] = $this->e2gSnipCfg['w'];
+                $l['h'] = $this->e2gSnipCfg['h'];
 
                 if (isset($landingPage)) {
                     $l['link'] = $modx->makeUrl($landingPage
@@ -835,16 +832,6 @@ class e2g_snip extends e2g_pub {
 
                         // path to subdir's thumbnail
                         $path = $this->_getPath($l['dir_id']);
-
-                        // if path is more than one
-                        if (count($path) > 1) {
-                            unset($path[1]); // unset the 'Easy 2' root path only
-                            $path = implode('/', array_values($path)) . '/';
-                        }
-                        // if path is not many
-                        else {
-                            $path = '';
-                        }
 
                         $l['link'] = $gdir . $path . $l['filename'];
                     }
@@ -867,11 +854,15 @@ class e2g_snip extends e2g_pub {
                 $l['thumbpluginprerender'] = $this->_plugin('OnE2GWebThumbPrerender', $e2gEvtParams);
                 $l['thumbpluginrender'] = $this->_plugin('OnE2GWebThumbRender', $e2gEvtParams);
 
+                // conversion
+                $l['name'] = $l['alias'];
+                
                 // whether configuration setting is set with or without table, the template will adjust it
-                $_filler = $this->_filler($this->_tplThumb(), $this->_libsThumb($l));
+                $_filler = $this->_filler($this->_getTpl('thumb_tpl'), $this->_loadThumbPlaceholders($l));
                 $_e2g['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
                 $i++;
-            } // while ($l = @mysql_fetch_array($fileQueryResult, MYSQL_ASSOC))
+            } // while ($l = @mysql_fetch_array($querySelectFiles, MYSQL_ASSOC))
+            mysql_free_result($querySelectFiles);
         } // if( $dirNumRows!=$limit && $showOnly!='folders' && !empty($gid) )
 
         $_e2g['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
@@ -881,7 +872,7 @@ class e2g_snip extends e2g_pub {
         //******************************************************************/
         if ($_e2g['parent_id'] > 0
                 && ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE)
-                && (isset($staticTag) ? $staticTag == $tag : NULL)
+                && ($staticTag == isset($staticTag) ? $tag : NULL)
         ) {
             $_e2g['back'] = '<span class="' . $backClass . '">&laquo; <a href="'
                     // making flexible FURL or not
@@ -899,19 +890,19 @@ class e2g_snip extends e2g_pub {
         //*                       PAGINATION: PAGE LINKS                       */
         //*             joining between dirs and files pagination              */
         //**********************************************************************/
-        if ($pagination == 1 && $orderBy != 'rand()' && $cat_orderBy != 'rand()') {
+        if ($pagination == 1 && $orderBy != 'rand()' && $catOrderBy != 'rand()') {
             // count the files again, this time WITHOUT limit!
             if ($showOnly == 'folders') {
                 $fileCount = 0;
             } elseif (!empty($gid)) {
                 if (isset($staticTag)) {
-                    $fileCountSelect = 'SELECT COUNT(id) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
+                    $selectCountFiles = 'SELECT COUNT(id) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
 
                     // OPEN the selected tagged folder
                     if (isset($_GET['gid'])
                             && $staticTag == $tag
-                            && $this->_tagsIds('dir', $tag, $_GET['gid'])) {
-                        $fileCountSelect .= 'WHERE dir_id IN (' . $_GET['gid'] . ')';
+                            && $this->_checkTaggedDirIds($tag, $_GET['gid'])) {
+                        $selectCountFiles .= 'WHERE dir_id IN (' . $_GET['gid'] . ')';
                     } else {
                         // the selected tag of multiple tags on the same page
                         if ($staticTag == $tag) {
@@ -921,57 +912,58 @@ class e2g_snip extends e2g_pub {
                         else {
                             $multipleTags = @explode(',', $staticTag);
                         }
-
-                        for ($i = 0; $i < count($multipleTags); $i++) {
+                        $countMultipleTags = count($multipleTags);
+                        for ($i = 0; $i < $countMultipleTags; $i++) {
                             if ($i == 0)
-                                $fileCountSelect .= 'WHERE tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                                $selectCountFiles .= 'WHERE tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                             else
-                                $fileCountSelect .= 'OR tag LIKE \'%' . $multipleTags[$i] . '%\' ';
+                                $selectCountFiles .= 'OR tag LIKE \'%' . $multipleTags[$i] . '%\' ';
                         }
                     }
                 }
                 // default
                 else {
-                    $fileCountSelect = 'SELECT COUNT(id) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
+                    $selectCountFiles = 'SELECT COUNT(id) FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
 
                     if ($gid != '*') {
                         if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
-                            $fileCountSelect .= 'WHERE dir_id IN (' . $gid . ') ';
+                            $selectCountFiles .= 'WHERE dir_id IN (' . $gid . ') ';
                         } else {
-                            $fileCountSelect .= 'WHERE dir_id IN (' . $staticGid . ') ';
+                            $selectCountFiles .= 'WHERE dir_id IN (' . $staticGid . ') ';
                         }
                     }
 
                     if (isset($whereFile)) {
                         $where = $this->_whereClause($whereFile);
-                        if ($where === FALSE)
+                        if (!$where) {
                             return FALSE;
-                        else {
-                            if ($gid != '*')
-                                $fileCountSelect .= ' AND ' . $where;
-                            else
-                                $fileCountSelect .= ' WHERE ' . $where;
                         }
+                        if ($gid != '*')
+                            $selectCountFiles .= ' AND ' . $where;
+                        else
+                            $selectCountFiles .= ' WHERE ' . $where;
                     }
 
-                    if ($excludeFilesWebAccess !== FALSE) {
-                        $fileCountSelect .= ' AND id NOT IN (' . $excludeFilesWebAccess . ')';
+                    if ($excludeFileWebAccess !== FALSE) {
+                        $selectCountFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
                     }
                 }
 
-                $fileCountQuery = mysql_query($fileCountSelect);
-                if (!$fileCountQuery) {
-                    echo __LINE__ . ' : ' . mysql_error() . '<br />' . $fileCountSelect . '<br />';
+                $selectCountFiles .= 'AND status = 1 ';
+
+                $querySelectCountFiles = mysql_query($selectCountFiles);
+                if (!$querySelectCountFiles) {
+                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
                     return FALSE;
-//                    or die(__LINE__ . ' : ' . mysql_error() . '<br />' . $fileCountSelect);
                 }
-                $fileCount = mysql_result($fileCountQuery, 0, 0);
+                $fileCount = mysql_result($querySelectCountFiles, 0, 0);
+                mysql_free_result($querySelectCountFiles);
             }
 
-            $totalCount = $dirCount + $fileCount;
+            $totalCount = $resultCountDirs + $fileCount;
 
             if ($totalCount === 0)
-                return;
+                return NULL;
             if ($totalCount > $limit) {
                 $_e2g['pages'] = '<div class="' . $pageNumClass . '">';
                 $i = 0;
@@ -1050,7 +1042,7 @@ class e2g_snip extends e2g_pub {
                     , 'sid' => $_e2g['sid']
                 ));
 
-        return $this->_filler($this->_tplGal(), $_e2g);
+        return $this->_filler($this->_getTpl('tpl'), $_e2g);
     }
 
     /**
@@ -1059,45 +1051,49 @@ class e2g_snip extends e2g_pub {
      */
     private function _imgFile() {
         $modx = $this->modx;
-        $fid = $this->e2gsnip_cfg['fid'];
-        $colls = $this->e2gsnip_cfg['colls'];
-//        $notables = $this->e2gsnip_cfg['notables']; // deprecated
-        $grid = $this->e2gsnip_cfg['grid'];
-        $gridClass = $this->e2gsnip_cfg['grid_class'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-//        $plugin = $this->e2gsnip_cfg['plugin'];
-        $imgSrc = $this->e2gsnip_cfg['img_src'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
+        $fid = $this->e2gSnipCfg['fid'];
+        $colls = $this->e2gSnipCfg['colls'];
+//        $notables = $this->e2gSnipCfg['notables']; // deprecated
+        $grid = $this->e2gSnipCfg['grid'];
+        $gridClass = $this->e2gSnipCfg['grid_class'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+//        $plugin = $this->e2gSnipCfg['plugin'];
+        $imgSrc = $this->e2gSnipCfg['img_src'];
+        $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
-        $fileSelect = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE id IN (' . $fid . ') '
                 . 'AND status = 1 ';
-        $res = mysql_query($fileSelect);
-        if (!$res) {
-            return __LINE__ . ' : ' . mysql_error() . '<br />' . $fileSelect;
+        $querySelectFiles = mysql_query($selectFiles);
+        if (!$querySelectFiles) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles . '<br />';
+            return FALSE;
         }
-        $resNum = mysql_num_rows($res);
-        if ($resNum === 0)
-            return;
+        $fileNumRows = mysql_num_rows($querySelectFiles);
+        if ($fileNumRows === 0) {
+//            return NULL;
+            return FALSE;
+        }
 
         // just to hide gallery's description CSS box in gallery template
         if (!isset($_e2g['title']) || !isset($_e2g['cat_description'])) {
             $_e2g['desc_class'] = 'style="display:none;"';
-        } else
+        } else {
             $_e2g['e2gdir_class'] = '';
+        }
 
         // START the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '<div class="' . $gridClass . '">' : '<table class="' . $gridClass . '"><tr>');
 
-        $this->_libs();
+        $this->_loadHeaders();
         $i = 0;
-        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
             // create row grid
             if (( $i > 0 ) && ( $i % $colls == 0 ) && $grid == 'table')
                 $_e2g['content'] .= '</tr><tr>';
 
-            $l['w'] = $this->e2gsnip_cfg['w'];
-            $l['h'] = $this->e2gsnip_cfg['h'];
+            $l['w'] = $this->e2gSnipCfg['w'];
+            $l['h'] = $this->e2gSnipCfg['h'];
 
             if (isset($landingPage)) {
                 $l['link'] = $modx->makeUrl($landingPage
@@ -1111,16 +1107,6 @@ class e2g_snip extends e2g_pub {
 
                     // path to subdir's thumbnail
                     $path = $this->_getPath($l['dir_id']);
-
-                    // if path is more than one
-                    if (count($path) > 1) {
-                        unset($path[1]); // unset the 'Easy 2' root path only
-                        $path = implode('/', array_values($path)) . '/';
-                    }
-                    // if path is not many
-                    else {
-                        $path = '';
-                    }
 
                     $l['link'] = $gdir . $path . $l['filename'];
                 }
@@ -1139,11 +1125,14 @@ class e2g_snip extends e2g_pub {
             $l['thumbpluginprerender'] = $this->_plugin('OnE2GWebThumbPrerender', $e2gEvtParams);
             $l['thumbpluginrender'] = $this->_plugin('OnE2GWebThumbRender', $e2gEvtParams);
 
+            $l['name'] = $l['alias'];
+            
             // whether configuration setting is set with or without table, the template will adjust it
-            $_filler = $this->_filler($this->_tplThumb(), $this->_libsThumb($l));
+            $_filler = $this->_filler($this->_getTpl('thumb_tpl'), $this->_loadThumbPlaceholders($l));
             $_e2g['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
             $i++;
         }
+        mysql_free_result($querySelectFiles);
 
         // Gallery's wrapper ID
         $_e2g['wrapper'] = $e2gWrapper;
@@ -1151,7 +1140,7 @@ class e2g_snip extends e2g_pub {
         // END the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
-        return $this->_filler($this->_tplGal(), $_e2g);
+        return $this->_filler($this->_getTpl('tpl'), $_e2g);
     }
 
     /**
@@ -1160,34 +1149,34 @@ class e2g_snip extends e2g_pub {
      */
     private function _imgRandom() {
         $modx = $this->modx;
-        $limit = $this->e2gsnip_cfg['limit'];
-        $rgid = $this->e2gsnip_cfg['rgid'];
-//        $notables = $this->e2gsnip_cfg['notables'];  // deprecated
-        $grid = $this->e2gsnip_cfg['grid'];
-        $gridClass = $this->e2gsnip_cfg['grid_class'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-//        $plugin = $this->e2gsnip_cfg['plugin'];
-        $imgSrc = $this->e2gsnip_cfg['img_src'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
+        $limit = $this->e2gSnipCfg['limit'];
+        $rgid = $this->e2gSnipCfg['rgid'];
+//        $notables = $this->e2gSnipCfg['notables'];  // deprecated
+        $grid = $this->e2gSnipCfg['grid'];
+        $gridClass = $this->e2gSnipCfg['grid_class'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+//        $plugin = $this->e2gSnipCfg['plugin'];
+        $imgSrc = $this->e2gSnipCfg['img_src'];
+        $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
-        $q = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE status = 1 '
                 . 'AND dir_id IN (' . $rgid . ') '
                 . 'ORDER BY RAND() '
                 . 'LIMIT 1'
         ;
 
-        $res = mysql_query($q);
-        $numRows = mysql_num_rows($res);
+        $querySelectFiles = mysql_query($selectFiles);
+        $numRows = mysql_num_rows($querySelectFiles);
         if ($numRows === 0)
-            return;
+            return NULL;
 
         // START the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '<div class="' . $gridClass . '">' : '<table class="' . $gridClass . '"><tr>');
 
-        $this->_libs();
+        $this->_loadHeaders();
 
-        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
             // just to hide gallery's description CSS box in gallery template
             if (!isset($_e2g['title']) || !isset($_e2g['cat_description'])) {
                 $_e2g['desc_class'] = 'style="display:none;"';
@@ -1195,8 +1184,8 @@ class e2g_snip extends e2g_pub {
                 $_e2g['e2gdir_class'] = '';
 
 
-            $l['w'] = $this->e2gsnip_cfg['w'];
-            $l['h'] = $this->e2gsnip_cfg['h'];
+            $l['w'] = $this->e2gSnipCfg['w'];
+            $l['h'] = $this->e2gSnipCfg['h'];
 
             /**
              * invoke plugin for EACH thumb
@@ -1223,23 +1212,17 @@ class e2g_snip extends e2g_pub {
                     // path to subdir's thumbnail
                     $path = $this->_getPath($l['dir_id']);
 
-                    // if path is more than one
-                    if (count($path) > 1) {
-                        unset($path[1]); // unset the 'Easy 2' root path only
-                        $path = implode('/', array_values($path)) . '/';
-                    }
-                    // if path is not many
-                    else {
-                        $path = '';
-                    }
-
                     $l['link'] = $gdir . $path . $l['filename'];
                 }
             }
+
+            $l['name'] = $l['alias'];
+
             // whether configuration setting is set with or without table, the template will adjust it
-            $_filler = $this->_filler($this->_tplRandom(), $this->_libsThumb($l));
+            $_filler = $this->_filler($this->_getTpl('rand_tpl'), $this->_loadThumbPlaceholders($l));
             $_e2g['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
         }
+        mysql_free_result($querySelectFiles);
 
         // Gallery's wrapper ID
         $_e2g['wrapper'] = $e2gWrapper;
@@ -1247,252 +1230,84 @@ class e2g_snip extends e2g_pub {
         // END the grid
         $_e2g['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
-        return $this->_filler($this->_tplGal(), $_e2g);
+        return $this->_filler($this->_getTpl('tpl'), $_e2g);
     }
 
     /**
      * To get and create thumbnails
-     * @param  int    $gdir        from $_GET['gid']
-     * @param  string $path        directory path of each of thumbnail
-     * @param  int    $w           thumbnail width
-     * @param  int    $h           thumbnail height
-     * @param  int    $thq         thumbnail quality
-     * @param  string $resizeType 'inner' | 'resize'
-     *                             'inner' = crop the thumbnail
-     *                             'resize' = autofit the thumbnail
-     * @param  int    $red         Red in RGB
-     * @param  int    $green       Green in RGB
-     * @param  int    $blue        Blue in RGB
-     * @param  bool   $wmtrigger   Watermark trigger, to create water mark
+     * @param  int    $gdir             from $_GET['gid']
+     * @param  string $path             directory path of each of thumbnail
+     * @param  int    $w                thumbnail width
+     * @param  int    $h                thumbnail height
+     * @param  int    $thq              thumbnail quality
+     * @param  string $resizeType       'inner' | 'resize'
+     *                                  'inner' = crop the thumbnail
+     *                                  'resize' = autofit the thumbnail
+     * @param  int    $red              Red in RGB
+     * @param  int    $green            Green in RGB
+     * @param  int    $blue             Blue in RGB
+     * @param  bool   $createWaterMark  create water mark
      * @return mixed FALSE/the thumbail's path
      */
-    private function _imgShaper($gdir, $path, $w, $h, $thq, $resizeType=NULL, $red=NULL, $green=NULL, $blue=NULL, $wmtrigger = 0) {
+    private function _imgShaper($gdir, $path, $w, $h, $thq, $resizeType=NULL, $red=NULL, $green=NULL, $blue=NULL, $createWaterMark = 0) {
         $modx = $this->modx;
+        $e2gSnipCfg = $this->e2gSnipCfg;
+
         // decoding UTF-8
         $gdir = $this->_e2gDecode($gdir);
         $path = $this->_e2gDecode($path);
         if (empty($path))
             return FALSE;
 
-        $w = !empty($w) ? $w : $this->e2gsnip_cfg['w'];
-        $h = !empty($h) ? $h : $this->e2gsnip_cfg['h'];
-        $thq = !empty($thq) ? $thq : $this->e2gsnip_cfg['thq'];
-        $resizeType = isset($resizeType) ? $resizeType : $this->e2gsnip_cfg['resize_type'];
-        $red = isset($red) ? $red : $this->e2gsnip_cfg['thbg_red'];
-        $green = isset($green) ? $green : $this->e2gsnip_cfg['thbg_green'];
-        $blue = isset($blue) ? $blue : $this->e2gsnip_cfg['thbg_blue'];
+        $w = !empty($w) ? $w : $this->e2gSnipCfg['w'];
+        $h = !empty($h) ? $h : $this->e2gSnipCfg['h'];
+        $thq = !empty($thq) ? $thq : $this->e2gSnipCfg['thq'];
+        $resizeType = isset($resizeType) ? $resizeType : $this->e2gSnipCfg['resize_type'];
+        $red = isset($red) ? $red : $this->e2gSnipCfg['thbg_red'];
+        $green = isset($green) ? $green : $this->e2gSnipCfg['thbg_green'];
+        $blue = isset($blue) ? $blue : $this->e2gSnipCfg['thbg_blue'];
 
-//        $thumbPath = '_thumbnails/'.substr($path, 0, strrpos($path, '.')).'_'.$w.'x'.$h.'.jpg';
         /**
          * Use document ID and session ID to separate between different snippet calls
          * on the same/different page(s) with different settings
          * but unfortunately with the same dimension.
          */
-        $e2gStaticInstances = $this->e2gsnip_cfg['e2g_static_instances'];
+        $e2gStaticInstances = $this->e2gSnipCfg['e2g_static_instances'];
         $docid = $modx->documentIdentifier;
-        $thumbPath = '_thumbnails/' . substr($path, 0, strrpos($path, '.')) . '_id' . $docid . '_sid' . $e2gStaticInstances . '_' . $w . 'x' . $h . '.jpg';
+        $thumbPath = '_thumbnails/'
+                . substr($path, 0, strrpos($path, '.'))
+                . '_id' . $docid
+                . '_sid' . $e2gStaticInstances
+                . '_' . $w . 'x' . $h
+                . '.jpg';
 
-        /**
-         * CREATE THUMBNAIL
-         */
-        // goldsky -- alter the maximum execution time
-        if (function_exists('set_time_limit'))
-            @set_time_limit(0);
-
-        if (!file_exists($gdir . $thumbPath) && file_exists($gdir . $path)) {
-            // goldsky -- adds output buffer to avoid PHP's memory limit
-            ob_start();
-
-            $inf = @getimagesize($gdir . $path);
-            if (!$inf)
+        if (!class_exists('E2gThumb')) {
+            if (!file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php'))) {
+                echo __LINE__ . ' : File <b>' . E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php</b> does not exist.';
                 return FALSE;
-
-            if ($inf[2] == 1)
-                $im = imagecreatefromgif($gdir . $path);
-            elseif ($inf[2] == 2)
-                $im = imagecreatefromjpeg($gdir . $path);
-            elseif ($inf[2] == 3)
-                $im = imagecreatefrompng($gdir . $path);
-            else
-                return FALSE;
-
-            if ($inf[0] / $w > 2.00 || $inf[1] / $h > 2.00) {
-                $tmp_w = $w * 2.00;
-                $tmp_h = round($inf[1] * ($tmp_w / $inf[0]), 2);
-
-                $temp = imagecreatetruecolor($tmp_w, $tmp_h);
-                imagecopyresized($temp, $im, 0, 0, 0, 0, $tmp_w, $tmp_h, $inf[0], $inf[1]);
-
-                $inf[0] = $tmp_w;
-                $inf[1] = $tmp_h;
-
-                imagedestroy($im);
-                $im = $temp;
+            } else {
+                include_once E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php';
             }
-
-            /**
-             * $resizeType == 'inner'
-             * trim to default dimensions
-             */
-            if ($resizeType == 'inner') {
-                // Shifts
-                $x = $y = 0;
-
-                // Dimensions
-                $w2 = $w;
-                $h2 = $h;
-
-                if (($inf[0] / $inf[1]) > ($w / $h)) {
-                    $w2 = round($inf[0] * $h / $inf[1], 2);
-                    $x = ($w2 - $w) / 2.00 * (-1.00);
-                } else {
-                    $h2 = round($inf[1] * $w / $inf[0], 2);
-                    $y = ($h2 - $h) / 2.00 * (-1.00);
-                }
-
-                $pic = imagecreatetruecolor($w, $h);
-                $bgc = imagecolorallocate($pic, $red, $green, $blue);
-                imagefill($pic, 0, 0, $bgc);
-                imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $inf[0], $inf[1]);
-            } elseif ($resizeType == 'shrink') {
-                /**
-                 * $resizeType == 'shrink'
-                 * ugly shrink to default dimensions
-                 */
-//                if ($inf[0] > $inf[1]) $h = round($inf[1] * $w / $inf[0], 2);
-//                else $w = round($inf[0] * $h / $inf[1], 2);
-
-                $pic = imagecreatetruecolor($w, $h);
-                $bgc = imagecolorallocate($pic, $red, $green, $blue);
-                imagefill($pic, 0, 0, $bgc);
-                imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
-            } elseif ($resizeType == 'resize') {
-                /**
-                 * $resizeType == 'resize'
-                 * resize image with original proportional dimensions
-                 */
-                // Shifts
-                $x = 0;
-                $y = 0;
-
-                // Dimensions
-                $w2 = $w;
-                $h2 = $h;
-
-                if ($w > $h) {          // landscape thumbnail box
-                    $w2 = round($inf[0] * $h / $inf[1], 2);
-                    $x = abs($w - $w2) / 2.00;
-                } elseif ($w == $h) {     // square thumbnail box
-                    if ($inf[0] < $inf[1]) {// portrait image
-                        $w2 = round($inf[0] * $h / $inf[1], 2);
-                        $x = abs($w - $w2) / 2.00;
-                    } elseif ($inf[0] == $inf[1]) {
-                        $w2 = $w;
-                        $h2 = $h;
-                        $x = 0;
-                        $y = 0;
-                    } else {              // landscape image
-                        $h2 = round($inf[1] * $w / $inf[0], 2);
-                        $y = abs($h - $h2) / 2.00;
-                    }
-                } else {                  // portrait thumbnail box
-                    $h2 = round($inf[1] * $w / $inf[0], 2);
-                    $y = abs($h - $h2) / 2.00;
-                }
-
-                $pic = imagecreatetruecolor($w, $h);
-                $bgc = imagecolorallocate($pic, $red, $green, $blue);
-                imagefill($pic, 0, 0, $bgc);
-                imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $inf[0], $inf[1]);
-            }
-            else
-                return FALSE;
-
-            /**
-             * make directory of thumbnails
-             */
-            $dirs = explode('/', $path);
-            $npath = $gdir . '_thumbnails';
-            for ($c = 0; $c < count($dirs) - 1; $c++) {
-                $npath .= '/' . $dirs[$c];
-                if (is_dir($npath))
-                    continue;
-                if (!@mkdir($npath))
-                    return FALSE;
-                @chmod($npath, 0755);
-            }
-
-            /**
-             * create the thumbnails
-             */
-            imagejpeg($pic, $gdir . $thumbPath, $thq);
-            /**
-             * if set, this will create watermark
-             */
-            if ($wmtrigger == 1) {
-                $this->_watermark($gdir . $thumbPath);
-            }
-            @chmod($gdir . $thumbPath, 0644);
-
-            /**
-             * image cache destroy
-             */
-            imagedestroy($pic);
-            imagedestroy($im);
-
-            // goldsky -- adds output buffer to avoid PHP's memory limit
-            ob_end_clean();
         }
-        // goldsky -- only to switch between localhost and live site.
-//        if (strpos($_SERVER['DOCUMENT_ROOT'], '/') === (int) 0) {
-        if (strtoupper(substr(PHP_OS, 0, 3) != 'WIN')) {
-            $urlEncoding = $gdir . str_replace('%2F', '/', rawurlencode($thumbPath));
-        } else
-            $urlEncoding = $gdir . $this->_e2gEncode($thumbPath);
-        return $urlEncoding;
+
+        $imgShaper = new E2gThumb($modx, $e2gSnipCfg);
+        $urlEncoding = $imgShaper->imgShaper($gdir, $path, $w, $h, $thq, $resizeType, $red, $green, $blue, $createWaterMark, $thumbPath);
+        if ($urlEncoding !== FALSE) {
+            return $urlEncoding;
+        } else {
+            return FALSE;
+        }
     }
 
     /**
-     * To get image's path
-     * @param  int    $id     image's ID
-     * @param  string $option the image's title options
-     * @return string the path returns as an array
+     * To get paths from the parent directory up to the Easy 2's ROOT gallery
+     * @param int       $dirId      parent directory's ID
+     * @param string    $option     output options: cat_name | cat_alias
+     * @param mixed     $format     output formats: string | array
+     * @return string
      */
-    private function _getPath($id, $option=FALSE) {
-        $modx = $this->modx;
-
-        $result = array();
-
-        $q = 'SELECT A.cat_id,A.cat_name,A.cat_alias '
-                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
-                . 'WHERE B.cat_id=' . $id . ' '
-                . 'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
-                . 'ORDER BY A.cat_left'
-        ;
-
-        $res = mysql_query($q);
-        if (!$res) {
-            return; // asuming there are multiple gids
-        }
-        if ($option === 'alias') {
-            while ($l = mysql_fetch_array($res)) {
-                if ($l['cat_alias'] != '')
-                    $result[$l['cat_id']] = $l['cat_alias'];
-                else
-                    $result[$l['cat_id']] = $l['cat_name'];
-            }
-        }
-        // default
-        else {
-            while ($l = mysql_fetch_row($res)) {
-                $result[$l[0]] = $l[1];
-            }
-        }
-
-        if (empty($result))
-            return NULL;
-        return $result;
+    private function _getPath($dirId, $option='cat_name', $format='string') {
+        return parent::getPath($dirId, $option, $format);
     }
 
     /**
@@ -1528,99 +1343,67 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
+     * Get template
+     * @param string    $tpl Template
+     * @return string   Template's content
+     */
+    private function _getTpl($tpl) {
+        return parent::getTpl($tpl);
+    }
+
+    /**
      * To get thumbnail for each folder
-     * @param  int    $gid folder's ID
+     * @param int       $gid    folder's ID
+     * @param string    $gdir   gallery's ROOT path
      * @return string image's source
      */
-    private function _folderImg($gid) {
-        $modx = $this->modx;
-        $catThumbOrderBy = $this->e2gsnip_cfg['cat_thumb_orderby'];
-        $catThumbOrder = $this->e2gsnip_cfg['cat_thumb_order'];
-
-        // http://modxcms.com/forums/index.php/topic,23177.msg273448.html#msg273448
-        // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
-        $q = 'SELECT F.* '
-                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_files F '
-                . 'WHERE F.dir_id IN ('
-                . 'SELECT A.cat_id FROM '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
-                . 'WHERE ('
-                . 'B.cat_id=' . $gid . ' '
-                . 'AND A.cat_left >= B.cat_left '
-                . 'AND A.cat_right <= B.cat_right '
-                . 'AND A.cat_level >= B.cat_level '
-                . 'AND A.cat_visible = 1'
-                . ') '
-                . 'ORDER BY A.cat_level ASC '
-                . ') '
-//                . 'ORDER BY F.id DESC '
-        ;
-        if ($catThumbOrderBy == 'random') {
-            $q .= 'ORDER BY rand() ';
-        } else {
-            $q .= 'ORDER BY F.' . $catThumbOrderBy . ' ' . $catThumbOrder . ' ';
-        }
-        $q .= 'LIMIT 1 ';
-
-        $res = mysql_query($q);
-        if ($res) {
-            $result = mysql_fetch_array($res, MYSQL_ASSOC);
-            $result['count'] = mysql_num_rows($res);
-        } else {
-            echo mysql_error() . ' ';
-        }
-        mysql_free_result($res);
-
-        /**
-         * returned as folder's thumbnail's info array
-         */
-        return $result;
+    private function _folderImg($gid, $gdir) {
+        return parent::folderImg($gid, $gdir);
     }
 
     /**
      * To insert included files into the page header
      * @return mixed the file inclusion or FALSE return
      */
-    private function _libs() {
+    private function _loadHeaders() {
         $modx = $this->modx;
-        $css = $this->e2gsnip_cfg['css'];
-        $glib = $this->e2gsnip_cfg['glib'];
+        $css = $this->e2gSnipCfg['css'];
+        $glib = $this->e2gSnipCfg['glib'];
 
         // GLOBAL e2g CSS styles
-        if (file_exists($css)) {
+        if (file_exists(realpath($css))) {
             $modx->regClientCSS($modx->config['base_url'] . $css, 'screen');
         }
 
         // Load the library from database.
         if (!isset($glibs)) {
-            $glibs = $this->_loadsViewerConfigs($glib);
-            if ($glibs === FALSE)
+            $glibs = $this->_loadViewerConfigs($glib);
+            if (!$glibs)
                 return FALSE;
         }
 
-        if (isset($glibs[$glib])) {
-            // CSS STYLES
-            if (!empty($glibs[$glib]['headers_css']) && $glibs[$glib]['autoload_css'] == 1) {
-                foreach ($glibs[$glib]['headers_css'] as $vRegClientCSS) {
-                    $modx->regClientCSS($vRegClientCSS, 'screen');
-                }
-            }
-            // JS Libraries
-            if (!empty($glibs[$glib]['headers_js']) && $glibs[$glib]['autoload_js'] == 1) {
-                foreach ($glibs[$glib]['headers_js'] as $vRegClientJS) {
-                    $modx->regClientStartupScript($vRegClientJS);
-                }
-            }
-            // HTMLBLOCK
-
-            if (!empty($glibs[$glib]['headers_html']) && $glibs[$glib]['autoload_html'] == 1) {
-                $modx->regClientStartupHTMLBlock($glibs[$glib]['headers_html']);
-            }
-            unset($glib);
-        }
-        else
+        if (!isset($glibs[$glib])) {
             return FALSE;
+        }
+        
+        // CSS STYLES
+        if (!empty($glibs[$glib]['headers_css']) && $glibs[$glib]['autoload_css'] == 1) {
+            foreach ($glibs[$glib]['headers_css'] as $vRegClientCSS) {
+                $modx->regClientCSS($vRegClientCSS, 'screen');
+            }
+        }
+        // JS Libraries
+        if (!empty($glibs[$glib]['headers_js']) && $glibs[$glib]['autoload_js'] == 1) {
+            foreach ($glibs[$glib]['headers_js'] as $vRegClientJS) {
+                $modx->regClientStartupScript($vRegClientJS);
+            }
+        }
+        // HTMLBLOCK
+        if (!empty($glibs[$glib]['headers_html']) && $glibs[$glib]['autoload_html'] == 1) {
+            $modx->regClientStartupHTMLBlock($glibs[$glib]['headers_html']);
+        }
+
+        return TRUE;
     }
 
     /**
@@ -1628,31 +1411,31 @@ class e2g_snip extends e2g_pub {
      * @param  mixed $row  the thumbnail's data in an array
      * @return mixed the file inclusion, thumbnail sources, comment's controller
      */
-    private function _libsThumb($row) {
+    private function _loadThumbPlaceholders($row) {
         $modx = $this->modx;
-        $gdir = $this->e2gsnip_cfg['gdir'];
-        $css = $this->e2gsnip_cfg['css'];
-        $glib = $this->e2gsnip_cfg['glib'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-        $mbstring = $this->e2gsnip_cfg['mbstring'];
-        $charset = $this->e2gsnip_cfg['charset'];
-        $nameLen = $this->e2gsnip_cfg['name_len'];
-        $w = $this->e2gsnip_cfg['w'];
-        $h = $this->e2gsnip_cfg['h'];
-        $thq = $this->e2gsnip_cfg['thq'];
+        $gdir = $this->e2gSnipCfg['gdir'];
+        $css = $this->e2gSnipCfg['css'];
+        $glib = $this->e2gSnipCfg['glib'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+        $mbstring = $this->e2gSnipCfg['mbstring'];
+        $charSet = $this->e2gSnipCfg['charset'];
+        $nameLen = $this->e2gSnipCfg['name_len'];
+        $w = $this->e2gSnipCfg['w'];
+        $h = $this->e2gSnipCfg['h'];
+        $thq = $this->e2gSnipCfg['thq'];
         // COMMENT
-        $ecm = $this->e2gsnip_cfg['ecm'];
-        $fid = $this->e2gsnip_cfg['fid'];
+        $ecm = $this->e2gSnipCfg['ecm'];
+        $fid = $this->e2gSnipCfg['fid'];
 //        $modx->toPlaceholder('fid', $fid, 'easy2:');
         $modx->setPlaceholder('easy2:fid', $fid);
 
         // SLIDESHOW
-        $showGroup = $this->e2gsnip_cfg['show_group'];
+        $showGroup = $this->e2gSnipCfg['show_group'];
         $modx->setPlaceholder('easy2:show_group', $showGroup);
 
         // store the file ID for the library's caption below
         $fid = $row['id'];
-        $glibs = $this->_loadsViewerConfigs($glib, $fid);
+        $glibs = $this->_loadViewerConfigs($glib, $fid);
 
         if (isset($landingPage)) {
             $row['glibact'] = '';
@@ -1664,25 +1447,26 @@ class e2g_snip extends e2g_pub {
         else
             return FALSE;
 
-        $row['title'] = $row['name'];
-        if ($row['name'] == '')
-            $row['name'] = '&nbsp;';
-        elseif ($mbstring) {
-            if (mb_strlen($row['name'], $charset) > $nameLen)
-                $row['name'] = mb_substr($row['name'], 0, $nameLen - 1, $charset) . '...';
+        $row['title'] = $row['filename'];
+        if ($row['filename'] == '') {
+            $row['title'] = '&nbsp;';
+        } elseif ($mbstring) {
+            if (mb_strlen($row['filename'], $charSet) > $nameLen)
+                $row['title'] = mb_substr($row['filename'], 0, $nameLen - 1, $charSet) . '...';
+        } elseif (strlen($row['filename']) > $nameLen) {
+            $row['title'] = substr($row['filename'], 0, $nameLen - 1) . '...';
         }
-        elseif (strlen($row['name']) > $nameLen)
-            $row['name'] = substr($row['name'], 0, $nameLen - 1) . '...';
 
         $path = $this->_getPath($row['dir_id']);
-        if (count($path) > 1) {
-            unset($path[1]);
-            $path = implode('/', array_values($path)) . '/';
-        } else {
-            $path = '';
-        }
 
-        $row['src'] = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq);
+        $imgShaper = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq);
+        if ($imgShaper !== FALSE) {
+            $row['src'] = $imgShaper;
+        } else {
+//            $row['src'] = 'assets/modules/easy2/show.easy2gallery.php?w=' . $w . '&amp;h=' . $h . '&amp;th=5';
+            continue;
+        }
+        unset($imgShaper);
 
         /**
          * Comments on the thumbnails
@@ -1690,20 +1474,9 @@ class e2g_snip extends e2g_pub {
         // HIDE COMMENTS from Ignored IP Addresses
         $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-        $comStatusQuery = 'SELECT COUNT(ign_ip_address) '
-                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip '
-                . 'WHERE ign_ip_address=\'' . $ip . '\'';
-        $comStatusRes = mysql_query($comStatusQuery);
-        if (!$comStatusRes) {
-            echo __LINE__ . ' : ' . mysql_error() . ' ' . $comStatusQuery . '<br />';
-            return FALSE;
-//            or die(__LINE__ . ' : ' . mysql_error());
-        }
-        while ($comRow = mysql_fetch_array($comStatusRes)) {
-            $countIgnoredIp = $comRow['COUNT(ign_ip_address)'];
-        }
+        $checkIgnoredIp = $this->_checkIgnoredIp($ip);
 
-        if ($ecm == 1 && ($countIgnoredIp == 0)) {
+        if ($ecm == 1 && (!$checkIgnoredIp)) {
             $row['com'] = 'e2gcom' . ($row['comments'] == 0 ? 0 : 1);
 
             // iframe activation
@@ -1718,15 +1491,16 @@ class e2g_snip extends e2g_pub {
         }
         if (isset($glib))
             unset($glib);
+
         return $row;
     }
 
-    private function _loadsViewerConfigs($glib, $fid=null) {
+    private function _loadViewerConfigs($glib, $fid=NULL) {
         $modx = $this->modx;
         // SLIDESHOW
-        $showGroup = $this->e2gsnip_cfg['show_group'];
+        $showGroup = $this->e2gSnipCfg['show_group'];
         $modx->setPlaceholder('easy2:show_group', $showGroup);
-        $fid = $this->e2gsnip_cfg['fid'];
+        $fid = $this->e2gSnipCfg['fid'];
 //        $modx->toPlaceholder('fid', $fid, 'easy2:');
         $modx->setPlaceholder('easy2:fid', $fid);
 
@@ -1772,280 +1546,22 @@ class e2g_snip extends e2g_pub {
      * Slideshow's controller
      * @return string the slideshow's images
      */
-    private function _slideshow() {
+    private function _slideshow($slideshow) {
         $modx = $this->modx;
         // database selection
-        $gdir = $this->e2gsnip_cfg['gdir'];
-        $gid = $this->e2gsnip_cfg['gid'];
-        $fid = $this->e2gsnip_cfg['fid'];
-        $rgid = $this->e2gsnip_cfg['rgid'];
+        $gdir = $this->e2gSnipCfg['gdir'];
 
-        $whereDir = $this->e2gsnip_cfg['where_dir'];
-        $whereFile = $this->e2gsnip_cfg['where_file'];
-
-        if ($this->e2gsnip_cfg['orderby'] == 'random') {
-            $orderBy = 'rand()';
-            $order = '';
-        } else {
-            $orderBy = $this->e2gsnip_cfg['orderby'];
-            $order = $this->e2gsnip_cfg['order'];
-        }
-        if ($this->e2gsnip_cfg['cat_orderby'] == 'random') {
-            $cat_orderBy = 'rand()';
-            $cat_order = '';
-        } else {
-            $cat_orderBy = $this->e2gsnip_cfg['cat_orderby'];
-            $cat_order = $this->e2gsnip_cfg['cat_order'];
-        }
-
-        if ($this->e2gsnip_cfg['ss_orderby'] == 'random') {
-            $ssOrderBy = 'rand()';
-            $ssOrder = '';
-        } else {
-            $ssOrderBy = $this->e2gsnip_cfg['ss_orderby'];
-            $ssOrder = $this->e2gsnip_cfg['ss_order'];
-        }
-
-        $ssLimit = $this->e2gsnip_cfg['ss_limit'];
-
-        $gpn = $this->e2gsnip_cfg['gpn'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
-
-        // initial slideshow's controller and headers
-        $slideshow = $this->e2gsnip_cfg['slideshow'];
-        $ssConfig = $this->e2gsnip_cfg['ss_config'];
-        $ssIndexFile = $this->e2gsnip_cfg['ss_indexfile'];
-        $ssCss = $this->e2gsnip_cfg['ss_css'];
-        $ssJs = $this->e2gsnip_cfg['ss_js'];
-
-        // thumbnail settings
-        $w = $this->e2gsnip_cfg['w'];
-        $h = $this->e2gsnip_cfg['h'];
-        $thq = $this->e2gsnip_cfg['thq'];
-        $resizeType = $this->e2gsnip_cfg['resize_type'];
-        $thbgRed = $this->e2gsnip_cfg['thbg_red'];
-        $thbgGreen = $this->e2gsnip_cfg['thbg_green'];
-        $thbgBlue = $this->e2gsnip_cfg['thbg_blue'];
+        $ssIndexFile = $this->e2gSnipCfg['ss_indexfile'];
+        $ssCss = $this->e2gSnipCfg['ss_css'];
+        $ssJs = $this->e2gSnipCfg['ss_js'];
 
         // slideshow's image settings
-        $ssImgSrc = $this->e2gsnip_cfg['ss_img_src'];
-        $ssW = $this->e2gsnip_cfg['ss_w'];
-        $ssH = $this->e2gsnip_cfg['ss_h'];
-        $ssThq = $this->e2gsnip_cfg['ss_thq'];
-        $ssResizeType = $this->e2gsnip_cfg['ss_resize_type'];
-        $ssBg = $this->e2gsnip_cfg['ss_bg'];
-        $ssRed = $this->e2gsnip_cfg['ss_red'];
-        $ssGreen = $this->e2gsnip_cfg['ss_green'];
-        $ssBlue = $this->e2gsnip_cfg['ss_blue'];
-
-        // landscape/portrait image's ratio for the slideshow box
-        $ssAllowedRatio = $this->e2gsnip_cfg['ss_allowedratio'];
+        $ssImgSrc = $this->e2gSnipCfg['ss_img_src'];
 
         // self landingpage
-        $css = $this->e2gsnip_cfg['css'];
-        $js = $this->e2gsnip_cfg['js'];
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-
-        /**
-         * Filtering the slideshow size ratio
-         */
-        if ($ssAllowedRatio != 'all') {
-            // create min-max slideshow width/height ratio
-            $ssXpldRatio = explode('-', $ssAllowedRatio);
-            $ssMinRatio = trim($ssXpldRatio[0]);
-            $ssMaxRatio = trim($ssXpldRatio[1]);
-        }
-
-        $_ssFile = array();
-        if (!empty($gid) && $modx->documentIdentifier != $landingPage) {
-            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
-
-            if ($gid != '*') {
-                $select .= 'dir_id IN (' . $gid . ') AND ';
-            }
-
-            if (isset($whereFile)) {
-                $where = $this->_whereClause($whereFile);
-                if ($where === FALSE)
-                    return FALSE;
-                else {
-                    $select .= $where . ' AND ';
-                }
-            }
-
-            if ($ssAllowedRatio != 'all') {
-                $select .= 'width/height >=' . floatval($ssMinRatio) . ' AND width/height<=' . floatval($ssMaxRatio) . ' AND ';
-            }
-
-            $select .= 'status = 1 '
-                    . 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' '
-                    . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ', ' . $ssLimit )
-            ;
-            $query = mysql_query($select);
-            if (!$query) {
-                $o = 'snippet calls wrong gallery id:' . $gid . ', order, or wrong limit.<br />';
-                $o .= $select . '<br />';
-                $o .= mysql_error();
-                return $o;
-            }
-
-            while ($fetch = mysql_fetch_array($query)) {
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-
-                $_ssFile['id'][] = $fetch['id'];
-                $_ssFile['dirid'][] = $fetch['dir_id'];
-                $_ssFile['src'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                $_ssFile['filename'][] = $fetch['filename'];
-                $_ssFile['title'][] = ($fetch['name'] != '' ? $fetch['name'] : $fetch['filename']);
-                $_ssFile['name'][] = $fetch['name'];
-                $_ssFile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $_ssFile['thumbsrc'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $w, $h, $thq,
-                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
-                if ($ssImgSrc == 'generated') {
-                    /**
-                     * + WATERMARK-ing
-                     */
-                    $_ssFile['resizedimg'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $ssThq,
-                                    $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
-                } elseif ($ssImgSrc == 'original') {
-                    $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                }
-
-                $_ssFile['tag'][] = $fetch['tag'];
-                $_ssFile['summary'][] = $fetch['summary'];
-                /**
-                 * TODO: Making a work around if _imgShaper returns an empty result
-                 */
-            }
-        }
-
-        if (!empty($fid)) {
-            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE id IN (' . $fid . ') ';
-
-            if ($ssAllowedRatio != 'all') {
-                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) . ' ';
-            }
-
-            $select .= 'AND status = 1 '
-            ;
-            $query = mysql_query($select);
-            if (!$query) {
-                return 'snippet calls wrong file id:' . $fid;
-            }
-
-            while ($fetch = mysql_fetch_array($query)) {
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $_ssFile['id'][] = $fetch['id'];
-                $_ssFile['dirid'][] = $fetch['dir_id'];
-                $_ssFile['src'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                $_ssFile['filename'][] = $fetch['filename'];
-                $_ssFile['title'][] = ($fetch['name'] != '' ? $fetch['name'] : $fetch['filename']);
-                $_ssFile['name'][] = $fetch['name'];
-                $_ssFile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $_ssFile['thumbsrc'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $w, $h, $thq,
-                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
-                if ($ssImgSrc == 'generated') {
-                    /**
-                     * + WATERMARK-ing
-                     */
-                    $_ssFile['resizedimg'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $ssThq,
-                                    $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
-                } elseif ($ssImgSrc == 'original') {
-                    $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                }
-
-                $_ssFile['tag'][] = $fetch['tag'];
-                $_ssFile['summary'][] = $fetch['summary'];
-            }
-        }
-
-        if (!empty($rgid)) {
-            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE status = 1 '
-                    . 'AND dir_id IN (' . $rgid . ') ';
-
-            if ($ssAllowedRatio != 'all') {
-                $select .= 'AND width/height >=' . floatval($ssMinRatio) . ' OR width/height<=' . floatval($ssMaxRatio) . ' ';
-            }
-
-            $select .= 'ORDER BY RAND() '
-                    . ( $ssLimit == 'none' ? '' : 'LIMIT 0,' . $ssLimit . ' ' )
-            ;
-            $query = mysql_query($select);
-            if (!$query) {
-                return 'snippet calls wrong random file id:' . $gid . ', or wrong limit';
-            }
-            while ($fetch = mysql_fetch_array($query)) {
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $_ssFile['id'][] = $fetch['id'];
-                $_ssFile['dirid'][] = $fetch['dir_id'];
-                $_ssFile['src'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                $_ssFile['filename'][] = $fetch['filename'];
-                $_ssFile['title'][] = ($fetch['name'] != '' ? $fetch['name'] : $fetch['filename']);
-                $_ssFile['name'][] = $fetch['name'];
-                $_ssFile['description'][] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $_ssFile['thumbsrc'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $w, $h, $thq,
-                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
-                if ($ssImgSrc == 'generated') {
-                    /**
-                     * + WATERMARK-ing
-                     */
-                    $_ssFile['resizedimg'][] = $this->_imgShaper($gdir, $path . $fetch['filename'], $ssW, $ssH, $ssThq,
-                                    $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
-                } elseif ($ssImgSrc == 'original') {
-                    $_ssFile['resizedimg'][] = $this->_e2gDecode($gdir . $path . $fetch['filename']);
-                }
-
-                $_ssFile['tag'][] = $fetch['tag'];
-                $_ssFile['summary'][] = $fetch['summary'];
-            }
-        }
-
-        /**
-         * if the counting below = 0 (zero), then should be considered inside
-         * the slideshow types, while in some slideshows this doesn't matter.
-         */
-        $countSlideshowFiles = count($_ssFile['src']);
+        $css = $this->e2gSnipCfg['css'];
+        $js = $this->e2gSnipCfg['js'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
 
         /**
          * added the &fid parameter inside the &slideshow, to open a full page of the clicked image
@@ -2068,76 +1584,14 @@ class e2g_snip extends e2g_pub {
             if (!empty($js)) {
                 $modx->regClientStartupScript($js);
             }
-
-            $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE id = ' . $_GET['fid'] . ' '
-            ;
-            $query = mysql_query($select);
-            if (!$query) {
-                return 'snippet calls wrong file id.';
-            }
-
-            while ($fetch = mysql_fetch_array($query)) {
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-                $src = $gdir . $path . $fetch['filename'];
-
-                // goldsky -- only to switch between localhost and live site.
-                // TODO: need review!
-                if ($ssImgSrc == 'original') {
-//                    if (strpos($_SERVER['DOCUMENT_ROOT'], '/') === (int) 0) {
-                    if (strtoupper(substr(PHP_OS, 0, 3) != 'WIN')) {
-                        $l['src'] = rawurldecode(str_replace('%2F', '/', rawurlencode($src)));
-                    } else
-                        $l['src'] = $src;
-                }
-                elseif ($ssImgSrc == 'generated') {
-                    /**
-                     * + WATERMARK-ing
-                     */
-                    if (!isset($lpW) || !isset($lpH)) {
-                        $inf = @getimagesize($this->_e2gDecode($src));
-                        if (!isset($lpW))
-                            $lpW = $inf[0];
-                        if (!isset($lpH))
-                            $lpH = $inf[1];
-                        $inf = array();
-                        unset($inf);
-                    }
-                    $filePath = $this->_imgShaper($gdir, $path . $fetch['filename'], $lpW, $lpH, $lpThq, $lpResizeType,
-                                    $lpRed, $lpGreen, $lpBlue, 1);
-//                    if (strpos($_SERVER['DOCUMENT_ROOT'], '/') === (int) 0) {
-                    if (strtoupper(substr(PHP_OS, 0, 3) != 'WIN')) {
-                        $l['src'] = rawurldecode(str_replace('%2F', '/', rawurlencode($filePath)));
-                    } else
-                        $l['src'] = $filePath;
-                }
-
-                $l['title'] = ($fetch['name'] != '' ? $fetch['name'] : $fetch['filename']);
-                $l['name'] = $fetch['name'];
-                $l['description'] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
-                $path = $this->_getPath($fetch['dir_id']);
-                if (count($path) > 1) {
-                    unset($path[1]);
-                    $path = implode('/', array_values($path)) . '/';
-                } else {
-                    $path = '';
-                }
-            }
-            $_ssFile = array();
-            return $this->_filler($this->_tplPage(), $l);
-        }
-        /**
-         * The DEFAULT display
-         */ else {
+            return $this->_landingPage($_GET['fid']);
+        } else {
+            /**
+             * The DEFAULT display
+             */
             // use custom index file if it's been set inside snippet call.
             if (isset($ssIndexFile)) {
-                if (file_exists($ssIndexFile)) {
+                if (file_exists(realpath($ssIndexFile))) {
                     ob_start();
                     include($ssIndexFile);
                     $ssDisplay = ob_get_contents();
@@ -2152,42 +1606,402 @@ class e2g_snip extends e2g_pub {
                         . 'WHERE name = \'' . $slideshow . '\'';
                 $queryIndexFile = mysql_query($selectIndexFile);
                 if (!$queryIndexFile) {
-                    return __LINE__ . ' : snippet calls wrong slideshow\'s name.';
+                    echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectIndexFile . '<br />';
+                    return FALSE;
                 }
 //                $dbIndexFile = mysql_result($queryIndexFile, 0, 0);
                 $row = mysql_fetch_row($queryIndexFile);
                 $dbIndexFile = $row[0];
                 if ($dbIndexFile == '') {
-                    return __LINE__ . ' : empty index file in database.';
-                } elseif (file_exists($dbIndexFile)) {
+                    echo __LINE__ . ' : Empty index file in database.';
+                    return FALSE;
+                } elseif (file_exists(realpath($dbIndexFile))) {
                     ob_start();
                     include($dbIndexFile);
                     $ssDisplay = ob_get_contents();
                     ob_end_clean();
                 } else {
-                    return __LINE__ . ' : slideshow index file <b>' . $dbIndexFile . '</b> is not found.';
+                    echo __LINE__ . ' : Slideshow index file <b>' . $dbIndexFile . '</b> is not found.<br />';
+                    return FALSE;
                 }
             }
-            $_ssFile = array();
         }
-        $_ssFile = array();
-        unset($_ssFile);
 
-        /**
-         * wrapping the slideshow with E2G's internal ID
-         * TODO: create placeholder for slideshow wrapper
-         */
-        $output = '
-<div id="' . $e2gWrapper . '">
-';
-        $output .= $ssDisplay;
-        $output .= '
-</div>
-';
+        $output = array();
+        $output['slideshow'] = $ssDisplay;
+        $output['wrapper'] = $this->e2gSnipCfg['e2g_wrapper'];
+        $output['sid'] = $this->e2gSnipCfg['e2g_static_instances'];
 
-        return $output;
+        return $this->_filler($this->_getTpl('slideshow-tpl'), $output);
     }
 
+    private function _getSlideShowParams() {
+        // database selection
+        $ssParams['gdir'] = $this->e2gSnipCfg['gdir'];
+        $ssParams['gid'] = $this->e2gSnipCfg['gid'];
+        $ssParams['gid'] = $this->e2gSnipCfg['gid'];
+        $ssParams['fid'] = $this->e2gSnipCfg['fid'];
+        $ssParams['rgid'] = $this->e2gSnipCfg['rgid'];
+        $ssParams['where_dir'] = $this->e2gSnipCfg['where_dir'];
+        $ssParams['where_file'] = $this->e2gSnipCfg['where_file'];
+        $ssParams['ss_allowedratio'] = $this->e2gSnipCfg['ss_allowedratio'];
+        /**
+         * Filtering the slideshow size ratio
+         */
+        if ($ssParams['ss_allowedratio'] != 'all') {
+            // create min-max slideshow width/height ratio
+            $ssXpldRatio = explode('-', $ssParams['ss_allowedratio']);
+
+            $ssMinRatio = trim($ssXpldRatio[0]);
+            $ssMinRatio = str_replace(',', '.', $ssMinRatio);
+            $ssMinRatio = @explode('.',$ssMinRatio);
+            $ssParams['ss_minratio'] = @implode('.', array(intval($ssMinRatio[0]),intval($ssMinRatio[1])));
+
+            $ssMaxRatio = trim($ssXpldRatio[1]);
+            $ssMaxRatio = str_replace(',', '.', $ssMaxRatio);
+            $ssMaxRatio = @explode('.',$ssMaxRatio);
+            $ssParams['ss_maxratio'] = @implode('.', array(intval($ssMaxRatio[0]),intval($ssMaxRatio[1])));
+        }
+
+        $ssParams['gpn'] = $this->e2gSnipCfg['gpn'];
+        $ssParams['ss_limit'] = $this->e2gSnipCfg['ss_limit'];
+        if ($this->e2gSnipCfg['orderby'] == 'random') {
+            $ssParams['orderby'] = 'rand()';
+            $ssParams['order'] = '';
+        } else {
+            $ssParams['orderby'] = $this->e2gSnipCfg['orderby'];
+            $ssParams['order'] = $this->e2gSnipCfg['order'];
+        }
+        if ($this->e2gSnipCfg['cat_orderby'] == 'random') {
+            $ssParams['cat_orderby'] = 'rand()';
+            $ssParams['cat_order'] = '';
+        } else {
+            $ssParams['cat_orderby'] = $this->e2gSnipCfg['cat_orderby'];
+            $ssParams['cat_order'] = $this->e2gSnipCfg['cat_order'];
+        }
+        $ssParams['ss_orderby'] = $this->e2gSnipCfg['ss_orderby'];
+        $ssParams['ss_order'] = $this->e2gSnipCfg['ss_order'];
+
+        // self landingpage
+        $ssParams['css'] = $this->e2gSnipCfg['css'];
+        $ssParams['js'] = $this->e2gSnipCfg['js'];
+        $ssParams['landingpage'] = $this->e2gSnipCfg['landingpage'];
+
+        // initial slideshow's controller and headers
+        $ssParams['ss_css'] = $this->e2gSnipCfg['ss_css'];
+        $ssParams['ss_js'] = $this->e2gSnipCfg['ss_js'];
+        $ssParams['ss_config'] = $this->e2gSnipCfg['ss_config'];
+
+        // thumbnail settings
+        $ssParams['w'] = $this->e2gSnipCfg['w'];
+        $ssParams['h'] = $this->e2gSnipCfg['h'];
+        $ssParams['thq'] = $this->e2gSnipCfg['thq'];
+        $ssParams['resize_type'] = $this->e2gSnipCfg['resize_type'];
+        $ssParams['thbg_red'] = $this->e2gSnipCfg['thbg_red'];
+        $ssParams['thbg_green'] = $this->e2gSnipCfg['thbg_green'];
+        $ssParams['thbg_blue'] = $this->e2gSnipCfg['thbg_blue'];
+
+        // slideshow's image settings
+        $ssParams['ss_img_src'] = $this->e2gSnipCfg['ss_img_src'];
+        $ssParams['ss_w'] = $this->e2gSnipCfg['ss_w'];
+        $ssParams['ss_h'] = $this->e2gSnipCfg['ss_h'];
+        $ssParams['ss_thq'] = $this->e2gSnipCfg['ss_thq'];
+        $ssParams['ss_resize_type'] = $this->e2gSnipCfg['ss_resize_type'];
+        $ssParams['ss_bg'] = $this->e2gSnipCfg['ss_bg'];
+        $ssParams['ss_red'] = $this->e2gSnipCfg['ss_red'];
+        $ssParams['ss_green'] = $this->e2gSnipCfg['ss_green'];
+        $ssParams['ss_blue'] = $this->e2gSnipCfg['ss_blue'];
+
+        return $ssParams;
+    }
+    
+    private function _getSlideShowFiles() {
+        $modx = $this->modx;
+        // database selection
+        $gdir = $this->e2gSnipCfg['gdir'];
+        $gid = $this->e2gSnipCfg['gid'];
+        $fid = $this->e2gSnipCfg['fid'];
+        $rgid = $this->e2gSnipCfg['rgid'];
+
+        $whereFile = $this->e2gSnipCfg['where_file'];
+
+        if ($this->e2gSnipCfg['ss_orderby'] == 'random') {
+            $ssOrderBy = 'rand()';
+            $ssOrder = '';
+        } else {
+            $ssOrderBy = $this->e2gSnipCfg['ss_orderby'];
+            $ssOrder = $this->e2gSnipCfg['ss_order'];
+        }
+
+        $gpn = $this->e2gSnipCfg['gpn'];
+        $ssLimit = $this->e2gSnipCfg['ss_limit'];
+
+        // thumbnail settings
+        $w = $this->e2gSnipCfg['w'];
+        $h = $this->e2gSnipCfg['h'];
+        $thq = $this->e2gSnipCfg['thq'];
+        $resizeType = $this->e2gSnipCfg['resize_type'];
+        $thbgRed = $this->e2gSnipCfg['thbg_red'];
+        $thbgGreen = $this->e2gSnipCfg['thbg_green'];
+        $thbgBlue = $this->e2gSnipCfg['thbg_blue'];
+
+        // slideshow's image settings
+        $ssImgSrc = $this->e2gSnipCfg['ss_img_src'];
+        $ssW = $this->e2gSnipCfg['ss_w'];
+        $ssH = $this->e2gSnipCfg['ss_h'];
+        $ssThq = $this->e2gSnipCfg['ss_thq'];
+        $ssResizeType = $this->e2gSnipCfg['ss_resize_type'];
+        $ssBg = $this->e2gSnipCfg['ss_bg'];
+        $ssRed = $this->e2gSnipCfg['ss_red'];
+        $ssGreen = $this->e2gSnipCfg['ss_green'];
+        $ssBlue = $this->e2gSnipCfg['ss_blue'];
+
+        // landscape/portrait image's ratio for the slideshow box
+        $ssAllowedRatio = $this->e2gSnipCfg['ss_allowedratio'];
+
+        // self landingpage
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+
+        /**
+         * Filtering the slideshow size ratio
+         */
+        if ($ssAllowedRatio != 'all') {
+            // create min-max slideshow width/height ratio
+            $ssXpldRatio = explode('-', $ssAllowedRatio);
+
+            $ssMinRatio = trim($ssXpldRatio[0]);
+            $ssMinRatio = str_replace(',', '.', $ssMinRatio);
+            $ssMinRatio = @explode('.',$ssMinRatio);
+            $ssMinRatio = @implode('.', array(intval($ssMinRatio[0]),intval($ssMinRatio[1])));
+
+            $ssMaxRatio = trim($ssXpldRatio[1]);
+            $ssMaxRatio = str_replace(',', '.', $ssMaxRatio);
+            $ssMaxRatio = @explode('.',$ssMaxRatio);
+            $ssMaxRatio = @implode('.', array(intval($ssMaxRatio[0]),intval($ssMaxRatio[1])));
+
+        }
+
+        $ssFiles = array();
+        $errorThumb = 'assets/modules/easy2/show.easy2gallery.php?w=' . $w . '&amp;h=' . $h . '&amp;th=2';
+        $errorImg = 'assets/modules/easy2/show.easy2gallery.php?w=' . $ssW . '&amp;h=' . $ssH . '&amp;th=5';
+        
+        if (isset($gid) && $modx->documentIdentifier != $landingPage) {
+            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
+
+            if ($gid != '*') {
+                $selectFiles .= 'dir_id IN (' . $gid . ') AND ';
+            }
+
+            if (isset($whereFile)) {
+                $where = $this->_whereClause($whereFile);
+                if (!$where) {
+                    echo __LINE__ . ' : ' . $whereFile . '<br />';
+                    return FALSE;
+                } else {
+                    $selectFiles .= $where . ' AND ';
+                }
+            }
+
+            if ($ssAllowedRatio != 'all') {
+                $selectFiles .= 'width/height >=\'' . floatval($ssMinRatio) . '\' AND width/height<=\'' . floatval($ssMaxRatio) . '\' AND ';
+            }
+
+            $selectFiles .= 'status = 1 '
+                    . 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' '
+                    . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ', ' . $ssLimit )
+            ;
+            $querySelectFiles = mysql_query($selectFiles);
+            if (!$querySelectFiles) {
+                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
+                return FALSE;
+            }
+
+            while ($row = mysql_fetch_array($querySelectFiles)) {
+                $path = $this->_getPath($row['dir_id']);
+
+                $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
+                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
+                // thumbnail first...
+                if ($thumbImg !== FALSE) {
+                    // ... then the slideshow's images
+                    if ($ssImgSrc == 'generated') {
+                        /**
+                         * + WATERMARK-ing
+                         */
+                        $ssImg = $this->_imgShaper($gdir, $path . $row['filename'], $ssW, $ssH, $ssThq,
+                                        $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
+                        if ($ssImg !== FALSE) {
+                            $ssFiles['resizedimg'][] = $ssImg;
+                        } else {
+//                            $ssFiles['resizedimg'][] = $errorImg;
+                            continue;
+                        }
+                        unset($ssImg);
+
+                    } elseif ($ssImgSrc == 'original') {
+                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                    }
+
+                    // if the slideshow's images were created successfully
+                    $ssFiles['thumbsrc'][] = $thumbImg;
+                } else {
+//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+                    continue;
+                }
+                unset($thumbImg);
+
+                $ssFiles['id'][] = $row['id'];
+                $ssFiles['dirid'][] = $row['dir_id'];
+                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['filename'][] = $row['filename'];
+                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
+                $ssFiles['alias'][] = $row['alias'];
+                $ssFiles['name'][] = $row['alias'];
+                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
+                $ssFiles['tag'][] = $row['tag'];
+                $ssFiles['summary'][] = $row['summary'];
+            }
+            mysql_free_result($querySelectFiles);
+        }
+
+        if (isset($fid)) {
+            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+                    . 'WHERE id IN (' . $fid . ') ';
+
+            // disable this, since the file is accessed directly
+//            if ($ssAllowedRatio != 'all') {
+//                $selectFiles .= 'AND width/height >=\'' . floatval($ssMinRatio) . '\' OR width/height<=\'' . floatval($ssMaxRatio) . '\' ';
+//            }
+
+            $selectFiles .= 'AND status = 1 '
+            ;
+            $querySelectFiles = mysql_query($selectFiles);
+            if (!$querySelectFiles) {
+                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
+                return FALSE;
+            }
+
+            while ($row = mysql_fetch_array($querySelectFiles)) {
+                $path = $this->_getPath($row['dir_id']);
+                
+                $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
+                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
+                // thumbnail first...
+                if ($thumbImg !== FALSE) {
+                    // ... then the slideshow's images
+                    if ($ssImgSrc == 'generated') {
+                        /**
+                         * + WATERMARK-ing
+                         */
+                        $ssImg = $this->_imgShaper($gdir, $path . $row['filename'], $ssW, $ssH, $ssThq,
+                                        $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
+                        if ($ssImg !== FALSE) {
+                            $ssFiles['resizedimg'][] = $ssImg;
+                        } else {
+//                            $ssFiles['resizedimg'][] = $errorImg;
+                            continue;
+                        }
+                        unset($ssImg);
+
+                    } elseif ($ssImgSrc == 'original') {
+                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                    }
+
+                    // if the slideshow's images were created successfully
+                    $ssFiles['thumbsrc'][] = $thumbImg;
+                } else {
+//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+                    continue;
+                }
+                unset($thumbImg);
+                
+                $ssFiles['id'][] = $row['id'];
+                $ssFiles['dirid'][] = $row['dir_id'];
+                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['filename'][] = $row['filename'];
+                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
+                $ssFiles['alias'][] = $row['alias'];
+                $ssFiles['name'][] = $row['alias'];
+                $ssFiles['description'][] = htmlspecialchars_decode($row['description'], ENT_QUOTES);
+                $ssFiles['tag'][] = $row['tag'];
+                $ssFiles['summary'][] = $row['summary'];
+            }
+        }
+
+        if (isset($rgid)) {
+            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+                    . 'WHERE status = 1 '
+                    . 'AND dir_id IN (' . $rgid . ') ';
+
+            if ($ssAllowedRatio != 'all') {
+                $selectFiles .= 'AND width/height >=\'' . floatval($ssMinRatio) . '\' OR width/height<=\'' . floatval($ssMaxRatio) . '\' ';
+            }
+
+            $selectFiles .= 'ORDER BY RAND() '
+                    . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ',' . $ssLimit . ' ' )
+            ;
+            $querySelectFiles = mysql_query($selectFiles);
+            if (!$querySelectFiles) {
+                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
+                return FALSE;
+            }
+            while ($row = mysql_fetch_array($querySelectFiles)) {
+                $path = $this->_getPath($row['dir_id']);
+                
+                $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
+                                $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
+                // thumbnail first...
+                if ($thumbImg !== FALSE) {
+                    // ... then the slideshow's images
+                    if ($ssImgSrc == 'generated') {
+                        /**
+                         * + WATERMARK-ing
+                         */
+                        $ssImg = $this->_imgShaper($gdir, $path . $row['filename'], $ssW, $ssH, $ssThq,
+                                        $ssResizeType, $ssRed, $ssGreen, $ssBlue, 1);
+                        if ($ssImg !== FALSE) {
+                            $ssFiles['resizedimg'][] = $ssImg;
+                        } else {
+//                            $ssFiles['resizedimg'][] = $errorImg;
+                            continue;
+                        }
+                        unset($ssImg);
+
+                    } elseif ($ssImgSrc == 'original') {
+                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                    }
+
+                    // if the slideshow's images were created successfully
+                    $ssFiles['thumbsrc'][] = $thumbImg;
+                } else {
+//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+                    continue;
+                }
+                unset($thumbImg);
+                
+                $ssFiles['id'][] = $row['id'];
+                $ssFiles['dirid'][] = $row['dir_id'];
+                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['filename'][] = $row['filename'];
+                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
+                $ssFiles['alias'][] = $row['alias'];
+                $ssFiles['name'][] = $row['alias'];
+                $ssFiles['description'][] = htmlspecialchars_decode($row['description'], ENT_QUOTES);
+                $ssFiles['tag'][] = $row['tag'];
+                $ssFiles['summary'][] = $row['summary'];
+            }
+            mysql_free_result($querySelectFiles);
+        }
+
+        /**
+         * if the counting below = 0 (zero), then should be considered inside
+         * the slideshow types, while for some slideshows this doesn't really matter.
+         */
+        $ssFiles['count'] = count($ssFiles['src']);
+
+        return $ssFiles;
+    }
+    
     /**
      * A landing page to show the image, including information within it.
      * @param  int   $fileId file's ID
@@ -2196,27 +2010,28 @@ class e2g_snip extends e2g_pub {
     private function _landingPage($fileId) {
         $modx = $this->modx;
 
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-        if ($modx->documentIdentifier != $landingPage)
-            return;
-        $page_tpl_css = $this->e2gsnip_cfg['page_tpl_css'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+//        if ($modx->documentIdentifier != $landingPage)
+//            return NULL;
+        $page_tpl_css = $this->e2gSnipCfg['page_tpl_css'];
 
-        $lp_img_src = $this->e2gsnip_cfg['lp_img_src'];
-        $lpW = $this->e2gsnip_cfg['lp_w'];
-        $lpH = $this->e2gsnip_cfg['lp_h'];
-        $lpThq = $this->e2gsnip_cfg['lp_thq'];
-        $lpResizeType = $this->e2gsnip_cfg['lp_resize_type'];
-        $lpBg = $this->e2gsnip_cfg['lp_bg'];
-        $lpRed = $this->e2gsnip_cfg['lp_red'];
-        $lpGreen = $this->e2gsnip_cfg['lp_green'];
-        $lpBlue = $this->e2gsnip_cfg['lp_blue'];
+        // page settings
+        $lp_img_src = $this->e2gSnipCfg['lp_img_src'];
+        $lpW = $this->e2gSnipCfg['lp_w'];
+        $lpH = $this->e2gSnipCfg['lp_h'];
+        $lpThq = $this->e2gSnipCfg['lp_thq'];
+        $lpResizeType = $this->e2gSnipCfg['lp_resize_type'];
+        $lpBg = $this->e2gSnipCfg['lp_bg'];
+        $lpRed = $this->e2gSnipCfg['lp_red'];
+        $lpGreen = $this->e2gSnipCfg['lp_green'];
+        $lpBlue = $this->e2gSnipCfg['lp_blue'];
 
-//        $plugin = $this->e2gsnip_cfg['plugin'];
-        $gdir = $this->e2gsnip_cfg['gdir'];
-        $css = $this->e2gsnip_cfg['css'];
-        $js = $this->e2gsnip_cfg['js'];
-        $ecm = $this->e2gsnip_cfg['ecm'];
-        $e2gWrapper = $this->e2gsnip_cfg['e2g_wrapper'];
+//        $plugin = $this->e2gSnipCfg['plugin'];
+        $gdir = $this->e2gSnipCfg['gdir'];
+        $css = $this->e2gSnipCfg['css'];
+        $js = $this->e2gSnipCfg['js'];
+        $ecm = $this->e2gSnipCfg['ecm'];
+        $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
         if (!empty($css)) {
             $modx->regClientCSS($css, 'screen');
@@ -2230,17 +2045,12 @@ class e2g_snip extends e2g_pub {
         ;
         $query = mysql_query($select);
         if (!$query) {
-            return __LINE__ . ' : snippet calls wrong file id.';
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select . '<br />';
+            return FALSE;
         }
 
         while ($fetch = mysql_fetch_array($query)) {
             $path = $this->_getPath($fetch['dir_id']);
-            if (count($path) > 1) {
-                unset($path[1]);
-                $path = implode('/', array_values($path)) . '/';
-            } else {
-                $path = '';
-            }
 
             // goldsky -- only to switch between localhost and live site.
             // TODO: need review!
@@ -2257,16 +2067,23 @@ class e2g_snip extends e2g_pub {
                  * + WATERMARK-ing
                  */
                 if (!isset($lpW) || !isset($lpH)) {
-                    $inf = @getimagesize($gdir . $this->_e2gDecode($path . $fetch['filename']));
+                    $imgSize = @getimagesize($gdir . $this->_e2gDecode($path . $fetch['filename']));
                     if (!isset($lpW))
-                        $lpW = $inf[0];
+                        $lpW = $imgSize[0];
                     if (!isset($lpH))
-                        $lpH = $inf[1];
-                    $inf = array();
-                    unset($inf);
+                        $lpH = $imgSize[1];
+                    $imgSize = array();
+                    unset($imgSize);
                 }
-                $filePath = $this->_imgShaper($gdir, $path . $fetch['filename'], $lpW, $lpH, $lpThq, $lpResizeType,
+                $imgShaper = $this->_imgShaper($gdir, $path . $fetch['filename'], $lpW, $lpH, $lpThq, $lpResizeType,
                                 $lpRed, $lpGreen, $lpBlue, 1);
+                if ($imgShaper !== FALSE) {
+                    $filePath = $imgShaper;
+                } else {
+                    $filePath = 'assets/modules/easy2/show.easy2gallery.php?w=' . $lpW . '&amp;h=' . $lpH . '&amp;th=5';
+                }
+                unset($imgShaper);
+
 //                if (strpos($_SERVER['DOCUMENT_ROOT'], '/') === (int) 0) {
                 if (strtoupper(substr(PHP_OS, 0, 3) != 'WIN')) {
                     $l['src'] = rawurldecode(str_replace('%2F', '/', rawurlencode($filePath)));
@@ -2274,16 +2091,10 @@ class e2g_snip extends e2g_pub {
                     $l['src'] = $filePath;
             }
 
-            $l['title'] = ($fetch['name'] != '' ? $fetch['name'] : $fetch['filename']);
-            $l['name'] = $fetch['name'];
+            $l['title'] = ($fetch['alias'] != '' ? $fetch['alias'] : $fetch['filename']);
+            $l['alias'] = $fetch['alias'];
+            $l['name'] = $fetch['alias'];
             $l['description'] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
-            $path = $this->_getPath($fetch['dir_id']);
-            if (count($path) > 1) {
-                unset($path[1]);
-                $path = implode('/', array_values($path)) . '/';
-            } else {
-                $path = '';
-            }
 
             /**
              * Comments on the landing page
@@ -2291,20 +2102,9 @@ class e2g_snip extends e2g_pub {
             // HIDE COMMENTS from Ignored IP Addresses
             $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-            $comStatusQuery = 'SELECT COUNT(ign_ip_address) '
-                    . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip '
-                    . 'WHERE ign_ip_address=\'' . $ip . '\'';
-            $comStatusRes = mysql_query($comStatusQuery);
-            if (!$comStatusRes) {
-                echo __LINE__ . ' : ' . mysql_error() . ' ' . $comStatusQuery . '<br />';
-                return FALSE;
-//                or die(__LINE__ . ' : ' . mysql_error());
-            }
-            while ($comRow = mysql_fetch_array($comStatusRes)) {
-                $countIgnoredIp = $comRow['COUNT(ign_ip_address)'];
-            }
+            $checkIgnoredIp = $this->_checkIgnoredIp($ip);
 
-            if ($ecm == 1 && ($countIgnoredIp == 0)) {
+            if ($ecm == 1 && (!$checkIgnoredIp)) {
 
                 $modx->regClientCSS($page_tpl_css);
 
@@ -2334,7 +2134,7 @@ class e2g_snip extends e2g_pub {
         $l['landingpagepluginprerender'] = $this->_plugin('OnE2GWebLandingpagePrerender', $e2gEvtParams);
         $l['landingpagepluginrender'] = $this->_plugin('OnE2GWebLandingpageRender', $e2gEvtParams);
 
-        return $this->_filler($this->_tplPage(), $l);
+        return $this->_filler($this->_getTpl('page_tpl'), $l);
     }
 
     /**
@@ -2344,17 +2144,17 @@ class e2g_snip extends e2g_pub {
      */
     private function _comments($fileId) {
         $modx = $this->modx;
-        $landingPage = $this->e2gsnip_cfg['landingpage'];
-        $recaptcha = $this->e2gsnip_cfg['recaptcha'];
-        $eclPage = $this->e2gsnip_cfg['ecl_page'];
+        $landingPage = $this->e2gSnipCfg['landingpage'];
+        $recaptcha = $this->e2gSnipCfg['recaptcha'];
+        $eclPage = $this->e2gSnipCfg['ecl_page'];
         $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
 
         require_once(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
         // Get a key from https://www.google.com/recaptcha/admin/create
-        $publicKey = $this->e2gsnip_cfg['recaptcha_key_public'];
-        $privatekey = $this->e2gsnip_cfg['recaptcha_key_private'];
+        $publicKey = $this->e2gSnipCfg['recaptcha_key_public'];
+        $privatekey = $this->e2gSnipCfg['recaptcha_key_private'];
 
-        if (file_exists(E2G_SNIPPET_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.comments.php')) {
+        if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.comments.php'))) {
             include_once E2G_SNIPPET_PATH . 'includes/langs/' . $modx->config['manager_language'] . '.comments.php';
             $lngCmt = $e2g_lang[$modx->config['manager_language']];
         } else {
@@ -2383,7 +2183,7 @@ class e2g_snip extends e2g_pub {
             $e = htmlspecialchars(trim($_POST['email']), ENT_QUOTES);
             $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-            if ($this->_checkEmailAddress($e) == FALSE) {
+            if (!$this->_checkEmailAddress($e)) {
                 $_P['comment_body'] .= '<h2>' . $lngCmt['email_err'] . '</h2>';
             } elseif ($recaptcha == 1 && (trim($_POST['recaptcha_response_field']) == '')) {
                 $_P['comment_body'] .= '<h2>' . $lngCmt['recaptcha_err'] . '</h2>';
@@ -2435,16 +2235,21 @@ class e2g_snip extends e2g_pub {
         }
 
         // DISPLAY THE AVAILABLE COMMENTS
-        $commentsQuery = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments '
+        $selectComments = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments '
                 . 'WHERE file_id = ' . $fileId . ' '
                 . 'AND STATUS=1 '
                 . 'ORDER BY id DESC '
                 . 'LIMIT ' . ($cpn * $eclPage) . ', ' . $eclPage;
-        $res = mysql_query($commentsQuery);
-        $i = 0;
-        while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+        $querySelectComments = mysql_query($selectComments);
+        if (!$querySelectComments) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectComments . '<br />';
+            return FALSE;
+        }
 
-            $l['i'] = $i % 2;
+        $rowClassNum = 0;
+        while ($l = mysql_fetch_array($querySelectComments, MYSQL_ASSOC)) {
+
+            $l['i'] = $rowClassNum % 2;
 
             $l['name_permalink'] = '<a href="#" name="lpcmtnm' . $l['id'] . '"></a> ';
             $l['name_w_permalink'] = '<a href="'
@@ -2459,21 +2264,30 @@ class e2g_snip extends e2g_pub {
             else
                 $l['name_w_mail'] = $l['author'];
 
-            $_P['comment_body'] .= $this->_filler($this->_tplRowCommentLandingPage(), $l);
-            $i++;
+            $_P['comment_body'] .= $this->_filler($this->_getTpl('page_comments_row_tpl'), $l);
+            $rowClassNum++;
         }
+        mysql_free_result($querySelectComments);
+
         $_P['pages_permalink'] = '<a href="#" name="lpcmtpg' . $cpn . '"></a>';
 
-        // COUNT PAGES
-        $commentCountQuery = 'SELECT COUNT(*) FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments WHERE file_id = ' . $fileId;
-        $res = mysql_query($commentCountQuery);
-        list($cnt) = mysql_fetch_row($res);
+        // Comment pages
+        $selectCountComments = 'SELECT COUNT(*) FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments WHERE file_id = ' . $fileId;
+        $querySelectCountComments = mysql_query($selectCountComments);
+        if (!$querySelectCountComments) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountComments . '<br />';
+            return FALSE;
+        }
+
+        list($cnt) = mysql_fetch_row($querySelectCountComments);
+        mysql_free_result($querySelectCountComments);
+
         if ($cnt > $eclPage) {
             $_P['comment_pages'] = '<p class="pnums">' . $lngCmt['pages'] . ':';
-            $i = 0;
-            while ($i * $eclPage < $cnt) {
-                if ($i == $cpn)
-                    $_P['comment_pages'] .= '<b>' . ($i + 1) . '</b> ';
+            $commentPageNum = 0;
+            while ($commentPageNum * $eclPage < $cnt) {
+                if ($commentPageNum == $cpn)
+                    $_P['comment_pages'] .= '<b>' . ($commentPageNum + 1) . '</b> ';
                 else
                     $_P['comment_pages'] .=
                             '<a href="'
@@ -2481,9 +2295,9 @@ class e2g_snip extends e2g_pub {
                             . $modx->makeUrl($modx->documentIdentifier
                                     , $modx->aliases
                                     , 'sid=' . $e2gStaticInstances)
-                            . '&amp;lp=' . $landingPage . '&amp;fid=' . $fileId . '&amp;cpn=' . $i . '#lpcmtpg' . $i
-                            . '">' . ($i + 1) . '</a> ';
-                $i++;
+                            . '&amp;lp=' . $landingPage . '&amp;fid=' . $fileId . '&amp;cpn=' . $commentPageNum . '#lpcmtpg' . $commentPageNum
+                            . '">' . ($commentPageNum + 1) . '</a> ';
+                $commentPageNum++;
             }
             $_P['comment_pages'] .= '</p>';
         }
@@ -2497,152 +2311,7 @@ class e2g_snip extends e2g_pub {
         } else {
             $_P['recaptcha'] = '';
         }
-        return $this->_filler($this->_tplCommentLandingPage(), $_P);
-    }
-
-    /**
-     * Template for the directory's thumbnail
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplDir() {
-        $modx = $this->modx;
-        $tplDir = $this->e2gsnip_cfg['dir_tpl'];
-        if (file_exists($tplDir)) {
-            $tpl_dir = file_get_contents($tplDir);
-            return $tpl_dir;
-        } elseif (!empty($modx->chunkCache[$tplDir])) {
-            $tpl_dir = $modx->chunkCache[$tplDir];
-            return $tpl_dir;
-        } else {
-            echo 'Directory template ' . $tplDir . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Template for the image's thumbnail
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplThumb() {
-        $modx = $this->modx;
-        $tplThumb = $this->e2gsnip_cfg['thumb_tpl'];
-        if (file_exists($tplThumb)) {
-            $tpl_thumb = file_get_contents($tplThumb);
-            return $tpl_thumb;
-        } elseif (!empty($modx->chunkCache[$tplThumb])) {
-            $tpl_thumb = $modx->chunkCache[$tplThumb];
-            return $tpl_thumb;
-        } else {
-            echo 'Thumbnail template ' . $tplThumb . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Template for the gallery wrapper
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplGal() {
-        $modx = $this->modx;
-        $tpl = $this->e2gsnip_cfg['tpl'];
-        if (file_exists($tpl)) {
-            $gal_tpl = file_get_contents($tpl);
-            return $gal_tpl;
-        } elseif (!empty($modx->chunkCache[$tpl])) {
-            $gal_tpl = $modx->chunkCache[$tpl];
-            return $gal_tpl;
-        } else {
-            echo 'Gallery template ' . $tpl . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Template for the random image
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplRandom() {
-        $modx = $this->modx;
-        $tplRandom = $this->e2gsnip_cfg['rand_tpl'];
-        if (file_exists($tplRandom)) {
-            $tplRandom = file_get_contents($tplRandom);
-            return $tplRandom;
-        } elseif (!empty($modx->chunkCache[$tplRandom])) {
-            $tplRandom = $modx->chunkCache[$tplRandom];
-            return $tplRandom;
-        } else {
-            echo 'Random template ' . $tplRandom . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Page template for the landing page
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplPage() {
-        $modx = $this->modx;
-        $tplLandingPage = $this->e2gsnip_cfg['page_tpl'];
-        if (file_exists($tplLandingPage)) {
-            $tplLandingPage = file_get_contents($tplLandingPage);
-            return $tplLandingPage;
-        } elseif (!empty($modx->chunkCache[$tplLandingPage])) {
-            $tplLandingPage = $modx->chunkCache[$tplLandingPage];
-            return $tplLandingPage;
-        } else {
-            echo 'Landing page template ' . $tplLandingPage . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Comment row template for the thumbnails
-     * @return mixed template from chunk or file, or returns FALSE notification
-     * @todo is this function disposabled?
-     */
-    private function _tplRowComment() {
-        $modx = $this->modx;
-        $tplCommentRow = $this->e2gsnip_cfg['comments_row_tpl'];
-        if (file_exists($tplCommentRow)) {
-            $row_tpl = file_get_contents($tplCommentRow);
-            return $row_tpl;
-        } elseif (!empty($modx->chunkCache[$tplCommentRow])) {
-            $row_tpl = $modx->chunkCache[$tplCommentRow];
-            return $row_tpl;
-        } else {
-            echo 'Comments row template ' . $tplCommentRow . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Comment template for the landing page
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplCommentLandingPage() {
-        $modx = $this->modx;
-        $tplCommentLandingPage = $this->e2gsnip_cfg['page_comments_tpl'];
-        if (file_exists($tplCommentLandingPage)) {
-            $tpl = file_get_contents($tplCommentLandingPage);
-            return $tpl;
-        } elseif (!empty($modx->chunkCache[$tplCommentLandingPage])) {
-            $tpl = $modx->chunkCache[$tplCommentLandingPage];
-            return $tpl;
-        } else {
-            echo 'Comments template ' . $tplCommentLandingPage . ' is not found!<br />';
-        }
-    }
-
-    /**
-     * Comment row template for the landing page
-     * @return mixed template from chunk or file, or returns FALSE notification
-     */
-    private function _tplRowCommentLandingPage() {
-        $modx = $this->modx;
-        $tplCommentRowLandingPage = $this->e2gsnip_cfg['page_comments_row_tpl'];
-        if (file_exists($tplCommentRowLandingPage)) {
-            $row_tpl = file_get_contents($tplCommentRowLandingPage);
-            return $row_tpl;
-        } elseif (!empty($modx->chunkCache[$tplCommentRowLandingPage])) {
-            $row_tpl = $modx->chunkCache[$tplCommentRowLandingPage];
-            return $row_tpl;
-        } else {
-            echo 'Page\'s comments row template ' . $tplCommentRowLandingPage . ' is not found!<br />';
-        }
+        return $this->_filler($this->_getTpl('page_comments_tpl'), $_P);
     }
 
     /**
@@ -2650,7 +2319,7 @@ class e2g_snip extends e2g_pub {
      * @param  string $email
      * @return bool   TRUE/FALSE
      */
-    function _checkEmailAddress($email) {
+    private function _checkEmailAddress($email) {
         return parent::checkEmailAddress($email);
     }
 
@@ -2661,113 +2330,106 @@ class e2g_snip extends e2g_pub {
      * @return mixed    if TRUE, will return the indexfile. Otherwise this will return FALSE.
      */
     private function _plugin($e2gEvtName, $e2gEvtParams=array()) {
-        $plugin = $this->e2gsnip_cfg['plugin'];
+        $plugin = $this->e2gSnipCfg['plugin'];
 
+        // if the user set &plugin=`none`
         if ($plugin == 'none')
-            return;
+            return NULL;
 
-        /**
-         * check the direct plugin settings from the snippet call
-         */
-        if (isset($plugin)) {
-            // example: &plugin=`thumb:starrating#Prerender, watermark@custom/index/file.php | gallery:... | landingpage:...`
-            // clean up
-            $badchars = array('`', ' ');
-            $plugin = str_replace($badchars, '', trim($plugin));
-
-            // generate the splitting targets with their names, area, and parameters
-            $xpldPlugins = array();
-            $xpldPlugins = @explode('|', trim($plugin));
-            // read them one by one
-            foreach ($xpldPlugins as $p_category) {
-                // get the plugins' targets and names
-                $xpldsettings = array();
-                $xpldsettings = @explode(':', trim($p_category));
-
-                // get the plugins' targets: thumb | gallery | landingpage
-                $p_target = $xpldsettings [0];
-                // get the plugins' names: starrating#Prerender, watermark
-                $p_selections = $xpldsettings [1];
-
-                // to disable the default action of the registered plugin in database
-                // eg: thumb:none
-                if ($p_selections == 'none')
-                    return;
-
-                $xpldTypes = array();
-                $xpldTypes = @explode(',', trim($p_selections));
-
-                foreach ($xpldTypes as $p_type) {
-                    $xpldIndexes = array();
-                    $xpldIndexes = @explode('@', trim($p_type));
-                    $p_indexfile = $xpldIndexes[1];
-
-                    $xpldNames = array();
-                    $xpldNames = @explode('#', $xpldIndexes[0]);
-                    $p_name = $xpldNames[0];
-                    $p_area = strtolower($xpldNames[1]);
-                    if (empty($p_area))
-                        $p_area = 'prerender';
-
-                    // to disable the default action of the registered plugin in database
-                    // eg: thumb:starrating#none
-                    if ($p_area == 'none')
-                        return;
-
-                    $check_e2gEvtName = '';
-                    if ($p_target == 'thumb' && $p_area == 'prerender')
-                        $check_e2gEvtName = 'OnE2GWebThumbPrerender';
-                    elseif ($p_target == 'thumb' && $p_area == 'render')
-                        $check_e2gEvtName = 'OnE2GWebThumbRender';
-                    elseif ($p_target == 'dir' && $p_area == 'prerender')
-                        $check_e2gEvtName = 'OnE2GWebDirPrerender';
-                    elseif ($p_target == 'dir' && $p_area == 'render')
-                        $check_e2gEvtName = 'OnE2GWebDirRender';
-                    elseif ($p_target == 'gallery' && $p_area == 'prerender')
-                        $check_e2gEvtName = 'OnE2GWebGalleryPrerender';
-                    elseif ($p_target == 'gallery' && $p_area == 'render')
-                        $check_e2gEvtName = 'OnE2GWebGalleryRender';
-                    elseif ($p_target == 'landingpage' && $p_area == 'prerender')
-                        $check_e2gEvtName = 'OnE2GWebLandingpagePrerender';
-                    elseif ($p_target == 'landingpage' && $p_area == 'render')
-                        $check_e2gEvtName = 'OnE2GWebLandingpageRender';
-                    else
-                        $check_e2gEvtName = '';
-
-                    if ($check_e2gEvtName != $e2gEvtName)
-                        return FALSE;
-
-                    unset($check_e2gEvtName);
-
-                    // LOAD DA FILE!
-                    if (empty($p_indexfile)) {
-                        // surpress the disabled plugin by adding the 4th parameter as 'FALSE'.
-                        $out = parent::plugin($e2gEvtName, $e2gEvtParams, $p_name, FALSE);
-                        if ($out !== FALSE)
-                            return $out;
-                    } else {
-                        if (!file_exists($p_indexfile)) {
-                            return __LINE__ . ' : File <b>' . $p_indexfile . '</b> does not exist.';
-                        } else {
-                            ob_start();
-                            include $p_indexfile;
-                            $out = ob_get_contents();
-                            ob_end_clean();
-                            return $out;
-                        }
-                    } // if (empty($p_indexfile))
-                } // foreach ($xpldTypes as $p_type)
-            } // foreach ($xpldPlugins as $p_category)
-        } // if (isset($plugin))
-        // if $plugin parameter is not set, then snippet will retrieve all enabled plugins from the database
-        else {
+        // call plugin from the database as default
+        if (!isset($plugin)) {
             return parent::plugin($e2gEvtName, $e2gEvtParams);
         }
 
-        // this function should not go to this part.
-        // if something weird happens, this should mark the line!
-        echo __LINE__ . ' : The plugin does not exist.';
-        return FALSE;
+        // if the plugins are called from the snippet
+        // example: &plugin=`thumb:starrating#Prerender, watermark@custom/index/file.php | gallery:... | landingpage:...`
+        // clean up
+        $badChars = array('`', ' ');
+        $plugin = str_replace($badChars, '', trim($plugin));
+
+        // generate the splitting targets with their names, area, and parameters
+        $xpldPlugins = array();
+        $xpldPlugins = @explode('|', trim($plugin));
+        // read them one by one
+        foreach ($xpldPlugins as $p_category) {
+            // get the plugins' targets and names
+            $xpldsettings = array();
+            $xpldsettings = @explode(':', trim($p_category));
+
+            // get the plugins' targets: thumb | gallery | landingpage
+            $pluginTarget = $xpldsettings [0];
+            // get the plugins' names: starrating#Prerender, watermark
+            $p_selections = $xpldsettings [1];
+
+            // to disable the default action of the registered plugin in database
+            // eg: thumb:none
+            if ($p_selections == 'none')
+                return NULL;
+
+            $xpldTypes = array();
+            $xpldTypes = @explode(',', trim($p_selections));
+
+            foreach ($xpldTypes as $pluginType) {
+                $xpldIndexes = array();
+                $xpldIndexes = @explode('@', trim($pluginType));
+                $pluginIndexFile = $xpldIndexes[1];
+
+                $xpldNames = array();
+                $xpldNames = @explode('#', $xpldIndexes[0]);
+                $pluginName = $xpldNames[0];
+                $pluginArea = strtolower($xpldNames[1]);
+                if (empty($pluginArea))
+                    $pluginArea = 'prerender';
+
+                // to disable the default action of the registered plugin in database
+                // eg: thumb:starrating#none
+                if ($pluginArea == 'none')
+                    return NULL;
+
+                $convertEvtName = '';
+                if ($pluginTarget == 'thumb' && $pluginArea == 'prerender')
+                    $convertEvtName = 'OnE2GWebThumbPrerender';
+                elseif ($pluginTarget == 'thumb' && $pluginArea == 'render')
+                    $convertEvtName = 'OnE2GWebThumbRender';
+                elseif ($pluginTarget == 'dir' && $pluginArea == 'prerender')
+                    $convertEvtName = 'OnE2GWebDirPrerender';
+                elseif ($pluginTarget == 'dir' && $pluginArea == 'render')
+                    $convertEvtName = 'OnE2GWebDirRender';
+                elseif ($pluginTarget == 'gallery' && $pluginArea == 'prerender')
+                    $convertEvtName = 'OnE2GWebGalleryPrerender';
+                elseif ($pluginTarget == 'gallery' && $pluginArea == 'render')
+                    $convertEvtName = 'OnE2GWebGalleryRender';
+                elseif ($pluginTarget == 'landingpage' && $pluginArea == 'prerender')
+                    $convertEvtName = 'OnE2GWebLandingpagePrerender';
+                elseif ($pluginTarget == 'landingpage' && $pluginArea == 'render')
+                    $convertEvtName = 'OnE2GWebLandingpageRender';
+                else
+                    $convertEvtName = '';
+
+                if ($convertEvtName != $e2gEvtName)
+                    return FALSE;
+
+                unset($convertEvtName);
+
+                // LOAD DA FILE!
+                if (empty($pluginIndexFile)) {
+                    // surpress the disabled plugin by adding the 4th parameter as 'FALSE'.
+                    $out = parent::plugin($e2gEvtName, $e2gEvtParams, $pluginName, FALSE);
+                    if ($out !== FALSE)
+                        return $out;
+                } else {
+                    if (!file_exists(realpath($pluginIndexFile))) {
+                        echo __LINE__ . ' : File <b>' . $pluginIndexFile . '</b> does not exist.';
+                        return FALSE;
+                    }
+                    ob_start();
+                    include $pluginIndexFile;
+                    $out = ob_get_contents();
+                    ob_end_clean();
+                    return $out;
+                } // if (empty($pluginIndexFile))
+            } // foreach ($xpldTypes as $pluginType)
+        } // foreach ($xpldPlugins as $p_category)
     }
 
     /**
@@ -2804,35 +2466,36 @@ class e2g_snip extends e2g_pub {
     private function _checkGidDecendant($id, $staticId) {
         $modx = $this->modx;
 
-        // for global star (*) selection
+        // for global variable: '*' (star), always returns TRUE
         if ($staticId == '*')
             return TRUE;
 
-        $s = 'SELECT A.cat_id FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
+        $selectDirs = 'SELECT A.cat_id FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
                 . $modx->db->config['table_prefix'] . 'easy2_dirs B '
                 . 'WHERE B.cat_id IN (' . $staticId . ') '
                 . 'AND A.cat_left BETWEEN B.cat_left AND B.cat_right '
         ;
-        $q = mysql_query($s);
-        if (!$q) {
-            echo __LINE__ . ' : ' . mysql_error() . '<br />' . $s . '<br />';
+        $querySelectDirs = mysql_query($selectDirs);
+        if (!$querySelectDirs) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs . '<br />';
             return FALSE;
-//            or die(__LINE__ . ' : ' . mysql_error() . '<br />' . $s);
         }
-        while ($l = mysql_fetch_array($q, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
             $check[$l['cat_id']] = $l['cat_id'];
         }
+        mysql_free_result($querySelectDirs);
+
         $xpldGids = explode(',', $id);
-        foreach ($xpldGids as $_id) {
-            if (!$check[$_id] && ($staticId != 1)) {
+        foreach ($xpldGids as $gid) {
+            if (!$check[$gid] && ($staticId != 1)) {
                 return FALSE;
 //                return $modx->sendUnauthorizedPage();
-            } elseif (!$check[$_id] && ($staticId == 1)) {
+            } elseif (!$check[$gid] && ($staticId == 1)) {
                 return FALSE;
 //                return $modx->sendErrorPage();
-            } else
-                return TRUE;
+            }
         }
+        return TRUE;
     }
 
     /**
@@ -2844,25 +2507,26 @@ class e2g_snip extends e2g_pub {
      */
     private function _checkFidDecendant($id, $staticId) {
         $modx = $this->modx;
-        $s = 'SELECT id FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
+        $selectFiles = 'SELECT id FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE id IN (' . $staticId . ') '
         ;
-        $q = mysql_query($s);
-        if (!$q) {
-            echo __LINE__ . ' : ' . mysql_error() . '<br />' . $s . '<br />';
+        $querySelectFiles = mysql_query($selectFiles);
+        if (!$querySelectFiles) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles . '<br />';
             return FALSE;
-//            or die(__LINE__ . ' : ' . mysql_error() . '<br />' . $s);
         }
-        while ($l = mysql_fetch_array($q, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
             $check[$l['id']] = $l['id'];
         }
+        mysql_free_result($querySelectFiles);
+
         $xpldFids = explode(',', $id);
-        foreach ($xpldFids as $_id) {
-            if (!$check[$_id]) {
+        foreach ($xpldFids as $fid) {
+            if (!$check[$fid]) {
                 return $modx->sendErrorPage();
-            } else
-                return TRUE;
+            }
         }
+        return TRUE;
     }
 
     /**
@@ -2872,76 +2536,90 @@ class e2g_snip extends e2g_pub {
      * @param int    $id  id of the specified dir/file
      * @return bool TRUE | FALSE
      */
-    private function _tagsIds($dirOrFile, $tag, $id=1) {
+    private function _checkTaggedDirIds($tag, $id=1) {
         $modx = $this->modx;
         $tag = strtolower($tag);
 
-        if ($dirOrFile == 'dir') {
-            $tagSelectDirIds = 'SELECT cat_id FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs ';
+        $selectTaggedDirs = 'SELECT cat_id FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs ';
 
-            $multipleTags = @explode(',', $tag);
-            for ($i = 0; $i < count($multipleTags); $i++) {
-                if ($i == 0)
-                    $tagSelectDirIds .= 'WHERE LOWER(cat_tag) LIKE \'%' . $multipleTags[$i] . '%\' ';
-                else
-                    $tagSelectDirIds .= 'OR LOWER(cat_tag) LIKE \'%' . $multipleTags[$i] . '%\' ';
-            }
-
-            $excludeDirsWebAccess = $this->_excludeWebAccess('dir');
-
-            if ($excludeDirsWebAccess !== FALSE) {
-                $tagSelectDirIds .= 'AND cat_id NOT IN (' . $excludeDirsWebAccess . ') ';
-            }
-
-            $tagsQuery = mysql_query($tagSelectDirIds);
-            if (!$tagsQuery) {
-                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $tagSelectDirIds . '<br />';
-                return FALSE;
-//                or die(__LINE__ . ' : ' . mysql_error() . '<br />' . $tagSelectDirIds);
-            }
-            while ($l = mysql_fetch_array($tagsQuery, MYSQL_ASSOC)) {
-                $tagsDir[$l['cat_id']] = $l['cat_id'];
-            }
-
-            if (isset($tagsDir[$id])) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+        $xpldDirTags = @explode(',', $tag);
+        $countDirTags = count($xpldDirTags);
+        for ($i = 0; $i < $countDirTags; $i++) {
+            if ($i == 0)
+                $selectTaggedDirs .= 'WHERE LOWER(cat_tag) LIKE \'%' . $xpldDirTags[$i] . '%\' ';
+            else
+                $selectTaggedDirs .= 'OR LOWER(cat_tag) LIKE \'%' . $xpldDirTags[$i] . '%\' ';
         }
-        if ($dirOrFile == 'file') {
-            $tagSelectFileIds = 'SELECT id FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
 
-            $multipleTags = @explode(',', $tag);
-            for ($i = 0; $i < count($multipleTags); $i++) {
-                if ($i == 0)
-                    $tagSelectFileIds .= 'WHERE LOWER(tag) LIKE \'%' . $multipleTags[$i] . '%\' ';
-                else
-                    $tagSelectFileIds .= 'OR LOWER(tag) LIKE \'%' . $multipleTags[$i] . '%\' ';
-            }
+        $excludeDirWebAccess = $this->_excludeWebAccess('dir');
 
-            $excludeFilesWebAccess = $this->_excludeWebAccess('file');
-
-            if ($excludeFilesWebAccess !== FALSE) {
-                $fileSelect .= ' AND id NOT IN (' . $excludeFilesWebAccess . ') ';
-            }
-
-            $tagsQuery = mysql_query($tagSelectFileIds);
-            if (!$tagsQuery) {
-                echo __LINE__ . ' : ' . mysql_error() . '<br />' . $tagSelectFileIds . '<br />';
-                return FALSE;
-//                or die(__LINE__ . ' : ' . mysql_error() . '<br />' . $tagSelectFileIds);
-            }
-            while ($l = mysql_fetch_array($tagsQuery, MYSQL_ASSOC)) {
-                $tagsFile[$l['id']] = $l['id'];
-            }
-
-            if (isset($tagsFile[$id])) {
-                return TRUE;
-            } else {
-                return FALSE;
-            }
+        if ($excludeDirWebAccess !== FALSE) {
+            $selectTaggedDirs .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ') ';
         }
+
+        $querySelectTaggedDirs = mysql_query($selectTaggedDirs);
+        if (!$querySelectTaggedDirs) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectTaggedDirs . '<br />';
+            return FALSE;
+        }
+
+        while ($l = mysql_fetch_array($querySelectTaggedDirs, MYSQL_ASSOC)) {
+            $taggedDirs[$l['cat_id']] = $l['cat_id'];
+        }
+        mysql_free_result($querySelectTaggedDirs);
+
+        if (!isset($taggedDirs[$id])) {
+            return FALSE;
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * CHECK the valid parent IDs of the &tag parameter
+     * @param string $dirOrFile dir|file
+     * @param string $tag from &tag parameter
+     * @param int    $id  id of the specified dir/file
+     * @return bool TRUE | FALSE
+     */
+    private function _checkTaggedFileIds($tag, $id) {
+        $modx = $this->modx;
+        $tag = strtolower($tag);
+
+
+
+        $selectTaggedFiles = 'SELECT id FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
+
+        $xpldFileTags = @explode(',', $tag);
+        $countFileTags = count($xpldFileTags);
+        for ($i = 0; $i < $countFileTags; $i++) {
+            if ($i == 0)
+                $selectTaggedFiles .= 'WHERE LOWER(tag) LIKE \'%' . $xpldFileTags[$i] . '%\' ';
+            else
+                $selectTaggedFiles .= 'OR LOWER(tag) LIKE \'%' . $xpldFileTags[$i] . '%\' ';
+        }
+
+        $excludeFileWebAccess = $this->_excludeWebAccess('file');
+
+        if ($excludeFileWebAccess !== FALSE) {
+            $selectFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
+        }
+
+        $querySelectTaggedFiles = mysql_query($selectTaggedFiles);
+        if (!$querySelectTaggedFiles) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectTaggedFiles . '<br />';
+            return FALSE;
+        }
+        while ($l = mysql_fetch_array($querySelectTaggedFiles, MYSQL_ASSOC)) {
+            $taggedFiles[$l['id']] = $l['id'];
+        }
+        mysql_free_result($querySelectTaggedFiles);
+
+        if (!isset($taggedFiles[$id])) {
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**
@@ -2955,8 +2633,8 @@ class e2g_snip extends e2g_pub {
      */
     private function _recaptchaForm($pubkey, $error = NULL, $use_ssl = FALSE) {
         require_once(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
-        $theme = $this->e2gsnip_cfg['recaptcha_theme'];
-        $theme_custom = $this->e2gsnip_cfg['recaptcha_theme_custom'];
+        $theme = $this->e2gSnipCfg['recaptcha_theme'];
+        $themeCustom = $this->e2gSnipCfg['recaptcha_theme_custom'];
 
         if ($pubkey == NULL || $pubkey == '') {
             return ("To use reCAPTCHA you must get an API key from <a href='https://www.google.com/recaptcha/admin/create'>https://www.google.com/recaptcha/admin/create</a>");
@@ -2976,7 +2654,7 @@ class e2g_snip extends e2g_pub {
             <script type="text/javascript">
             var RecaptchaOptions = {
             theme : \'' . $theme . '\'
-                ' . ($theme == 'custom' ? ',custom_theme_widget: \'' . $theme_custom . '\'' : '') . '};
+                ' . ($theme == 'custom' ? ',custom_theme_widget: \'' . $themeCustom . '\'' : '') . '};
             </script>
             <script type="text/javascript" src="' . $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
             <noscript>
@@ -2987,118 +2665,21 @@ class e2g_snip extends e2g_pub {
     }
 
     /**
-     * Generating the watermark
-     * @param string $fp file path
-     * @return mixed image output
-     */
-    private function _watermark($fp) {
-        $e2g = $this->e2gsnip_cfg;
-
-        if ($e2g['ewm'] != 0) {
-            $inf = @getimagesize($fp);
-
-            if ($inf[2] == 1)
-                $im = imagecreatefromgif($fp);
-            elseif ($inf[2] == 2)
-                $im = imagecreatefromjpeg($fp);
-            elseif ($inf[2] == 3)
-                $im = imagecreatefrompng($fp);
-            else
-                return 'Imagecreate error';
-
-            if ($e2g['wmtype'] == 'text') {
-                // X
-                $len = strlen($e2g['wmt']);
-                if ($e2g['wmpos1'] == 3)
-                    $x = $inf[0] - 10 - ($len * 6);
-                elseif ($e2g['wmpos1'] == 2)
-                    $x = ($inf[0] - ($len * 6)) / 2;
-                else
-                    $x = 10;
-
-                // Y
-                if ($e2g['wmpos2'] == 3)
-                    $y = $inf[1] - 20;
-                elseif ($e2g['wmpos2'] == 2)
-                    $y = ($inf[1] / 2) - 5;
-                else
-                    $y = 10;
-
-                $text_color = imagecolorallocate($im, 0, 0, 0);
-                imagestring($im, 2, $x - 1, $y, $e2g['wmt'], $text_color);
-                imagestring($im, 2, $x + 1, $y, $e2g['wmt'], $text_color);
-                imagestring($im, 2, $x, $y - 1, $e2g['wmt'], $text_color);
-                imagestring($im, 2, $x, $y + 1, $e2g['wmt'], $text_color);
-                imagestring($im, 2, $x + 1, $y + 1, $e2g['wmt'], $text_color);
-                imagestring($im, 2, $x - 1, $y - 1, $e2g['wmt'], $text_color);
-
-                $text_color = imagecolorallocate($im, 255, 255, 255);
-                imagestring($im, 2, $x, $y, $e2g['wmt'], $text_color);
-            }
-            elseif ($e2g['wmtype'] == 'image') {
-
-                $wmfp = str_replace('../', '', $e2g['wmt']);
-                if (!file_exists($wmfp)) {
-                    return 'WM file not found';
-                }
-
-                $wminfo = @getimagesize($wmfp);
-
-                if ($wminfo[2] == 1)
-                    $wmi = imagecreatefromgif($wmfp);
-                elseif ($wminfo[2] == 2)
-                    $wmi = imagecreatefromjpeg($wmfp);
-                elseif ($wminfo[2] == 3)
-                    $wmi = imagecreatefrompng($wmfp);
-                else
-                    return 'WM error';
-
-                imageAlphaBlending($wmi, FALSE);
-                imageSaveAlpha($wmi, TRUE);
-                $wm_w = imageSX($wmi);
-                $wm_h = imageSY($wmi);
-
-                // X
-                $len = strlen($e2g['wmt']);
-                if ($e2g['wmpos1'] == 3)
-                    $x = $inf[0] - 10 - $wm_w;
-                elseif ($e2g['wmpos1'] == 2)
-                    $x = ($inf[0] - $wm_w) / 2;
-                else
-                    $x = 10;
-
-                // Y
-                if ($e2g['wmpos2'] == 3)
-                    $y = $inf[1] - 10 - $wm_h;
-                elseif ($e2g['wmpos2'] == 2)
-                    $y = ($inf[1] / 2) - $wm_h;
-                else
-                    $y = 10;
-
-
-                imagecopy($im, $wmi, $x, $y, 0, 0, $wm_w, $wm_h);
-                imagedestroy($wmi);
-            }
-            return imagejpeg($im, $fp);
-        }
-    }
-
-    /**
      *
      * @param string $direction     prev/up/next
-     * @param string $staticKey    static identifier's value
-     * @param string $dynamicKey   dynamic identifier's value, from the $_GET value
+     * @param string $staticKey     static identifier's value
+     * @param string $dynamicKey    dynamic identifier's value, from the $_GET value
      * @param string $orderBy       image order
      * @param string $order         ASC | DESC
      * @return mixed The text and link of the navigator direction
      */
-    private function _navPrevUpNext($direction, $staticKey, $dynamicKey, $cat_orderBy, $cat_order) {
+    private function _navPrevUpNext($direction, $staticKey, $dynamicKey, $catOrderBy, $catOrder) {
         $modx = $this->modx;
-        $gid = $this->e2gsnip_cfg['gid'];
-        $staticGid = $this->e2gsnip_cfg['static_gid'];
-        $tag = $this->e2gsnip_cfg['tag'];
-        $staticTag = $this->e2gsnip_cfg['static_tag'];
-        $e2gStaticInstances = $this->e2gsnip_cfg['e2g_static_instances'];
+        $gid = $this->e2gSnipCfg['gid'];
+        $staticGid = $this->e2gSnipCfg['static_gid'];
+        $tag = $this->e2gSnipCfg['tag'];
+        $staticTag = $this->e2gSnipCfg['static_tag'];
+        $e2gStaticInstances = $this->e2gSnipCfg['e2g_static_instances'];
 
         // if the gallery is the parent ID of the snippet call, disable the up navigation
         if ($staticGid == $gid) {
@@ -3108,9 +2689,9 @@ class e2g_snip extends e2g_pub {
 
             if ($direction == 'prev') {
                 if (isset($staticTag)) {
-                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $cat_orderBy, $cat_order, -1);
+                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $catOrderBy, $catOrder, -1);
                 } else {
-                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $cat_orderBy, $cat_order, -1);
+                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $catOrderBy, $catOrder, -1);
                 }
                 if (!empty($sibling)) {
                     $prevUpNext['cat_id'] = $sibling['cat_id'];
@@ -3146,9 +2727,9 @@ class e2g_snip extends e2g_pub {
                 $prevUpNext['cat_name'] = $parent['cat_name'];
             } elseif ($direction == 'next') {
                 if (isset($staticTag)) {
-                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $cat_orderBy, $cat_order, 1);
+                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $catOrderBy, $catOrder, 1);
                 } else {
-                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $cat_orderBy, $cat_order, 1);
+                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $catOrderBy, $catOrder, 1);
                 }
                 if (!empty($sibling)) {
                     $prevUpNext['cat_id'] = $sibling['cat_id'];
@@ -3166,10 +2747,18 @@ class e2g_snip extends e2g_pub {
                     return FALSE;
                 }
             }
+
             return $prevUpNext;
         }
     }
 
+    /**
+     * Get parent directory information
+     * @param string    $trigger    catch the 'tag' trigget
+     * @param int       $dynamicId  changing ID from $_GET variable
+     * @param string    $field      database field
+     * @return string   parent's info on TRUE return, or EMPTY on FALSE
+     */
     private function _getParentInfo($trigger, $dynamicId, $field) {
         $modx = $this->modx;
 
@@ -3185,25 +2774,34 @@ class e2g_snip extends e2g_pub {
 
         $queryParent = mysql_query($selectParent);
         if (!$queryParent) {
-            echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectParent . '<br />';
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectParent . '<br />';
             return FALSE;
-//            or die(__LINE__ . ': ' . mysql_error() . '<br />' . $selectParent);
         }
         while ($row = mysql_fetch_array($queryParent)) {
             $parent['cat_id'] = $row['parent_id'];
         }
 
-        if (!empty($parent['cat_id'])) {
-            $parent['cat_name'] = $this->_getDirInfo($parent['cat_id'], 'cat_name');
-            return $parent;
-        }
-        else
+        if (empty($parent['cat_id'])) {
             return FALSE;
+        }
+        $parent['cat_name'] = $this->_getDirInfo($parent['cat_id'], 'cat_name');
+
+        return $parent;
     }
 
-    private function _getSiblingInfo($trigger, $dynamicId, $field, $cat_orderBy, $cat_order, $siblingCounter) {
+    /**
+     * Get information about sibling directory
+     * @param string    $trigger        catch the 'tag' parameter
+     * @param int       $dynamicId      changing ID from $_GET variable
+     * @param string    $field          database field
+     * @param string    $catOrderBy    directory's ordering
+     * @param string    $catOrder      directory's ordering orientation
+     * @param int       $siblingCounter sibling counter
+     * @return string   Sibling's info on TRUE return, or EMPTY on FALSE
+     */
+    private function _getSiblingInfo($trigger, $dynamicId, $field, $catOrderBy, $catOrder, $siblingCounter) {
         $modx = $this->modx;
-        $gid = $this->e2gsnip_cfg['gid'];
+        $gid = $this->e2gSnipCfg['gid'];
 
         $selectChildren = 'SELECT a.cat_id, a.cat_tag, a.' . $field . ' FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs a '
                 . 'WHERE a.parent_id IN ('
@@ -3237,15 +2835,13 @@ class e2g_snip extends e2g_pub {
                 . ')'
                 . ')<>0 ';
 
-        $selectChildren .= 'ORDER BY a.' . $cat_orderBy . ' ' . $cat_order;
+        $selectChildren .= 'ORDER BY a.' . $catOrderBy . ' ' . $catOrder;
 
         $queryChildren = mysql_query($selectChildren);
         if (!$queryChildren) {
-            echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectChildren . '<br />';
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectChildren . '<br />';
             return FALSE;
-//            or die(__LINE__ . ': ' . mysql_error() . '<br />' . $selectChildren);
         }
-        $row = array();
 
         while ($row = mysql_fetch_array($queryChildren)) {
             $siblings['cat_id'][] = $row['cat_id'];
@@ -3253,38 +2849,33 @@ class e2g_snip extends e2g_pub {
             $siblings[$field][] = $row[$field];
         }
 
-        $thesibling = '';
-        if (count($siblings) > 1) {
-            for ($i = 0; $i < count($siblings); $i++) {
-                $j = intval($i + $siblingCounter);
-                if ($j < 0)
-                    continue;
-                else {
-                    if ($trigger == 'tag') {
-                        foreach ($siblings['cat_tag'] as $k => $v) {
-                            if ($siblings['cat_id'][$i] == $gid) {
-                                $thesibling['cat_id'] = $siblings['cat_id'][$j];
-                                $thesibling['cat_tag'] = $siblings['cat_tag'][$j];
-                                $thesibling['cat_name'] = $siblings['cat_name'][$j];
-                            }
-                        }
-                    } else {
-                        foreach ($siblings['cat_id'] as $k => $v) {
-                            if ($siblings['cat_id'][$i] == $dynamicId) {
-                                $thesibling['cat_id'] = $siblings['cat_id'][$j];
-                                $thesibling['cat_name'] = $siblings['cat_name'][$j];
-                            }
-                        }
-                    }
+        $countSiblings = count($siblings['cat_id']);
+
+        if ($countSiblings <= 1) {
+            return FALSE;
+        }
+        $thesibling = array();
+        for ($i = 0; $i <= $countSiblings; $i++) {
+            $j = intval($i + $siblingCounter);
+            if ($j < 0) {
+                continue;
+            }
+            if ($trigger == 'tag') {
+                if ($siblings['cat_id'][$i] == $gid) {
+                    $thesibling['cat_id'] = $siblings['cat_id'][$j];
+                    $thesibling['cat_tag'] = $siblings['cat_tag'][$j];
+                    $thesibling['cat_name'] = $siblings['cat_name'][$j];
+                }
+            } else {
+                if ($siblings['cat_id'][$i] == $dynamicId) {
+                    $thesibling['cat_id'] = $siblings['cat_id'][$j];
+                    $thesibling['cat_name'] = $siblings['cat_name'][$j];
                 }
             }
-
-            if (!empty($thesibling['cat_id']) || !empty($thesibling['cat_tag'])) {
-                return $thesibling;
-            }
         }
-        else
-            return '';
+        if (!empty($thesibling['cat_id']) || !empty($thesibling['cat_tag'])) {
+            return $thesibling;
+        }
     }
 
     /**
@@ -3324,12 +2915,12 @@ class e2g_snip extends e2g_pub {
 
             $whereClause = $whereClauseTemp;
 
-            $xpld_ors = @explode(' OR ', $whereClause);
-            $count_xpld_ors = count($xpld_ors);
+            $xpldOrs = @explode(' OR ', $whereClause);
+            $countXpldOrs = count($xpldOrs);
             $whereClauseTemp = '';
-            for ($i = 0; $i < $count_xpld_ors; $i++) {
+            for ($i = 0; $i < $countXpldOrs; $i++) {
                 // the first loop has been prefixed from above loop
-                $whereClauseTemp .= ( $i == 0 ? '' : $prefix . '.') . trim($xpld_ors[$i]) . ' ';
+                $whereClauseTemp .= ( $i == 0 ? '' : $prefix . '.') . trim($xpldOrs[$i]) . ' ';
                 if ($i < ($countXpldAnds - 1))
                     $whereClauseTemp .= 'OR ';
             }
@@ -3346,7 +2937,7 @@ class e2g_snip extends e2g_pub {
      * @return string clean operator
      */
     private function _whereClauseOperator($operator) {
-        $operators = array(
+        $validOperators = array(
             "NULL safe equal" => '<=>'
             , "equal" => '='
             , "greater equal" => '>='
@@ -3358,10 +2949,10 @@ class e2g_snip extends e2g_pub {
             , "not equal" => '!='
             , "right shift" => '>>'
         );
-        if (!array_key_exists($operator, $operators))
+        if (!array_key_exists($operator, $validOperators))
             return FALSE;
-        else
-            return $operators[$operator];
+
+        return $validOperators[$operator];
     }
 
     /**
@@ -3426,6 +3017,57 @@ class e2g_snip extends e2g_pub {
         }
         $excludeWebAccessString = @implode(',', $excludeWebAccess);
         return $excludeWebAccessString;
+    }
+
+    /**
+     * Strips HTML tags
+     * @param <type> $string
+     * @param <type> $stripped
+     */
+    private function _stripHTMLTags($string, $strippedTags=array('p', 'div', 'span')) {
+        foreach ($strippedTags as $tag) {
+            $string = preg_replace('~\<(.*?)' . $tag . '(.*?)\>~', '', $string);
+        }
+        return $string;
+    }
+
+    /**
+     * Check if the given IP is ignored
+     * @param string    $ip     IP Address
+     * @return bool     TRUE if it is ignored | FALSE if it is not.
+     */
+    private function _checkIgnoredIp($ip) {
+        $modx = $this->modx;
+
+        $selectCountIgnIps = 'SELECT COUNT(ign_ip_address) '
+                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip '
+                . 'WHERE ign_ip_address=\'' . $ip . '\'';
+        $querySelectCountIgnIp = mysql_query($selectCountIgnIps);
+        if (!$querySelectCountIgnIp) {
+            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountIgnIps . '<br />';
+            return FALSE;
+        }
+//        while ($comRow = mysql_fetch_array($querySelectCountIgnIp)) {
+//            $countIgnoredIp = $comRow['COUNT(ign_ip_address)'];
+//        }
+        $resultCountIgnIps = mysql_result($querySelectCountIgnIp, 0, 0);
+        mysql_free_result($querySelectCountIgnIp);
+
+        if ($resultCountIgnIps > 0) {
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * Crop text by length
+     * @param   string  $charSet    character set
+     * @param   int     $nameLen    text's length
+     * @param   string  $text       text to be cropped
+     * @return  string  shorthened text
+     */
+    private function _cropName($charSet, $nameLen, $text) {
+        return parent::cropName($charSet, $nameLen, $text);
     }
 
 }

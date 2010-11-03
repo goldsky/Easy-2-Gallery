@@ -6,7 +6,7 @@ if ($_GET['langfile']) {
 }
 
 // prepare the english file
-if (!file_exists(E2G_MODULE_PATH . 'includes/langs/english' . $fileLastName)) {
+if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLastName))) {
     $_SESSION['easy2err'][] = 'No english file which is referred to this language file.';
 } else {
     include (E2G_MODULE_PATH . 'includes/langs/english' . $fileLastName);

@@ -31,22 +31,26 @@ if (IN_MANAGER_MODE != 'true')
                     </a>
                 </li>
             <?php } ?>
-            <!--
             <li class="views">
-                <a href="javascript:;">
+                <a href="<?php echo $index; ?>&amp;view=list<?php
+            echo isset($_GET['pid']) ? '&amp;pid=' . $parentId : '';
+            echo isset($_GET['path']) ? '&amp;path=' . $_GET['path'] : '';
+            ?>" title="list">
                     <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/table.png" alt="" />
                 </a>&nbsp;
-                <a href="javascript:;">
+                <a href="<?php echo $index; ?>&amp;view=thumbnails<?php
+                   echo isset($_GET['pid']) ? '&amp;pid=' . $parentId : '';
+                   echo isset($_GET['path']) ? '&amp;path=' . $_GET['path'] : '';
+            ?>" title="thumbnails">
                     <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/slides.png" alt="" />
                 </a>
             </li>
-            -->
         </ul>
         <ul class="actionButtons">
             <li style="float:right">
                 <?php echo $lng['gotofolder']; ?>:
-                <select name="newparent" onchange="submitform(1)">
-                    <option value="">&nbsp;</option>
+                   <select name="newparent" onchange="submitform(1)">
+                       <option value="">&nbsp;</option>
                     <?php echo $this->_folderOptions(0, 1); ?>
                 </select>
             </li>

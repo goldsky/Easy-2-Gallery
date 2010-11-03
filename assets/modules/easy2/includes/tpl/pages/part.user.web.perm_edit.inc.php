@@ -2,22 +2,22 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<form action="<?php echo $index . '&amp;act=save_web_files_perm'; ?>" method="post">
+<form action="<?php echo $index . '&amp;act=save_web_dirs_perm'; ?>" method="post">
     <input type="hidden" name="group_id" value="<?php echo $_GET['group_id']; ?>" />
     <ul style="border-bottom: 1px dotted #CCC;">
         <?php
-        $e2gFileWebGroupsIds = $this->_fileWebGroupIds($_GET['group_id']);
+        $e2gDirWebGroupIds = $this->_dirWebGroupIds($_GET['group_id']);
 
-        $fileWebGroups = $modx->db->makeArray($modx->db->query(
-                                'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                                . 'ORDER BY id ASC'
+        $dirWebGroups = $modx->db->makeArray($modx->db->query(
+                                'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
+                                . 'ORDER BY cat_id ASC'
                 ));
-        foreach ($fileWebGroups as $v) {
+        foreach ($dirWebGroups as $v) {
         ?>
-            <li><input type="checkbox" name="webFilesAccess[]" value="<?php echo $v['id']; ?>"
+            <li><input type="checkbox" name="dirWebAccess[]" value="<?php echo $v['cat_id']; ?>"
             <?php
-            echo in_array($v['id'], $e2gFileWebGroupsIds) ? ' checked="checked"' : '';
-            ?> /><?php echo $v['filename']; ?></li>
+            echo in_array($v['cat_id'], $e2gDirWebGroupIds) ? ' checked="checked"' : '';
+            ?> /><?php echo $v['cat_name']; ?></li>
             <?php } ?>
        </ul>
        <div>

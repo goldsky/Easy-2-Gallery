@@ -33,15 +33,10 @@ if (IN_MANAGER_MODE != 'true')
                                                         . ' WHERE file_id=' . (int) $_GET['file_id']
                                                         . ' ORDER BY id DESC'
                                         );
-                                        $i = 0; // only for row coloring
+                                        $rowNum = 0; // only for row coloring
                                         while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
-                                            $cp = $this->_pathTo($l['dir_id']);
-                                            unset($cp[1]);
-                                            $cdir = '';
-                                            if (!empty($cp))
-                                                $cdir .= implode('/', $cp) . '/';
                                 ?>
-                                            <tr <?php echo $cl[$i % 2]; ?> >
+                                            <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                                                 <td valign="top" width="20">
                                                     <input name="comments[]" value="<?php echo $l['id']; ?>" type="checkbox" style="border:0;padding:0">
                                                 </td>
@@ -149,10 +144,7 @@ if (IN_MANAGER_MODE != 'true')
                                         </td>
                                     </tr>
                                 <?php
-                                                if (isset($cdir)) {
-                                                    unset($cdir);
-                                                }
-                                                $i++;
+                                                $rowNum++;
                                             }
                                 ?>
                                         </table>

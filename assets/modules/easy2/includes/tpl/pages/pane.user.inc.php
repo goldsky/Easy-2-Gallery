@@ -102,7 +102,7 @@ if (IN_MANAGER_MODE != 'true')
 
                                             <?php
                                             if ($_GET['page'] == 'edit_mgrPerm' && $_GET['group_id'] == $mgrGroup['id']) {
-                                                include E2G_MODULE_PATH . 'includes/tpl/part.user.mgr.perm_edit.inc.php';
+                                                include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.mgr.perm_edit.inc.php';
                                             } else {
                                             ?>
                                                 <a href="<?php echo $index; ?>&amp;page=edit_mgrPerm&amp;group_id=<?php echo $mgrGroup['id']; ?>"><?php echo $lng['edit']; ?></a><br />
@@ -207,7 +207,7 @@ if (IN_MANAGER_MODE != 'true')
                                             </script>
                                             <?php
                                             if ($_GET['page'] == 'edit_webPerm' && $_GET['group_id'] == $webGroup['id']) {
-                                                include E2G_MODULE_PATH . 'includes/tpl/part.user.web.perm_edit.inc.php';
+                                                include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.web.perm_edit.inc.php';
                                             ?>
                                                 <p>
                                                     <a href="<?php echo $index; ?>&amp;page=edit_webFilesPerm&amp;group_id=<?php echo $webGroup['id']; ?>"><?php echo $lng['edit']; ?></a>
@@ -221,7 +221,7 @@ if (IN_MANAGER_MODE != 'true')
                                                     <b><?php echo $lng['folders']; ?></b>
                                                 <p>
                                                 <?php
-                                                include E2G_MODULE_PATH . 'includes/tpl/part.user.web.perm_editfile.inc.php';
+                                                include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.web.perm_editfile.inc.php';
                                             } else {
                                                 ?>
                                             <p>
@@ -232,7 +232,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 /**
                                                  * Display the directories/folders access
                                                  */
-                                                $webDirsAccessArray = $modx->db->makeArray($modx->db->query(
+                                                $dirWebAccessArray = $modx->db->makeArray($modx->db->query(
                                                                         'SELECT d.cat_name FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs d '
                                                                         . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_webgroup_access a '
                                                                         . 'ON a.id=d.cat_id '
@@ -240,24 +240,24 @@ if (IN_MANAGER_MODE != 'true')
                                                                         . 'AND a.webgroup_id =\'' . $webGroup['id'] . '\' '
                                                                         . 'ORDER BY d.cat_name ASC'
                                                         ));
-                                                if (!empty($webDirsAccessArray)) {
+                                                if (!empty($dirWebAccessArray)) {
                                                     $inheritParentPermission = FALSE;
-                                                    if (in_array('0', $webDirsAccessArray, true))
+                                                    if (in_array('0', $dirWebAccessArray, true))
                                                         $inheritParentPermission = TRUE;
 
                                                     if ($inheritParentPermission === TRUE) {
                                                         echo $lng['permission_inherit_parent'];
                                                     }
 
-                                                    $countwebDirsAccessArray = count($webDirsAccessArray);
+                                                    $countdirWebAccessArray = count($dirWebAccessArray);
                                                     $i = 0;
                                                     if ($inheritParentPermission === TRUE) {
                                                         echo ', ';
                                                     }
-                                                    foreach ($webDirsAccessArray as $webDir) {
+                                                    foreach ($dirWebAccessArray as $webDir) {
                                                         $i++;
                                                         echo $webDir['cat_name'];
-                                                        if ($i < $countwebDirsAccessArray)
+                                                        if ($i < $countdirWebAccessArray)
                                                             echo ', ';
                                                     }
                                                 }
