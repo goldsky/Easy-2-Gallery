@@ -1,6 +1,6 @@
 
 <form name="list" action="" method="post">
-    <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> [+easy2:gal.selectAll+]
+    [+easy2:gal.selectAll+]
     <div class="e2g_wrapper">
         [+easy2:gal.mod_thumb_content+]
     </div>
