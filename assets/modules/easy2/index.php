@@ -145,18 +145,21 @@ $e2gModCfg['e2gpg'] = ( isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1' );
 // E2G's module views
 $_SESSION['mod_view'] = isset($_GET['view']) ? $_GET['view'] : (isset($_SESSION['mod_view']) ? $_SESSION['mod_view'] : $e2g['mod_view']);
 
+require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+// Module's pages
+$e2gModCfg['e2gPages'] = $e2gPages;
 // Gallery template
-$e2gModCfg['mod_tpl_gal'] = '../' . $e2g['mod_tpl_gal'];
+$e2gModCfg['mod_tpl_gal'] = '../' . $e2gFilePageTemplates['mod_tpl_gal'];
 // Dir template
-$e2gModCfg['mod_tpl_dir'] = '../' . $e2g['mod_tpl_dir'];
+$e2gModCfg['mod_tpl_dir'] = '../' . $e2gFilePageTemplates['mod_tpl_dir'];
 // Thumb template
-$e2gModCfg['mod_tpl_thumb'] = '../' . $e2g['mod_tpl_thumb'];
+$e2gModCfg['mod_tpl_thumb'] = '../' . $e2gFilePageTemplates['mod_tpl_thumb'];
 // Table template
-$e2gModCfg['mod_tpl_table'] = '../' . $e2g['mod_tpl_table'];
+$e2gModCfg['mod_tpl_table'] = '../' . $e2gFilePageTemplates['mod_tpl_table'];
 // Table's row template for dirs
-$e2gModCfg['mod_tpl_table_row_dir'] = '../' . $e2g['mod_tpl_table_row_dir'];
+$e2gModCfg['mod_tpl_table_row_dir'] = '../' . $e2gFilePageTemplates['mod_tpl_table_row_dir'];
 // Table's row template for files
-$e2gModCfg['mod_tpl_table_row_file'] = '../' . $e2g['mod_tpl_table_row_file'];
+$e2gModCfg['mod_tpl_table_row_file'] = '../' . $e2gFilePageTemplates['mod_tpl_table_row_file'];
 // Thumb's width
 $e2gModCfg['mod_w'] = $e2g['mod_w'];
 // Thumb's height
