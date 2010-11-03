@@ -566,7 +566,8 @@ class E2gPub { // public/protected class
         } else {
             // skip the value of Easy 2's ROOT gallery ID/name
             unset($resultString['0']);
-            $result = implode('/', array_values($resultString)) . '/';
+            $result = implode('/', array_values($resultString));
+            $result .= empty($resultString) ? '' : '/';
         }
 
         return $result;
