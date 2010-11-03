@@ -4,7 +4,12 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 $galPh = array();
-$galPh['gal.selectAll'] = $lng['select_all'];
+
+if (!isset($_GET[path]))
+    $galPh['gal.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> ' . $lng['select_all'];
+else
+    $galPh['gal.selectAll'] = '';
+
 $galPh['gal.mod_thumb_content'] = '';
 $read = $this->_readDir($e2g['dir'], $path, $parentId);
 

@@ -15,7 +15,7 @@ if (IN_MANAGER_MODE != 'true')
                     <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/trash.png" alt="" /> <?php echo $lng['clean_cache']; ?>
                 </a>
             </li><?php
-if (!$_GET['tag']) {
+if (!isset($_GET['tag']) && !isset($_GET['path'])) {
 ?>
             <li>
                 <a href="<?php echo $index; ?>&amp;page=create_dir&amp;pid=<?php echo $parentId; ?>">

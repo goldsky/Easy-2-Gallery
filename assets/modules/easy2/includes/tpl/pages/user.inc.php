@@ -101,7 +101,7 @@ if (IN_MANAGER_MODE != 'true')
 
                                         <?php
                                         if ($_GET['page'] == 'edit_mgrPerm' && $_GET['group_id'] == $mgrGroup['id']) {
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.mgr.perm_edit.inc.php';
+                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.mgr.perm_edit.inc.php';
                                         } else {
                                         ?>
                                             <a href="<?php echo $index; ?>&amp;page=edit_mgrPerm&amp;group_id=<?php echo $mgrGroup['id']; ?>"><?php echo $lng['edit']; ?></a><br />
@@ -206,7 +206,7 @@ if (IN_MANAGER_MODE != 'true')
                                         </script>
                                         <?php
                                         if ($_GET['page'] == 'edit_webPerm' && $_GET['group_id'] == $webGroup['id']) {
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.web.perm_edit.inc.php';
+                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_edit.inc.php';
                                         ?>
                                             <p>
                                                 <a href="<?php echo $index; ?>&amp;page=edit_webFilesPerm&amp;group_id=<?php echo $webGroup['id']; ?>"><?php echo $lng['edit']; ?></a>
@@ -220,7 +220,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <b><?php echo $lng['folders']; ?></b>
                                             <p>
                                             <?php
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/part.user.web.perm_editfile.inc.php';
+                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_editfile.inc.php';
                                         } else {
                                             ?>
                                         <p>

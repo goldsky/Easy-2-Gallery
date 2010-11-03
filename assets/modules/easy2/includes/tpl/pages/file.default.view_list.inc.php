@@ -4,7 +4,12 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 $galPh = array();
-$galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
+
+if (!isset($_GET[path]))
+    $galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
+else
+    $galPh['th.selectAll'] = '';
+
 $galPh['th.actions'] = $lng['actions'];
 $galPh['th.type'] = $lng['type'];
 $galPh['th.name'] = $lng['dir'] . ' / ' . $lng['filename'];

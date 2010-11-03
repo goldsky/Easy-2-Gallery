@@ -2,7 +2,7 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-include_once E2G_MODULE_PATH . 'includes/tpl/pages/menu.top.inc.php';
+include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 
 $parent = array();
 // Description of the current directory
@@ -82,11 +82,11 @@ $modView = $_SESSION['mod_view'];
 ob_start();
 switch ($modView) {
     case 'list':
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.view_list.inc.php';
+        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_list.inc.php';
         $obGetContents = ob_get_contents();
         break;
     case 'thumbnails':
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.view_thumb.inc.php';
+        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_thumb.inc.php';
         $obGetContents = ob_get_contents();
         break;
     default:

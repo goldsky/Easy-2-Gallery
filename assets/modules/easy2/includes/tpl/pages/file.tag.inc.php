@@ -5,7 +5,7 @@ if (IN_MANAGER_MODE != 'true')
 $tag = $_GET['tag'];
 $readTag = $this->_readTag($tag);
 
-include_once E2G_MODULE_PATH . 'includes/tpl/pages/menu.top.inc.php';
+include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 ?>
 <ul class="actionButtons">
     <li>
