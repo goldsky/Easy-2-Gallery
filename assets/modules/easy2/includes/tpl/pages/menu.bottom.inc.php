@@ -10,7 +10,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
                 <option value="show"><?php echo $lng['show']; ?></option>
                 <option value="hide"><?php echo $lng['hide']; ?></option>
                 <option value="delete"><?php echo $lng['delete']; ?></option>
-                <?php if(class_exists(ZipArchive)) { ?>
+                <?php if(class_exists('ZipArchive')) { ?>
                 <option value="download"><?php echo $lng['download']; ?></option>
                     <?php } ?>
                 <option value="tag"><?php echo $lng['tag']; ?></option>

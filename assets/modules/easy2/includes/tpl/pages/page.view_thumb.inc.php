@@ -5,6 +5,7 @@ if (IN_MANAGER_MODE != 'true')
 
 $galPh = array();
 $galPh['gal.selectAll'] = $lng['select_all'];
+$galPh['gal.mod_thumb_content'] = '';
 $read = $this->_readDir($e2g['dir'], $path, $parentId);
 
 #########################     DIRECTORIES      #########################
@@ -23,9 +24,10 @@ for ($b = 0; $b < $countRowDirName; $b++) {
         $folderImgInfos = $this->_folderImg($dirPhRow['thumb.id'], '../' . $e2g['dir']);
 
         // if there is an empty folder, or invalid content
-        if ($folderImgInfos === FALSE) {
-            continue;
-        }
+//        if ($folderImgInfos === FALSE) {
+//            continue;
+//        }
+
         // path to subdir's thumbnail
         $pathToImg = $this->_getPath($folderImgInfos['dir_id']);
         $imgShaper = $this->_imgShaper('../' . $rootDir

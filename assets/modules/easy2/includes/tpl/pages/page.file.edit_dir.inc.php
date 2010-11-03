@@ -2,10 +2,16 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<p><?php echo $lng['editing']; ?> <?php echo $lng['dir']; ?> <b><?php echo $row['cat_name']; ?></b>
-    &nbsp; &nbsp; &nbsp;
-    <a href="<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>"><?php echo $lng['back']; ?></a>
-</p>
+<ul class="actionButtons">
+    <li>
+        <a href="<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>">
+            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $lng['back']; ?>
+        </a>
+    </li>
+    <li>
+        <span class="h2title"><?php echo $lng['editing']; ?> </span><?php echo $lng['dir']; ?> <b><?php echo $row['cat_name']; ?></b>
+    </li>
+</ul>
 <form name="list" action="<?php echo $index . '&amp;act=save_dir'; ?>" method="post">
     <?php // This 'pid' hidden input is for page returning ?>
     <input type="hidden" name="pid" value="<?php echo $_GET['pid']; ?>" />

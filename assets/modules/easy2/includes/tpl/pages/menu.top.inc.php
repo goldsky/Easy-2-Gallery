@@ -14,23 +14,26 @@ if (IN_MANAGER_MODE != 'true')
                 <a href="<?php echo $index; ?>&amp;act=clean_cache">
                     <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/trash.png" alt="" /> <?php echo $lng['clean_cache']; ?>
                 </a>
-            </li>
+            </li><?php
+if (!$_GET['tag']) {
+?>
             <li>
                 <a href="<?php echo $index; ?>&amp;page=create_dir&amp;pid=<?php echo $parentId; ?>">
                     <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" /> <?php echo $lng['dir_create']; ?>
                 </a>
-            </li>
-            <?php
+            </li><?php
             if ($userRole == '1'
                     || in_array($e2gPages['upload']['access'], $userPermissionsArray)
             ) {
-            ?>                        
+?>                        
                 <li>
                     <a href="<?php echo $blankIndex; ?>&amp;e2gpg=<?php echo $e2gPages['upload']['e2gpg']; ?>&amp;pid=<?php echo $parentId; ?>">
                         <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/add.png" alt="" /> <?php echo $lng['upload']; ?>
                     </a>
                 </li>
-            <?php } ?>
+            <?php
+            }
+        } ?>
             <li class="views">
                 <a href="<?php echo $index; ?>&amp;view=list<?php
             echo isset($_GET['pid']) ? '&amp;pid=' . $parentId : '';

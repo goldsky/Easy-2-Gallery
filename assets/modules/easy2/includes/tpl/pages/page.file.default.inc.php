@@ -67,19 +67,7 @@ mysql_free_result($resultdesc);
         <tr>
             <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
             <td valign="top">:</td>
-            <td>
-            <?php
-                if ($parent['tag'] != '') {
-                    $multipleTags = @explode(',', $parent['tag']);
-                    $countTags = count($multipleTags);
-                    for ($c = 0; $c < $countTags; $c++) {
-                        echo '<a href="' . $index . '&amp;page=tag&amp;tag=' . trim($multipleTags[$c]) . '">' . trim($multipleTags[$c]) . '</a>';
-                        if ($c < ($countTags - 1))
-                            echo ', ';
-                    }
-                }
-            ?>
-            </td>
+            <td><?php echo $this->_createTagLinks($parent['tag']); ?></td>
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description']; ?></b></td>

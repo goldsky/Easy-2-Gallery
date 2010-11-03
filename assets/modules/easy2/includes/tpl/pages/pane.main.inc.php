@@ -12,7 +12,7 @@ $_t = $this->e2gModCfg['_t'];
 $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
 
 // loading the hyperlinks ($e2gPages)
-require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+// require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
 $e2gpg = $this->e2gModCfg['e2gpg'];
 foreach ($e2gPages as $k => $v) {
     $e2gPage[$v['e2gpg']] = $e2gPages[$k];
