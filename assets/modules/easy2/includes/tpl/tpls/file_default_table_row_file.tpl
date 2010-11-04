@@ -1,6 +1,6 @@
 
             <tr[+easy2:td.rowClass+]>
-                <td valign="top">[+easy2:td.checkBox+]</td>
+                <td valign="top" align="center">[+easy2:td.checkBox+]</td>
                 <td valign="top" align="right" nowrap="nowrap" style="border-right: 1px dotted #cccccc;border-left: 1px dotted #cccccc;">[+easy2:td.buttons+]</td>
                 <td valign="top">[+easy2:td.icon+]</td>
                 <td>
