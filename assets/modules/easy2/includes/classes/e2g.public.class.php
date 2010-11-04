@@ -248,7 +248,7 @@ class E2gPub { // public/protected class
                     'image/gif' => TRUE,
                     'image/png' => TRUE
                 );
-                if ($allowedExt[$size["mime"]] && $fp) {
+                if (!empty($size["mime"]) && $allowedExt[$size["mime"]] && $fp) {
                     if ($e2gDebug == 1) {
                         $fileInfo = 'Filename <b style="color:red;">' . $f . '</b> is a valid image file: ' . $size["mime"] . ' - ' . $size[3];
                     }
@@ -310,10 +310,12 @@ class E2gPub { // public/protected class
             }
             closedir($openFolder);
         }
-        if ($e2gDebug == 1)
-            return '<br /><b style="color:red;">' . $foldername . '</b> is a valid folder.';
-        else
-            return TRUE;
+        if ($e2gDebug == 1) {
+            echo __LINE__ . ' : <br /><b style="color:red;">' . $foldername . '</b> is a valid folder.';
+            return FALSE;
+        }
+
+        return TRUE;
     }
 
     /**
@@ -551,7 +553,7 @@ class E2gPub { // public/protected class
         $resultString = array();
         $result = '';
         while ($l = mysql_fetch_array($queryDir)) {
-            if (''==$l[$option])
+            if ($option != 'cat_name' && empty($l[$option]))
                 $l[$option] = $l['cat_name'];
             $resultArray[$l['cat_id']] = $l[$option];
             $resultString[$l['parent_id']] = $l[$option];
@@ -580,7 +582,7 @@ class E2gPub { // public/protected class
      * @param   string  $text       text to be cropped
      * @return  string  shorthened text
      */
-    protected function cropName ($charSet, $nameLen, $text) {
+    protected function cropName($charSet, $nameLen, $text) {
         if (empty($charSet) || empty($nameLen))
             return FALSE;
 
@@ -594,4 +596,5 @@ class E2gPub { // public/protected class
         }
         return $croppedName;
     }
+
 }

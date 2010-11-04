@@ -94,11 +94,14 @@ $e2gPages = array(
     )
 );
 
-$e2gFilePageTemplates = array(
-    'mod_tpl_table' => 'assets/modules/easy2/includes/tpl/tpls/mod_table.htm'
-    , 'mod_tpl_table_row_dir' => 'assets/modules/easy2/includes/tpl/tpls/mod_table_row_dir.htm'
-    , 'mod_tpl_table_row_file' => 'assets/modules/easy2/includes/tpl/tpls/mod_table_row_file.htm'
-    , 'mod_tpl_gal' => 'assets/modules/easy2/includes/tpl/tpls/mod_gallery.htm'
-    , 'mod_tpl_dir' => 'assets/modules/easy2/includes/tpl/tpls/mod_directory.htm'
-    , 'mod_tpl_thumb' => 'assets/modules/easy2/includes/tpl/tpls/mod_thumbnail.htm'
+$e2gFilePageTpls = array(
+    'file_default_table_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table.tpl'
+    , 'file_default_table_row_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table_row_dir.tpl'
+    , 'file_default_table_row_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table_row_file.tpl'
+    , 'file_thumb_gal_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_gal.tpl'
+    , 'file_thumb_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_dir.tpl'
+    , 'file_thumb_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_file.tpl'
+    , 'file_tag_table_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table.tpl'
+    , 'file_tag_table_row_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table_row_dir.tpl'
+    , 'file_tag_table_row_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table_row_file.tpl'
 );
