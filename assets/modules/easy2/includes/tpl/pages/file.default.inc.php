@@ -29,12 +29,10 @@ mysql_free_result($resultdesc);
             // signature of non recorded directory is an additional &path parameter in the address bar
             // otherwise then it's a recorded one.
             if (!isset($_GET['path'])) {
-            ?>
-                <a href="<?php echo $index; ?>&amp;page=edit_dir&amp;dir_id=<?php echo $parentId; ?>&amp;pid=<?php echo $parentId; ?>">
-                    <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/folder_edit.png" width="16" height="16"
-                         alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" align="middle" border="0" />
-                </a>
-            <?php } ?>
+                echo $this->_actionButton('edit_dir', array(
+                    'page' => 'edit_dir'
+                    , 'dir_id' => $parentId
+                )); } ?>
             <b><?php echo $path['link']; ?></b>
         </td>
     </tr>
