@@ -130,10 +130,8 @@ $e2gModCfg['e2g_encode'] = $e2g['e2g_encode'];
 
 // SET UP THE PATH
 $e2gModCfg['dir'] = $e2g['dir'];
-//$e2gModCfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
-$e2gModCfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
-//$e2gModCfg['path'] = ( isset($path) ? $path : '' );
-//$e2gModCfg['path'] = ( isset($_GET['path']) ? $_GET['path'] : '' );
+$e2gModCfg['gdir'] = isset($gdir) ? $gdir : $e2g['dir'];
+$e2gModCfg['path'] = isset($path) ? $path : (isset($_GET['path']) ? $_GET['path'] : '');
 $e2gModCfg['parent_id'] = ( isset($_GET['pid']) && is_numeric($_GET['pid']) ) ? (int) $_GET['pid'] : 1;
 $e2gModCfg['tag'] = isset($_GET['tag']) ? $_GET['tag'] : NULL;
 
@@ -145,13 +143,13 @@ $e2gModCfg['e2g_debug'] = $e2g['e2g_debug'];
 // override MODx's debug variable
 $debug = 0;
 // MODx's manager theme
-$e2gModCfg['_t'] = ( isset($_t) ? $_t : $modx->config['manager_theme'] );
+$e2gModCfg['_t'] = isset($_t) ? $_t : $modx->config['manager_theme'];
 // MODx's action ID
-$e2gModCfg['_a'] = ( isset($_a) ? $_a : (int) $_GET['a'] );
+$e2gModCfg['_a'] = isset($_a) ? $_a : (int) $_GET['a'];
 // MODx's module ID
-$e2gModCfg['_i'] = ( isset($_i) ? $_i : (int) $_GET['id'] );
+$e2gModCfg['_i'] = isset($_i) ? $_i : (int) $_GET['id'];
 // E2G's module pages
-$e2gModCfg['e2gpg'] = ( isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1' );
+$e2gModCfg['e2gpg'] = isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1';
 // E2G's module views
 $_SESSION['mod_view'] = isset($_GET['view']) ? $_GET['view'] : (isset($_SESSION['mod_view']) ? $_SESSION['mod_view'] : $e2g['mod_view']);
 
@@ -244,11 +242,10 @@ if ($e2gModCfg['mod_id'] != $_GET['id']) {
 }
 
 // module's href
-$e2gModCfg['index'] = ( isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
+$e2gModCfg['index'] = isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
                 . '&amp;id=' . $e2gModCfg['_i']
                 . '&amp;e2gpg=' . $e2gModCfg['e2gpg']
 //        .(isset($_GET['page'])? '&amp;page='.$_GET['page']:null)
-        )
         . ( $alienparams != '' ? $alienparams : '' );
 
 // blank page's href
