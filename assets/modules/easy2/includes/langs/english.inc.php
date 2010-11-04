@@ -107,6 +107,7 @@ $e2g_lang['english'] = array (
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',
     'dir_delete_fhdd' => 'folder has been removed from hd',
+    'dirs_delete_fhdd' => 'folders have been removed from hd',
     'dir_deleted' => 'folder has been deleted',
     'dir_hidden_inverse_err' => 'Folder has already been hidden',
     'dir_hidden_suc' => 'Folder has been hidden',
