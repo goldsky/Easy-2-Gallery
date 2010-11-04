@@ -218,6 +218,7 @@ if ($e2gModCfg['mod_id'] != $_GET['id']) {
         'a' => (isset($_GET['a']) ? $_GET['a'] : null)
         , 'id' => (isset($_GET['id']) ? $_GET['id'] : null)
         , 'pid' => (isset($_GET['pid']) ? $_GET['pid'] : null)
+        , 'tag' => (isset($_GET['tag']) ? $_GET['tag'] : null)
         , 'dir_id' => (isset($_GET['dir_id']) ? $_GET['dir_id'] : null)
         , 'file_id' => (isset($_GET['file_id']) ? $_GET['file_id'] : null)
         , 'lang' => (isset($_GET['lang']) ? $_GET['lang'] : null)
