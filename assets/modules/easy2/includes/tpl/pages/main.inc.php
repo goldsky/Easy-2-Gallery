@@ -117,7 +117,7 @@ foreach ($e2gPages as $k => $v) {
                 if (i==2) {
                     var index=document.forms["topmenu"].opentag.selectedIndex;
                     if (document.forms["topmenu"].opentag.options[index].value != "") {
-                        window.location.href= '<?php echo html_entity_decode($index); ?>&page=tag&tag='+ document.forms["topmenu"].opentag.options[index].value;
+                        window.location.href= '<?php echo html_entity_decode($index); ?>&tag='+ document.forms["topmenu"].opentag.options[index].value;
                     }
                 }
                 if (i==3) {

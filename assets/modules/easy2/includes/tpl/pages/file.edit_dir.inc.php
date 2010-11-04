@@ -12,70 +12,73 @@ if (IN_MANAGER_MODE != 'true')
         <span class="h2title"><?php echo $lng['editing']; ?> </span><?php echo $lng['dir']; ?> <b><?php echo $row['cat_name']; ?></b>
     </li>
 </ul>
-<form name="list" action="<?php echo $index . '&amp;act=save_dir'; ?>" method="post">
-    <?php // This 'pid' hidden input is for page returning ?>
+<form name="list" action="<?php
+echo $index . '&amp;act=save_dir&amp;pid=' . $parentId;
+echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
+?>" method="post">
+          <?php // This 'pid' hidden input is for page returning ?>
     <input type="hidden" name="pid" value="<?php echo $_GET['pid']; ?>" />
     <input type="hidden" name="parent_id" value="<?php echo $row['parent_id']; ?>" />
     <input type="hidden" name="cat_id" value="<?php echo $row['cat_id']; ?>" />
     <input type="hidden" name="cat_name" value="<?php echo $row['cat_name']; ?>" />
 
     <?php
-    echo $this->_plugin('OnE2GFolderEditFormPrerender');
+          echo $this->_plugin('OnE2GFolderEditFormPrerender');
 
-    // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
-    if ($row['cat_id'] != '1') {
+          // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
+          if ($row['cat_id'] != '1') {
     ?>
-        <div>
-            <span><b><?php echo $lng['enter_new_dirname']; ?></b></span>
-            <span><b>:</b></span>
-            <span><input name="new_cat_name" type="text" value="<?php echo $row['cat_name']; ?>" size="30" /></span>
-        </div>
+              <div>
+                  <span><b><?php echo $lng['enter_new_dirname']; ?></b></span>
+                  <span><b>:</b></span>
+                  <span><input name="new_cat_name" type="text" value="<?php echo $row['cat_name']; ?>" size="30" /></span>
+              </div>
     <?php
-    }
+          }
     ?>
-    <div class="clear">&nbsp;</div>
-    <div class="tab-pane" id="tabEditFolderPane">
-        <script type="text/javascript">
-            tpEditFolder = new WebFXTabPane(document.getElementById('tabEditFolderPane'));
-        </script>
-        <div class="tab-page" id="tabEditFolderPage">
-            <h2 class="tab"><?php echo $lng['general']; ?></h2>
-            <script type="text/javascript">
-                tpEditFolder.addTabPage( document.getElementById( 'tabEditFolderPage') );
-            </script>
-            <table id="dir_edit" cellspacing="0" cellpadding="2" class="aForm" >
-                <tr>
-                    <td><b><?php echo $lng['object_id']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><?php echo $row['cat_id']; ?></td>
-                </tr>
-                <tr>
-                    <td><b><?php echo $lng['enter_new_alias']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><input name="alias" type="text" value="<?php echo $row['cat_alias']; ?>" size="95" /></td>
-                </tr>
-                <tr>
-                    <td><b><?php echo $lng['summary']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><input name="summary" type="text" value="<?php echo $row['cat_summary']; ?>" size="95" /></td>
-                </tr>
-                <tr>
-                    <td><b><?php echo $lng['tag']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><input name="tag" type="text" value="<?php echo $row['cat_tag']; ?>" size="95" /></td>
-                </tr>
-                <tr>
-                    <td valign="top"><b><?php echo $lng['description']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><textarea name="description" style="width:500px" class="mceEditor" cols="" rows="4"><?php echo $row['cat_description']; ?></textarea></td>
-                </tr>
-                <tr>
-                    <td valign="top"><b><?php echo $lng['user_permissions']; ?></b></td>
-                    <td valign="top"><b>:</b></td>
-                    <td><?php
-    $webGroups = $modx->db->makeArray($modx->db->query(
-                            'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'webgroup_names ORDER BY id ASC'));
-    if (count($webGroups) > 0) {
+          <div class="clear">&nbsp;</div>
+          <div class="tab-pane" id="tabEditFolderPane">
+              <script type="text/javascript">
+                  tpEditFolder = new WebFXTabPane(document.getElementById('tabEditFolderPane'));
+              </script>
+              <div class="tab-page" id="tabEditFolderPage">
+                  <h2 class="tab"><?php echo $lng['general']; ?></h2>
+                  <script type="text/javascript">
+                      tpEditFolder.addTabPage( document.getElementById( 'tabEditFolderPage') );
+                  </script>
+                  <table id="dir_edit" cellspacing="0" cellpadding="2" class="aForm" >
+                      <tr>
+                          <td><b><?php echo $lng['object_id']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><?php echo $row['cat_id']; ?></td>
+                      </tr>
+                      <tr>
+                          <td><b><?php echo $lng['enter_new_alias']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><input name="alias" type="text" value="<?php echo $row['cat_alias']; ?>" size="95" /></td>
+                      </tr>
+                      <tr>
+                          <td><b><?php echo $lng['summary']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><input name="summary" type="text" value="<?php echo $row['cat_summary']; ?>" size="95" /></td>
+                      </tr>
+                      <tr>
+                          <td><b><?php echo $lng['tag']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><input name="tag" type="text" value="<?php echo $row['cat_tag']; ?>" size="95" /></td>
+                      </tr>
+                      <tr>
+                          <td valign="top"><b><?php echo $lng['description']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><textarea name="description" style="width:500px" class="mceEditor" cols="" rows="4"><?php echo $row['cat_description']; ?></textarea></td>
+                      </tr>
+                      <tr>
+                          <td valign="top"><b><?php echo $lng['user_permissions']; ?></b></td>
+                          <td valign="top"><b>:</b></td>
+                          <td><?php
+          $webGroups = $modx->db->makeArray($modx->db->query(
+                                  'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'webgroup_names ORDER BY id ASC'));
+          if (count($webGroups) > 0) {
     ?>
                         <ul><?php
                         foreach ($webGroups as $webGroup) {

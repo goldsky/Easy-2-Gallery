@@ -79,20 +79,22 @@ mysql_free_result($resultdesc);
 <br />
 <?php
 $modView = $_SESSION['mod_view'];
-ob_start();
 switch ($modView) {
     case 'list':
+        ob_start();
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_list.inc.php';
         $obGetContents = ob_get_contents();
+        ob_end_clean();
         break;
     case 'thumbnails':
+        ob_start();
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_thumb.inc.php';
         $obGetContents = ob_get_contents();
+        ob_end_clean();
         break;
     default:
         break;
 }
-ob_end_clean();
 
 if (isset($_GET['view']))
     header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));

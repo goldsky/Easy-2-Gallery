@@ -4,12 +4,24 @@ if (IN_MANAGER_MODE != 'true')
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>">
+        <a href="<?php echo $index;
+        if (isset($_GET['tag'])) {
+        ?>&amp;tag=<?php echo $_GET['tag'];
+        } else {
+        ?>&amp;pid=<?php echo $parentId;
+        }
+        ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $lng['back']; ?>
         </a>
     </li>
     <li>
-        <a href="<?php echo $index; ?>&amp;page=comments&amp;file_id=<?php echo $_GET['file_id']; ?>&amp;pid=<?php echo $parentId; ?>">
+        <a href="<?php echo $index; ?>&amp;page=comments&amp;file_id=<?php echo $_GET['file_id'];
+        if (isset($_GET['tag'])) {
+        ?>&amp;tag=<?php echo $_GET['tag'];
+        } else {
+        ?>&amp;pid=<?php echo $parentId;
+        }
+        ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_refresh.png" width="16" height="16" border="0" alt="" /> <?php echo $lng['update']; ?>
         </a>
     </li>

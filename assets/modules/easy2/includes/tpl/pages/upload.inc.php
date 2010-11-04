@@ -44,8 +44,8 @@ if (IN_MANAGER_MODE != 'true')
                             <td><input name="img[]" type="file" size="95" /></td>
                         </tr>
                         <tr>
-                            <td><b><?php echo $lng['name']; ?> :</b></td>
-                            <td><input name="name[]" type="text" size="95" /></td>
+                            <td><b><?php echo $lng['alias']; ?> :</b></td>
+                            <td><input name="alias[]" type="text" size="95" /></td>
                         </tr>
                         <tr>
                             <td><b><?php echo $lng['summary']; ?> :</b></td>

@@ -11,14 +11,14 @@ else
     $galPh['gal.selectAll'] = '';
 
 $galPh['gal.fileThumbGalContent'] = '';
-$readDir = $this->_readDir($e2g['dir'], $path, $parentId);
+$readTag = $this->_readTag($tag);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 // count the name, because new dir (without ID) is also being read.
-$countRowDirName = count($readDir['dir']['name']);
+$countRowDirName = count($readTag['dir']['name']);
 for ($b = 0; $b < $countRowDirName; $b++) {
-    foreach ($readDir['dir'] as $k => $v) {
+    foreach ($readTag['dir'] as $k => $v) {
         $dirPhRow['thumb.' . $k] = $v[$b];
     }
 
@@ -114,10 +114,10 @@ for ($b = 0; $b < $countRowDirName; $b++) {
 }
 
 $dirPhRow = array();
-$countDeletedDirs = count($readDir['deletedDir']['id']);
+$countDeletedDirs = count($readTag['deletedDir']['id']);
 if ($countDeletedDirs > 0) {
     for ($b = 0; $b < $countDeletedDirs; $b++) {
-        foreach ($readDir['deletedDir'] as $k => $v) {
+        foreach ($readTag['deletedDir'] as $k => $v) {
             $dirPhRow['thumb.' . $k] = $v[$b];
         }
         $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
@@ -154,9 +154,9 @@ if ($countDeletedDirs > 0) {
 #########################     FILES      #########################
 $filePhRow = array();
 // count the name, because new file (without ID) is also being read.
-$countRowFileName = count($readDir['file']['name']);
+$countRowFileName = count($readTag['file']['name']);
 for ($b = 0; $b < $countRowFileName; $b++) {
-    foreach ($readDir['file'] as $k => $v) {
+    foreach ($readTag['file'] as $k => $v) {
         $filePhRow['thumb.' . $k] = $v[$b];
     }
 
@@ -218,10 +218,10 @@ for ($b = 0; $b < $countRowFileName; $b++) {
 
 // deleted file
 $filePhRow = array();
-$countDeletedFiles = count($readDir['deletedFile']['id']);
+$countDeletedFiles = count($readTag['deletedFile']['id']);
 if ($countDeletedFiles > 0) {
     for ($b = 0; $b < $countDeletedFiles; $b++) {
-        foreach ($readDir['deletedFile'] as $k => $v) {
+        foreach ($readTag['deletedFile'] as $k => $v) {
             $filePhRow['thumb.' . $k] = $v[$b];
         }
         $filePhRow['thumb.thumb'] = '';

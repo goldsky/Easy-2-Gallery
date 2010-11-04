@@ -4,7 +4,13 @@ if (IN_MANAGER_MODE != 'true')
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>">
+        <a href="<?php echo $index;
+        if (isset($_GET['tag'])) {
+        ?>&amp;tag=<?php echo $_GET['tag'];
+        } else {
+        ?>&amp;pid=<?php echo $parentId;
+        }
+        ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $lng['back']; ?>
         </a>
     </li>
@@ -13,7 +19,10 @@ if (IN_MANAGER_MODE != 'true')
         <?php echo $lng['files']; ?> <b><?php echo $row['filename']; ?> </b> (<?php echo $row['comments'] . ' ' . strtolower($lng['comments']); ?>)
     </li>
 </ul>
-<form name="list" action="<?php echo $index . '&amp;act=save_file&amp;pid=' . $parentId; ?>" method="post">
+<form name="list" action="<?php
+echo $index . '&amp;act=save_file&amp;pid=' . $parentId;
+echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
+?>" method="post">
     <input type="hidden" name="file_id" value="<?php echo $row['id']; ?>" />
 
     <?php echo $this->_plugin('OnE2GFileEditFormPrerender'); ?>
@@ -57,7 +66,7 @@ if (IN_MANAGER_MODE != 'true')
                     <tr>
                         <td><b><?php echo $lng['name']; ?></b></td>
                         <td valign="top"><b>:</b></td>
-                        <td><input name="name" type="text" value="<?php echo $row['name']; ?>" size="95" /></td>
+                        <td><input name="alias" type="text" value="<?php echo $row['alias']; ?>" size="95" /></td>
                     </tr>
                     <tr>
                         <td><b><?php echo $lng['summary']; ?></b></td>
