@@ -116,6 +116,15 @@ if (!is_dir(MODX_BASE_PATH . $e2g['dir'])) {
     }
 }
 
+// Easy 2 Gallery module path
+if (!defined('E2G_GALLERY_PATH')) {
+    define('E2G_GALLERY_PATH', MODX_BASE_PATH . $e2g['dir']);
+}
+// Easy 2 Gallery module URL
+if (!defined('E2G_GALLERY_URL')) {
+    define('E2G_GALLERY_URL', MODX_SITE_URL . $e2g['dir']);
+}
+
 // ENCODING
 $e2gModCfg['e2g_encode'] = $e2g['e2g_encode'];
 
@@ -126,6 +135,7 @@ $e2gModCfg['gdir'] = ( isset($gdir) ? $gdir : $e2g['dir'] );
 //$e2gModCfg['path'] = ( isset($path) ? $path : '' );
 //$e2gModCfg['path'] = ( isset($_GET['path']) ? $_GET['path'] : '' );
 $e2gModCfg['parent_id'] = ( isset($_GET['pid']) && is_numeric($_GET['pid']) ) ? (int) $_GET['pid'] : 1;
+$e2gModCfg['tag'] = isset($_GET['tag']) ? $_GET['tag'] : NULL;
 
 /**
  * SYSTEM VARS
@@ -148,18 +158,24 @@ $_SESSION['mod_view'] = isset($_GET['view']) ? $_GET['view'] : (isset($_SESSION[
 require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
 // Module's pages
 $e2gModCfg['e2gPages'] = $e2gPages;
-// Gallery template
-$e2gModCfg['mod_tpl_gal'] = '../' . $e2gFilePageTemplates['mod_tpl_gal'];
-// Dir template
-$e2gModCfg['mod_tpl_dir'] = '../' . $e2gFilePageTemplates['mod_tpl_dir'];
-// Thumb template
-$e2gModCfg['mod_tpl_thumb'] = '../' . $e2gFilePageTemplates['mod_tpl_thumb'];
-// Table template
-$e2gModCfg['mod_tpl_table'] = '../' . $e2gFilePageTemplates['mod_tpl_table'];
-// Table's row template for dirs
-$e2gModCfg['mod_tpl_table_row_dir'] = '../' . $e2gFilePageTemplates['mod_tpl_table_row_dir'];
-// Table's row template for files
-$e2gModCfg['mod_tpl_table_row_file'] = '../' . $e2gFilePageTemplates['mod_tpl_table_row_file'];
+// Default gallery template
+$e2gModCfg['file_thumb_gal_tpl'] = '../' . $e2gFilePageTpls['file_thumb_gal_tpl'];
+// Default dir template
+$e2gModCfg['file_thumb_dir_tpl'] = '../' . $e2gFilePageTpls['file_thumb_dir_tpl'];
+// Default thumb template
+$e2gModCfg['file_thumb_file_tpl'] = '../' . $e2gFilePageTpls['file_thumb_file_tpl'];
+// Default table template
+$e2gModCfg['file_default_table_tpl'] = '../' . $e2gFilePageTpls['file_default_table_tpl'];
+// Default table's row template for dirs
+$e2gModCfg['file_default_table_row_dir_tpl'] = '../' . $e2gFilePageTpls['file_default_table_row_dir_tpl'];
+// Default table's row template for files
+$e2gModCfg['file_default_table_row_file_tpl'] = '../' . $e2gFilePageTpls['file_default_table_row_file_tpl'];
+// Tagging table template
+$e2gModCfg['file_tag_table_tpl'] = '../' . $e2gFilePageTpls['file_tag_table_tpl'];
+// Tagging table's row template for dirs
+$e2gModCfg['file_tag_table_row_dir_tpl'] = '../' . $e2gFilePageTpls['file_tag_table_row_dir_tpl'];
+// Tagging table's row template for files
+$e2gModCfg['file_tag_table_row_file_tpl'] = '../' . $e2gFilePageTpls['file_tag_table_row_file_tpl'];
 // Thumb's width
 $e2gModCfg['mod_w'] = $e2g['mod_w'];
 // Thumb's height

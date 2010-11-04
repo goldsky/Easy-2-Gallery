@@ -16,13 +16,13 @@ elseif ($imgSize[2] == 2)
 elseif ($imgSize[2] == 3)
     $im = imagecreatefrompng($path);
 else {
-    header("Content-type: image/png");
+    header('Content-type: image/png');
     $im = @imagecreate($w, $h)
-            or die("Cannot Initialize new GD image stream");
+            or die('Cannot Initialize new GD image stream');
     $bgColor = imagecolorallocate($im, 255, 255, 255);
     $textColor = imagecolorallocate($im, 233, 14, 91);
     $textHeight = isset($_GET['th']) ? $_GET['th'] : 2;
-    $text = isset($_GET['text']) ? $_GET['text'] : "Image error";
+    $text = isset($_GET['text']) ? $_GET['text'] : 'Image error';
     $y = $h/2 - $textHeight * 4;
     $textWidth = imagefontwidth($textHeight) * strlen($text);
     $center = ceil($w / 2);
@@ -53,13 +53,13 @@ if (isset($_GET['mod_w']) || $_GET['mod_h']) {
     imagefill($pic, 0, 0, $bgc);
     imagecopyresampled($pic, $im, $x, $y, 0, 0, $w2, $h2, $imgSize[0], $imgSize[1]);
 } elseif (isset($_GET['text'])) {
-    header("Content-type: image/png");
+    header('Content-type: image/png');
     $im = @imagecreate($w, $h)
-            or die("Cannot Initialize new GD image stream");
+            or die('Cannot Initialize new GD image stream');
     $bgColor = imagecolorallocate($im, 255, 255, 255);
     $textColor = imagecolorallocate($im, 233, 14, 91);
     $textHeight = isset($_GET['th']) ? $_GET['th'] : 2;
-    $text = trim($_GET['text']) != '' ? $_GET['text'] : "Image error";
+    $text = isset($_GET['text']) ? $_GET['text'] : 'Image error';
     $y = $h/2 - $textHeight * 4;
     $textWidth = imagefontwidth($textHeight) * strlen($text);
     $center = ceil($w / 2);
@@ -100,11 +100,11 @@ if (isset($_GET['mod_w']) || $_GET['mod_h']) {
 //$text_color = imagecolorallocate($im, 0, 0, 0);
 //imagestring($pic, 3, 5, 5, round(getmicrotime() - $timeStart, 4) . 's', $text_color);
 
-header("Content-type: image/jpeg");
+header('Content-type: image/jpeg');
 imagejpeg($pic);
 imagedestroy($pic);
 
 function getmicrotime() {
-    list($usec, $sec) = explode(" ", microtime());
+    list($usec, $sec) = explode(' ', microtime());
     return ((float) $usec + (float) $sec);
 }
