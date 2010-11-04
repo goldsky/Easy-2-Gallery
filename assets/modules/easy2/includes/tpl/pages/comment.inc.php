@@ -88,6 +88,9 @@ $filesLink = $e2gPages['files']['link'];
                                     $queryComments = mysql_query($selectComments);
                                     if (!$queryComments)
                                         die(mysql_error());
+
+                                    // for table row class looping
+                                    $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
                                     $rowNum = 0; // only for row coloring
                                     while ($l = mysql_fetch_array($queryComments, MYSQL_ASSOC)) {
                                         $filePath = str_replace('%2F', '/', rawurlencode($gdir . $path['string'] . $l['filename']));

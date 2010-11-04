@@ -464,76 +464,6 @@ class E2gMod extends E2gPub {
                 break;
         } // switch ($act)
 
-        /**
-         * PAGE ACTION
-         */
-        // for table row class looping
-        $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-        $rowNum = 0;
-        $page = empty($_GET['page']) ? '' : $_GET['page'];
-        switch ($page) {
-            case 'create_dir':
-                //the page content is rendered in ../tpl/pages/page.file.create_dir.inc.php
-                break;
-
-            case 'edit_dir' :
-                if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['id_err'];
-                    header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                    exit();
-                }
-
-                // call up the database content first as the comparison subjects
-                $res = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs WHERE cat_id=' . (int) $_GET['dir_id']);
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                mysql_free_result($res);
-                //the page content is rendered in ../tpl/pages/page.file.edit_dir.inc.php
-                break;
-
-            case 'edit_file':
-                if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $id['id_err'];
-
-                    header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                    exit();
-                }
-
-                // call up the database content first as the comparison subjects
-                $res = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $_GET['file_id']);
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                mysql_free_result($res);
-
-                $ext = substr($row['filename'], strrpos($row['filename'], '.'));
-                $filename = substr($row['filename'], 0, -(strlen($ext)));
-
-                //the page content is rendered in ../tpl/pages/page.file.edit_file.inc.php
-                break;
-
-            case 'comments':
-                if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $id['id_err'];
-
-                    header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                    exit();
-                }
-                $res = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $_GET['file_id']);
-                $row = mysql_fetch_array($res, MYSQL_ASSOC);
-                mysql_free_result($res);
-                //the page content is rendered in ../tpl/pages/page.file.comments.inc.php
-                break;
-
-            case 'openexplorer':
-                if (isset($_POST['newparent']))
-                    $parentId = $_POST['newparent'];
-                header('Location: ' . html_entity_decode($index . '&amp;pid=' . $parentId));
-                exit();
-                break;
-
-            default:
-                //the page content is rendered in ../tpl/pages/page.main.inc.php
-                break;
-        } // switch ($page)
-
         ob_start();
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
         $output = ob_get_contents();
@@ -2668,16 +2598,6 @@ class E2gMod extends E2gPub {
         if (empty($get['dir_id']) && empty($get['dir_path'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dpath_err'];
             return FALSE;
-        }
-
-        // check the parameters
-        if (!empty($get['dir_id'])) {
-            $dirNameDb = $this->_getDirInfo($get['dir_id'], 'cat_name');
-            $dirNamePath = $this->_basenameSafe($get['dir_path']);
-            if ($dirNameDb != $dirNamePath) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dpath_err'] . ' => ' . $dirNameDb . ' != ' . $dirNamePath;
-                return FALSE;
-            }
         }
 
         // the numeric keys are the member of the database
@@ -5026,11 +4946,11 @@ class E2gMod extends E2gPub {
 
             $row['file']['rowNum'][] = $rowNum;
             $row['file']['rowClass'][] = $rowClass[$rowNum % 2];
-            $filePath = '../' . $gdir . $this->_getPath($l['dir_id']);
+            $filePath = $gdir . $this->_getPath($l['dir_id']);
             $fileNameUrlDecodeFilename = urldecode($l['filename']);
             $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode( $filePath . $l['filename']));
 
-            if (!file_exists($filePath . $l['filename'])) {
+            if (!file_exists( '../' . $filePath . $l['filename'])) {
                 $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -5038,7 +4958,7 @@ class E2gMod extends E2gPub {
                 $fileAttributes = '<i>(' . $lng['deleted'] . ')</i>';
                 $fileAttributeIcons = '
                 <a href="' . $index . '&amp;act=delete_file&amp;file_path=' . $filePathRawUrlEncoded
-                        . (empty($fileId) ? '' : '&amp;file_id=' . $fileId) . '"
+                        . '&amp;file_id=' . $l['id'] . '"
                    onclick="return confirmDelete();">
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
                          alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />

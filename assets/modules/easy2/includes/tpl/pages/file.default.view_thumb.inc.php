@@ -34,7 +34,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
                     . $dirPhRow['thumb.pathRawUrlEncoded']
                     . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                     . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                    . '&amp;text=' . __LINE__ . '-' . $lng['empty']
+                    . '&amp;text=' . $lng['empty']
             ;
             $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
@@ -96,7 +96,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
                 . $dirPhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['new'];
+                . '&amp;text=' . $lng['new'];
         $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
                 <img src="' . $imgPreview
@@ -124,12 +124,12 @@ if ($countDeletedDirs > 0) {
                 . $dirPhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted'];
+                . '&amp;text=' . $lng['deleted'];
         $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
                 . $dirPhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=300'
                 . '&amp;mod_h=100'
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted']
+                . '&amp;text=' . $lng['deleted']
                 . '&amp;th=5';
         $dirPhRow['thumb.thumb'] = '
             <a href="' . $imgSrc
@@ -230,12 +230,12 @@ if ($countDeletedFiles > 0) {
                 . $filePhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted'];
+                . '&amp;text=' . $lng['deleted'];
         $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
                 . $filePhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=300'
                 . '&amp;mod_h=100'
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted']
+                . '&amp;text=' . $lng['deleted']
                 . '&amp;th=5';
         $filePhRow['thumb.thumb'] = '
             <a href="' . $imgSrc

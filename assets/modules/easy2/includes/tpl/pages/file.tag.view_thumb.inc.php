@@ -4,12 +4,7 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 $galPh = array();
-
-if (!isset($_GET[path]))
-    $galPh['gal.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> ' . $lng['select_all'];
-else
-    $galPh['gal.selectAll'] = '';
-
+$galPh['gal.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> ' . $lng['select_all'];
 $galPh['gal.fileThumbGalContent'] = '';
 $readTag = $this->_readTag($tag);
 
@@ -34,7 +29,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
                     . $dirPhRow['thumb.pathRawUrlEncoded']
                     . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                     . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                    . '&amp;text=' . __LINE__ . '-' . $lng['empty']
+                    . '&amp;text=' . $lng['empty']
             ;
             $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
@@ -49,7 +44,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
         } else {
             // path to subdir's thumbnail
             $pathToImg = $this->_getPath($folderImgInfos['dir_id']);
-            $imgShaper = $this->_imgShaper('../' . $rootDir
+            $imgShaper = $this->_imgShaper('../' . $gdir
                             , $pathToImg . $folderImgInfos['filename']
                             , $dirPhRow['thumb.mod_w']
                             , $dirPhRow['thumb.mod_w']
@@ -92,11 +87,12 @@ for ($b = 0; $b < $countRowDirName; $b++) {
             }
         }
     } else {
+        // new folder
         $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
                 . $dirPhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['new'];
+                . '&amp;text=' . $lng['new'];
         $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
                 <img src="' . $imgPreview
@@ -111,44 +107,6 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     }
 
     $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_dir_tpl'), $dirPhRow);
-}
-
-$dirPhRow = array();
-$countDeletedDirs = count($readTag['deletedDir']['id']);
-if ($countDeletedDirs > 0) {
-    for ($b = 0; $b < $countDeletedDirs; $b++) {
-        foreach ($readTag['deletedDir'] as $k => $v) {
-            $dirPhRow['thumb.' . $k] = $v[$b];
-        }
-        $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $dirPhRow['thumb.pathRawUrlEncoded']
-                . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
-                . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted'];
-        $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $dirPhRow['thumb.pathRawUrlEncoded']
-                . '&amp;mod_w=300'
-                . '&amp;mod_h=100'
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted']
-                . '&amp;th=5';
-        $dirPhRow['thumb.thumb'] = '
-            <a href="' . $imgSrc
-                . '" class="highslide" onclick="return hs.expand(this)"'
-                . ' title="' . $dirPhRow['thumb.name'] . ' ' . $dirPhRow['thumb.gid'] . ' ' . $dirPhRow['thumb.attributes']
-                . '">
-                <img src="' . $imgPreview
-                . '" alt="' . $dirPhRow['thumb.path']
-                . $dirPhRow['thumb.name']
-                . '" title="' . $dirPhRow['thumb.title']
-                . '" width="' . $dirPhRow['thumb.mod_w']
-                . '" height="' . $dirPhRow['thumb.mod_h']
-                . '" />
-            </a>
-';
-
-        unset($imgPreview);
-        $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_dir_tpl'), $dirPhRow);
-    }
 }
 
 #########################     FILES      #########################
@@ -167,7 +125,7 @@ for ($b = 0; $b < $countRowFileName; $b++) {
     if (!empty($filePhRow['thumb.id'])) {
         // path to subdir's thumbnail
         $pathToImg = $this->_getPath($filePhRow['thumb.dirId']);
-        $imgShaper = $this->_imgShaper('../' . $rootDir
+        $imgShaper = $this->_imgShaper('../' . $gdir
                         , $pathToImg . $filePhRow['thumb.name']
                         , $filePhRow['thumb.mod_w']
                         , $filePhRow['thumb.mod_w']
@@ -175,7 +133,7 @@ for ($b = 0; $b < $countRowFileName; $b++) {
         if ($imgShaper !== FALSE) {
             $filePhRow['thumb.src'] = $imgShaper;
             $filePhRow['thumb.thumb'] = '
-            <a href="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
+            <a href="' . '../' . $filePhRow['thumb.pathRawUrlEncoded']
                     . '" class="highslide" onclick="return hs.expand(this)" '
                     . 'title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
                     . '">
@@ -214,45 +172,6 @@ for ($b = 0; $b < $countRowFileName; $b++) {
     }
 
     $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_file_tpl'), $filePhRow);
-}
-
-// deleted file
-$filePhRow = array();
-$countDeletedFiles = count($readTag['deletedFile']['id']);
-if ($countDeletedFiles > 0) {
-    for ($b = 0; $b < $countDeletedFiles; $b++) {
-        foreach ($readTag['deletedFile'] as $k => $v) {
-            $filePhRow['thumb.' . $k] = $v[$b];
-        }
-        $filePhRow['thumb.thumb'] = '';
-
-        $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $filePhRow['thumb.pathRawUrlEncoded']
-                . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
-                . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted'];
-        $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $filePhRow['thumb.pathRawUrlEncoded']
-                . '&amp;mod_w=300'
-                . '&amp;mod_h=100'
-                . '&amp;text=' . __LINE__ . '-' . $lng['deleted']
-                . '&amp;th=5';
-        $filePhRow['thumb.thumb'] = '
-            <a href="' . $imgSrc
-                . '" class="highslide" onclick="return hs.expand(this)"'
-                . ' title="' . $filePhRow['thumb.title'] . ' ' . $filePhRow['thumb.fid']
-                . '">
-                <img src="' . $imgPreview
-                . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
-                . '" title="' . $filePhRow['thumb.title']
-                . '" width="' . $filePhRow['thumb.mod_w']
-                . '" height="' . $filePhRow['thumb.mod_h']
-                . '" />
-            </a>
-';
-        unset($imgPreview);
-        $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_file_tpl'), $filePhRow);
-    }
 }
 
 ob_start();

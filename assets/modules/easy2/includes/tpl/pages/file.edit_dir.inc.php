@@ -1,6 +1,11 @@
 <?php
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
+
+// call up the database content first as the comparison subjects
+$queryDir = mysql_query('SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs WHERE cat_id=' . (int) $_GET['dir_id']);
+$row = mysql_fetch_array($queryDir, MYSQL_ASSOC);
+mysql_free_result($queryDir);
 ?>
 <ul class="actionButtons">
     <li>

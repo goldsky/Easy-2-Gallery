@@ -341,7 +341,7 @@ if (IN_MANAGER_MODE != 'true')
                             <option value="last_modified"<?php echo ($e2g['orderby'] == 'last_modified' ? ' selected="selected"' : ''); ?>>last_modified (<?php echo $lng['last_modified']; ?>)</option>
                             <option value="comments"<?php echo ($e2g['orderby'] == 'comments' ? ' selected="selected"' : ''); ?>>comments (<?php echo $lng['comments_cnt']; ?>)</option>
                             <option value="filename"<?php echo ($e2g['orderby'] == 'filename' ? ' selected="selected"' : ''); ?>>filename (<?php echo $lng['filename']; ?>)</option>
-                            <option value="name"<?php echo ($e2g['orderby'] == 'name' ? ' selected="selected"' : ''); ?>>name (<?php echo $lng['name']; ?>)</option>
+                            <option value="alias"<?php echo ($e2g['orderby'] == 'alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias']; ?>)</option>
                             <option value="random"<?php echo ($e2g['orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
                         </select>
                         <span style="color:green;">&amp;order=</span>

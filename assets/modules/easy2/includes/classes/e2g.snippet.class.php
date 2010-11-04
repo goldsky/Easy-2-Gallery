@@ -856,7 +856,12 @@ class E2gSnippet extends E2gPub {
 
                 // conversion
                 $l['name'] = $l['alias'];
-                
+
+                // check the picture existance before continue
+                if (!file_exists( realpath($gdir . $this->_getPath($l['dir_id']) . $l['filename']))) {
+                    continue;
+                }
+
                 // whether configuration setting is set with or without table, the template will adjust it
                 $_filler = $this->_filler($this->_getTpl('thumb_tpl'), $this->_loadThumbPlaceholders($l));
                 $_e2g['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
@@ -1463,8 +1468,7 @@ class E2gSnippet extends E2gPub {
         if ($imgShaper !== FALSE) {
             $row['src'] = $imgShaper;
         } else {
-//            $row['src'] = 'assets/modules/easy2/show.easy2gallery.php?w=' . $w . '&amp;h=' . $h . '&amp;th=5';
-            continue;
+            $row['src'] = 'assets/modules/easy2/show.easy2gallery.php?w=' . $w . '&amp;h=' . $h . '&amp;th=5';
         }
         unset($imgShaper);
 

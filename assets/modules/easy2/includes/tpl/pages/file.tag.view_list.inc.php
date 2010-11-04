@@ -22,16 +22,9 @@ $galPh['th.w'] = 'W (px)';
 $galPh['th.h'] = 'H (px)';
 $galPh['td.fileTagTableContent'] = '';
 
-//echo __LINE__ . ' : $modView = ' . $modView . '<br />';
-
 $tag = isset($tag) ? $tag : $_GET['tag'];
 $readTag = $this->_readTag($tag);
 
-//echo __LINE__ . ' : $readTag = ' . $readTag . '<br />';
-//echo '<pre>';
-//print_r($readTag);
-//echo '</pre>';
-//die();
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 // count the name, because new dir (without ID) is also being read.
@@ -49,19 +42,6 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
 }
 
-$dirPhRow = array();
-$countDeletedDirs = count($readTag['deletedDir']['id']);
-if ($countDeletedDirs > 0) {
-    for ($b = 0; $b < $countDeletedDirs; $b++) {
-        foreach ($readTag['deletedDir'] as $k => $v) {
-            $dirPhRow['td.' . $k] = $v[$b];
-        }
-        $dirPhRow['td.rowDir'] = $dirPhRow['td.styledName'] . ' ' . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.attributes']
-        ;
-
-        $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
-    }
-}
 #########################        FILES         #########################
 $filePhRow = array();
 // count the name, because new file (without ID) is also being read.
@@ -87,19 +67,6 @@ for ($b = 0; $b < $countRowFileName; $b++) {
     }
     
     $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_file_tpl'), $filePhRow);
-}
-
-// deleted file
-$filePhRow = array();
-$countDeletedFiles = count($readTag['deletedFile']['id']);
-if ($countDeletedFiles > 0) {
-    for ($b = 0; $b < $countDeletedFiles; $b++) {
-        foreach ($readTag['deletedFile'] as $k => $v) {
-            $filePhRow['td.' . $k] = $v[$b];
-        }
-        $filePhRow['td.rowFile'] = $filePhRow['td.styledName'] . ' ' . $filePhRow['td.fid'] . ' ' . $filePhRow['td.attributes'];
-        $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_file_tpl'), $filePhRow);
-    }
 }
 
 ob_start();
