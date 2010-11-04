@@ -58,8 +58,8 @@ class E2gMod extends E2gPub {
         $blankIndex = $this->e2gModCfg['blank_index'];
         $e2gPages = $this->e2gModCfg['e2gPages'];
 //        $gdir = $this->e2gModCfg['gdir'];
-        $gdir = $this->e2gModCfg['dir'];
-        $rootDir = $gdir;
+        $gdir = $this->e2gModCfg['gdir'];
+        $rootDir = $this->e2gModCfg['dir'];
 
         $getPathArray = $this->_getPath($parentId, NULL, 'array');
         $path = array();
@@ -77,7 +77,6 @@ class E2gMod extends E2gPub {
             $path['string'] = implode('/', $getPathArray) . '/';
             $gdir .= $path['string'];
         } elseif (isset($_GET['path'])) {
-            $path['string'] = '';
             $getPath = str_replace('../', '', $_GET['path']);
             $pathArray = explode('/', $getPath);
             foreach ($pathArray as $v) {
@@ -107,7 +106,7 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'upload_all':
-                if (!$this->_uploadAll($gdir, $_POST, $_FILES)) {
+                if (!$this->_uploadAll($_POST, $_FILES)) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 } else {
                     if ($_POST['gotofolder'] == 'gothere') {
@@ -522,7 +521,7 @@ class E2gMod extends E2gPub {
         $lng = $this->lng;
 
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->_validFolder($path))
+        if (!$this->_validFolder($path) || empty($path))
             return $res;
         $fs = array();
         $fs = glob($path . '*');
@@ -607,7 +606,7 @@ class E2gMod extends E2gPub {
         $e2g = $this->e2g;
         $lng = $this->lng;
 
-        if (!$this->_validFolder($path)) {
+        if (empty($path) || !$this->_validFolder($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['invalid_folder'] . ' : ' . $path;
             return FALSE;
         }
@@ -648,7 +647,7 @@ class E2gMod extends E2gPub {
                 . 'WHERE cat_id=' . $id
         );
 
-        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['dir_added'] . ' : ' . $path;
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['dir_added'] . ' : ' . str_replace('../', '', $path);
 
         // invoke the plugin
         $this->_plugin('OnE2GFolderAdd', array('gid' => $id, 'foldername' => $name));
@@ -1174,6 +1173,9 @@ class E2gMod extends E2gPub {
     /**
      * to check the existance of filename/folder in the file system.<br />
      * if exists, this will add numbering into the uploaded files.
+     * @param string    $name   name
+     * @param int       $pid    parent's ID
+     * @return string   new name if duplicate exists
      */
     private function _singleFile($name, $pid) {
         $modx = $this->modx;
@@ -1478,30 +1480,23 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * @author Schoschie (nh t ngin dott de)
-     * @link http://www.php.net/manual/en/features.file-upload.errors.php#90522
-     * @param   int     $error_code
+     * @author Jeff Miner mrjminer AT gmail DOT com
+     * @link http://www.php.net/manual/en/features.file-upload.errors.php#99304
+     * @param   int     $errorCode      Error code in number
      * @return  string  The error message
      */
-    private function _fileUploadErrorMessage($error_code) {
-        switch ($error_code) {
-            case UPLOAD_ERR_INI_SIZE:
-                return 'The uploaded file exceeds the upload_max_filesize directive in php.ini';
-            case UPLOAD_ERR_FORM_SIZE:
-                return 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form';
-            case UPLOAD_ERR_PARTIAL:
-                return 'The uploaded file was only partially uploaded';
-            case UPLOAD_ERR_NO_FILE:
-                return 'No file was uploaded';
-            case UPLOAD_ERR_NO_TMP_DIR:
-                return 'Missing a temporary folder';
-            case UPLOAD_ERR_CANT_WRITE:
-                return 'Failed to write file to disk';
-            case UPLOAD_ERR_EXTENSION:
-                return 'File upload stopped by extension';
-            default:
-                return 'Unknown upload error';
-        }
+    private function _fileUploadErrorMessage($errorCode) {
+        $errorType = array(
+            1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',
+            'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form.',
+            'The uploaded file was only partially uploaded.',
+            'No file was uploaded.',
+            6 => 'Missing a temporary folder.',
+            'Failed to write file to disk.',
+            'A PHP extension stopped the file upload.'
+        );
+       $errorMessage = $errorType[$errorCode];
+       return $errorMessage;
     }
 
     /**
@@ -1680,32 +1675,41 @@ class E2gMod extends E2gPub {
      * @param   string  $files  file's or zipfile's object
      * @return  mixed   FALSE on failure or return report string on succeed
      */
-    private function _uploadAll($gdir, $post, $files) {
+    private function _uploadAll($post, $files) {
         $modx = $this->modx;
         $e2g = $this->e2g;
         $lng = $this->lng;
-//        $gdir = $this->e2gModCfg['gdir'];
         $newParent = !empty($post['newparent']) ? $post['newparent'] : 1;
 
-        if (empty($files['img']['tmp_name'][0]) && empty($files['zip']['tmp_name'][0])) {
+        if (empty($files['img']['name'][0]) && empty($files['zip']['name'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . $lng['upload_empty'];
             return FALSE;
         }
-
+        $error = 0;
         // CREATE PATH
-//        $path = $this->_getPath($newParent);
-//        $gdir .= $path;
+        $path = $this->_getPath($newParent);
+        $newParentPath .= $e2g['dir'].$path;
         // UPLOAD IMAGES
         if (!empty($files['img']['tmp_name'][0])) {
             $j = 0;
             $countFiles = count($files['img']['tmp_name']);
             for ($i = 0; $i < $countFiles; $i++) {
+                if ($files['img']['error'][$i] !== 0) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : img error # '
+                            . $files['img']['error'][$i] . $lng['upload_err'] . ' : '
+                            . $this->_fileUploadErrorMessage($files['img']['error'][$i])
+                            . ' => ' . $files['img']['name'][$i]
+                    ;
+                    $error++;
+                    continue;
+                }
+                
                 if (!is_uploaded_file($files['img']['tmp_name'][$i])) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' ' . $files['img']['name'][$i];
                     continue;
                 }
                 if (!preg_match('/^image\//i', $files['img']['type'][$i])) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['type_err'] . ' ' . $files['img']['type'][$i];
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['type_err'] . ' ' . $files['img']['type'][$i] . ' => ' . $files['img']['name'][$i];
                     continue;
                 }
 
@@ -1741,10 +1745,10 @@ class E2gMod extends E2gPub {
                     continue;
                 }
 
-                if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->_e2gDecode($gdir . $filteredName))) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . '../' . $this->_e2gDecode($gdir . $filteredName);
+                if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->_e2gDecode($newParentPath . $filteredName))) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . '../' . $this->_e2gDecode($newParentPath . $filteredName);
                 }
-                $this->_changeModOwnGrp('file', '../' . $this->_e2gDecode($gdir . $filteredName), FALSE);
+                $this->_changeModOwnGrp('file', '../' . $this->_e2gDecode($newParentPath . $filteredName), FALSE);
 
                 // invoke the plugin
                 $this->_plugin('OnE2GFileUpload', array(
@@ -1755,17 +1759,24 @@ class E2gMod extends E2gPub {
 
                 $j++;
             } // for ($i = 0; $i < $countFiles; $i++)
-            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $j . ' ' . $lng['files_uploaded'] . '.';
+            if ($error > 0)
+                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $j . ' ' . $lng['files_uploaded'] . '.';
         } // Upload images
         // UPLOAD ZIP
-        if ($files['zip']['error'] == 0 && $files['zip']['size'] > 0) {
-            if (!$err = $this->_unzip(
-                            realpath($files['zip']['tmp_name'])
-                            , realpath(MODX_BASE_PATH . $this->_e2gDecode($gdir))
-                    )
-            ) {
+        if ($files['zip']['size'] > 0) {
+            if ($files['zip']['error'] !== 0) {
+                    $error++;
+                $_SESSION['easy2err'][] = __LINE__ . ' : zip error # '
+                        . $files['zip']['error'] . $lng['upload_err'] . ' : '
+                        . $this->_fileUploadErrorMessage($files['zip']['error'])
+                        . ' => ' . $files['zip']['name']
+                        ;
+                return FALSE;
+            }
+            $unzip = $this->_unzip(realpath($files['zip']['tmp_name']), realpath(MODX_BASE_PATH . $this->_e2gDecode($newParentPath)));
+            if (!$unzip) {
                 $_SESSION['easy2err'][] = __LINE__ . ' <span class="warning"><b>' . $lng['upload_err']
-                        . ($err === 0 ? 'Missing zip library (php_zip.dll / zip.so)' : '') . '</b></span><br /><br />';
+                        . ($unzip === 0 ? 'Missing zip library (php_zip.dll / zip.so)' : '') . '</b></span><br /><br />';
             }
 
             @unlink($files['zip']['tmp_name']);
@@ -1778,7 +1789,7 @@ class E2gMod extends E2gPub {
 
             // invoke the plugin
             $this->_plugin('OnE2GZipUpload', array(
-                'path' => realpath(MODX_BASE_PATH . $this->_e2gDecode($gdir))
+                'path' => realpath(MODX_BASE_PATH . $this->_e2gDecode($newParentPath))
             ));
         }
         return TRUE;
@@ -2628,11 +2639,11 @@ class E2gMod extends E2gPub {
             $dirPath = str_replace('../', '', $this->_e2gDecode($get['dir_path']));
             $res = $this->_deleteAll('../' . $dirPath . '/');
         }
-        if (count($ids) > 0 && count($res['e']) == 0) {
+        if (count($ids) > 0 && count($res['e']) === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_deleted'] : $lng['dirs_deleted']);
         } elseif (count($ids) > 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_delete_fdb'] : $lng['dirs_delete_fdb']);
-        } elseif (count($res['e']) == 0) {
+        } elseif (count($res['e']) === 0 && $res['d'] > 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_delete_fhdd'] : $lng['dirs_delete_fhdd']);
         } else {
             if (!empty($res['e']))
@@ -2665,7 +2676,7 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-        // the numeric keys are the member of the database
+        // the numeric key is the member of the database
         if (is_numeric($get['file_id'])) {
             $fileName = $this->_getFileInfo($get['file_id'], 'filename');
             $deleteRecord = mysql_query('DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . $get['file_id']);
@@ -2678,9 +2689,9 @@ class E2gMod extends E2gPub {
         }
         if ($deleteRecord && $deletePhysical) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete'] . ' : ' . $fileName;
-        } elseif ($deleteRecord) {
+        } elseif (empty($get['file_path']) && $deleteRecord) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete_fdb'] . ' : ' . $fileName;
-        } elseif ($deletePhysical) {
+        } elseif (empty($get['file_id']) && $deletePhysical) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete_fhdd'] . ' : ' . $baseName;
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_delete_err'] . ' : ' . $filePath;
@@ -4377,7 +4388,7 @@ class E2gMod extends E2gPub {
                     if (!isset($_GET['path'])) {
                         // Checkbox
                         $dirCheckBox = '
-                <input name="dir[' . $dirId . ']" value="' . rawurldecode($dirPath) . '" type="checkbox" style="border:0;padding:0" />
+                <input name="dir[' . $dirId . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                 ';
                     }
                     if ($mdirs[$dirName]['cat_visible'] == '1') {
@@ -4416,17 +4427,24 @@ class E2gMod extends E2gPub {
                 } // if (isset($mdirs[$dirName]))
                 else {
                     /**
-                     * Exist dir in file system, but has not yet inserted into database
+                     * Existing dir in file system, but has not yet inserted into database
                      */
-                    if (!isset($_GET['path'])) {
+                    if (isset($_GET['path'])) {
                         // Checkbox
                         $dirCheckBox = '
-                    <input name="dir[d' . $rowNum . ']" value="' . rawurldecode($dirPath) . '" type="checkbox" style="border:0;padding:0" />
+                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
+                    ';
+                    }
+                    if (isset($_GET['path']) && isset($pid) || $pid === 1) {
+                        // Checkbox
+                        $dirCheckBox = '
+                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                     ';
                         // add dir
                         $dirButtons .= $this->_actionButton('add_dir', array(
                                     'act' => 'add_dir'
-                                    , 'dir_path' => $dirPath
+                                    , 'dir_path' => $dirPathRawUrlEncoded
+                                    , 'pid' => $pid
                                 ));
                     }
                     $dirTime = date($this->e2g['mod_date_format'], filemtime($dirPath));
@@ -4444,7 +4462,7 @@ class E2gMod extends E2gPub {
                 if (!empty($dirId)) {
                     $dirButtons .= $this->_actionButton('delete_dir', array(
                                 'act' => 'delete_dir'
-                                , 'dir_path' => $dirPath
+                                , 'dir_path' => $dirPathRawUrlEncoded
                                 , 'dir_id' => $dirId
                                     )
                                     , 'onclick="return confirmDeleteFolder();"'
@@ -4452,7 +4470,7 @@ class E2gMod extends E2gPub {
                 } else {
                     $dirButtons .= $this->_actionButton('delete_dir', array(
                                 'act' => 'delete_dir'
-                                , 'dir_path' => $dirPath
+                                , 'dir_path' => $dirPathRawUrlEncoded
                                     )
                                     , 'onclick="return confirmDeleteFolder();"'
                     );
@@ -4689,7 +4707,6 @@ class E2gMod extends E2gPub {
                             'act' => 'delete_file'
                             , 'pid' => $pid
                             , 'file_path' => $filePathRawUrlEncoded
-                            , 'file_id' => $fileId
                                 )
                                 , 'onclick="return confirmDelete();"'
                 );
@@ -4948,9 +4965,9 @@ class E2gMod extends E2gPub {
             $row['file']['rowClass'][] = $rowClass[$rowNum % 2];
             $filePath = $gdir . $this->_getPath($l['dir_id']);
             $fileNameUrlDecodeFilename = urldecode($l['filename']);
-            $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode( $filePath . $l['filename']));
+            $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($filePath . $l['filename']));
 
-            if (!file_exists( '../' . $filePath . $l['filename'])) {
+            if (!file_exists('../' . $filePath . $l['filename'])) {
                 $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -5238,8 +5255,6 @@ class E2gMod extends E2gPub {
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" width="16" height="16"'
                     . ' alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" border="0" />';
         }
-
-
 
         // images
         if ($buttonName == 'hide_file') {
