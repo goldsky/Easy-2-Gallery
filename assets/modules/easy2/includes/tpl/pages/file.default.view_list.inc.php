@@ -34,7 +34,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     $dirPhRow['td.rowDir'] = '<a href="' . $dirPhRow['td.href'] . '">'
             . $dirPhRow['td.styledName']
             . '</a> '
-            . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.attributes']
+            . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
     ;
 
     $galPh['td.fileDefaultTableContent'] .= $this->_filler($this->_getTpl('file_default_table_row_dir_tpl'), $dirPhRow);

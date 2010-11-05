@@ -4865,7 +4865,7 @@ class E2gMod extends E2gPub {
             $row['dir']['title'][] = ( trim($l['cat_alias']) != '' ? $l['cat_alias'] : $l['cat_name']);
             $row['dir']['tagLinks'][] = $this->_createTagLinks($l['cat_tag']);
             $row['dir']['time'][] = $this->_getTime($l['date_added'], $l['last_modified'], $dirPath . $l['cat_name']);
-            $row['dir']['count'][] = $this->_countFiles($dirPath . $l['cat_name']);
+            $row['dir']['count'][] = $this->_countFiles( '../' . $dirPath . $l['cat_name']);
 
             $dirStyledName = $l['cat_name']; // will be overridden for styling below
             $dirCheckBox = '';

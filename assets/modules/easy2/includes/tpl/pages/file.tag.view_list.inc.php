@@ -36,7 +36,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     $dirPhRow['td.rowDir'] = '<a href="' . $dirPhRow['td.href'] . '">'
             . $dirPhRow['td.styledName']
             . '</a> '
-            . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.attributes']
+            . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
     ;
 
     $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
@@ -65,7 +65,7 @@ for ($b = 0; $b < $countRowFileName; $b++) {
                 <div class="imPreview" id="rowPreview_' . $filePhRow['td.rowNum'] . '" style="display:none;"></div>
 ';
     }
-    
+
     $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_file_tpl'), $filePhRow);
 }
 
