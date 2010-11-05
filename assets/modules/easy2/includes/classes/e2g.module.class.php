@@ -1112,7 +1112,7 @@ class E2gMod extends E2gPub {
                 }
                 $fileIds = array();
                 while ($l = mysql_fetch_row($querySelectFiles)) {
-                    $fileIds[] = $l[1];
+                    $fileIds[] = $l[0];
                 }
                 mysql_free_result($querySelectFiles);
 
