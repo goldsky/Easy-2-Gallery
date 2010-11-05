@@ -106,6 +106,7 @@ $e2g_lang['english'] = array (
     'dir_created' => 'New folder was created',
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',
+    'dirs_delete_fdb' => 'folders have been removed from DB',
     'dir_delete_fhdd' => 'folder has been removed from hd',
     'dirs_delete_fhdd' => 'folders have been removed from hd',
     'dir_deleted' => 'folder has been deleted',
