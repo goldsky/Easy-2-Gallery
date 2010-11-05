@@ -29,7 +29,7 @@ mysql_free_result($resultdesc);
             // signature of non recorded directory is an additional &path parameter in the address bar
             // otherwise then it's a recorded one.
             if (!isset($_GET['path'])) {
-                echo $this->_actionButton('edit_dir', array(
+                echo $this->_actionIcon('edit_dir', array(
                     'page' => 'edit_dir'
                     , 'dir_id' => $parentId
                 )); } ?>
