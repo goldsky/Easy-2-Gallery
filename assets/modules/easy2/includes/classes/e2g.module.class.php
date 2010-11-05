@@ -2637,7 +2637,7 @@ class E2gMod extends E2gPub {
         }
         if (!empty($get['dir_path'])) {
             $dirPath = str_replace('../', '', $this->_e2gDecode($get['dir_path']));
-            $res = $this->_deleteAll('../' . $dirPath . '/');
+            $res = $this->_deleteAll(realpath('../' . $dirPath . '/'));
         }
         if (count($ids) > 0 && count($res['e']) === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_deleted'] : $lng['dirs_deleted']);
@@ -2670,31 +2670,59 @@ class E2gMod extends E2gPub {
     private function _deleteFile($get) {
         $modx = $this->modx;
         $lng = $this->lng;
+        $e2g = $this->e2g;
 
         if (empty($get['file_id']) && empty($get['file_path'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['fpath_err'];
             return FALSE;
         }
 
+        if (!empty($get['file_id']) && !empty($get['file_path'])) {
+            $fileName = $this->_getFileInfo($get['file_id'], 'filename');
+            $dirId = $this->_getFileInfo($get['file_id'], 'dir_id');
+            $dirPath = $this->_getPath($dirId);
+            if ($e2g['dir'] . $dirPath . $fileName != $get['file_path']) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['fpath_err'];
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $dirPath . '/' . $fileName . ' != ' . $get['file_path'];
+                return FALSE;
+            }
+        }
+
+        $res = array('db' => 0, 'fs' => 0, 'dber' => 0, 'fser' => 0);
         // the numeric key is the member of the database
         if (is_numeric($get['file_id'])) {
             $fileName = $this->_getFileInfo($get['file_id'], 'filename');
-            $deleteRecord = mysql_query('DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . $get['file_id']);
-            mysql_query('DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments WHERE file_id=' . $get['file_id']);
+            $deleteFile = 'DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . $get['file_id'];
+            $queryDeleteFile = mysql_query($deleteFile);
+            if (!$queryDeleteFile) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFile;
+                $res['dber']++;
+            } else {
+                mysql_query('DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments WHERE file_id=' . $get['file_id']);
+                $res['db']++;
+            }
         }
+        // for non-database member
         if (!empty($get['file_path'])) {
             $baseName = $this->_basenameSafe($get['file_path']);
             $filePath = str_replace('../', '', $this->_e2gDecode($get['file_path']));
             $deletePhysical = @unlink('../' . $filePath);
+            if (!$deletePhysical) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : #' . $lng['file_delete_err'] . ' : ' . $filePath;
+                $res['fser']++;
+            } else {
+                $res['fs']++;
+            }
         }
-        if ($deleteRecord && $deletePhysical) {
-            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete'] . ' : ' . $fileName;
-        } elseif (empty($get['file_path']) && $deleteRecord) {
+
+        if ($res['dber'] > 0 && $res['fser'] > 0) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_delete_err'] . ' : ' . $filePath;
+        } elseif ($res['db'] > 0 && $res['fs'] === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete_fdb'] . ' : ' . $fileName;
-        } elseif (empty($get['file_id']) && $deletePhysical) {
+        } elseif ($res['db'] === 0 && $res['fs'] > 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete_fhdd'] . ' : ' . $baseName;
         } else {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_delete_err'] . ' : ' . $filePath;
+            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['file_delete'] . ' : ' . $fileName;
         }
 
         // invoke the plugin
@@ -4706,10 +4734,10 @@ class E2gMod extends E2gPub {
                 $fileButtons .= $this->_actionButton('delete_file', array(
                             'act' => 'delete_file'
                             , 'pid' => $pid
+                            , 'file_id' => $fileId
                             , 'file_path' => $filePathRawUrlEncoded
                                 )
-                                , 'onclick="return confirmDelete();"'
-                );
+                                , 'onclick="return confirmDelete();"');
 
                 $row['file']['rowNum'][] = $rowNum;
                 $row['file']['rowClass'][] = $rowClass[$rowNum % 2];
@@ -4762,8 +4790,7 @@ class E2gMod extends E2gPub {
                     $row['deletedFile']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
                     $row['deletedFile']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
                     $row['deletedFile']['attributeIcons'][] = '
-                <a href="' . $index . '&amp;act=delete_file&amp;file_path=' . $filePathRawUrlEncoded
-                            . (empty($fileId) ? '' : '&amp;file_id=' . $fileId) . '"
+                <a href="' . $index . '&amp;act=delete_file&amp;file_id=' . $fileId . '"
                    onclick="return confirmDelete();">
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
                          alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
@@ -4778,6 +4805,7 @@ class E2gMod extends E2gPub {
                     $deletedFileButtons .= $this->_actionButton('delete_file', array(
                                 'act' => 'delete_file'
                                 , 'file_id' => $v['id']
+                                , 'pid' => $pid
                                     )
                                     , 'onclick="return confirmDelete();"'
                     );
@@ -4974,8 +5002,7 @@ class E2gMod extends E2gPub {
                 $fileStyledName = '<b style="color:red;"><u>' . $l['filename'] . '</u></b>';
                 $fileAttributes = '<i>(' . $lng['deleted'] . ')</i>';
                 $fileAttributeIcons = '
-                <a href="' . $index . '&amp;act=delete_file&amp;file_path=' . $filePathRawUrlEncoded
-                        . '&amp;file_id=' . $l['id'] . '"
+                <a href="' . $index . '&amp;act=delete_file&amp;file_id=' . $l['id'] . '"
                    onclick="return confirmDelete();">
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
                          alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
