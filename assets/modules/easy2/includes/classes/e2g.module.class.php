@@ -4556,21 +4556,15 @@ class E2gMod extends E2gPub {
                     $row['deletedDir']['count'][] = intval("0");
                     $row['deletedDir']['link'][] = '<b style="color:red;"><u>' . $v['name'] . '</u></b>';
                     $row['deletedDir']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
-                    $row['deletedDir']['attributeIcons'][] = '
-                    <a href="' . $index . '&amp;act=delete_dir&amp;dir_id=' . $v['id'] . '"
-                       onclick="return confirmDeleteFolder();">
-                        <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
-                             alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
-                    </a>
-                    ';
+                    $row['deletedDir']['attributeIcons'][] = '';
+                    
                     $row['deletedDir']['href'][] = '';
 
-                    $row['deletedDir']['buttons'][] = '
-                    <a href="' . $index . '&amp;act=delete_dir&amp;dir_id=' . $v['id'] . '"
-                       onclick="return confirmDeleteFolder();">
-                        <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
-                             alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
-                    </a>';
+                    $row['deletedDir']['buttons'][] = $this->_actionButton('delete_dir', array(
+                                    'act' => 'delete_dir'
+                                    , 'dir_id' => $v['id']
+                                    , 'pid' => $pid
+                                ), 'onclick="return confirmDeleteFolder();"');
                     $row['deletedDir']['icon'][] = '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png"
                         width="16" height="16" border="0" alt="" />
@@ -4789,28 +4783,15 @@ class E2gMod extends E2gPub {
                     $row['deletedFile']['pathRawUrlEncoded'][] = str_replace('%2F', '/', rawurlencode($gdir . $v['filename']));
                     $row['deletedFile']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
                     $row['deletedFile']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
-                    $row['deletedFile']['attributeIcons'][] = '
-                <a href="' . $index . '&amp;act=delete_file&amp;file_id=' . $fileId . '"
-                   onclick="return confirmDelete();">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
-                         alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
-                </a>
-                    ';
-                    $deletedFileButtons = $this->_actionButton('comments', array(
-                                'page' => 'comments'
-                                , 'file_id' => $v['id']
-                                , 'pid' => $pid
-                                    )
-                    );
-                    $deletedFileButtons .= $this->_actionButton('delete_file', array(
+                    $row['deletedFile']['attributeIcons'][] = '';
+                    
+                    $row['deletedFile']['buttons'][] = $this->_actionButton('delete_file', array(
                                 'act' => 'delete_file'
                                 , 'file_id' => $v['id']
                                 , 'pid' => $pid
                                     )
                                     , 'onclick="return confirmDelete();"'
                     );
-
-                    $row['deletedFile']['buttons'][] = $deletedFileButtons;
                     $row['deletedFile']['icon'][] = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
