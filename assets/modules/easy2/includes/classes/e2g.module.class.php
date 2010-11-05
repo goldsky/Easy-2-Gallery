@@ -1759,7 +1759,7 @@ class E2gMod extends E2gPub {
 
                 $j++;
             } // for ($i = 0; $i < $countFiles; $i++)
-            if ($error > 0)
+            if ($error === 0)
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $j . ' ' . $lng['files_uploaded'] . '.';
         } // Upload images
         // UPLOAD ZIP
@@ -4423,7 +4423,7 @@ class E2gMod extends E2gPub {
                         $dirStyledName = '<b>' . $dirName . '</b>';
 //                        $dirLink = '<a href="' . $index . '&amp;pid=' . $mdirs[$dirName]['id'] . '">' . $dirStyledName . '</a>';
                         $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
-                        $dirButtons = $this->_actionButton('hide_dir', array(
+                        $dirButtons = $this->_actionIcon('hide_dir', array(
                                     'act' => 'hide_dir'
                                     , 'dir_id' => $dirId
                                     , 'pid' => $pid
@@ -4438,14 +4438,14 @@ class E2gMod extends E2gPub {
                 </a>
                 ';
                         $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
-                        $dirButtons = $this->_actionButton('show_dir', array(
+                        $dirButtons = $this->_actionIcon('show_dir', array(
                                     'act' => 'show_dir'
                                     , 'dir_id' => $dirId
                                     , 'pid' => $pid
                                 ));
                     }
                     // edit dir
-                    $dirButtons .= $this->_actionButton('edit_dir', array(
+                    $dirButtons .= $this->_actionIcon('edit_dir', array(
                                 'page' => 'edit_dir'
                                 , 'dir_id' => $dirId
                                 , 'pid' => $pid
@@ -4469,7 +4469,7 @@ class E2gMod extends E2gPub {
                     <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                     ';
                         // add dir
-                        $dirButtons .= $this->_actionButton('add_dir', array(
+                        $dirButtons .= $this->_actionIcon('add_dir', array(
                                     'act' => 'add_dir'
                                     , 'dir_path' => $dirPathRawUrlEncoded
                                     , 'pid' => $pid
@@ -4488,7 +4488,7 @@ class E2gMod extends E2gPub {
                 }
 
                 if (!empty($dirId)) {
-                    $dirButtons .= $this->_actionButton('delete_dir', array(
+                    $dirButtons .= $this->_actionIcon('delete_dir', array(
                                 'act' => 'delete_dir'
                                 , 'dir_path' => $dirPathRawUrlEncoded
                                 , 'dir_id' => $dirId
@@ -4496,7 +4496,7 @@ class E2gMod extends E2gPub {
                                     , 'onclick="return confirmDeleteFolder();"'
                     );
                 } else {
-                    $dirButtons .= $this->_actionButton('delete_dir', array(
+                    $dirButtons .= $this->_actionIcon('delete_dir', array(
                                 'act' => 'delete_dir'
                                 , 'dir_path' => $dirPathRawUrlEncoded
                                     )
@@ -4560,7 +4560,7 @@ class E2gMod extends E2gPub {
                     
                     $row['deletedDir']['href'][] = '';
 
-                    $row['deletedDir']['buttons'][] = $this->_actionButton('delete_dir', array(
+                    $row['deletedDir']['buttons'][] = $this->_actionIcon('delete_dir', array(
                                     'act' => 'delete_dir'
                                     , 'dir_id' => $v['id']
                                     , 'pid' => $pid
@@ -4660,7 +4660,7 @@ class E2gMod extends E2gPub {
                     $fileTime = $this->_getTime($mfiles[$filename]['date_added'], $mfiles[$filename]['last_modified'], $filePath);
 
                     if ($mfiles[$filename]['status'] == '1') {
-                        $fileButtons = $this->_actionButton('hide_file', array(
+                        $fileButtons = $this->_actionIcon('hide_file', array(
                                     'act' => 'hide_file'
                                     , 'file_id' => $fileId
                                     , 'pid' => $pid
@@ -4674,19 +4674,19 @@ class E2gMod extends E2gPub {
                         width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
                 </a>
                 ';
-                        $fileButtons = $this->_actionButton('show_file', array(
+                        $fileButtons = $this->_actionIcon('show_file', array(
                                     'act' => 'show_file'
                                     , 'file_id' => $fileId
                                     , 'pid' => $pid
                                 ));
                     }
-                    $fileButtons .= $this->_actionButton('comments', array(
+                    $fileButtons .= $this->_actionIcon('comments', array(
                                 'page' => 'comments'
                                 , 'file_id' => $fileId
                                 , 'pid' => $pid
                             ));
 
-                    $fileButtons .= $this->_actionButton('edit_file', array(
+                    $fileButtons .= $this->_actionIcon('edit_file', array(
                                 'page' => 'edit_file'
                                 , 'file_id' => $fileId
                                 , 'pid' => $pid
@@ -4713,7 +4713,7 @@ class E2gMod extends E2gPub {
                     $fileAttributeIcons = '';
                     if (empty($path['string'])) {
                         // add file
-                        $fileButtons .= $this->_actionButton('add_file', array(
+                        $fileButtons .= $this->_actionIcon('add_file', array(
                                     'act' => 'add_file'
                                     , 'file_path' => $filePathRawUrlEncoded
                                     , 'pid' => $pid
@@ -4725,7 +4725,7 @@ class E2gMod extends E2gPub {
                     list($width, $height) = @getimagesize($filePath);
                 }
 
-                $fileButtons .= $this->_actionButton('delete_file', array(
+                $fileButtons .= $this->_actionIcon('delete_file', array(
                             'act' => 'delete_file'
                             , 'pid' => $pid
                             , 'file_id' => $fileId
@@ -4785,7 +4785,7 @@ class E2gMod extends E2gPub {
                     $row['deletedFile']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
                     $row['deletedFile']['attributeIcons'][] = '';
                     
-                    $row['deletedFile']['buttons'][] = $this->_actionButton('delete_file', array(
+                    $row['deletedFile']['buttons'][] = $this->_actionIcon('delete_file', array(
                                 'act' => 'delete_file'
                                 , 'file_id' => $v['id']
                                 , 'pid' => $pid
@@ -4880,7 +4880,7 @@ class E2gMod extends E2gPub {
 
             if ($l['cat_visible'] == '1') {
                 $dirStyledName = '<b>' . $l['cat_name'] . '</b>';
-                $dirButtons = $this->_actionButton('hide_dir', array(
+                $dirButtons = $this->_actionIcon('hide_dir', array(
                             'act' => 'hide_dir'
                             , 'dir_id' => $l['cat_id']
                             , 'pid' => $l['parent_id']
@@ -4892,19 +4892,19 @@ class E2gMod extends E2gPub {
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
                 </a>
                 ';
-                $dirButtons = $this->_actionButton('show_dir', array(
+                $dirButtons = $this->_actionIcon('show_dir', array(
                             'act' => 'show_dir'
                             , 'dir_id' => $l['cat_id']
                             , 'pid' => $l['parent_id']
                         ));
             }
 
-            $dirButtons .= $this->_actionButton('edit_dir', array(
+            $dirButtons .= $this->_actionIcon('edit_dir', array(
                         'page' => 'edit_dir'
                         , 'dir_id' => $l['cat_id']
                         , 'tag' => $tag
                     ));
-            $dirButtons .= $this->_actionButton('delete_dir', array(
+            $dirButtons .= $this->_actionIcon('delete_dir', array(
                         'act' => 'delete_dir'
                         , 'dir_path' => $dirPath . $l['cat_name']
                         , 'dir_id' => $l['cat_id']
@@ -4982,16 +4982,9 @@ class E2gMod extends E2gPub {
                 ';
                 $fileStyledName = '<b style="color:red;"><u>' . $l['filename'] . '</u></b>';
                 $fileAttributes = '<i>(' . $lng['deleted'] . ')</i>';
-                $fileAttributeIcons = '
-                <a href="' . $index . '&amp;act=delete_file&amp;file_id=' . $l['id'] . '"
-                   onclick="return confirmDelete();">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/delete.png" border="0"
-                         alt="' . $lng['delete'] . '" title="' . $lng['delete'] . '" />
-                </a>
-                    ';
             } else {
                 if ($l['status'] == '1') {
-                    $fileButtons = $this->_actionButton('hide_file', array(
+                    $fileButtons = $this->_actionIcon('hide_file', array(
                                 'act' => 'hide_file'
                                 , 'file_id' => $l['id']
                                 , 'tag' => $tag
@@ -4999,12 +4992,12 @@ class E2gMod extends E2gPub {
                 } else {
                     $fileStyledName = '<i>' . $l['filename'] . '</i>';
                     $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                    $fileAttributeIcons = '
-                    <a href="' . $index . '&amp;act=show_file&amp;file_id=' . $l['id'] . '&amp;pid=' . $l['dir_id'] . '">
-                        <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
-                    </a>
-                    ';
-                    $fileButtons = $this->_actionButton('show_file', array(
+                    $fileAttributeIcons = $this->_actionIcon('show_file', array(
+                                'act' => 'show_file'
+                                , 'file_id' => $l['id']
+                                , 'tag' => $tag
+                            ));
+                    $fileButtons = $this->_actionIcon('show_file', array(
                                 'act' => 'show_file'
                                 , 'file_id' => $l['id']
                                 , 'tag' => $tag
@@ -5012,19 +5005,19 @@ class E2gMod extends E2gPub {
                 }
             }
 
-            $fileButtons .= $this->_actionButton('comments', array(
+            $fileButtons .= $this->_actionIcon('comments', array(
                         'page' => 'comments'
                         , 'file_id' => $l['id']
                         , 'tag' => $tag
                     ));
 
-            $fileButtons .= $this->_actionButton('edit_file', array(
+            $fileButtons .= $this->_actionIcon('edit_file', array(
                         'page' => 'edit_file'
                         , 'file_id' => $l['id']
                         , 'tag' => $tag
                     ));
 
-            $fileButtons .= $this->_actionButton('delete_file', array(
+            $fileButtons .= $this->_actionIcon('delete_file', array(
                         'act' => 'delete_file'
                         , 'pid' => $l['dir_id']
                         , 'file_path' => $filePathRawUrlEncoded
@@ -5222,7 +5215,7 @@ class E2gMod extends E2gPub {
      * @param string    $attributes     additional space for styles, onclick event, or anything else.
      * @return string   The button's hyperlink and image.
      */
-    private function _actionButton($buttonName, $getParams=array(), $attributes=NULL) {
+    private function _actionIcon($buttonName, $getParams=array(), $attributes=NULL) {
         $index = $this->e2gModCfg['index'];
         $lng = $this->lng;
 
