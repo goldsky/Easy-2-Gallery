@@ -4656,7 +4656,7 @@ class E2gMod extends E2gPub {
                     if (!isset($_GET['path'])) {
                         // Checkbox
                         $fileCheckBox = '
-                <input name="im[' . $fileId . ']" value="im[' . $fileId . ']" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fileId . ']" value="' . $filePathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                 ';
                     }
                     $tag = $mfiles[$filename]['tag'];
