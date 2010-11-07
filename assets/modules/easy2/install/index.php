@@ -553,6 +553,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `last_modified` DATETIME NULL DEFAULT NULL,
                         `modified_by` TINYINT(4) NULL DEFAULT NULL,
                         `cat_visible` TINYINT(4) NOT NULL DEFAULT \'1\',
+                        `cat_redirect_link` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`cat_id`),
                         INDEX `cat_left` (`cat_left`)
                         ) TYPE=MyISAM';
@@ -652,6 +653,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     addField('easy2_dirs', 'added_by', 'TINYINT(4) UNSIGNED NULL DEFAULT NULL', 'AFTER date_added');
     // modified_by
     addField('easy2_dirs', 'modified_by', 'TINYINT(4) NULL DEFAULT NULL', 'AFTER last_modified');
+    // cat_redirect_link
+    addField('easy2_dirs', 'cat_redirect_link', 'VARCHAR(255) NULL DEFAULT NULL', 'AFTER modified_by');
     #******************************************
     # ENDS UPDATING DIR TABLE FOR 1.4.0 RC-2 **
     #******************************************
@@ -770,6 +773,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `modified_by` TINYINT(4) NULL DEFAULT NULL,
                         `comments` INT(10) UNSIGNED NOT NULL DEFAULT \'0\',
                         `status` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'1\',
+                        `redirect_link` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`id`)
                         ) TYPE=MyISAM';
         if (!mysql_query($createFileTable)) {
@@ -815,6 +819,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     addField('easy2_files', 'width', 'INT(10) UNSIGNED NULL DEFAULT NULL', 'AFTER size');
     // additional field height
     addField('easy2_files', 'height', 'INT(10) UNSIGNED NULL DEFAULT NULL', 'AFTER width');
+    // additional redirect_link
+    addField('easy2_files', 'redirect_link', 'VARCHAR(255) NULL DEFAULT NULL', 'AFTER status');
     #********************************************
     # ENDS UPDATING FILES TABLE FOR 1.4.0 RC-2 **
     #********************************************
@@ -832,7 +838,6 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                     . $lngi['upgraded'];
         }
     }
-
 
     // adding ignore IP table for 1.4.0 Beta4
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_ignoredip'])) {

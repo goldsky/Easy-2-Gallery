@@ -51,7 +51,7 @@ class E2gMod extends E2gPub {
         $modx = $this->modx;
         $lng = $this->lng;
         $e2gDebug = $this->e2gModCfg['e2g_debug'];
-        $parentId = $this->e2gModCfg['parent_id'];
+        $parentId = isset($parentId) ? $parentId : $this->e2gModCfg['parent_id'];
         $_a = $this->e2gModCfg['_a'];
         $_i = $this->e2gModCfg['_i'];
         $index = $this->e2gModCfg['index'];
@@ -177,27 +177,27 @@ class E2gMod extends E2gPub {
 
             // Move files/folders to the new folder
             case 'move_checked':
-                if (!$this->_moveChecked($_POST)) {
+                if ($this->_moveChecked($_POST) === FALSE) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     exit();
                 }
-
-                $this->_cleanCache();
                 /**
                  * REDIRECT PAGE TO THE SELECTED OPTION
                  */
-                if (($_POST['gotofolder'] == 'gothere')) {
+                $parentId = $_POST['newparent'];
+                if ($_POST['gotofolder'] == 'gothere') {
                     header('Location: ' . html_entity_decode(
                                     MODX_MANAGER_URL
                                     . 'index.php?'
                                     . 'a=' . $_a
                                     . '&amp;id=' . $_i
                                     . '&amp;e2gpg=2'
-                                    . '&amp;pid=' . $_POST['newparent']
+                                    . '&amp;pid=' . $parentId
                     ));
                 } else {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 }
+                $this->_cleanCache();
 
                 exit();
                 break;
@@ -2191,7 +2191,10 @@ class E2gMod extends E2gPub {
             if ($res['dfp'][0] == 0 && $res['ddb'][0] == 0) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dirs_delete_err'];
             } elseif ($res['dfp'][0] == $res['ddb'][0]) {
-                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['dfp'][0] . ' ' . $lng['dirs_deleted'] . '.';
+                if ($res['ddb'][0] === 1)
+                    $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['dfp'][0] . ' ' . $lng['dir_deleted'] . '.';
+                else
+                    $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['dfp'][0] . ' ' . $lng['dirs_deleted'] . '.';
             } else {
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['ddb'][0] . ' ' . $lng['dirs_deleted_fdb'] . '.';
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['dfp'][0] . ' ' . $lng['dirs_deleted_fhdd'] . '.';
@@ -2635,11 +2638,13 @@ class E2gMod extends E2gPub {
             mysql_query('DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                     . 'WHERE dir_id IN(' . implode(',', $ids) . ')');
         }
+
         if (!empty($get['dir_path'])) {
             $dirPath = str_replace('../', '', $this->_e2gDecode($get['dir_path']));
             $res = $this->_deleteAll(realpath('../' . $dirPath . '/'));
         }
-        if (count($ids) > 0 && count($res['e']) === 0) {
+        
+        if ($ids !== FALSE && count($res['e']) === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_deleted'] : $lng['dirs_deleted']);
         } elseif (count($ids) > 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_delete_fdb'] : $lng['dirs_delete_fdb']);
@@ -3799,6 +3804,7 @@ class E2gMod extends E2gPub {
                 . ', cat_description = \'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\''
                 . ', modified_by=\'' . $modx->getLoginUserID() . '\' '
                 . ', last_modified=NOW() '
+                . ', cat_redirect_link = \'' . htmlspecialchars(trim($post['cat_redirect_link']), ENT_QUOTES) . '\''
                 . 'WHERE cat_id=' . $post['cat_id'];
         $queryUpdateDir = mysql_query($updateDir);
         if (!$queryUpdateDir) {
@@ -3868,6 +3874,7 @@ class E2gMod extends E2gPub {
                 . ', description = \'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\''
                 . ', modified_by=\'' . $modx->getLoginUserID() . '\' '
                 . ', last_modified=NOW() '
+                . ', redirect_link = \'' . htmlspecialchars(trim($post['redirect_link']), ENT_QUOTES) . '\''
                 . 'WHERE id=' . $post['file_id'];
         $queryUpdateFile = mysql_query($updateFile);
         if (!$queryUpdateFile) {
@@ -4668,12 +4675,11 @@ class E2gMod extends E2gPub {
                     } else {
                         $fileStyledName = '<i>' . $filename . '</i>';
                         $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                        $fileAttributeIcons = '
-                <a href="' . $index . '&amp;act=show_file&amp;file_id=' . $fileId . '&amp;pid=' . $pid . '">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png"
-                        width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
-                </a>
-                ';
+                        $fileAttributeIcons = $this->_actionIcon('show_file', array(
+                                    'act' => 'show_file'
+                                    , 'file_id' => $fileId
+                                    , 'pid' => $pid
+                                ));
                         $fileButtons = $this->_actionIcon('show_file', array(
                                     'act' => 'show_file'
                                     , 'file_id' => $fileId
@@ -5204,8 +5210,8 @@ class E2gMod extends E2gPub {
      * @param   string  $text       text to be cropped
      * @return  string  shorthened text
      */
-    private function _cropName($charSet, $nameLen, $text) {
-        return parent::cropName($charSet, $nameLen, $text);
+    private function _cropName($mbstring, $charSet, $nameLen, $text) {
+        return parent::cropName($mbstring, $charSet, $nameLen, $text);
     }
 
     /**

@@ -96,22 +96,29 @@
 }
 
 .e2gpnums a {
+    text-decoration:none;
     background:#F4F4F4;
     border:1px solid #E8E8E8;
     color:gray;
 }
 
 .e2gpnums a:hover {
-    background:#B3EC6C;
-    border:1px solid #83D71C;
+    background: black;
+    border:1px solid #E8E8E8;
     color:white;
-    text-decoration:none;
 }
 
 .e2gpnums a,
-.e2gpnums b {
+.e2gpnums b,
+.e2gpnums .disabled {
     padding:3px 6px;
     line-height:2em;
+}
+
+.e2gpnums .disabled {
+    color: #BFBFBF;
+    background:#EFEFEF;
+    border:1px solid #E8E8E8;
 }
 
 /* Content */

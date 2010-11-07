@@ -1,8 +1,5 @@
 <?php
 $e2g_lang['english'] = array (
-    'mod_tpl_table' => 'Table template',
-    'mod_tpl_table_row_dir' => 'Table row template for dirs',
-    'mod_tpl_table_row_file' => 'Table row template for files',
     '_thumb_err' => 'Could not create folder &quot;_thumbnails&quot;',
     'actions' => 'Actions',
     'add' => 'Add',
@@ -10,11 +7,21 @@ $e2g_lang['english'] = array (
     'alias' => 'Alias',
     'all' => 'All',
     'and' => 'and',
-    'new' => 'New',
-    'numeric_err' => 'The value is not a numeric',
     'approve' => 'Approve',
     'approve_not' => 'Unapprove',
     'approved' => 'Approved',
+
+    'pagination_adjacents_cfg' => 'Pagination adjacents',
+    'pagination_adjacents_cfg_desc' => 'Number of pagination adjacents, in integer',
+    'pagination_spread_cfg' => 'Pagination\'s middle spread',
+    'pagination_spread_cfg_desc' => 'Number of pagination spread, in integer',
+    'pagination_text_previous_cfg' => 'Text for \'previous\'',
+    'pagination_text_previous_cfg_desc' => 'The text for previous\'s link, in string',
+    'pagination_text_next_cfg' => 'Text for \'next\'',
+    'pagination_text_next_cfg_desc' => 'The text for next\'s link, in string',
+    'pagination_splitter_cfg' => 'Pagination splitter',
+    'pagination_splitter_cfg_desc' => 'The splitter between the hidden pages, in string',
+
     'approved_not' => 'Unapproved',
     'archive' => 'Archive zip',
     'asc' => 'asc',
@@ -73,8 +80,8 @@ $e2g_lang['english'] = array (
     'copy' => 'Copy',
     'credit_lang_file' => 'Language file credit',
     'credit_lang_file_author' => 'Cx2, Temus, goldsky',
-    'credit_lang_file_date' => 'October 6, 2010',
-    'credit_lang_file_version' => '2.1',
+    'credit_lang_file_date' => 'November 7, 2010',
+    'credit_lang_file_version' => '2.2',
     'crumbs_separator_cfg' => 'Separator between the crumbs',
     'crumbs_separator_cfg_desc' => 'Pick any character, including the [space]',
     'crumbs_showAsLinks_cfg' => 'Crumb as a link',
@@ -106,9 +113,7 @@ $e2g_lang['english'] = array (
     'dir_created' => 'New folder was created',
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',
-    'dirs_delete_fdb' => 'folders have been removed from DB',
     'dir_delete_fhdd' => 'folder has been removed from hd',
-    'dirs_delete_fhdd' => 'folders have been removed from hd',
     'dir_deleted' => 'folder has been deleted',
     'dir_hidden_inverse_err' => 'Folder has already been hidden',
     'dir_hidden_suc' => 'Folder has been hidden',
@@ -125,6 +130,8 @@ $e2g_lang['english'] = array (
     'dir_updated_suc' => 'Folder has been updated',
     'dirs' => 'folders',
     'dirs_delete_err' => 'Could not delete folders',
+    'dirs_delete_fdb' => 'folders have been removed from DB',
+    'dirs_delete_fhdd' => 'folders have been removed from hd',
     'dirs_deleted' => 'folders have been deleted',
     'dirs_deleted_fdb' => 'folders have been removed from DB',
     'dirs_deleted_fhdd' => 'folders have been removed from HD',
@@ -257,7 +264,7 @@ $e2g_lang['english'] = array (
 &lt;ul&gt;
 &lt;li&gt;[field][,comma][operator][,comma][value]&lt;/li&gt;
 &lt;li&gt;They can have multiple clauses by using &#039;AND&#039; and/or &#039;OR&#039;&lt;/li&gt;
-&lt;li&gt;The Operator have to be a string, as following:          
+&lt;li&gt;The Operator have to be a string, as following:           
 &lt;ul&gt;
 &lt;li&gt;&quot;NULL safe equal&quot; =&amp;gt; &#039;&amp;lt;=&amp;gt;&#039;&lt;/li&gt;
 &lt;li&gt;&quot;equal&quot; =&amp;gt; &#039;=&#039;&lt;/li&gt;
@@ -313,6 +320,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;crumbs_classCurrent &lt;/strong&gt;- CSS classname for the current crumb&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;back_class&lt;/strong&gt;- CSS classname for the back button&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;pagenum_class&lt;/strong&gt;- CSS classname for the pagination&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;use_redirect_link &lt;/strong&gt;- redirecting the thumbnails to the specified link from the dir&#039;s/file&#039;s information.&lt;br /&gt;Redirect link will &lt;strong&gt;ONLY&lt;/strong&gt; be used if the snippet calls &lt;strong&gt;&amp;amp;use_redirect_link=`1`&lt;/strong&gt; and the database is not empty.&lt;br /&gt;Empty content will make the links fall back to the original E2G&#039;s link.&lt;br /&gt;[~any_modx_doc_id~] is also a valid input.&lt;/p&gt;
 &lt;hr /&gt;
 &lt;h2&gt;Landing Page&lt;/h2&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;landingpage&lt;/strong&gt; - set the slideshow&#039;s/thumbnail&#039;s  landing page.&lt;/p&gt;
@@ -383,7 +391,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                             
+&lt;li&gt;galleriffic                              
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -391,7 +399,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                             
+&lt;li&gt;smoothgallery                              
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -405,7 +413,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                             
+&lt;li&gt;galleryview                              
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -415,7 +423,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                             
+&lt;li&gt;contentflow                              
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -525,8 +533,8 @@ $e2g_lang['english'] = array (
     'info_system' => 'System Info',
     'inner' => 'inner',
     'install' => 'Install',
-    'invalid_folder' => 'Folder path\'s is invalid',
-    'invalid_file' => 'File path\'s is invalid',
+    'invalid_file' => 'File path&#039;s is invalid',
+    'invalid_folder' => 'Folder path&#039;s is invalid',
     'invisible' => 'Invisible',
     'invoke_event_err' => 'Error when invoking an event',
     'ip_address' => 'IP Address',
@@ -543,6 +551,7 @@ $e2g_lang['english'] = array (
     'left' => 'left',
     'limit' => 'Pictures per page',
     'limit_cfg_desc' => 'Thumbnails per page',
+    'list' => 'List',
     'magic_quote' => 'Magic Quotes',
     'magic_quote_disabling' => 'Try to disable it from .htaccess or php.ini',
     'megabytes' => 'MB',
@@ -551,10 +560,14 @@ $e2g_lang['english'] = array (
     'mgr_files' => 'Files Manager',
     'mgr_plugins' => 'Plugins Manager',
     'mgr_users' => 'Users Manager',
-    'snip_options' => 'Snippet&#039;s Options',
-    'mod_options' => 'Module&#039;s Options',
     'mod_date_format' => 'Date Format',
     'mod_date_format_cfg_desc' => 'PHP date format',
+    'mod_options' => 'Module&#039;s Options',
+    'mod_tpl_table' => 'Table template',
+    'mod_tpl_table_row_dir' => 'Table row template for dirs',
+    'mod_tpl_table_row_file' => 'Table row template for files',
+    'mod_view' => 'Module Views',
+    'mod_view_cfg_desc' => 'Default view for file&#039;s page',
     'modified' => 'Modified',
     'move' => 'Move',
     'movetofolder' => 'Move to folder',
@@ -568,8 +581,10 @@ $e2g_lang['english'] = array (
     'nav_prevSymbol_cfg_desc' => 'Text or html image tag link for previous navigation symbol',
     'nav_upSymbol_cfg' => 'Text or image tag',
     'nav_upSymbol_cfg_desc' => 'Text or html image tag link for upper navigation symbol',
+    'new' => 'New',
     'no' => 'no',
     'none' => 'none',
+    'numeric_err' => 'The value is not a numeric',
     'object_id' => 'ID',
     'off' => 'Off',
     'on' => 'On',
@@ -599,6 +614,7 @@ $e2g_lang['english'] = array (
     'recaptcha_key_public_desc' => '&lt;p&gt;This is used in the JavaScript code that is served to your users&lt;/p&gt;',
     'recommended' => 'recommended',
     'red' => 'Red',
+    'redirect_link' => 'Redirect link',
     'remove' => 'Remove',
     'required' => 'required',
     'reset' => 'Reset',
@@ -633,6 +649,7 @@ $e2g_lang['english'] = array (
     'slideshow_update_err' => 'Could not update slideshow',
     'slideshow_update_suc' => 'Updated the slideshow',
     'slideshows' => 'Slideshows',
+    'snip_options' => 'Snippet&#039;s Options',
     'spam' => 'Spam',
     'ss_allowedratio_cfg' => 'Allowed image&#039;s ratio',
     'ss_allowedratio_cfg_desc' => '&lt;p&gt;Allowed images with the range ( minimum-maximum, in float number ) of the specified width/height dimension ratio to be selected (e.g.: 0.75-1.25). This is useful for filtering landscape/portrait images. Input &lt;strong&gt;&#039;all&#039;&lt;/strong&gt; to allow all.&lt;/p&gt;',
@@ -676,6 +693,7 @@ $e2g_lang['english'] = array (
     'thq' => 'Compression level',
     'thq_cfg_desc' => '&lt;p&gt;Level of jpeg compression of thumbnails from 0 to 100, without %.&lt;/p&gt;',
     'thumb' => 'thumbnail',
+    'thumbnails' => 'Thumbnails',
     'tinymce_path' => 'Tiny MCE path',
     'tinymce_path_desc' => 'Path to tiny_mce.js file',
     'title' => 'Title',
@@ -686,13 +704,13 @@ $e2g_lang['english'] = array (
     'tpl_css_path_cfg_desc' => 'Path to CSS file',
     'tpl_jsdisabled' => 'JS disabled tpl',
     'tpl_lp' => 'Landing page tpl',
-    'tpl_slideshow' => 'Slideshow tpl',
     'tpl_lp_cmt' => 'Landingpage&#039;s comment tpl',
     'tpl_lp_cmt_path_cfg_desc' => 'Chunk name or path to landingpage&#039;s comment tpl file',
     'tpl_lp_cmt_row' => 'Landingpage&#039;s comment row tpl',
     'tpl_lp_css' => 'Landing page CSS',
     'tpl_lp_path_cfg_desc' => '&lt;p&gt;chunk name or path to template file of a single landing page&lt;/p&gt;',
     'tpl_path_cfg_desc' => 'Chunk name or path to tpl file',
+    'tpl_slideshow' => 'Slideshow tpl',
     'translation' => 'Translation',
     'type' => 'Type',
     'type_err' => 'Restricted type of file',
@@ -757,10 +775,6 @@ $e2g_lang['english'] = array (
     'viewer_headers' => 'headers',
     'viewer_update_err' => 'Could not update the viewer',
     'viewer_update_suc' => 'Updated the viewer',
-    'mod_view' => 'Module Views',
-    'mod_view_cfg_desc' => 'View selection for file list on module',
-    'list' => 'List',
-    'thumbnails' => 'Thumbnails',
     'visible' => 'Visible',
     'w' => 'Width',
     'w_cfg_desc' => '&lt;p&gt;Max width in pixels, larger images will be resized automatically.&lt;strong&gt; 0 - no limit&lt;/strong&gt;.&lt;/p&gt;',
@@ -773,7 +787,7 @@ $e2g_lang['english'] = array (
     'watermark_verpos' => 'Vertical position',
     'watermark_verpos_cfg_desc' => 'vertical position of watermark',
     'watermarks' => 'Watermarks',
-    'webgroup_save_err_empty_params' => 'Could not save web group, empty group IDs, object\'s type, or object\'s ID',
+    'webgroup_save_err_empty_params' => '&lt;p&gt;Could not save web group, empty group IDs, object&#039;s type, or object&#039;s ID&lt;/p&gt;',
     'white' => 'White',
     'withselected' => 'With selected',
     'yes' => 'yes',

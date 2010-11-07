@@ -61,10 +61,8 @@ if (!isset($_GET['path'])) {
                 <?php echo $this->_folderOptions(0); ?>
             </select>
             <span><?php echo $lng['and']; ?></span>
-            <select name="gotofolder">
-                <option value="gothere"><?php echo $lng['go_there']; ?></option>
-                <option value="stayhere"><?php echo $lng['stay_here']; ?></option>
-            </select>
+            <input type="radio" name="gotofolder" value="gothere" checked="checked"/><?php echo $lng['go_there']; ?>
+            <input type="radio" name="gotofolder" value="stayhere" /><?php echo $lng['stay_here']; ?>
             <a name="move" href="javascript:;" onclick="submitform(7)">
                 <img src="<?php echo  MODX_MANAGER_URL ; ?>media/style/MODxCarbon/images/icons/sort.png" alt="" />
                 <span><?php echo $lng['go']; ?></span>

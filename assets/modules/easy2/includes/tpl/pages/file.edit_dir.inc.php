@@ -95,6 +95,13 @@ echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
                         </ul><?php } ?>
                     </td>
                 </tr>
+                <tr>
+                    <td valign="top"><b><?php echo $lng['redirect_link']; ?></b></td>
+                    <td valign="top"><b>:</b></td>
+                    <td>
+                        <input name="cat_redirect_link" type="text" value="<?php echo $row['cat_redirect_link']; ?>" size="95" />
+                    </td>
+                </tr>
             </table>
         </div>
     </div><?php echo $this->_plugin('OnE2GFolderEditFormRender'); ?>

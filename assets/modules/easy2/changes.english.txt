@@ -14,6 +14,31 @@
 + Sliced the snippet's pagination to be shorter
 + Changed the &crumbs_use option values: 'foldername' => 'cat_name' | 'alias' => 'cat_alias'
 + Renamed the file's 'name' field to be 'alias' to distinct the term with filename
++ New parameters :
+  + For manual templates:
+      + &glib=`0`           : will disable all the gallery's headers loading.
+      + &autoload_css=`0`   : will disable the gallery's CSS headers loading.
+      + &autoload_js=`0`    : will disable the gallery's JS headers loading.
+      + &autoload_html=`0`  : will disable the gallery's HTML block headers loading.
+  + &use_redirect_link:
+    The thumbnails (directories or images) now can be redirected to a specified link that has been set from inside Module.
+    Empty content will make the links fall back to the original E2G's link.
++ Deprecated parameters :
+  - &pagenum_class
+    Specified the class directly on the template
+  - &back_class
+    Specified the class directly on the template
+
+SOMETHING MAY BREAK ON UPGRADING:
++ Custom Slideshow:
+  This version now stores the slideshows parameters inside a method.
+  The usage should be changed just like this:
+  + To get all the slideshow parameters: $ssParams = $this->_getSlideShowParams();
+  + To gel all the slideshow files     : $ssFiles = $this->_getSlideShowFiles();
++ Directory's link:
+  since now the E2G's thumbnails can be redirected to a specified link, the template's placeholder has been changed:
+  old: <a href="[+easy2:link+][+easy2:cat_id+][+easy2:cat_tag+]#[+easy2:permalink+]">
+  new: <a href="[+easy2:link+]">
 
 ********** 1.4.0-Release Candidate 3 **********
 + Bug fixings on the converted variables

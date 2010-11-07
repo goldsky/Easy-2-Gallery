@@ -166,381 +166,464 @@ if (IN_MANAGER_MODE != 'true')
                 </tr>
             </table>
         </div>
-        <div class="tab-page" id="tabThumbnailsSettings">
+        <div class="tab-page" id="tabThumbnailSettings">
             <h2 class="tab"><?php echo $lng['settings_thumb']; ?></h2>
             <script type="text/javascript">
-                tpConfig.addTabPage( document.getElementById( 'tabThumbnailsSettings') );
+                tpConfig.addTabPage( document.getElementById( 'tabThumbnailSettings') );
             </script>
-            <table cellspacing="0" cellpadding="2" width="100%">
-                <tr>
-                    <td colspan="2"><b class="success" style="font-size:120%"><?php echo $lng['mod_options']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
-                    <td><input name="mod_w" type="text" value="<?php echo $e2g['mod_w']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['h']; ?>:</b></td>
-                    <td><input name="mod_h" type="text" value="<?php echo $e2g['mod_h']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['thq']; ?>:</b></td>
-                    <td><input name="mod_thq" type="text" value="<?php echo $e2g['mod_thq']; ?>" size="3" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['resize_type']; ?>:</b></td>
-                    <td>
-                        <select name="mod_resize_type">
-                            <option value="inner"<?php echo ($e2g['mod_resize_type'] == 'inner' ? ' selected="selected"' : ''); ?>><?php echo $lng['inner']; ?></option>
-                            <option value="shrink"<?php echo ($e2g['mod_resize_type'] == 'shrink' ? ' selected="selected"' : ''); ?>><?php echo $lng['shrink']; ?></option>
-                            <option value="resize"<?php echo ($e2g['mod_resize_type'] == 'resize' ? ' selected="selected"' : ''); ?>><?php echo $lng['resize']; ?></option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
-                    <td>
-                        R: <input name="mod_thbg_red" type="text" value="<?php echo $e2g['mod_thbg_red']; ?>" size="3" />
-                        G: <input name="mod_thbg_green" type="text" value="<?php echo $e2g['mod_thbg_green']; ?>" size="3" />
-                        B: <input name="mod_thbg_blue" type="text" value="<?php echo $e2g['mod_thbg_blue']; ?>" size="3" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['snip_options']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['h']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;h=</span> <input name="h" type="text" value="<?php echo $e2g['h']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['thq']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['resize_type']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;resize_type=</span>
-                        <select name="resize_type">
-                            <option value="inner"<?php echo ($e2g['resize_type'] == 'inner' ? ' selected="selected"' : ''); ?>><?php echo $lng['inner']; ?></option>
-                            <option value="shrink"<?php echo ($e2g['resize_type'] == 'shrink' ? ' selected="selected"' : ''); ?>><?php echo $lng['shrink']; ?></option>
-                            <option value="resize"<?php echo ($e2g['resize_type'] == 'resize' ? ' selected="selected"' : ''); ?>><?php echo $lng['resize']; ?></option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?>
-                        <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/img/e2g_resize_proportions.png" alt="e2g_resize_proportions.png" />
-                    </td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
-                    <td>
-                        R: <span style="color:green;">&amp;thbg_red=</span> <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3" />
-                        G: <span style="color:green;">&amp;thbg_green=</span> <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3" />
-                        B: <span style="color:green;">&amp;thbg_blue=</span> <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['glib']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;glib=</span> <select name="glib">
-                            <?php
-                            $selectGlibs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_viewers ';
 
-                            $glibs = $modx->db->makeArray($modx->db->query($selectGlibs));
+            <div class="tab-pane" id="tabThumbnailConfigPane">
+                <script type="text/javascript">
+                    tpThumbnailConfig = new WebFXTabPane(document.getElementById('tabThumbnailConfigPane'));
+                </script>
+                <div class="tab-page" id="tabModOptionSettings">
+                    <h2 class="tab"><?php echo $lng['mod_options']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabModOptionSettings') );
+                    </script>
 
-                            foreach ($glibs as $k => $v) {
-                                $jsLibs[$v['name']] = $v;
-                            }
-                            $glibs = array();
-                            unset($glibs);
-                            foreach ($jsLibs as $k => $v) {
-                                echo '<option value="' . $k . '"' . (($v['glib'] == $k) ? ' selected="selected"' : '') . '>' . $k . ' (' . $v['alias'] . ')</option>';
-                            }
-                            ?>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['glib_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['grid']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;grid=</span> <input type="radio" name="grid" value="css" <?php echo ($e2g['grid'] == 'css' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['css']; ?>
-                        <input type="radio" name="grid" value="table" <?php echo ($e2g['grid'] == 'table' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['table']; ?> <br />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['grid_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['settings_display']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['name_len']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;name_len=</span> <input name="name_len" type="text" value="<?php echo $e2g['name_len']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['name_len_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['cat_name_len']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;cat_name_len=</span> <input name="cat_name_len" type="text" value="<?php echo $e2g['cat_name_len']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['cat_name_len_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['colls']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;colls=</span> <input name="colls" type="text" value="<?php echo $e2g['colls']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['colls_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['limit']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;limit=</span> <input name="limit" type="text" value="<?php echo $e2g['limit']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['limit_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['order']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;orderby=</span>
-                        <select size="1" name="orderby">
-                            <option value="date_added"<?php echo ($e2g['orderby'] == 'date_added' ? ' selected="selected"' : ''); ?>>date_added (<?php echo $lng['date_added']; ?>)</option>
-                            <option value="last_modified"<?php echo ($e2g['orderby'] == 'last_modified' ? ' selected="selected"' : ''); ?>>last_modified (<?php echo $lng['last_modified']; ?>)</option>
-                            <option value="comments"<?php echo ($e2g['orderby'] == 'comments' ? ' selected="selected"' : ''); ?>>comments (<?php echo $lng['comments_cnt']; ?>)</option>
-                            <option value="filename"<?php echo ($e2g['orderby'] == 'filename' ? ' selected="selected"' : ''); ?>>filename (<?php echo $lng['filename']; ?>)</option>
-                            <option value="alias"<?php echo ($e2g['orderby'] == 'alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias']; ?>)</option>
-                            <option value="random"<?php echo ($e2g['orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
-                        </select>
-                        <span style="color:green;">&amp;order=</span>
-                        <select size="1" name="order">
-                            <option value="ASC"<?php echo ($e2g['order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
-                            <option value="DESC"<?php echo ($e2g['order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['order_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['order2']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;cat_orderby=</span>
-                        <select size="1" name="cat_orderby">
-                            <option value="cat_id"<?php echo ($e2g['cat_id'] == 'cat_id' ? ' selected="selected"' : ''); ?>>cat_id (<?php echo $lng['cat_id']; ?>)</option>
-                            <option value="cat_name"<?php echo ($e2g['cat_name'] == 'cat_name' ? ' selected="selected"' : ''); ?>>cat_name (<?php echo $lng['dir_name']; ?>)</option>
-                            <option value="cat_alias"<?php echo ($e2g['cat_alias'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>cat_alias (<?php echo $lng['alias']; ?>)</option>
-                            <option value="random"<?php echo ($e2g['cat_orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
-                        </select>
-                        <span style="color:green;">&amp;cat_order=</span>
-                        <select size="1" name="cat_order">
-                            <option value="ASC"<?php echo ($e2g['cat_order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
-                            <option value="DESC"<?php echo ($e2g['cat_order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['order2_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['cat_thumb_order_cfg']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;cat_thumb_orderby=</span>
-                        <select size="1" name="cat_thumb_orderby">
-                            <option value="date_added"<?php echo ($e2g['cat_thumb_orderby'] == 'date_added' ? ' selected="selected"' : ''); ?>>date_added (<?php echo $lng['date_added']; ?>)</option>
-                            <option value="last_modified"<?php echo ($e2g['cat_thumb_orderby'] == 'last_modified' ? ' selected="selected"' : ''); ?>>last_modified (<?php echo $lng['last_modified']; ?>)</option>
-                            <option value="comments"<?php echo ($e2g['cat_thumb_orderby'] == 'comments' ? ' selected="selected"' : ''); ?>>comments (<?php echo $lng['comments_cnt']; ?>)</option>
-                            <option value="filename"<?php echo ($e2g['cat_thumb_orderby'] == 'filename' ? ' selected="selected"' : ''); ?>>filename (<?php echo $lng['filename']; ?>)</option>
-                            <option value="name"<?php echo ($e2g['cat_thumb_orderby'] == 'name' ? ' selected="selected"' : ''); ?>>name (<?php echo $lng['name']; ?>)</option>
-                            <option value="random"<?php echo ($e2g['cat_thumb_orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
-                        </select>
-                        <span style="color:green;">&amp;cat_thumb_order=</span>
-                        <select size="1" name="cat_thumb_order">
-                            <option value="ASC"<?php echo ($e2g['cat_thumb_order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
-                            <option value="DESC"<?php echo ($e2g['cat_thumb_order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['cat_thumb_order_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['settings_crumbs']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['enable']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;crumbs= 0 | 1</span>
-                        <input name="crumbs" type="radio" value="0"<?php echo ($e2g['crumbs'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="crumbs" type="radio" value="1"<?php echo ($e2g['crumbs'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['use']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;crumbs_use=</span>
-                        <select size="1" name="crumbs_use">
-                            <option value="cat_name"<?php echo ($e2g['crumbs_use'] == 'cat_name' ? ' selected="selected"' : ''); ?>>foldername (<?php echo $lng['dir_name']; ?>)</option>
-                            <option value="cat_alias"<?php echo ($e2g['crumbs_use'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias'] . ' / ' . $lng['title']; ?>)</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_usage_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['crumbs_separator_cfg']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;crumbs_separator=</span> <input name="crumbs_separator" type="text" value="<?php echo $e2g['crumbs_separator']; ?>" size="4" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_separator_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['crumbs_showAsLinks_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;crumbs_showAsLinks= 0 | 1</span>
-                        <input name="crumbs_showAsLinks" type="radio" value="0"<?php echo ($e2g['crumbs_showAsLinks'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="crumbs_showAsLinks" type="radio" value="1"<?php echo ($e2g['crumbs_showAsLinks'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showAsLinks_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['crumbs_showHome_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;crumbs_showHome= 0 | 1</span>
-                        <input name="crumbs_showHome" type="radio" value="0"<?php echo ($e2g['crumbs_showHome'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="crumbs_showHome" type="radio" value="1"<?php echo ($e2g['crumbs_showHome'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showHome_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['crumbs_showCurrent_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;crumbs_showCurrent= 0 | 1</span>
-                        <input name="crumbs_showCurrent" type="radio" value="0"<?php echo ($e2g['crumbs_showCurrent'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="crumbs_showCurrent" type="radio" value="1"<?php echo ($e2g['crumbs_showCurrent'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showCurrent_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['crumbs_showPrevious_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;crumbs_showPrevious= 0 | 1</span>
-                        <input name="crumbs_showPrevious" type="radio" value="0"<?php echo ($e2g['crumbs_showPrevious'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="crumbs_showPrevious" type="radio" value="1"<?php echo ($e2g['crumbs_showPrevious'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showPrevious_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['settings_nav_prevUpNext']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['enable']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;nav_prevUpNext= 0 | 1</span>
-                        <input name="nav_prevUpNext" type="radio" value="0"<?php echo ($e2g['nav_prevUpNext'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="nav_prevUpNext" type="radio" value="1"<?php echo ($e2g['nav_prevUpNext'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['nav_prevSymbol_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;nav_prevSymbol=</span> <input name="nav_prevSymbol" type="text" value="<?php echo $e2g['nav_prevSymbol']; ?>" size="70" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_prevSymbol_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['nav_upSymbol_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;nav_upSymbol=</span> <input name="nav_upSymbol" type="text" value="<?php echo $e2g['nav_upSymbol']; ?>" size="70" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_upSymbol_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['nav_nextSymbol_cfg']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;nav_nextSymbol=</span> <input name="nav_nextSymbol" type="text" value="<?php echo $e2g['nav_nextSymbol']; ?>" size="70" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_nextSymbol_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['settings_pagination']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $lng['enable']; ?>:</b></td>
-                    <td>
-                        <span style="color:green;">&amp;pagination= 0 | 1</span>
-                        <input name="pagination" type="radio" value="0"<?php echo ($e2g['pagination'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['off']; ?></b>
-                        <input name="pagination" type="radio" value="1"<?php echo ($e2g['pagination'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
-                        <b><?php echo $lng['on']; ?></b>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
-                </tr>
-            </table>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
+                            <td><input name="mod_w" type="text" value="<?php echo $e2g['mod_w']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['h']; ?>:</b></td>
+                            <td><input name="mod_h" type="text" value="<?php echo $e2g['mod_h']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['thq']; ?>:</b></td>
+                            <td><input name="mod_thq" type="text" value="<?php echo $e2g['mod_thq']; ?>" size="3" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['resize_type']; ?>:</b></td>
+                            <td>
+                                <select name="mod_resize_type">
+                                    <option value="inner"<?php echo ($e2g['mod_resize_type'] == 'inner' ? ' selected="selected"' : ''); ?>><?php echo $lng['inner']; ?></option>
+                                    <option value="shrink"<?php echo ($e2g['mod_resize_type'] == 'shrink' ? ' selected="selected"' : ''); ?>><?php echo $lng['shrink']; ?></option>
+                                    <option value="resize"<?php echo ($e2g['mod_resize_type'] == 'resize' ? ' selected="selected"' : ''); ?>><?php echo $lng['resize']; ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
+                            <td>
+                                R: <input name="mod_thbg_red" type="text" value="<?php echo $e2g['mod_thbg_red']; ?>" size="3" />
+                                G: <input name="mod_thbg_green" type="text" value="<?php echo $e2g['mod_thbg_green']; ?>" size="3" />
+                                B: <input name="mod_thbg_blue" type="text" value="<?php echo $e2g['mod_thbg_blue']; ?>" size="3" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabSnipOptionSettings">
+                    <h2 class="tab"><?php echo $lng['snip_options']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabSnipOptionSettings') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['w']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;w=</span> <input name="w" type="text" value="<?php echo $e2g['w']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['w_thumb_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['h']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;h=</span> <input name="h" type="text" value="<?php echo $e2g['h']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['h_thumb_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['thq']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;thq=</span> <input name="thq" type="text" value="<?php echo $e2g['thq']; ?>" size="3" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['thq_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['resize_type']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;resize_type=</span>
+                                <select name="resize_type">
+                                    <option value="inner"<?php echo ($e2g['resize_type'] == 'inner' ? ' selected="selected"' : ''); ?>><?php echo $lng['inner']; ?></option>
+                                    <option value="shrink"<?php echo ($e2g['resize_type'] == 'shrink' ? ' selected="selected"' : ''); ?>><?php echo $lng['shrink']; ?></option>
+                                    <option value="resize"<?php echo ($e2g['resize_type'] == 'resize' ? ' selected="selected"' : ''); ?>><?php echo $lng['resize']; ?></option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['resize_type_cfg_desc']); ?>
+                                <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/img/e2g_resize_proportions.png" alt="e2g_resize_proportions.png" />
+                            </td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['thbg_rgb']; ?>:</b></td>
+                            <td>
+                                R: <span style="color:green;">&amp;thbg_red=</span> <input name="thbg_red" type="text" value="<?php echo $e2g['thbg_red']; ?>" size="3" />
+                                G: <span style="color:green;">&amp;thbg_green=</span> <input name="thbg_green" type="text" value="<?php echo $e2g['thbg_green']; ?>" size="3" />
+                                B: <span style="color:green;">&amp;thbg_blue=</span> <input name="thbg_blue" type="text" value="<?php echo $e2g['thbg_blue']; ?>" size="3" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['thbg_rgb_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['glib']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;glib=</span> <select name="glib">
+                                    <?php
+                                    $selectGlibs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_viewers ';
+
+                                    $glibs = $modx->db->makeArray($modx->db->query($selectGlibs));
+
+                                    foreach ($glibs as $k => $v) {
+                                        $jsLibs[$v['name']] = $v;
+                                    }
+                                    $glibs = array();
+                                    unset($glibs);
+                                    foreach ($jsLibs as $k => $v) {
+                                        echo '<option value="' . $k . '"' . (($v['glib'] == $k) ? ' selected="selected"' : '') . '>' . $k . ' (' . $v['alias'] . ')</option>';
+                                    }
+                                    ?>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['glib_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['grid']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;grid=</span> <input type="radio" name="grid" value="css" <?php echo ($e2g['grid'] == 'css' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['css']; ?>
+                                <input type="radio" name="grid" value="table" <?php echo ($e2g['grid'] == 'table' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['table']; ?> <br />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['grid_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabDisplayOptionSettings">
+                    <h2 class="tab"><?php echo $lng['settings_display']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabDisplayOptionSettings') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['name_len']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;name_len=</span> <input name="name_len" type="text" value="<?php echo $e2g['name_len']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['name_len_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['cat_name_len']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;cat_name_len=</span> <input name="cat_name_len" type="text" value="<?php echo $e2g['cat_name_len']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['cat_name_len_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['colls']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;colls=</span> <input name="colls" type="text" value="<?php echo $e2g['colls']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['colls_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['limit']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;limit=</span> <input name="limit" type="text" value="<?php echo $e2g['limit']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['limit_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['order']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;orderby=</span>
+                                <select size="1" name="orderby">
+                                    <option value="date_added"<?php echo ($e2g['orderby'] == 'date_added' ? ' selected="selected"' : ''); ?>>date_added (<?php echo $lng['date_added']; ?>)</option>
+                                    <option value="last_modified"<?php echo ($e2g['orderby'] == 'last_modified' ? ' selected="selected"' : ''); ?>>last_modified (<?php echo $lng['last_modified']; ?>)</option>
+                                    <option value="comments"<?php echo ($e2g['orderby'] == 'comments' ? ' selected="selected"' : ''); ?>>comments (<?php echo $lng['comments_cnt']; ?>)</option>
+                                    <option value="filename"<?php echo ($e2g['orderby'] == 'filename' ? ' selected="selected"' : ''); ?>>filename (<?php echo $lng['filename']; ?>)</option>
+                                    <option value="alias"<?php echo ($e2g['orderby'] == 'alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias']; ?>)</option>
+                                    <option value="random"<?php echo ($e2g['orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
+                                </select>
+                                <span style="color:green;">&amp;order=</span>
+                                <select size="1" name="order">
+                                    <option value="ASC"<?php echo ($e2g['order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
+                                    <option value="DESC"<?php echo ($e2g['order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['order_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['order2']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;cat_orderby=</span>
+                                <select size="1" name="cat_orderby">
+                                    <option value="cat_id"<?php echo ($e2g['cat_id'] == 'cat_id' ? ' selected="selected"' : ''); ?>>cat_id (<?php echo $lng['cat_id']; ?>)</option>
+                                    <option value="cat_name"<?php echo ($e2g['cat_name'] == 'cat_name' ? ' selected="selected"' : ''); ?>>cat_name (<?php echo $lng['dir_name']; ?>)</option>
+                                    <option value="cat_alias"<?php echo ($e2g['cat_alias'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>cat_alias (<?php echo $lng['alias']; ?>)</option>
+                                    <option value="random"<?php echo ($e2g['cat_orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
+                                </select>
+                                <span style="color:green;">&amp;cat_order=</span>
+                                <select size="1" name="cat_order">
+                                    <option value="ASC"<?php echo ($e2g['cat_order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
+                                    <option value="DESC"<?php echo ($e2g['cat_order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['order2_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['cat_thumb_order_cfg']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;cat_thumb_orderby=</span>
+                                <select size="1" name="cat_thumb_orderby">
+                                    <option value="date_added"<?php echo ($e2g['cat_thumb_orderby'] == 'date_added' ? ' selected="selected"' : ''); ?>>date_added (<?php echo $lng['date_added']; ?>)</option>
+                                    <option value="last_modified"<?php echo ($e2g['cat_thumb_orderby'] == 'last_modified' ? ' selected="selected"' : ''); ?>>last_modified (<?php echo $lng['last_modified']; ?>)</option>
+                                    <option value="comments"<?php echo ($e2g['cat_thumb_orderby'] == 'comments' ? ' selected="selected"' : ''); ?>>comments (<?php echo $lng['comments_cnt']; ?>)</option>
+                                    <option value="filename"<?php echo ($e2g['cat_thumb_orderby'] == 'filename' ? ' selected="selected"' : ''); ?>>filename (<?php echo $lng['filename']; ?>)</option>
+                                    <option value="name"<?php echo ($e2g['cat_thumb_orderby'] == 'name' ? ' selected="selected"' : ''); ?>>name (<?php echo $lng['name']; ?>)</option>
+                                    <option value="random"<?php echo ($e2g['cat_thumb_orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
+                                </select>
+                                <span style="color:green;">&amp;cat_thumb_order=</span>
+                                <select size="1" name="cat_thumb_order">
+                                    <option value="ASC"<?php echo ($e2g['cat_thumb_order'] == 'ASC' ? ' selected="selected"' : ''); ?>>ASC (<?php echo $lng['asc']; ?>)</option>
+                                    <option value="DESC"<?php echo ($e2g['cat_thumb_order'] == 'DESC' ? ' selected="selected"' : ''); ?>>DESC (<?php echo $lng['desc']; ?>)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['cat_thumb_order_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabCrumbOptionSettings">
+                    <h2 class="tab"><?php echo $lng['settings_crumbs']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabCrumbOptionSettings') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['enable']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;crumbs= 0 | 1</span>
+                                <input name="crumbs" type="radio" value="0"<?php echo ($e2g['crumbs'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs" type="radio" value="1"<?php echo ($e2g['crumbs'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['use']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;crumbs_use=</span>
+                                <select size="1" name="crumbs_use">
+                                    <option value="cat_name"<?php echo ($e2g['crumbs_use'] == 'cat_name' ? ' selected="selected"' : ''); ?>>foldername (<?php echo $lng['dir_name']; ?>)</option>
+                                    <option value="cat_alias"<?php echo ($e2g['crumbs_use'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>alias (<?php echo $lng['alias'] . ' / ' . $lng['title']; ?>)</option>
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_usage_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['crumbs_separator_cfg']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;crumbs_separator=</span> <input name="crumbs_separator" type="text" value="<?php echo $e2g['crumbs_separator']; ?>" size="4" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_separator_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['crumbs_showAsLinks_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;crumbs_showAsLinks= 0 | 1</span>
+                                <input name="crumbs_showAsLinks" type="radio" value="0"<?php echo ($e2g['crumbs_showAsLinks'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs_showAsLinks" type="radio" value="1"<?php echo ($e2g['crumbs_showAsLinks'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showAsLinks_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['crumbs_showHome_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;crumbs_showHome= 0 | 1</span>
+                                <input name="crumbs_showHome" type="radio" value="0"<?php echo ($e2g['crumbs_showHome'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs_showHome" type="radio" value="1"<?php echo ($e2g['crumbs_showHome'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showHome_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['crumbs_showCurrent_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;crumbs_showCurrent= 0 | 1</span>
+                                <input name="crumbs_showCurrent" type="radio" value="0"<?php echo ($e2g['crumbs_showCurrent'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs_showCurrent" type="radio" value="1"<?php echo ($e2g['crumbs_showCurrent'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showCurrent_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['crumbs_showPrevious_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;crumbs_showPrevious= 0 | 1</span>
+                                <input name="crumbs_showPrevious" type="radio" value="0"<?php echo ($e2g['crumbs_showPrevious'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="crumbs_showPrevious" type="radio" value="1"<?php echo ($e2g['crumbs_showPrevious'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['crumbs_showPrevious_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabPrevUpNextOptionSettings">
+                    <h2 class="tab"><?php echo $lng['settings_nav_prevUpNext']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabPrevUpNextOptionSettings') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['enable']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;nav_prevUpNext= 0 | 1</span>
+                                <input name="nav_prevUpNext" type="radio" value="0"<?php echo ($e2g['nav_prevUpNext'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="nav_prevUpNext" type="radio" value="1"<?php echo ($e2g['nav_prevUpNext'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['nav_prevSymbol_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;nav_prevSymbol=</span> <input name="nav_prevSymbol" type="text" value="<?php echo $e2g['nav_prevSymbol']; ?>" size="70" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_prevSymbol_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['nav_upSymbol_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;nav_upSymbol=</span> <input name="nav_upSymbol" type="text" value="<?php echo $e2g['nav_upSymbol']; ?>" size="70" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_upSymbol_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['nav_nextSymbol_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;nav_nextSymbol=</span> <input name="nav_nextSymbol" type="text" value="<?php echo $e2g['nav_nextSymbol']; ?>" size="70" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['nav_nextSymbol_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabPaginationOptionSettings">
+                    <h2 class="tab"><?php echo $lng['settings_pagination']; ?></h2>
+                    <script type="text/javascript">
+                        tpThumbnailConfig.addTabPage( document.getElementById( 'tabPaginationOptionSettings') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $lng['enable']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;pagination= 0 | 1</span>
+                                <input name="pagination" type="radio" value="0"<?php echo ($e2g['pagination'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['off']; ?></b>
+                                <input name="pagination" type="radio" value="1"<?php echo ($e2g['pagination'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['enable']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['pagination_adjacents_cfg']; ?>:</b></td>
+                            <td>
+                                <input name="pagination_adjacents" size="30" type="text" value="<?php echo $e2g['pagination_adjacents']; ?>" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['pagination_adjacents_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['pagination_spread_cfg']; ?>:</b></td>
+                            <td>
+                                <input name="pagination_spread" size="30" type="text" value="<?php echo $e2g['pagination_spread']; ?>" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['pagination_spread_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['pagination_text_previous_cfg']; ?>:</b></td>
+                            <td>
+                                <input name="pagination_text_previous" size="30" type="text" value="<?php echo $e2g['pagination_text_previous']; ?>" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['pagination_text_previous_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['pagination_text_next_cfg']; ?>:</b></td>
+                            <td>
+                                <input name="pagination_text_next" size="30" type="text" value="<?php echo $e2g['pagination_text_next']; ?>" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['pagination_text_next_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $lng['pagination_splitter_cfg']; ?>:</b></td>
+                            <td>
+                                <input name="pagination_splitter" size="30" type="text" value="<?php echo $e2g['pagination_splitter']; ?>" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($lng['pagination_splitter_cfg_desc']); ?></td>
+                        </tr>
+
+
+
+                    </table>
+                </div>
+            </div>
         </div>
         <div class="tab-page" id="tabSlideshowSettings">
             <h2 class="tab"><?php echo $lng['settings_slideshow']; ?></h2>
@@ -662,7 +745,7 @@ if (IN_MANAGER_MODE != 'true')
                 tpConfig.addTabPage( document.getElementById( 'tabTemplatesSettings') );
             </script>
             <table cellspacing="0" cellpadding="2" width="100%"><tr class="gridAltItem">
-                    <td width="190"><b><?php echo $lng['gallery']; ?>:</b></td>
+                    <td width="180"><b><?php echo $lng['gallery']; ?>:</b></td>
                     <td><span style="color:green;">&amp;tpl=</span> <input name="tpl" type="text" value="<?php echo $e2g['tpl']; ?>" size="70" /></td>
                 </tr>
                 <tr>
@@ -742,7 +825,7 @@ if (IN_MANAGER_MODE != 'true')
                     <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $lng['css']; ?></b></td>
                 </tr>
                 <tr class="gridAltItem">
-                    <td width="190"><b><?php echo $lng['css']; ?>:</b></td>
+                    <td width="180"><b><?php echo $lng['css']; ?>:</b></td>
                     <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $e2g['css']; ?>" size="70" /></td>
                 </tr>
                 <tr>
@@ -769,20 +852,26 @@ if (IN_MANAGER_MODE != 'true')
                 <tr>
                     <td colspan="2"><?php echo $lng['classname']; ?></td>
                 </tr>
+
+
+                <!--Deprecated-->
                 <tr class="gridAltItem">
                     <td><b><?php echo $lng['cfg_back_class']; ?>:</b></td>
                     <td><span style="color:green;">&amp;back_class=</span> <input name="back_class" type="text" value="<?php echo $e2g['back_class']; ?>" size="20" /></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?php echo $lng['classname']; ?></td>
+                    <td colspan="2"><?php echo $lng['classname']; ?> (Deprecated. Please, specified this directly on the template, instead.)</td>
                 </tr>
                 <tr class="gridAltItem">
                     <td><b><?php echo $lng['cfg_pagenum_class']; ?>:</b></td>
                     <td><span style="color:green;">&amp;pagenum_class=</span> <input name="pagenum_class" type="text" value="<?php echo $e2g['pagenum_class']; ?>" size="20" /></td>
                 </tr>
                 <tr>
-                    <td colspan="2"><?php echo $lng['classname']; ?></td>
+                    <td colspan="2"><?php echo $lng['classname']; ?> (Deprecated. Please, specified this directly on the template, instead.)</td>
                 </tr>
+                <!--Deprecated-->
+
+
             </table>
 
         </div>

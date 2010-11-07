@@ -582,17 +582,18 @@ class E2gPub { // public/protected class
      * @param   string  $text       text to be cropped
      * @return  string  shorthened text
      */
-    protected function cropName($charSet, $nameLen, $text) {
+    protected function cropName($mbstring, $charSet, $nameLen, $text) {
         if (empty($charSet) || empty($nameLen))
             return FALSE;
 
-        if ($text == '') {
+        $croppedName = $text;
+        if (trim(htmlspecialchars_decode($text)) == '') {
             $croppedName = '&nbsp;';
         } elseif ($mbstring) {
-            if (mb_strlen($text, $charSet) > $nameLen)
-                $croppedName = mb_substr($text, 0, $nameLen - 1, $charSet) . '...';
-        } elseif (strlen($text) > $nameLen) {
-            $croppedName = substr($text, 0, $nameLen - 1) . '...';
+            if (mb_strlen($text, $charSet) > (int)$nameLen)
+                $croppedName = mb_substr($text, 0, (int)$nameLen - 1, $charSet) . '...';
+        } elseif (strlen($text) >(int) $nameLen) {
+            $croppedName = substr($text, 0, (int)$nameLen - 1) . '...';
         }
         return $croppedName;
     }
