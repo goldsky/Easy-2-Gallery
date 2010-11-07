@@ -57,7 +57,6 @@ class E2gMod extends E2gPub {
         $index = $this->e2gModCfg['index'];
         $blankIndex = $this->e2gModCfg['blank_index'];
         $e2gPages = $this->e2gModCfg['e2gPages'];
-//        $gdir = $this->e2gModCfg['gdir'];
         $gdir = $this->e2gModCfg['gdir'];
         $rootDir = $this->e2gModCfg['dir'];
 
@@ -244,12 +243,6 @@ class E2gMod extends E2gPub {
             // Add directory into database
             case 'add_dir':
                 $this->_addAll('../' . str_replace('../', '', $this->_e2gDecode($_GET['dir_path']) . '/'), $parentId);
-//                if ($this->_addAll('../' . str_replace('../', '', $this->_e2gDecode($_GET['dir_path']) . '/'), $parentId)) {
-//                    $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['dir_added'];
-//                } else {
-//                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_add_err'];
-//                }
-
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -471,48 +464,6 @@ class E2gMod extends E2gPub {
         echo $output;
     }
 
-    private function _loadModPages($e2g) {
-        $modx = $this->modx;
-        $lng = $this->lng;
-        $e2gDebug = $this->e2gModCfg['e2g_debug'];
-        $parentId = $this->e2gModCfg['parent_id'];
-        $_a = $this->e2gModCfg['_a'];
-        $_i = $this->e2gModCfg['_i'];
-        $index = $this->e2gModCfg['index'];
-        $blankIndex = $this->e2gModCfg['blank_index'];
-//        $gdir = $this->e2gModCfg['gdir'];
-        $gdir = $this->e2gModCfg['dir'];
-        $rootDir = $gdir;
-
-        $getPathArray = $this->_getPath($parentId, NULL, 'array');
-        $path = array();
-
-        // Create the ROOT gallery's link
-        foreach ($getPathArray as $k => $v) {
-            $path['link'] .= '<a href="' . $index . '&amp;pid=' . $k . '">' . $v . '</a>/';
-        }
-        unset($getPathArray[1]);
-
-        // Create the afterwards gallery's path
-        if (!empty($getPathArray)) {
-            $path['string'] = implode('/', $getPathArray) . '/';
-            $gdir .= $path['string'];
-        } elseif (isset($_GET['path'])) {
-            $path['string'] = '';
-            $getPath = str_replace('../', '', $_GET['path']);
-            $pathArray = explode('/', $getPath);
-//            $path['string'] = '';
-            foreach ($pathArray as $v) {
-                if (empty($v)) {
-                    continue;
-                }
-                $path['string'] .= $v . '/';
-                $path['link'] .= '<a href="' . $index . '&amp;pid=' . $parentId . '&amp;path=' . $path['string'] . '">' . $v . '</a> / ';
-            }
-            $gdir .= $path['string'];
-        }
-    }
-
     /**
      * To delete all files/folders that have been selected with the checkbox
      * @param string $path file's/folder's path
@@ -619,7 +570,6 @@ class E2gMod extends E2gPub {
 
         // converting non-latin names with MODx's stripAlias function
         $nameAlias = $modx->stripAlias($name);
-
 
         if ($name != $nameAlias) {
             $basePath = dirname($path);
@@ -1730,7 +1680,6 @@ class E2gMod extends E2gPub {
                 $insertFile = 'INSERT INTO ' . $modx->db->config['table_prefix'] . 'easy2_files '
                         . 'SET dir_id=\'' . $newParent . '\''
                         . ', filename=\'' . mysql_real_escape_string($filteredName) . '\''
-//                        . ', size=\'' . (int) $files['img']['size'][$i] . '\''
                         . ', size=\'' . $newInf['size'] . '\''
                         . ', width=\'' . $newInf[0] . '\''
                         . ', height=\'' . $newInf[1] . '\''
@@ -2343,7 +2292,6 @@ class E2gMod extends E2gPub {
             elseif ($this->_validFile($_zipContent)) {
                 $_zipContent = realpath($_zipContent);
                 $basename = end(@explode(DIRECTORY_SEPARATOR, $_zipContent));
-//                    $basename = $this>_e2gEncode($basename);
                 $zip->addFile($_zipContent, $basename);
             }
             $zip->close();
@@ -2489,8 +2437,6 @@ class E2gMod extends E2gPub {
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['ddb'][0] . ' ' . $lng['dirs_moved_fdb'] . '.';
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['dfp'][0] . ' ' . $lng['dirs_moved_fhdd'] . '.';
             }
-
-            // ****************** list names ****************** //
         } // if (!empty($post['dir']))
         // MOVING IMAGES
         if (!empty($post['im'])) {
@@ -2596,7 +2542,6 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['file'][$i];
                 }
             }
-            // ****************** list names ****************** //
         } // if (!empty($post['im']))
     }
 
@@ -3690,7 +3635,7 @@ class E2gMod extends E2gPub {
      * @param string    $post       values from the input form
      * @param string    $gdir       directory path
      * @param int       $parentId  parent's ID
-     * @return <type>
+     * @return bool     TRUE | FALSE
      */
     private function _createDir($post, $gdir, $parentId) {
         $modx = $this->modx;
@@ -3770,12 +3715,9 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-//        $pathToDir = $this->_getPath($post['parent_id']);
         $newDirName = $modx->stripAlias($post['new_cat_name']);
-//        $newDirPath = $this->_e2gDecode($gdir . $pathToDir . $newDirName);
         $newDirPath = $this->_e2gDecode($gdir . $newDirName);
         $oldDirName = $post['cat_name'];
-//        $oldDirPath = $this->_e2gDecode($gdir . $pathToDir . $oldDirName);
         $oldDirPath = $this->_e2gDecode($gdir . $oldDirName);
 
         $renameDirConfirm = FALSE;
@@ -4428,7 +4370,6 @@ class E2gMod extends E2gPub {
                     }
                     if ($mdirs[$dirName]['cat_visible'] == '1') {
                         $dirStyledName = '<b>' . $dirName . '</b>';
-//                        $dirLink = '<a href="' . $index . '&amp;pid=' . $mdirs[$dirName]['id'] . '">' . $dirStyledName . '</a>';
                         $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
                         $dirButtons = $this->_actionIcon('hide_dir', array(
                                     'act' => 'hide_dir'
@@ -4937,7 +4878,6 @@ class E2gMod extends E2gPub {
 
         mysql_free_result($querySelectDirs);
 
-        ############################################################################################################################
         //******************************************************************/
         //************* FILE content for the current directory *************/
         //******************************************************************/
