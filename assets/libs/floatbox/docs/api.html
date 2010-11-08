@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+<meta name="Robots" content="noindex, nofollow">
+<title>Floatbox v4.20 API Reference</title>
+<style type="text/css">
+body { font-family:Verdana, Arial, Helvetica, sans-serif; line-height: 17px; font-size:13px; background-color:#fafafa; }
+#content { margin:1em 25px; }
+h2 { font-size:1.3em; margin:.7em 0 .2em 0; color:#046; }
+h3 { font-size: 1.15em; margin:-.3em 0 .8em 0; color: #046; }
+h4 { font-size:1em; margin:.7em 0 0 0; color:#046; }
+h5 { font-size:.9em; margin:1.2em 0 0 0; }
+p { margin:.6em 0 0 1.5em; }
+.code, .blockcode { font-family:"Courier New", Courier, monospace; font-size:0.85em; color:#603; background-color:#eaeaea; }
+.blockcode { display:block; margin-top:0.5em; }
+ul, ol { margin-top:.4em; }
+li { margin-top:.3em; }
+ul.index ul { list-style-type:none; margin:0 0 7px 15px; padding:0; }
+.index li { margin-top:.2em; }
+div.separator { height:1px; width:80%; font-size:1px; margin:24px 0; border-color:#000; border-style:solid; border-width:1px 0; }
+</style>
+</head>
+<body>
+<div id="content">
+<h2>Floatbox v4.20 - Programmer's API Reference</h2>
+<a href="http://randomous.com/floatbox/home">randomous.com</a>
+<div id="index" class="separator"></div>
+
+<h4>Index</h4>
+<ul class="index">
+<li><a href="#variables">Variables and Properties</a>
+<ul>
+<li>fb</li>
+<li>fb.instances</li>
+<li>fb.lastChild</li>
+<li>fb.topBox</li>
+<li>fb.parent</li>
+<li>fb.fbContent</li>
+<li>fb.currentIndex</li>
+<li>fb.mobile</li>
+</ul>
+</li>
+<li><a href="#functions">Floatbox Functions</a>
+<ul>
+<li>fb.start ( source, options ) *</li>
+<li>fb.end ( arg )</li>
+<li>fb.activateElements ( node )</li>
+<li>fb.restack ( instance )</li>
+<li>fb.ownerInstance ( node )</li>
+<li>fb.resize ( width, height, instance )</li>
+<li>fb.reload ( source, instance )</li>
+<li>fb.goBack ( )</li>
+<li>fb.cycleStop ( )</li>
+<li>fb.cycleGo ( )</li>
+<li>fb.pause ( bool )</li>
+<li>fb.showNext ( )</li>
+<li>fb.showPrevious ( )</li>
+<li>fb.showItem ( index )</li>
+</ul>
+</li>
+<li><a href="#callbacks">Event Callbacks</a>
+<ul>
+<li>afterFBLoaded</li>
+<li>beforeBoxStart</li>
+<li>afterBoxStart</li>
+<li>beforeItemStart</li>
+<li>afterItemStart</li>
+<li>beforeItemEnd</li>
+<li>afterItemEnd</li>
+<li>beforeBoxEnd</li>
+<li>afterBoxEnd</li>
+<li>beforePrint</li>
+<li>afterPrint</li>
+</ul>
+</li>
+<li><a href="#library">Library Functions</a>
+<ul>
+<li>fb$ ( id ) *</li>
+<li>fb.flashObject ( url, width, height, params, node, id, altContent ) *</li>
+<li>fb.addEvent ( node, action, func ) *</li>
+<li>fb.removeEvent ( node, action, func ) *</li>
+<li>fb.stopEvent ( e ) *</li>
+<li>fb.extend ( objTarget, objSource [, objSource2 ...] ) *</li>
+<li>fb.executeJS ( strURI, callback ) *</li>
+<li>fb.getFormValues ( source )</li>
+<li>fb.serialize ( source )</li>
+<li>fb.deserialize ( str )</li>
+<li>fb.preload ( src, callback ) *</li>
+<li>fb.printNode ( node, style )</li>
+<li>fb.getElementsByClassName ( className[s], node ) *</li>
+<li>fb.getStyle ( node, property, integerize ) *</li>
+<li>fb.getScrollLeft ( )</li>
+<li>fb.getScrollTop ( )</li>
+<li>fb.getScroll ( )</li>
+<li>fb.getViewportWidth ( )</li>
+<li>fb.getViewportHeight ( )</li>
+<li>fb.getViewport ( )</li>
+<li>fb.getLayout ( node, local )</li>
+<li>fb.getIframeDocument ( node )</li>
+<li>fb.getIframeWindow ( node )</li>
+<li>fb.nodeContains ( parent, child ) *</li>
+<li>fb.hasAttribute ( node, attribute ) *</li>
+<li>fb.getOuterHTML ( node ) *</li>
+<li>fb.setInnerHTML ( node, html ) *</li>
+<li>fb.translate ( source, destLang, callback, plainText ) *</li>
+<li>fb.ajax ( { source: strURI, updateNode: node, callback: function(xhr), postData: form|object|strParams, cache: boolean, headers: { name: value [, name: value] } } ) *</li>
+</ul>
+</li>
+</ul>
+<p>
+* Functions marked with an asterisk are available immediately while the page is loading.<br />
+The other functions are available at DOMContentLoaded (which equals afterFBLoaded).
+</p>
+
+<div id="variables" class="separator"></div>
+<h4>Variables and Properties</h4>
+
+<h5>fb</h5>
+<p>
+Floatbox's primary object is the global var "fb".<br />
+All properties and functions are members of the fb object.
+</p><p>
+If you are running floatbox in a hierarchy of iframes, the fb objects in each child window are references to the fb object on the top document
+(i.e., there is only one fb object even though there are multiple window objects).<br />
+An iframe displayed by floatbox that does not have floatbox.js included on its document will not have the global fb var in its window's scope.
+To programmatically use fb from such a child iframe, fetch it from the parent window by referring to it as "parent.fb".
+</p>
+
+<h5>fb.instances</h5>
+<p>
+Floatbox can display multiple boxes at one time, such as when displaying an info box over top of a displayed image or when showing multiple non-modal sibling boxes.<br />
+Each floatbox instance that is opened is added to the fb.instances array.<br />
+The order of the array is always the chronological order in which the boxes were opened.<br />
+The primary or first floatbox is always fb.instances[0].
+</p>
+
+<h5>fb.lastChild</h5>
+<p>
+fb.lastChild always points to the last box loaded.<br />
+If there is only one box (or none displayed yet), fb.lastChild === fb.<br />
+fb.lastChild is always identical to fb.instances[fb.instances.length-1].
+</p>
+
+<h5>fb.topBox</h5>
+<p>
+If you are working with modal floatboxes (the default), fb.topBox will always be the same as fb.lastChild.<br />
+Multiple non-modal floatboxes can have their stack order changed by user interaction or by code.<br />
+When non-modal boxes are re-stacked, fb.topBox will always point to the box that is currently displayed on top of all others.
+</p>
+
+<h5>fb.parent</h5>
+<p>
+For any given box, .parent points to the box immediately preceding it in the instances array.
+For example, if 3 boxes are stacked up, fb.lastChild.parent will point to the middle box.<br />
+fb.instances[2].parent === fb.instances[1].<br />
+fb.parent (fb always being the primary, first-loaded box) is identical to fb.
+</p>
+
+<h5>fb.fbContent</h5>
+<p>
+fbContent is the DOM node (element) holding the content that is displayed by floatbox.
+It may be an img, iframe, or div depending on what kind of content is currently showing.<br />
+Having this node reference can be helpful when dynamically working with floatboxed iframe or div html content.<br />
+Use the 'lastChild', 'topBox', or the 'instances' array of pointers to get to the fbContent element for secondary (stacked) floatboxes
+- e.g. <span class="code notranslate">fb.topBox.fbContent</span> or <span class="code notranslate">fb.instances[2].fbContent</span>.
+</p>
+
+<h5>fb.currentIndex</h5>
+<p>
+In a multi-item gallery set, fb.currentIndex is the zero-based index of the currently showing item in the set array.
+For example, if item 4 of 7 is showing, fb.currentIndex is 3.
+</p>
+
+<h5>fb.mobile</h5>
+<p>
+This will be set to true if the visitor's browser is Mobile Safari based, such as an iPhone or Android device.
+</p>
+
+<p>
+<a href="#index">Back to Index</a>
+</p>
+
+<div id="functions" class="separator"></div>
+<h4>Functions</h4>
+
+<h5>fb.start ( source, options )</h5>
+<p>
+fb.start creates and invokes a floatbox.<br />
+The 'source' parameter is overloaded. It can be a URI string (path to the content), a DOM element, an element's id, or a string of HTML.<br />
+The optional 'options' parameter can accept a string of floatbox options formatted the same as for data-fb-options attributes,
+or can accept an associative array of option name:value pairs.<br />
+For backward-compatability, fb.start still accepts the old-school object parameter { href: strURL, rev: strOptions, title: strTitle, html: strHTML }.
+</p><p>
+Examples:<br />
+Load an image in floatbox with some options.<br />
+<span class="code notranslate">fb.start( 'path/image.jpg', 'controlsPos:tr caption:`my caption`' );</span><br />
+or <span class="code notranslate">fb.start( 'path/image.jpg', { controlsPos: 'tr', caption: 'my caption' } );</span><br /><br />
+Launch an existing anchor in floatbox. Pass the anchor element or its id to fb.start().<br />
+<span class="code notranslate">fb.start( 'someAnchorId' );</span>
+or <span class="code notranslate">fb.start( fb$('someAnchorId') );</span><br /><br />
+Open inline hidden div content.<br />
+<span class="code notranslate">fb.start( '#someDivId' );</span>
+or <span class="code notranslate">fb.start( fb$('someDivId') );</span><br /><br />
+Use direct html as the content source.<br />
+<span class="code notranslate">fb.start( '&lt;p&gt;hello world&lt;/p&gt;', 'roundCorners:none showClose:false' );</span><br />
+(The direct content string must contain '&lt;' and '&gt;' to be recognized as html.)<br /><br />
+A dynamically added anchor could launch itself in floatbox with:<br />
+<span class="code notranslate">
+&lt;a href="image1.jpg" onclick="fb.start( this ); return false;"&gt;click me&lt;/a&gt;
+</span><br />
+The anchor does not need a floatbox class and does not have to be activated by fb.activateElements().<br />
+Note that the options parameter can itself contain a 'source' option which will override the first source parameter.
+This allows you to define the entire start action in one associative array, and invoke a box based on that array with
+<span class="code notranslate">fb.start( null, myOptionsObject );</span>
+</p>
+
+<h5>fb.end ( arg )</h5>
+<p>
+Call fb.end() to close a running floatbox.<br />
+The 'arg' parameter is optional.<br />
+With multiple boxes open, you can close a particular one by passing the instance number or the actual floatbox instance object.
+E.g., <span class="code notranslate">fb.end( 1 )</span> and <span class="code notranslate">fb.end( fb.instances[1] )</span> are equivalent.<br />
+If 'arg' is a boolean value of true, all boxes will be closed.<br />
+If 'arg' is a string and there is only one floatbox currently open,
+arg is assumed to be a URL and the base page will attempt to navigate to that URL when the floatbox end completes.
+The string 'self' will cause the currently loaded base page to refresh, while 'back' will load the previous item from the browser's history.<br />
+If 'arg' is not provided, fb.lastChild - the last opened box - will be closed.<br />
+Typical usage: <span class="code notranslate">fb.end( )</span>.<br />
+To navigate to a page on exit: <span class="code notranslate">fb.end( 'somePage.html' )</span>.
+</p>
+
+<h5>fb.activateElements ( node )</h5>
+<p>
+fb.activateElements crawls a node or a document and assigns actions to elements that are marked up for some kind of floatbox behaviour.<br />
+It activates floatboxed anchors, image cycler sets, enhanced tooltips and popup thumbnails.<br />
+If you dynamically add floatbox-enabled elements to a page after the initial page load,
+fb.activateElements needs to be run against the new content to activate it.<br />
+Until activated, a floatboxed anchor will open just like a normal link and navigate the browser to the href'd page.<br />
+If the optional node parameter is not provided, the entire document will be crawled.
+</p><p>
+The easiest way to fetch and add new content is with the floatbox library function fb.ajax, described below.<br />
+When you use this function with its updateNode parameter, activateElements will be automatically run against that node for you.<br />
+For any other method of dynamically adding new floatbox content, your code will have to invoke fb.activateElements after the new content is in place
+(or, alternatively, have an onclick action of <span class="code notranslate">onclick="fb.start( this ); return false;"</span> assigned).<br />
+See the section about dynamically loading floatbox content in <a href="instructions#dynamic">the instructions</a> for examples of using fb.activateElements with "normal" ajax calls and ASP.NET UpdatePanels.<br />
+(The legacy function fb.tagAnchors still works and is now an alias for activateElements.)
+</p>
+
+<h5>fb.restack ( instance )</h5>
+<p>
+If multiple non-modal boxes are open, fb.restack can move a particular box instance to the top making it appear above the other boxes.<br />
+The 'instance' parameter is optional and can be an instance number or the actual floatbox instance object.<br />
+If 'instance' is not provided, the called floatbox will be the one moved to the top.<br />
+For example, the following three calls are equivalent:<br />
+<span class="code notranslate">fb.restack( 2 );</span><br />
+<span class="code notranslate">fb.restack( fb.instances[2] );</span><br />
+<span class="code notranslate">fb.instances[2].restack( );</span>
+</p>
+
+<h5>fb.ownerInstance ( node )</h5>
+<p>
+ownerInstance accepts a DOM node or an id string and returns the instance number of the floatbox that owns or contains the passed node.<br />
+The first floatbox instance is 0.<br />
+If the node is not in a floatbox (i.e., it is on the base page), ownerInstance returns -1.<br />
+ownerInstance is the index into the fb.instances array.<br />
+This index is needed when working with multiple non-modal boxes to locate a particular box for an action such as bringing the box to the top or closing it.<br />
+Example - Bring the non-modal box that contains the node with id 'myForm' to the top (assuming the content type is not iframe but is one of ajax, direct or inline):<br />
+<span class="code notranslate">fb.restack( fb.ownerInstance( fb$( 'myForm' ) ) );</span>
+</p>
+
+<h5>fb.resize ( width, height, instance )</h5>
+<p>
+Resizes a floatbox instance to the new requested dimensions.<br />
+Width and height are the new content dimensions in pixels, not including the box decoration around the content.<br />
+If neither width nor height are given, or are both passed as 0, the current box content will be measured and the floatbox height will be resized to the current content's height.<br />
+If either width or height is 0 or not provided, but the other dimension is given a +ve value, the 0 dimension will retain its original value while the +ve dimension will be set as requested.<br />
+If multiple boxes are open, a particular box can be targeted for the reload by passing the floatbox object or its instance number as the second parameter.
+If no instance parameter is provided, the top box will be resized.<br />
+For example, if the html content in a floatbox has just been dynamically changed in some fashion,
+the box can be resized to the new content's height with a simple call of <span class="code notranslate">fb.resize( );</span>
+</p>
+
+<h5>fb.reload ( source, instance )</h5>
+<p>
+Reloads the content in an already running box.<br />
+The optional 'source' parameter is a URI path to new content that will replace the current box content.
+If 'source' is not given, the existing content will be re-fetched.<br />
+If multiple boxes are open, a particular box can be targeted for the reload by passing the floatbox object or its instance number as the second parameter.<br />
+Only content of types iframe, image and ajax can be reloaded. Inline, media and direct content cannot be.<br />
+</p>
+
+<h5>fb.goBack ( )</h5>
+<p>
+If a previous item has been displayed in the top-most running box,
+either because a gallery set is running or content has been updated with either fb.reload or fb.start and sameBox:true,
+fb.goBack will reload the item displayed immediately prior to the current item.
+</p>
+
+<h5>fb.cycleStop ( )<br />
+fb.cycleGo ( )</h5>
+<p>
+Suspends and resumes all cycler thumbnail and image sets on a page.
+</p>
+
+<h5>fb.pause ( bool )</h5>
+<p>
+<span class="code notranslate">fb.pause( true )</span> pauses a running slideshow and <span class="code notranslate">fb.pause( false )</span> resumes a paused one.
+</p>
+
+<h5>fb.showPrevious ( )<br />
+fb.showNext ( )</h5>
+<p>
+Displays the previous or next item in a gallery set (group) of items. If you're already showing the first or last item in a set, wrap behaviour is determined by the 'enableWrap' option.
+</p>
+
+<h5>fb.showItem ( index )</h5>
+<p>
+Displays item number 'index' from a currently loaded gallery set. The first item in a set has an index of 0.
+</p>
+
+<p>
+<a href="#index">Back to Index</a>
+</p>
+
+<div id="callbacks" class="separator"></div>
+<h4>Event Callbacks</h4>
+<p>
+Floatbox will look for callback functions that you define for the following events:<br />
+<span style="font-weight:bold;">afterFBLoaded, beforeBoxStart, afterBoxStart, beforeItemStart, afterItemStart, beforeItemEnd, afterItemEnd, beforeBoxEnd, afterBoxEnd, beforePrint, afterPrint</span>.
+</p><p>
+Javascript code is assigned to options of those names in the standard options setting manner of putting them in fbPageOptions or on an anchor's rev or data-fb-options attribute.<br />
+Callbacks defined in a page's fbPageOptions definition can be either true javascript functions or strings to be eval'd.<br />
+By their nature, callbacks defined as options in an anchor's rev tag will be strings and so will be eval'd.
+</p><p>
+If any of the before* callback functions return a value of false, the associated floatbox action will be cancelled.<br />
+Be careful when using an eval'd string as a before* callback because the return value will be the value of the last statement executed.<br />
+So an eval'd callback function of "abc = 42; xyz = false;" can cancel a floatbox action whereas "xyz = false; abc = 42;" will not.<br />
+It's cleanest and safest if your eval'd statement is a simple call to a proper javascript function defined elsewhere on the page.
+</p><p>
+The <b>afterFBLoaded</b> callback is a handy place to put code to run at page startup.<br />
+When the callback fires, the DOM has completed loading and Floatbox has activated all its content on the page, but window.onload has most likely not yet fired.<br />
+Use afterFBLoaded as your DOMContentLoaded hook.
+</p><p>
+Example - A function callback in the page options:
+<span class="blockcode notranslate">
+function myFunc() {<br />
+&nbsp;&nbsp;alert( 'eat a peach' );<br />
+&nbsp;&nbsp;return true;<br />
+}<br />
+fbPageOptions = {<br />
+&nbsp;&nbsp;beforeBoxStart: myFunc<br />
+};
+</span>
+</p><p>
+And a string callback in an anchor's data-fb-options (or rev) attribute:
+<span class="blockcode notranslate">
+&lt;a href="xyz.php" class="floatbox" data-fb-options="afterItemEnd:`myFunc();`"&gt;talk about fruit&lt;/a&gt;
+</span>
+<br />(Don't forget the back-quotes. They're required for correct parsing.)
+</p>
+
+<p>
+<a href="#index">Back to Index</a>
+</p>
+
+<div id="library" class="separator"></div>
+<h4>Library Functions</h4>
+<p>
+In addition to the floatbox functions described above, the fb object exposes a comprehensive set of functions that allow you to use floatbox as a javascript library.<br />
+The floatbox library is a robust and correct collection of functions that make it easy to manage ajax, flash, events, forms, DOM interactions and many other operations simply and reliably across all client browsers.
+</p><p>
+Note: All library functions that have a 'node' parameter will accept either a DOM element or the id string for an element as that parameter.
+</p>
+
+<h5>fb$ ( id )</h5>
+<p>
+The fb$ function is short-hand for 'document.getElementById', with minor extensions.<br />
+If the id parameter is a string, it will return the element that has that id, or null if there is no such element.<br />
+If the id parameter is an element, that element will be returned.<br />
+(Note that the function name is fb$, NOT fb.$ with a dot.)
+</p>
+
+<h5>fb.flashObject ( url, width, height, params, node, id, altContent )</h5>
+<p>
+Use this to easily add simple cross-browser flash objects to your page.<br />
+Because the flash objects are created from external script they will not be subject to Firefox and Opera's annoying (and inconsistent) "click to activate" behaviour.<br />
+If you need flash version detection, consider using swfobject2 instead.
+</p>
+<ul>
+<li>strURI is the path to the swf file.</li>
+<li>width and height are the dimensions of the flash object in pixels.</li>
+<li>params (optional) is either an associative array or a string of parameters to be assigned.<br />
+The default parameters are <span class="code notranslate">{ wmode:'opaque', scale:'exactfit', play:'false', quality:'high' }</span>
+or, equivalently, <span class="code notranslate">'wmode:opaque scale:exactfit play:false quality:high'</span>.<br />
+(Please see <a href="http://kb2.adobe.com/cps/127/tn_12701.html" target="_blank">http://kb2.adobe.com/cps/127/tn_12701.html</a> for a complete list of available flash parameters.)
+</li>
+<li>node is an optional parameter that can be a DOM element (normally a div) or the string id of an element.
+If given, the flash object will be inserted inside the node.
+If node is not provided, the flash object is written in place at the location of the script call using document.write().
+</li>
+<li>An id can be assigned to the flash object using the optional id parameter.
+An id is used when interacting with the flash object using scripted controls.
+</li>
+<li>Alternate content can be provided for client agents that don't have the flash plugin installed and active.
+Provide altContent as a string of html.
+</li>
+</ul>
+<p>
+An alternate way to call this function is to pass parameters as members of a single javascript object (associative array).
+For example:<span class="blockcode notranslate">
+fb.flashObject( {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;url: 'somePath.swf',<br />
+&nbsp;&nbsp;&nbsp;&nbsp;width: 400,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;height: 300,<br />
+&nbsp;&nbsp;&nbsp;&nbsp;altContent: '&lt;p&gt;Flash required to view this content.&lt;/p&gt;'<br />
+} );
+</p>
+
+<h5>fb.addEvent ( node, action, func )<br />
+fb.removeEvent ( node, action, func )</h5>
+<p>
+These two functions standardize DOM2 event handling across different browsers,
+removing most of the troublesome characteristics of IE's event handlers.<br />
+All parameters are required.<br />
+The 'node' parameter is the element (or its id) to attach (or detach) the event handler to.<br />
+The 'action' parameter is the event you want to target and does not include the 'on' prefix used by IE (e.g., use 'load' and not 'onload').<br />
+The event handler code is passed as a function in the third parameter.<br />
+Using fb.addEvent in Internet Explorer adds the following enhancements to IE's event handling to make it more similar to standards-based DOM2 events:
+</p>
+<ul>
+<li>correctly sets the 'this' keyword in the event handler function</li>
+<li>passes the fired event object as a parameter to the event handler function</li>
+<li>sets the event.target attribute to the element that fired the event</li>
+</ul>
+<p>
+The return value is always the passed 'func' parameter, which can be used to track assigned events for future removal.<br />
+Example: <span class="code notranslate">fb.addEvent( 'someId', 'click', function(e) { alert( 'type of element clicked: ' + e.target.nodeName ); } )</span><br />
+fb.addEvent makes document.DOMContentReady available in all broswers including IE.
+<span class="code notranslate">fb.addEvent( document, 'DOMContentLoaded', func );</span>
+</p>
+
+<h5>fb.stopEvent ( e )</h5>
+<p>
+fb.stopEvent is a cross-browser way to stop normal execution (bubbling, propagation) of an event.<br />
+Pass the event you want to block as the only parameter.<br />
+stopEvent's return value is always a boolean false that can be passed through by your calling function.<br />
+For example, to stop the default click behaviour in the example above for addEvent, we would make our click function would look like this:<br />
+<span class="code notranslate">function(e) { alert( ... ); return fb.stopEvent( e ); } )</span>
+</p>
+
+<h5>fb.extend ( objTarget, objSource [, objSource2 ...] )</h5>
+<p>
+fb.extend takes two or more javascript objects as parameters and extends the properties and values of the first object with those from the other objects.<br />
+The target object is modified in place and is also the return value of the function.<br />
+To obtain an extended copy of the the original target without modifying it, pass an empty object as the first parameter and the target object as the second.<br />
+<span class="code notranslate">fb.extend( myObj, yourObj )</span> will copy yourObj's name:value pairs into myObj.<br />
+<span class="code notranslate">var ourObj = fb.extend( {}, myObj, yourObj )</span> returns a new merged object without modifying myObj.<br />
+<span class="code notranslate">var newObj = fb.extend( {}, oldObj )</span> will create a new object seeded with name:value pairs from oldObj.
+</p>
+
+<h5>fb.executeJS ( strURI, callback )</h5>
+<p>
+Use fb.executeJS to dynamically load and execute an external javascript file.
+The javascript file can come from any domain (cross-domain scripting restrictions are not in effect).
+The optional callback function will be fired after the external javascript has completed execution.
+</p>
+
+<h5>fb.getFormValues ( source )</h5>
+<p>
+Returns an associative array of all the name:value pairs for the elements of a form.<br />
+The source parameter can be a form DOM element, a form's name, or a form's id.<br />
+The getFormValues function provides correct form handling as per the W3C forms recommendations
+and properly handles empty and missing values, radio buttons and user defined input types.<br />
+The following input element types are ignored: file, image, reset, submit and button.
+</p>
+
+<h5>fb.serialize ( source )</h5>
+<p>
+serialize returns a properly encoded string of name=value pairs that can be used as a URI's querystring
+or for submission by an AJAX POST call.<br />
+The source parameter accepts any of an associative array, a form DOM element, a form's name, or a form's id.<br />
+If a form is passed as the source, the values are first parsed out using getFormValues and the result of that is serialized.
+</p>
+
+<h5>fb.deserialize ( str )</h5>
+<p>
+deserialize reverses the serialize function by taking an encoded querystring as its argument
+and returning an associative array of decoded name:value pairs.
+</p>
+
+<h5>fb.preload ( src, callback )</h5>
+<p>
+You can borrow floatbox's image preloader if you like.
+Pass fb.preload the source path for the image to preload as a string.
+Or, pass an array of source path strings for images to be preloaded.<br />
+If the optional callback function is provided as the second parameter, that function will be invoked when the image preload completes.<br />
+The callback function can accept a single parameter that will be the unattached img element containing the preloaded image.<br />
+If src is an array, callback is called after the last image loads.
+</p>
+
+<h5>fb.printNode ( node, style )</h5>
+<p>
+Use printNode to display a print dialog to your users that will print only the contents of a particular node,
+rather than printing the full page.<br />
+The printNode function accepts two arguments, both of which are optional.<br />
+The node parameter accepts either a DOM node or an element's id string.
+If node is null, the currently displayed floatbox contents will be printed.<br />
+You can apply styles to the print node's content using the optional style value.
+'style' can be a string of css definitions (like you would place directly in an element's style attribute),
+or can be the path to a css file that contains the css definitions to be applied.
+</p>
+
+<h5>fb.getElementsByClassName ( className[s], node )</h5>
+<p>
+Returns an array of elements within 'node' that have a class name of 'className'.<br />
+The className parameter can be a simple string or an array of strings. If an array, all elements that have any of the requested classNames will be returned.<br />
+The 'node' parameter is optional and will default to the &lt;html&gt; element if not given.
+</p>
+
+<h5>fb.getStyle ( node, property, integerize )</h5>
+<p>
+Returns the cascaded or computed (currently active) style for a given element.<br />
+The optional 'property' parameter is any css property. You can use either the css or camelCase property syntax (i.e., 'font-size' or 'fontSize').<br />
+If 'property' is not passed, the return value will be a cssText string of all effective styles for the referenced node in the form 'property1: value1; property2: value2;...propertyN: valueN;'.<br />
+If the 3rd parameter is 'true', the return value will be an integer.
+E.g., a style of '49px' will come back as the number 49.
+Example: <span class="code notranslate">var size = fb.getStyle( 'someId', 'font-size' )</span>
+</p>
+
+<h5>fb.getScrollLeft ( )<br />
+fb.getScrollTop ( )</h5>
+<p>
+Returns the browser's current horizontal or vertical scrollbar position in pixels.
+</p>
+
+<h5>fb.getScroll ( )</h5>
+<p>
+fb.getScroll combines getScrollLeft and getScrollTop into a single call with a return value of an associative array containing the two named values 'left' and 'top'.<br />
+Example usage:<span class="blockcode notranslate">
+var scroll = fb.getScroll( );<br />
+alert( 'horizontal scroll is ' + scroll.left + ' pixels' );<br />
+alert( 'vertical scroll is ' + scroll.top + ' pixels' );<br />
+</span>
+</p>
+
+<h5>fb.getViewportWidth ( )<br />
+fb.getViewportHeight ( )</h5>
+<p>
+Returns the browser's current viewport width or height in pixels.
+</p>
+
+<h5>fb.getViewport ( )</h5>
+<p>
+fb.getViewport combines getViewportWidth and getViewportHeight into a single call with a return value of an associative array containing the two named values 'width' and 'height'.<br />
+Example usage:<span class="blockcode notranslate">
+var viewport = fb.getViewport( );<br />
+alert( 'browser screen is ' + viewport.width + ' wide and ' + viewport.height + ' high' );
+</span>
+</p>
+
+<h5>fb.getLayout ( node, local )</h5>
+<p>
+Use getLayout to get the position and dimensions of any node on your page.<br />
+getLayout accepts a DOM node or an element's id string and returns an associative array containing the values 'left', 'top', 'width' and 'height'.<br />
+If the optional second parameter is true and node is inside an iframe, the returned 'left' and 'top' coordinates will be relative to that iframe's document, otherwise the coordinates are relative to the top page's document.<br />
+</p>
+
+<h5>fb.getIframeDocument ( node )<br />
+fb.getIframeWindow ( node )</h5>
+<p>
+These functions return an iframe's document object and window object respectively.<br />
+Node is an optional parameter. If provided, it must be an iframe element or the iframe element's id. The iframe does not have to be inside a floatbox.<br />
+If node is not passed and the called floatbox instance contains an iframe as its content, the document or window for that instance's iframe will be returned.<br />
+For example, calling <span class="code notranslate">fb.instances[2].getIframeDocument( )</span>
+is the same as calling <span class="code notranslate">fb.getIframeDocument( fb.instances[2].fbContent )</span>.<br />
+If node is not passed and the called floatbox instance does not contain an iframe,
+fb.lastChild.fbContent is assumed and the document or window object for the last-loaded iframe is returned.<br />
+Null is returned if node is not an iframe and no floatboxed iframe could be found using the above described defaults.<br />
+A simple example; get the window object of the iframe in the only running floatbox:<br />
+<span class="code notranslate">var win = fb.getIframeWindow( )</span>.
+</p>
+
+<h5>fb.nodeContains ( parentNode, childNode )</h5>
+<p>
+nodeContains returns true or false based on whether the DOM element 'childNode' is contained inside the 'parentNode' element.<br />
+Both parentNode and childNode are mandatory arguments and can be either the actual DOM element or a string id value that identifies the element.<br />
+If parentNode and childNode are the same node, true is returned.
+</p>
+
+<h5>fb.hasAttribute ( node, attribute )</h5>
+<p>
+Returns true or false based on whether the DOM element 'node' has 'attribute' set in its tag.<br />
+If the node's attribute is set to an empty string, the function still returns true.<br />
+The node parameter can be a DOM element or the string id of an element.
+</p>
+
+<h5>fb.getOuterHTML ( node )</h5>
+<p>
+Not all browsers support the outerHTML property.
+fb.getOuterHTML will return the outerHTML (innerHTML plus the element's own markup) for any element in all browsers.
+</p>
+
+<h5>fb.setInnerHTML ( node, html )</h5>
+<p>
+This is a safe way to assign innerHTML to any element.
+It works reliably on both text/html and application/xhtml-xml pages.<br />
+If direct assignment of innerHTML works, it is used (it's a lot quicker).
+If setting of innerHTML is rejected, DOM insertion methods are used.
+</p>
+
+<h5>fb.translate ( source, destLang, callback, plainText )</h5>
+<p>
+The fb.translate function is a wrapper for the translate capability of the Google AJAX Language API.
+Its use is subject to <a href="http://code.google.com/apis/ajaxlanguage/terms.html" target="_blank">Google's terms of use</a>.
+Do not use this function if you don't agree with or abide by those terms of use.<br />
+All parameters are optional.
+</p>
+<ul>
+<li><b>source</b>: Can be any of a node, a node's id, a nodeList, plain text or html to be translated, an array of any of the preceding, or null.
+If null, the default source is the currently opened floatbox and the content and captions of that floatbox will be translated in place.</li>
+<li><b>destLang</b>: The two (or five) character language code for the translation to appear in.
+If not given, it defaults to floatbox's current language which is the detected browser localization language if not explicitly set in floatbox options.</li>
+<li><b>callback</b>: Callback function to fire on completion of the translation.
+The callback will receive a single parameter of the Google translation results object which looks like this:
+<span class="code notranslate">{ "responseData" : { "translatedText" : the-translated-text, "detectedSourceLanguage"? : the-source-language },	"responseDetails" : null | string-on-error,	"responseStatus" : 200 | error-code }</span>
+To get the translated text in in a callback of 'func(result)', use 'result.responseData.translatedText'.</li>
+<li><b>plainText</b>: The default source content type is html. To translate plain text, set the plainText parameter to true.
+This mainly affects the handling of whitespace and newlines.</li>
+</ul>
+<p>Important Notes:</p>
+<ul>
+<li>The translation request is sent as an encoded querystring on an HTTP GET request and is subject to URI length limitations.
+In practice this means an approximate limit of about 1200 characters of source html. (You can send an array of node references to retrieve a series of less than 1200 character translations.)</li>
+<li>The translation request may fail for any number of reasons such as the URI is too long,
+the source language cannot be detected,
+too many requests are made in a short time period (e.g., a long array),
+or the Google service may change its interface, have a service disruption or cease operation altogether.</li>
+<li>The content of a cross-domain iframed floatbox cannot be translated from code on the base page; the translate call must come from the iframed document itself.</li>
+<li>Translation calls are always asynchronous and have no return value.</li>
+</ul>
+<p>
+Here's a basic example that will translate floatbox content to the site visitor's current browser language when the item is opened:
+<span class="blockcode notranslate">
+&lt;a href="#someID" class="floatbox" data-fb-options="afterItemStart:`if (fb.language != 'en') fb.translate();`"&gt;click me&lt;/a&gt;
+</span>
+</p><p>
+And another example that translates the hidden div content at page load time before the item is shown in floatbox.
+<span class="blockcode notranslate">
+&lt;script type="text/javascript"&gt;<br />
+fbPageOptions = {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;afterFBLoaded: function() {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;if (fb.language != 'en') fb.translate('someID');<br />
+&nbsp;&nbsp;&nbsp;&nbsp;}<br />
+}<br />
+&lt;/script&gt;
+</span>
+</p><p>
+And a translation of direct text to a specific language, using the callback to access the results.
+<span class="blockcode notranslate">
+fb.translate('eat a peach', 'fr', function(result) { alert(result.responseData.translatedText); });
+</span>
+</p>
+
+<h5>fb.ajax ( { source: strURI, updateNode: node, callback: function(xhr), postData: form|object|strParams, cache: boolean, headers: { name: value [, name: value] } } )</h5>
+<p>
+The fb.ajax function is an XMLHttpRequest object wrapper that provides AJAX functionality for dynamic gets and posts using a single line of script.<br />
+The return value is the XMLHttpRequest object. Having access to this object enables use of the object's native properties and methods such as 'abort()'.<br />
+fb.ajax always issues asynchronous requests.
+</p>
+<ul>
+<li>
+The <b>source</b> parameter is mandatory (the others are optional).
+This is the URI of the page you are fetching the ajax content from.<br />
+'url', 'uri' and 'href' are allowed aliases for the 'source' parameter's name.<br />
+Note that ajax calls cannot go across different domains and that the source parameter must reference a resource that's on the same domain as the current page.
+For this reason, it's best to use relative URIs in your ajax calls (leave out the "http://someDomain.com" part).
+</li><li>
+If the <b>updateNode</b> parameter is present, the element referenced by that parameter will be updated with the request's response text from the server.<br />
+Use this to automatically populate a div on your page with content from your ajax call.<br />
+updateNode can be either a DOM element object or the id of an element.<br />
+If there are anchors in the fetched content that are marked up for floatbox behaviour (i.e., have class="floatbox" on them),
+or there is other floatbox content such as cyclers or tooltips,
+that content will be automatically activated by fb.activateElements after the update.<br />
+Any inline javascript in the incoming content will be reliably executed.
+</li><li>
+The <b>callback</b> function, if present, will be executed when the ajax request has completed and the response is available.<br />
+The parameter passed to the callback function ('xhr' in the example above) is the XMLHttpRequest object and allows you to access the ajax response values such as xhr.status and xhr.responseText.<br />
+The callback can be a proper function or a string to be eval'd.
+If a string, the 'xhr' parameter and xhr.responseText are not available.<br />
+(The callback function is fired when readyState is 4.)
+</li><li>
+If the <b>postData</b> parameter is present, a POST request will be made to the server.
+If postData is not present (or is empty), a GET request will be made.<br />
+The postData parameter is versatile:
+it can accept a query string of encoded name=value pairs separated by ampersands, an associative array (JSON object), a form DOM node, a form's id, or a form's name.<br />
+If postData points to a form, the form values will be properly serialized and the resultant encoded query string will be sent with the POST request.<br />
+Similarly, a JSON object will be serialized to an encoded query string.<br />
+Note: If you are passing a string directly and any of the name or value components might contain interesting characters, those names and values should be encoded using encodeURIComponent before being concatenated.
+</li><li>
+The <b>cache</b> parameter enables browser and proxy caching of the returned content - default is false.
+</li><li>
+The <b>headers</b> parameter takes an object of name:value pairs of custom request headers that are to be used in the ajax call.<br />
+Headers for caching, posting ('Content-Type'), and 'X-Requested-With' are already provided by the ajax function.<br />
+An fb.ajax call with custom headers might look like this:<br />
+<span class="code notranslate">fb.ajax({ source:'xyz.php', headers:{ 'Content-Type':'text/xml;charset=utf-8', 'X-My-Header':'MyValue' } });</span>
+</ul>
+<p>
+Here's an example that updates the contents of a div called "contents" and puts the time of the update into a span element using floatbox's ajax support:<br />
+<span class="blockcode notranslate">
+&lt;script type="text/javascript"&gt;<br />
+&nbsp;&nbsp;// this is the callback function that will be used to add the update time to the page<br />
+&nbsp;&nbsp;function updateTime( xhr ) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;fb.setInnerHTML( 'time', (new Date()).toTimeString() );<br />
+&nbsp;&nbsp;}<br />
+&nbsp;&nbsp;// this is the onclick action that will fire the ajax request<br />
+&nbsp;&nbsp;function click( ) {<br />
+&nbsp;&nbsp;&nbsp;&nbsp;fb.ajax({ source: 'ajax.php', updateNode: 'contents', callback: updateTime });<br />
+&nbsp;&nbsp;}<br />
+&lt;/script&gt;<br />
+<br />
+&lt;input type="button" onclick="click();" value="get ajax" /&gt;<br />
+<br />
+&lt;div id="contents"&gt;&lt;/div&gt;<br />
+last update at: &lt;span id="time"&gt;&lt;/span&gt;<br />
+</span>
+</p>
+
+<p>
+<a href="#index">Back to Index</a>
+</p>
+<div class="separator"></div>
+
+</div>
+</body>
+</html>
