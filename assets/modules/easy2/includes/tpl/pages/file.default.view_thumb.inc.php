@@ -172,7 +172,27 @@ for ($b = 0; $b < $countRowFileName; $b++) {
                         , $filePhRow['thumb.mod_w']
                         , $filePhRow['thumb.mod_w']
                         , $thq);
-        if ($imgShaper !== FALSE) {
+        // if there is an invalid content
+        if ($imgShaper === FALSE) {
+            $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
+                    . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
+                    . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
+                    . '&amp;text=' . __LINE__ . '-FALSE'
+            ;
+            $filePhRow['thumb.thumb'] = '
+                <a href="' . $imgPreview
+                    . '" class="highslide" onclick="return hs.expand(this)"'
+                    . ' title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
+                    . '">
+                    <img src="' . $imgPreview
+                    . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
+                    . '" title="' . $filePhRow['thumb.title']
+                    . '" width="' . $filePhRow['thumb.mod_w']
+                    . '" height="' . $filePhRow['thumb.mod_h']
+                    . '" />
+                </a>
+    ';
+        } else {
             $filePhRow['thumb.src'] = $imgShaper;
             $filePhRow['thumb.thumb'] = '
             <a href="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']

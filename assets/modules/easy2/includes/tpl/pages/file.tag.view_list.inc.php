@@ -27,12 +27,12 @@ $readTag = $this->_readTag($tag);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
-// count the name, because new dir (without ID) is also being read.
-$countRowDirName = count($readTag['dir']['name']);
-for ($b = 0; $b < $countRowDirName; $b++) {
-    foreach ($readTag['dir'] as $k => $v) {
-        $dirPhRow['td.' . $k] = $v[$b];
+
+foreach ($readTag['dir'] as $dir) {
+    foreach ($dir as $dirk => $dirv) {
+        $dirPhRow['td.' . $dirk] = $dirv;
     }
+
     $dirPhRow['td.rowDir'] = '<a href="' . $dirPhRow['td.href'] . '">'
             . $dirPhRow['td.styledName']
             . '</a> '
@@ -44,13 +44,12 @@ for ($b = 0; $b < $countRowDirName; $b++) {
 
 #########################        FILES         #########################
 $filePhRow = array();
-// count the name, because new file (without ID) is also being read.
-$countRowFileName = count($readTag['file']['name']);
-for ($b = 0; $b < $countRowFileName; $b++) {
-    foreach ($readTag['file'] as $k => $v) {
-        $filePhRow['td.' . $k] = $v[$b];
-    }
 
+foreach ($readTag['file'] as $file) {
+    foreach ($file as $filek => $filev) {
+        $filePhRow['td.' . $filek] = $filev;
+    }
+    
     if ($filePhRow['td.attributes'] == '<i>(' . $lng['deleted'] . ')</i>') {
         $filePhRow['td.rowFile'] = $filePhRow['td.styledName'] . ' ' . $filePhRow['td.fid'] . ' ' . $filePhRow['td.attributes'];
     } else {

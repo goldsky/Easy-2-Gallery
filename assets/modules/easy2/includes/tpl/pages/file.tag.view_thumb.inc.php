@@ -10,13 +10,11 @@ $readTag = $this->_readTag($tag);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
-// count the name, because new dir (without ID) is also being read.
-$countRowDirName = count($readTag['dir']['name']);
-for ($b = 0; $b < $countRowDirName; $b++) {
-    foreach ($readTag['dir'] as $k => $v) {
-        $dirPhRow['thumb.' . $k] = $v[$b];
-    }
 
+foreach ($readTag['dir'] as $dir) {
+    foreach ($dir as $dirk => $dirv) {
+        $dirPhRow['thumb.' . $dirk] = $dirv;
+    }
     $dirPhRow['thumb.src'] = '';
     $dirPhRow['thumb.thumb'] = '';
     if (!empty($dirPhRow['thumb.id'])) {
@@ -26,7 +24,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
         // if there is an empty folder, or invalid content
         if ($folderImgInfos === FALSE) {
             $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                    . $dirPhRow['thumb.pathRawUrlEncoded']
+                    .  '../' . $dirPhRow['thumb.pathRawUrlEncoded']
                     . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                     . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
                     . '&amp;text=' . $lng['empty']
@@ -65,7 +63,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
             } else {
                 // folder has been deleted
                 $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                        . $dirPhRow['thumb.pathRawUrlEncoded']
+                        .  '../' . $dirPhRow['thumb.pathRawUrlEncoded']
                         . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                         . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
                         . '&amp;text=' . __LINE__ . '-'
@@ -89,7 +87,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     } else {
         // new folder
         $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $dirPhRow['thumb.pathRawUrlEncoded']
+                .  '../' . $dirPhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
                 . '&amp;text=' . $lng['new'];
@@ -111,15 +109,13 @@ for ($b = 0; $b < $countRowDirName; $b++) {
 
 #########################     FILES      #########################
 $filePhRow = array();
-// count the name, because new file (without ID) is also being read.
-$countRowFileName = count($readTag['file']['name']);
-for ($b = 0; $b < $countRowFileName; $b++) {
-    foreach ($readTag['file'] as $k => $v) {
-        $filePhRow['thumb.' . $k] = $v[$b];
+
+foreach ($readTag['file'] as $file) {
+    foreach ($file as $filek => $filev) {
+        $filePhRow['thumb.' . $filek] = $filev;
     }
 
     $filePhRow['thumb.link'] = '';
-
     $filePhRow['thumb.src'] = '';
     $filePhRow['thumb.thumb'] = '';
     if (!empty($filePhRow['thumb.id'])) {
@@ -130,7 +126,27 @@ for ($b = 0; $b < $countRowFileName; $b++) {
                         , $filePhRow['thumb.mod_w']
                         , $filePhRow['thumb.mod_w']
                         , $thq);
-        if ($imgShaper !== FALSE) {
+        // if there is an invalid content
+        if ($imgShaper === FALSE) {
+            $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
+                    . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
+                    . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
+                    . '&amp;text=' . __LINE__ . '-FALSE'
+            ;
+            $filePhRow['thumb.thumb'] = '
+                <a href="' . $imgPreview
+                    . '" class="highslide" onclick="return hs.expand(this)"'
+                    . ' title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
+                    . '">
+                    <img src="' . $imgPreview
+                    . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
+                    . '" title="' . $filePhRow['thumb.title']
+                    . '" width="' . $filePhRow['thumb.mod_w']
+                    . '" height="' . $filePhRow['thumb.mod_h']
+                    . '" />
+                </a>
+    ';
+        } else {
             $filePhRow['thumb.src'] = $imgShaper;
             $filePhRow['thumb.thumb'] = '
             <a href="' . '../' . $filePhRow['thumb.pathRawUrlEncoded']
@@ -146,11 +162,11 @@ for ($b = 0; $b < $countRowFileName; $b++) {
             </a>
 ';
         }
-        unset($imgShaper);
+        unset($imgShaper, $imgPreview);
     } else {
         // new image
         $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
-                . $filePhRow['thumb.pathRawUrlEncoded']
+                .  '../' . $filePhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
                 . '&amp;text=' . __LINE__ . '-'

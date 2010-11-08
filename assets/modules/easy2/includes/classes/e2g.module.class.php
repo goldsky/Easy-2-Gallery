@@ -4776,7 +4776,7 @@ class E2gMod extends E2gPub {
         $rowNum = 0;
 
         //******************************************************************/
-        //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
+        //**************************** Dir tags ****************************/
         //******************************************************************/
         $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'WHERE cat_tag LIKE \'%' . $tag . '%\' '
@@ -4786,33 +4786,33 @@ class E2gMod extends E2gPub {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
             return FALSE;
         }
-        $row['dir'] = array();
+        $row = array();
         while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
             // goldsky -- store the array to be connected between db <--> fs
-            $row['dir']['parent_id'][] = $l['parent_id'];
-            $row['dir']['id'][] = $l['cat_id'];
-            $row['dir']['name'][] = $l['cat_name'];
-            $row['dir']['alias'][] = $l['cat_alias'];
-            $row['dir']['tag'][] = $l['cat_tag'];
-            $row['dir']['cat_visible'][] = $l['cat_visible'];
-            $row['dir']['date_added'][] = $l['date_added'];
-            $row['dir']['last_modified'][] = $l['last_modified'];
+            $row['dir'][$l['cat_id']]['parent_id'] = $l['parent_id'];
+            $row['dir'][$l['cat_id']]['id'] = $l['cat_id'];
+            $row['dir'][$l['cat_id']]['name'] = $l['cat_name'];
+            $row['dir'][$l['cat_id']]['alias'] = $l['cat_alias'];
+            $row['dir'][$l['cat_id']]['tag'] = $l['cat_tag'];
+            $row['dir'][$l['cat_id']]['cat_visible'] = $l['cat_visible'];
+            $row['dir'][$l['cat_id']]['date_added'] = $l['date_added'];
+            $row['dir'][$l['cat_id']]['last_modified'] = $l['last_modified'];
 
             ####################### Template placeholders ######################
 
-            $row['dir']['rowNum'][] = $rowNum;
-            $row['dir']['rowClass'][] = $rowClass[$rowNum % 2];
+            $row['dir'][$l['cat_id']]['rowNum'] = $rowNum;
+            $row['dir'][$l['cat_id']]['rowClass'] = $rowClass[$rowNum % 2];
             $dirPath = $gdir . $this->_getPath($l['parent_id']);
-            $row['dir']['checkBox'][] = '
+            $row['dir'][$l['cat_id']]['checkBox'] = '
                 <input name="dir[' . $l['cat_id'] . ']" value="' . rawurldecode($dirPath . $l['cat_name']) . '" type="checkbox" style="border:0;padding:0" />
                 ';
-            $row['dir']['gid'][] = '[id: ' . $l['cat_id'] . ']';
-            $row['dir']['path'][] = $dirPath;
-            $row['dir']['pathRawUrlEncoded'][] = str_replace('%2F', '/', rawurlencode($dirPath . $l['cat_name']));
-            $row['dir']['title'][] = ( trim($l['cat_alias']) != '' ? $l['cat_alias'] : $l['cat_name']);
-            $row['dir']['tagLinks'][] = $this->_createTagLinks($l['cat_tag']);
-            $row['dir']['time'][] = $this->_getTime($l['date_added'], $l['last_modified'], $dirPath . $l['cat_name']);
-            $row['dir']['count'][] = $this->_countFiles( '../' . $dirPath . $l['cat_name']);
+            $row['dir'][$l['cat_id']]['gid'] = '[id: ' . $l['cat_id'] . ']';
+            $row['dir'][$l['cat_id']]['path'] = $dirPath;
+            $row['dir'][$l['cat_id']]['pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($dirPath . $l['cat_name']));
+            $row['dir'][$l['cat_id']]['title'] = ( trim($l['cat_alias']) != '' ? $l['cat_alias'] : $l['cat_name']);
+            $row['dir'][$l['cat_id']]['tagLinks'] = $this->_createTagLinks($l['cat_tag']);
+            $row['dir'][$l['cat_id']]['time'] = $this->_getTime($l['date_added'], $l['last_modified'], $dirPath . $l['cat_name']);
+            $row['dir'][$l['cat_id']]['count'] = $this->_countFiles( '../' . $dirPath . $l['cat_name']);
 
             $dirStyledName = $l['cat_name']; // will be overridden for styling below
             $dirCheckBox = '';
@@ -4860,18 +4860,18 @@ class E2gMod extends E2gPub {
                             , 'onclick="return confirmDeleteFolder();"'
             );
 
-            $row['dir']['styledName'][] = $dirStyledName;
-            $row['dir']['attributes'][] = $dirAttributes;
-            $row['dir']['attributeIcons'][] = $dirAttributeIcons;
-            $row['dir']['href'][] = $index . '&amp;pid=' . $l['cat_id'];
-            $row['dir']['buttons'][] = $dirButtons;
-            $row['dir']['icon'][] = $dirIcons;
-            $row['dir']['size'][] = '---';
-            $row['dir']['w'][] = '---';
-            $row['dir']['h'][] = '---';
-            $row['dir']['mod_w'][] = $modThumbW;
-            $row['dir']['mod_h'][] = $modThumbH;
-            $row['dir']['mod_thq'][] = $modThumbThq;
+            $row['dir'][$l['cat_id']]['styledName'] = $dirStyledName;
+            $row['dir'][$l['cat_id']]['attributes'] = $dirAttributes;
+            $row['dir'][$l['cat_id']]['attributeIcons'] = $dirAttributeIcons;
+            $row['dir'][$l['cat_id']]['href'] = $index . '&amp;pid=' . $l['cat_id'];
+            $row['dir'][$l['cat_id']]['buttons'] = $dirButtons;
+            $row['dir'][$l['cat_id']]['icon'] = $dirIcons;
+            $row['dir'][$l['cat_id']]['size'] = '---';
+            $row['dir'][$l['cat_id']]['w'] = '---';
+            $row['dir'][$l['cat_id']]['h'] = '---';
+            $row['dir'][$l['cat_id']]['mod_w'] = $modThumbW;
+            $row['dir'][$l['cat_id']]['mod_h'] = $modThumbH;
+            $row['dir'][$l['cat_id']]['mod_thq'] = $modThumbThq;
 
             $rowNum++;
         }
@@ -4879,29 +4879,29 @@ class E2gMod extends E2gPub {
         mysql_free_result($querySelectDirs);
 
         //******************************************************************/
-        //************* FILE content for the current directory *************/
+        //*************************** FILE tags ****************************/
         //******************************************************************/
         $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE tag LIKE \'%' . $tag . '%\' ';
+                . 'WHERE tag LIKE \'%' . $tag . '%\' '
+                . 'ORDER BY id ASC';
         $querySelectFiles = mysql_query($selectFiles);
-        $row['file'] = array();
         if (!$querySelectFiles) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
             return FALSE;
         }
+        
         while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-            // goldsky -- store the array to be connected between db <--> fs
-            $row['file']['id'][] = $l['id'];
-            $row['file']['dirId'][] = $l['dir_id'];
-            $row['file']['name'][] = $l['filename'];
-            $row['file']['size'][] = round($l['size'] / 1024);
-            $row['file']['w'][] = $l['width'];
-            $row['file']['h'][] = $l['height'];
-            $row['file']['alias'][] = $l['alias'];
-            $row['file']['tag'][] = $l['tag'];
-            $row['file']['date_added'][] = $l['date_added'];
-            $row['file']['last_modified'][] = $l['last_modified'];
-            $row['file']['status'][] = $l['status'];
+            $row['file'][$l['id']]['id'] = $l['id'];
+            $row['file'][$l['id']]['dirId'] = $l['dir_id'];
+            $row['file'][$l['id']]['name'] = $l['filename'];
+            $row['file'][$l['id']]['size'] = round($l['size'] / 1024);
+            $row['file'][$l['id']]['w'] = $l['width'];
+            $row['file'][$l['id']]['h'] = $l['height'];
+            $row['file'][$l['id']]['alias'] = $l['alias'];
+            $row['file'][$l['id']]['tag'] = $l['tag'];
+            $row['file'][$l['id']]['date_added'] = $l['date_added'];
+            $row['file'][$l['id']]['last_modified'] = $l['last_modified'];
+            $row['file'][$l['id']]['status'] = $l['status'];
 
             ####################### Template placeholders ######################
 
@@ -4916,8 +4916,8 @@ class E2gMod extends E2gPub {
             ';
             $fileButtons = '';
 
-            $row['file']['rowNum'][] = $rowNum;
-            $row['file']['rowClass'][] = $rowClass[$rowNum % 2];
+            $row['file'][$l['id']]['rowNum'] = $rowNum;
+            $row['file'][$l['id']]['rowClass'] = $rowClass[$rowNum % 2];
             $filePath = $gdir . $this->_getPath($l['dir_id']);
             $fileNameUrlDecodeFilename = urldecode($l['filename']);
             $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($filePath . $l['filename']));
@@ -4972,24 +4972,24 @@ class E2gMod extends E2gPub {
                             , 'onclick="return confirmDelete();"'
             );
 
-            $row['file']['checkBox'][] = '
+            $row['file'][$l['id']]['checkBox'] = '
                 <input name="im[' . $l['id'] . ']" value="im[' . $l['id'] . ']" type="checkbox" style="border:0;padding:0" />
                 ';
-            $row['file']['dirId'][] = $l['dir_id'];
-            $row['file']['fid'][] = '[id:' . $l['id'] . ']';
-            $row['file']['styledName'][] = $fileStyledName;
-            $row['file']['title'][] = ( trim($l['alias']) != '' ? $l['alias'] : $l['filename']);
-            $row['file']['tagLinks'][] = $this->_createTagLinks($l['tag']);
-            $row['file']['path'][] = $filePath;
-            $row['file']['pathRawUrlEncoded'][] = $filePathRawUrlEncoded;
-            $row['file']['time'][] = $this->_getTime($l['date_added'], $l['last_modified'], $filePath . $l['filename']);
-            $row['file']['attributes'][] = $fileAttributes;
-            $row['file']['attributeIcons'][] = $fileAttributeIcons;
-            $row['file']['buttons'][] = $fileButtons;
-            $row['file']['icon'][] = $fileIcon;
-            $row['file']['mod_w'][] = $modThumbW;
-            $row['file']['mod_h'][] = $modThumbH;
-            $row['file']['mod_thq'][] = $modThumbThq;
+            $row['file'][$l['id']]['dirId'] = $l['dir_id'];
+            $row['file'][$l['id']]['fid'] = '[id:' . $l['id'] . ']';
+            $row['file'][$l['id']]['styledName'] = $fileStyledName;
+            $row['file'][$l['id']]['title'] = ( trim($l['alias']) != '' ? $l['alias'] : $l['filename']);
+            $row['file'][$l['id']]['tagLinks'] = $this->_createTagLinks($l['tag']);
+            $row['file'][$l['id']]['path'] = $filePath;
+            $row['file'][$l['id']]['pathRawUrlEncoded'] = $filePathRawUrlEncoded;
+            $row['file'][$l['id']]['time'] = $this->_getTime($l['date_added'], $l['last_modified'], $filePath . $l['filename']);
+            $row['file'][$l['id']]['attributes'] = $fileAttributes;
+            $row['file'][$l['id']]['attributeIcons'] = $fileAttributeIcons;
+            $row['file'][$l['id']]['buttons'] = $fileButtons;
+            $row['file'][$l['id']]['icon'] = $fileIcon;
+            $row['file'][$l['id']]['mod_w'] = $modThumbW;
+            $row['file'][$l['id']]['mod_h'] = $modThumbH;
+            $row['file'][$l['id']]['mod_thq'] = $modThumbThq;
 
             $rowNum++;
         }
