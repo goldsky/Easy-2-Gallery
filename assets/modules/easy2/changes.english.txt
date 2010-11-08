@@ -28,6 +28,7 @@
     Specified the class directly on the template
   - &back_class
     Specified the class directly on the template
++ Fixed issue on the joining parameters (&gid and &fid) in one snippet call.
 + Updated the floatbox to 4.20 version
 
 SOMETHING MAY BREAK ON UPGRADING:
