@@ -125,7 +125,12 @@ if (isset($_GET['tag'])) {
         </div><?php echo $this->_plugin('OnE2GFileEditFormRender'); ?>
         <div style="margin-left: 80px;">
             <input type="submit" value="<?php echo $lng['save']; ?>" />
-            <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="document.location.href='<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>'" />
+            <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="document.location.href='<?php
+                                                     echo $index;
+                                                     if ($_GET['tag'])
+                                                         echo '&amp;tag=' . $_GET['tag'];
+                                                     else
+                                                         echo '&amp;pid=' . $parentId; ?>'" />
         </div>
     </div>
 </form>

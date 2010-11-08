@@ -17,24 +17,26 @@ $e2gSnipCfg['e2g_wrapper'] = $e2g['e2g_wrapper'];
 /**
  * GALLERY / ALBUM Selection Parameters
  */
-if (isset($fid)) {
-    // FILE ID
-    $e2gSnipCfg['fid'] = (isset($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : (isset($fid) ? $fid : null );
-    $e2gSnipCfg['static_fid'] = isset($fid) ? $fid : null;
-} elseif (isset($rgid)) {
-    // RANDOMIZED GALLERY ID
-    $e2gSnipCfg['rgid'] = isset($rgid) ? $rgid : null;
-} else {
-    // GALLERY ID
-    $e2gSnipCfg['gid'] = (isset($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : (isset($gid) ? $gid : 1 );
-    // to get the REAL snippet's gid call
-    $e2gSnipCfg['static_gid'] = isset($gid) ? $gid : 1;
+// FILE ID
+$e2gSnipCfg['fid'] = (isset($_GET['fid']) && is_numeric($_GET['fid'])) ? $_GET['fid'] : (isset($fid) ? $fid : NULL );
+$e2gSnipCfg['static_fid'] = isset($fid) ? $fid : NULL;
+// RANDOMIZED GALLERY ID
+$e2gSnipCfg['rgid'] = isset($rgid) ? $rgid : NULL;
+// GALLERY ID
+if (!isset($gid) && !isset($fid)) {
+    $gid = 1;
 }
+//$e2gSnipCfg['gid'] = (isset($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : (isset($gid) ? $gid : 1 );
+$e2gSnipCfg['gid'] = (isset($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : (isset($gid) ? $gid : NULL );
+// to get the REAL snippet's gid call
+//$e2gSnipCfg['static_gid'] = isset($gid) ? $gid : 1;
+$e2gSnipCfg['static_gid'] = isset($gid) ? $gid : NULL;
+
 // TAGS
 if (isset($tags))
     $tag = $tags; // compatibility
-$e2gSnipCfg['tag'] = isset($_GET['tag']) ? $_GET['tag'] : (isset($tag) ? $tag : null );
-$e2gSnipCfg['static_tag'] = isset($tag) ? $tag : null;
+$e2gSnipCfg['tag'] = isset($_GET['tag']) ? $_GET['tag'] : (isset($tag) ? $tag : NULL );
+$e2gSnipCfg['static_tag'] = isset($tag) ? $tag : NULL;
 
 /**
  * ENCODING
@@ -307,8 +309,8 @@ $e2gSnipCfg['landingpage'] = isset($landingpage) ? $landingpage : (isset($_GET['
 /**
  * IF, the image source =`generated`, use these more options
  */
-$e2gSnipCfg['lp_w'] = isset($lp_w) ? $lp_w : null; // width -> null: will be retrieved from the getimagesize() function
-$e2gSnipCfg['lp_h'] = isset($lp_h) ? $lp_h : null; // height -> null: will be retrieved from the getimagesize() function
+$e2gSnipCfg['lp_w'] = isset($lp_w) ? $lp_w : NULL; // width -> NULL: will be retrieved from the getimagesize() function
+$e2gSnipCfg['lp_h'] = isset($lp_h) ? $lp_h : NULL; // height -> NULL: will be retrieved from the getimagesize() function
 $e2gSnipCfg['lp_thq'] = (isset($lp_thq) && $lp_thq <= 100 && $lp_thq >= 0) ? (int) $lp_thq : $e2g['thq'];
 /**
  * landingpage's 'resize-type'
@@ -360,7 +362,7 @@ $e2gSnipCfg['cat_name_len'] = (isset($cat_name_len) && is_numeric($cat_name_len)
  */
 if (isset($plugins))
     $plugin = $plugins; // compatibility
-$e2gSnipCfg['plugin'] = isset($plugin) ? $plugin : null;
+$e2gSnipCfg['plugin'] = isset($plugin) ? $plugin : NULL;
 
 // set pagination on or off: 0 | 1
 $e2gSnipCfg['pagination'] = ( isset($pagination) && is_numeric($pagination) ) ? $pagination : $e2g['pagination'];

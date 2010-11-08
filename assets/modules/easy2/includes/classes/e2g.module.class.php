@@ -2374,7 +2374,7 @@ class E2gMod extends E2gPub {
                         if (!$ids) {
                             if (!empty($moveDir['e'])) {
                                 $_SESSION['easy2err'] = $moveDir['e'];
-                                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_move_err'] . $oldPath['origin'] . ' => ' . $newPath['origin'];
+                                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_move_err'] . ' : '. $oldPath['origin'] . ' => ' . $newPath['origin'];
                             }
                             if (!empty($tree->error))
                                 $_SESSION['easy2err'][] = __LINE__ . ' : Error: ' . $tree->error;
@@ -4305,14 +4305,7 @@ class E2gMod extends E2gPub {
             $row = array(); // for return
             $mdirs = array();
             while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-                // goldsky -- store the array to be connected between db <--> fs
-                $mdirs[$l['cat_name']]['id'] = $l['cat_id'];
-                $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
-                $mdirs[$l['cat_name']]['alias'] = $l['cat_alias'];
-                $mdirs[$l['cat_name']]['cat_tag'] = $l['cat_tag'];
-                $mdirs[$l['cat_name']]['cat_visible'] = $l['cat_visible'];
-                $mdirs[$l['cat_name']]['date_added'] = $l['date_added'];
-                $mdirs[$l['cat_name']]['last_modified'] = $l['last_modified'];
+                $mdirs[$l['cat_name']] = $l;
             }
             mysql_free_result($querySelectDirs);
         }
@@ -4351,13 +4344,19 @@ class E2gMod extends E2gPub {
                 $dirHref = '';
                 $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
-                    width="16" height="16" border="0" alt="" />
+                    width="16" height="16" border="0" alt="folder" title="'. $lng['dir'] .'" />
                 ';
+                if (!empty($mdirs[$dirName]['cat_redirect_link'])) {
+                    $dirIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mdirs[$dirName]['cat_redirect_link'] . '" border="0" />
+                        ';
+                }
                 $dirButtons = '';
 
                 if (isset($mdirs[$dirName])) {
-                    $dirId = $mdirs[$dirName]['id'];
-                    $dirAlias = $mdirs[$dirName]['alias'];
+                    $dirId = $mdirs[$dirName]['cat_id'];
+                    $dirAlias = $mdirs[$dirName]['cat_alias'];
                     $dirTag = $mdirs[$dirName]['cat_tag'];
                     $dirTagLinks = $this->_createTagLinks($dirTag);
                     $dirTime = $this->_getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $dirPath);
@@ -4370,7 +4369,7 @@ class E2gMod extends E2gPub {
                     }
                     if ($mdirs[$dirName]['cat_visible'] == '1') {
                         $dirStyledName = '<b>' . $dirName . '</b>';
-                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
+                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
                         $dirButtons = $this->_actionIcon('hide_dir', array(
                                     'act' => 'hide_dir'
                                     , 'dir_id' => $dirId
@@ -4385,7 +4384,7 @@ class E2gMod extends E2gPub {
                         height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
                 </a>
                 ';
-                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['id'];
+                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
                         $dirButtons = $this->_actionIcon('show_dir', array(
                                     'act' => 'show_dir'
                                     , 'dir_id' => $dirId
@@ -4490,33 +4489,41 @@ class E2gMod extends E2gPub {
                     $row['deletedDir']['rowNum'][] = $rowNum;
                     $row['deletedDir']['rowClass'][] = $rowClass[$rowNum % 2];
                     $row['deletedDir']['checkBox'][] = '
-                    <input name="dir[' . $v['id'] . ']" value="dir[' . $v['id'] . ']" type="checkbox" style="border:0;padding:0" />
+                    <input name="dir[' . $v['cat_id'] . ']" value="dir[' . $v['cat_id'] . ']" type="checkbox" style="border:0;padding:0" />
                         ';
-                    $row['deletedDir']['id'][] = $v['id'];
-                    $row['deletedDir']['gid'][] = '[id: ' . $v['id'] . ']';
-                    $row['deletedDir']['name'][] = $v['name'];
-                    $row['deletedDir']['styledName'][] = '<b style="color:red;"><u>' . $v['name'] . '</u></b>';
+                    $row['deletedDir']['id'][] = $v['cat_id'];
+                    $row['deletedDir']['gid'][] = '[id: ' . $v['cat_id'] . ']';
+                    $row['deletedDir']['name'][] = $v['cat_name'];
+                    $row['deletedDir']['styledName'][] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
                     $row['deletedDir']['path'][] = '';
-                    $row['deletedDir']['alias'][] = $v['alias'];
-                    $row['deletedDir']['title'][] = ( trim($v['alias']) != '' ? $v['alias'] : $v['name']);
+                    $row['deletedDir']['alias'][] = $v['cat_alias'];
+                    $row['deletedDir']['title'][] = ( trim($v['cat_alias']) != '' ? $v['cat_alias'] : $v['cat_name']);
                     $row['deletedDir']['tagLinks'][] = $this->_createTagLinks($v['cat_tag']);
                     $row['deletedDir']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
                     $row['deletedDir']['count'][] = intval("0");
-                    $row['deletedDir']['link'][] = '<b style="color:red;"><u>' . $v['name'] . '</u></b>';
+                    $row['deletedDir']['link'][] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
                     $row['deletedDir']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
                     $row['deletedDir']['attributeIcons'][] = '';
-                    
+
                     $row['deletedDir']['href'][] = '';
 
                     $row['deletedDir']['buttons'][] = $this->_actionIcon('delete_dir', array(
                                     'act' => 'delete_dir'
-                                    , 'dir_id' => $v['id']
+                                    , 'dir_id' => $v['cat_id']
                                     , 'pid' => $pid
-                                ), 'onclick="return confirmDeleteFolder();"');
-                    $row['deletedDir']['icon'][] = '
+                                    ), 'onclick="return confirmDeleteFolder();"');
+                    $deletedDirIcon = '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png"
-                        width="16" height="16" border="0" alt="" />
+                        width="16" height="16" border="0" alt="folder_delete.png" title="' . $lng['deleted'] . '" />
                     ';
+                    if (!empty($v['cat_redirect_link'])) {
+                        $deletedDirIcon .= '
+                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
+                        height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mdirs[$dirName]['cat_redirect_link'] . '" border="0" />
+                            ';
+                    }
+                    $row['deletedDir']['icon'][] = $deletedDirIcon;
+
                     $row['deletedDir']['mod_w'][] = $modThumbW;
                     $row['deletedDir']['mod_h'][] = $modThumbH;
                     $row['deletedDir']['mod_thq'][] = $modThumbThq;
@@ -4541,17 +4548,7 @@ class E2gMod extends E2gPub {
             }
             $mfiles = array();
             while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-                // goldsky -- store the array to be connected between db <--> fs
-                $mfiles[$l['filename']]['id'] = $l['id'];
-                $mfiles[$l['filename']]['filename'] = $l['filename'];
-                $mfiles[$l['filename']]['size'] = $l['size'];
-                $mfiles[$l['filename']]['width'] = $l['width'];
-                $mfiles[$l['filename']]['height'] = $l['height'];
-                $mfiles[$l['filename']]['alias'] = $l['alias'];
-                $mfiles[$l['filename']]['tag'] = $l['tag'];
-                $mfiles[$l['filename']]['date_added'] = $l['date_added'];
-                $mfiles[$l['filename']]['last_modified'] = $l['last_modified'];
-                $mfiles[$l['filename']]['status'] = $l['status'];
+                $mfiles[$l['filename']] = $l;
             }
             mysql_free_result($querySelectFiles);
         }
@@ -4589,6 +4586,12 @@ class E2gMod extends E2gPub {
                 $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
                 ';
+                if (!empty($mfiles[$filename]['redirect_link'])) {
+                    $fileIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mfiles[$filename]['redirect_link'] . '" border="0" />
+                        ';
+                }
                 $fileButtons = '';
 
                 if (isset($mfiles[$filename])) {
@@ -4731,7 +4734,7 @@ class E2gMod extends E2gPub {
                     $row['deletedFile']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
                     $row['deletedFile']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
                     $row['deletedFile']['attributeIcons'][] = '';
-                    
+
                     $row['deletedFile']['buttons'][] = $this->_actionIcon('delete_file', array(
                                 'act' => 'delete_file'
                                 , 'file_id' => $v['id']
@@ -4819,10 +4822,16 @@ class E2gMod extends E2gPub {
             $dirLink = '';
             $dirAttributes = '';
             $dirAttributeIcons = '';
-            $dirIcons = '
+            $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
                     width="16" height="16" border="0" alt="" />
                 ';
+            if (!empty($l['cat_redirect_link'])) {
+                $dirIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $l['cat_redirect_link'] . '" border="0" />
+                        ';
+            }
             $dirButtons = '';
 
             if ($l['cat_visible'] == '1') {
@@ -4865,7 +4874,7 @@ class E2gMod extends E2gPub {
             $row['dir'][$l['cat_id']]['attributeIcons'] = $dirAttributeIcons;
             $row['dir'][$l['cat_id']]['href'] = $index . '&amp;pid=' . $l['cat_id'];
             $row['dir'][$l['cat_id']]['buttons'] = $dirButtons;
-            $row['dir'][$l['cat_id']]['icon'] = $dirIcons;
+            $row['dir'][$l['cat_id']]['icon'] = $dirIcon;
             $row['dir'][$l['cat_id']]['size'] = '---';
             $row['dir'][$l['cat_id']]['w'] = '---';
             $row['dir'][$l['cat_id']]['h'] = '---';
@@ -4914,6 +4923,12 @@ class E2gMod extends E2gPub {
             $fileIcon = '
             <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
             ';
+            if (!empty($l['redirect_link'])) {
+                $fileIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $l['redirect_link'] . '" border="0" />
+                        ';
+            }
             $fileButtons = '';
 
             $row['file'][$l['id']]['rowNum'] = $rowNum;

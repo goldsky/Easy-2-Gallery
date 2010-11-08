@@ -44,23 +44,23 @@ class E2gSnippet extends E2gPub {
          * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
          */
         $modx = $this->modx;
-//        $gid = $this->e2gSnipCfg['gid']; // default
+        $gid = $this->e2gSnipCfg['gid']; // default
 //        $staticGid = $this->e2gSnipCfg['static_gid'];
         $fid = $this->e2gSnipCfg['fid'];
-//        $static_fid = $this->e2gSnipCfg['static_fid'];
+//        $staticFid = $this->e2gSnipCfg['static_fid'];
         $rgid = $this->e2gSnipCfg['rgid'];
         $slideshow = $this->e2gSnipCfg['slideshow'];
         $landingPage = $this->e2gSnipCfg['landingpage'];
 
         // to avoid gallery's thumbnails display on the landingpage's page
         if ($modx->documentIdentifier != $landingPage) {
-            if (isset($fid) && !isset($slideshow)) {
+            if (!isset($gid) && isset($fid) && !isset($slideshow)) {
                 return $this->_imgFile();
             }
             if (isset($rgid) && !isset($slideshow)) {
                 return $this->_imgRandom();
             }
-            if (!isset($fid) && !isset($rgid) && !isset($slideshow)) {
+            if (!isset($rgid) && !isset($slideshow)) {
                 return $this->_gallery(); // default
             }
         }
@@ -81,6 +81,8 @@ class E2gSnippet extends E2gPub {
         $gdir = $this->e2gSnipCfg['gdir'];
         $gid = $this->e2gSnipCfg['gid'];
         $staticGid = $this->e2gSnipCfg['static_gid'];
+        $fid = $this->e2gSnipCfg['fid'];
+        $staticFid = $this->e2gSnipCfg['static_fid'];
         $e2gInstances = $this->e2gSnipCfg['e2g_instances'];
         $e2gStaticInstances = $this->e2gSnipCfg['e2g_static_instances'];
         $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
@@ -688,7 +690,6 @@ class E2gSnippet extends E2gPub {
                 $i = 0;
                 while ($i * $limit < $totalCount) {
                     if ($i == $gpn) {
-//                        $galPh['pages'] .= '<b>' . ($i + 1) . '</b> ';
                         $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
                         $pages['currentPage'] = ($i + 1);
                     } else {
@@ -708,15 +709,14 @@ class E2gSnippet extends E2gPub {
                             $permalinkName = $modx->stripAlias($permalinkName);
                             // making flexible FURL or not
                             $pagesLink = $indexPage . ( isset($staticGid)
-                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid) , $staticGid) == TRUE ) ?
+                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
                                             '&amp;gid=' . $gid :
                                             '&amp;gid=' . $staticGid )
+                                    . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
                                     . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
                         }
 
                         $pagesLink = str_replace(' ', '', $pagesLink);
-//                        $galPh['pages'] .= '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
-
                         $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
                     }
 
@@ -730,15 +730,17 @@ class E2gSnippet extends E2gPub {
                     } else {
                         $previousLink = $indexPage
                                 . ( isset($staticGid)
-                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid) , $staticGid) == TRUE ) ?
+                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
                                         '&amp;gid=' . $gid :
                                         '&amp;gid=' . $staticGid )
+                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
                                 . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
                         $nextLink = $indexPage
                                 . ( isset($staticGid)
                                 && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
                                         '&amp;gid=' . $gid :
                                         '&amp;gid=' . $staticGid )
+                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
                                 . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
                     }
 
@@ -2910,6 +2912,9 @@ class E2gSnippet extends E2gPub {
         $staticTag = $this->e2gSnipCfg['static_tag'];
         $gid = $this->e2gSnipCfg['gid'];
         $staticGid = $this->e2gSnipCfg['static_gid'];
+        $fid = $this->e2gSnipCfg['fid'];
+        $staticFid = $this->e2gSnipCfg['static_fid'];
+
         $whereFile = $this->e2gSnipCfg['where_file'];
         $excludeDirWebAccess = $this->_excludeWebAccess('dir');
         $excludeFileWebAccess = $this->_excludeWebAccess('file');
@@ -2941,10 +2946,13 @@ class E2gSnippet extends E2gPub {
                 }
                 $fileSqlStatements .= 'AND ';
             }
-        }
-        // exclude &tag snippet call, for the &gid parameter
-        else {
+        } else {
             if ($gid != '*') {
+                if (isset($fid) 
+                        && (isset($gid) ? $gid == $staticGid : NULL)
+                        ) {
+                    $fileSqlStatements .= 'id IN (' . $fid . ') OR ';
+                }
                 if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
                     $fileSqlStatements .= 'dir_id IN (' . $gid . ') ';
                 } else {
@@ -2952,7 +2960,6 @@ class E2gSnippet extends E2gPub {
                 }
                 $fileSqlStatements .= 'AND ';
             }
-
             if (isset($whereFile)) {
                 $where = $this->_whereClause($whereFile);
                 if (!$where) {
@@ -3006,7 +3013,7 @@ class E2gSnippet extends E2gPub {
                 }
             } else {
                 // start splitting
-                if ($pages['currentPage'] < ($adjacents + floor($middleSpread/2) + 1)) {
+                if ($pages['currentPage'] < ($adjacents + floor($middleSpread / 2) + 1)) {
                     for ($i = 1; $i < ($adjacents + $middleSpread + 1); $i++) {
                         if ($i == $pages['currentPage']) {
                             $pagination.= '<b>' . $i . '</b>';
@@ -3019,13 +3026,13 @@ class E2gSnippet extends E2gPub {
                     for ($i = ($pages['totalPageNum'] - $adjacents + 1); $i <= $pages['totalPageNum']; $i++) {
                         $pagination.= $pages['pages'][$i];
                     }
-                } elseif ( $pages['currentPage'] >= ($adjacents + floor($middleSpread/2) + 1) // front
-                        && $pages['currentPage'] < ($pages['totalPageNum'] - ($adjacents + ceil($middleSpread/2) - 1)) // end
-                        ) {
+                } elseif ($pages['currentPage'] >= ($adjacents + floor($middleSpread / 2) + 1) // front
+                        && $pages['currentPage'] < ($pages['totalPageNum'] - ($adjacents + ceil($middleSpread / 2) - 1)) // end
+                ) {
                     $pagination.= $pages['pages'][1];
                     $pagination.= $pages['pages'][2];
                     $pagination.= $splitter;
-                    for ($i = ($pages['currentPage'] - floor($middleSpread/2)); $i <= $pages['currentPage']  + floor($middleSpread/2); $i++) {
+                    for ($i = ($pages['currentPage'] - floor($middleSpread / 2)); $i <= $pages['currentPage'] + floor($middleSpread / 2); $i++) {
                         if ($i == $pages['currentPage']) {
                             $pagination.= '<b>' . $i . '</b>';
                         } else {
@@ -3041,8 +3048,8 @@ class E2gSnippet extends E2gPub {
                     $pagination.= $pages['pages'][1];
                     $pagination.= $pages['pages'][2];
                     $pagination.= $splitter;
-                    
-                    for ($i = $pages['totalPageNum'] - ($adjacents + $middleSpread-1); $i <= $pages['totalPageNum']; $i++) {
+
+                    for ($i = $pages['totalPageNum'] - ($adjacents + $middleSpread - 1); $i <= $pages['totalPageNum']; $i++) {
                         if ($i == $pages['currentPage']) {
                             $pagination.= '<b>' . $i . '</b>';
                         } else {

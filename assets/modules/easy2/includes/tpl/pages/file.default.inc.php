@@ -6,21 +6,27 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 
 $parent = array();
 // Description of the current directory
-$qdesc = 'SELECT * '
-        . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
+$qdesc = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
         . 'WHERE cat_id = ' . $parentId;
 
 $resultdesc = mysql_query($qdesc);
 while ($l = mysql_fetch_array($resultdesc)) {
-    $parent['alias'] = $l['cat_alias'];
-    $parent['summary'] = $l['cat_summary'];
-    $parent['tag'] = $l['cat_tag'];
-    $parent['desc'] = $l['cat_description'];
-    $parent['visible'] = $l['cat_visible'];
+    $parent['cat_id'] = $l['cat_id'];
+    $parent['cat_alias'] = $l['cat_alias'];
+    $parent['cat_summary'] = $l['cat_summary'];
+    $parent['cat_tag'] = $l['cat_tag'];
+    $parent['cat_description'] = $l['cat_description'];
+    $parent['cat_visible'] = $l['cat_visible'];
+    $parent['cat_redirect_link'] = $l['cat_redirect_link'];
 }
 mysql_free_result($resultdesc);
 ?>
 <table cellspacing="2" cellpadding="0">
+        <tr>
+            <td valign="top"><b>ID</b></td>
+            <td valign="top">:</td>
+            <td><?php echo $parent['cat_id']; ?></td>
+        </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['path']; ?></b></td>
         <td valign="top">:</td>
@@ -45,7 +51,7 @@ mysql_free_result($resultdesc);
                     <td valign="top">:</td>
                     <td>
             <?php
-                if ($parent['visible'] == 1)
+                if ($parent['cat_visible'] == 1)
                     echo htmlspecialchars_decode($lng['visible'], ENT_QUOTES);
                 else
                     echo '<span style="color:red;font-weight:bold;font-style:italic;">' . htmlspecialchars_decode($lng['hidden'], ENT_QUOTES) . '</span>';
@@ -55,23 +61,30 @@ mysql_free_result($resultdesc);
         <tr>
             <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
             <td valign="top">:</td>
-            <td><?php echo $parent['alias']; ?></td>
+            <td><?php echo $parent['cat_alias']; ?></td>
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['summary']; ?></b></td>
             <td valign="top">:</td>
-            <td><?php echo htmlspecialchars_decode($parent['summary'], ENT_QUOTES); ?></td>
+            <td><?php echo htmlspecialchars_decode($parent['cat_summary'], ENT_QUOTES); ?></td>
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
             <td valign="top">:</td>
-            <td><?php echo $this->_createTagLinks($parent['tag']); ?></td>
+            <td><?php echo $this->_createTagLinks($parent['cat_tag']); ?></td>
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description']; ?></b></td>
             <td valign="top">:</td>
-            <td><?php echo htmlspecialchars_decode($parent['desc'], ENT_QUOTES); ?></td>
-        </tr><?php } ?>
+            <td><?php echo htmlspecialchars_decode($parent['cat_description'], ENT_QUOTES); ?></td>
+        </tr>
+        <tr>
+            <td valign="top"><b><?php echo $lng['redirect_link']; ?></b></td>
+            <td valign="top">:</td>
+            <td><?php echo $parent['cat_redirect_link']; ?></td>
+        </tr>
+
+            <?php } ?>
 </table>
 
 <br />
