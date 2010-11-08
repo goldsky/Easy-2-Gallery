@@ -28,6 +28,7 @@
     Specified the class directly on the template
   - &back_class
     Specified the class directly on the template
++ Updated the floatbox to 4.20 version
 
 SOMETHING MAY BREAK ON UPGRADING:
 + Custom Slideshow:
