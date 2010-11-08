@@ -54,29 +54,22 @@ for ($b = 0; $b < $countRowDirName; $b++) {
                             , $dirPhRow['thumb.mod_w']
                             , $dirPhRow['thumb.mod_w']
                             , $thq);
-            if ($imgShaper !== FALSE) {
-                $dirPhRow['thumb.src'] = $imgShaper;
-                $dirPhRow['thumb.thumb'] = '
-            <a href="' . $dirPhRow['thumb.href'] . '">
-                <img src="' . $imgShaper
-                        . '" alt="' . $dirPhRow['thumb.name']
-                        . '" title="' . $dirPhRow['thumb.title']
-                        . '" width="' . $dirPhRow['thumb.mod_w']
-                        . '" height="' . $dirPhRow['thumb.mod_h']
-                        . '" />
-            </a>
-';
-                unset($imgShaper);
-            } else {
+            if ($imgShaper === FALSE) {
                 // folder has been deleted
                 $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
                         . $dirPhRow['thumb.pathRawUrlEncoded']
                         . '&amp;mod_w=' . $dirPhRow['thumb.mod_w']
                         . '&amp;mod_h=' . $dirPhRow['thumb.mod_h']
-                        . '&amp;text=' . __LINE__ . '-'
+                        . '&amp;text=' . $lng['deleted']
                 ;
+                $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
+                        . $dirPhRow['thumb.pathRawUrlEncoded']
+                        . '&amp;mod_w=300'
+                        . '&amp;mod_h=100'
+                        . '&amp;text=' . $lng['deleted']
+                        . '&amp;th=5';
                 $dirPhRow['thumb.thumb'] = '
-            <a href="' . $dirPhRow['thumb.path'] . $dirPhRow['thumb.name']
+            <a href="' . $imgSrc
                         . '" class="highslide" onclick="return hs.expand(this)"'
                         . ' title="' . $dirPhRow['thumb.name'] . ' ' . $dirPhRow['thumb.gid'] . ' ' . $dirPhRow['thumb.attributes']
                         . '">
@@ -89,6 +82,19 @@ for ($b = 0; $b < $countRowDirName; $b++) {
             </a>
 ';
                 unset($imgPreview);
+            } else {
+                $dirPhRow['thumb.src'] = $imgShaper;
+                $dirPhRow['thumb.thumb'] = '
+            <a href="' . $dirPhRow['thumb.href'] . '">
+                <img src="' . $imgShaper
+                        . '" alt="' . $dirPhRow['thumb.name']
+                        . '" title="' . $dirPhRow['thumb.title']
+                        . '" width="' . $dirPhRow['thumb.mod_w']
+                        . '" height="' . $dirPhRow['thumb.mod_h']
+                        . '" />
+            </a>
+';
+                unset($imgShaper);
             }
         }
     } else {
