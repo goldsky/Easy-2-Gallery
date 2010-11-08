@@ -1520,7 +1520,7 @@ class E2gSnippet extends E2gPub {
         $errorThumb = 'assets/modules/easy2/show.easy2gallery.php?w=' . $w . '&amp;h=' . $h . '&amp;th=2';
         $errorImg = 'assets/modules/easy2/show.easy2gallery.php?w=' . $ssW . '&amp;h=' . $ssH . '&amp;th=5';
 
-        if (isset($gid) && $modx->documentIdentifier != $landingPage) {
+        if (!empty($gid) && $modx->documentIdentifier != $landingPage) {
             $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
 
             if ($gid != '*') {
@@ -1598,7 +1598,7 @@ class E2gSnippet extends E2gPub {
             mysql_free_result($querySelectFiles);
         }
 
-        if (isset($fid)) {
+        if (!empty($fid)) {
             $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                     . 'WHERE id IN (' . $fid . ') ';
 
@@ -1661,7 +1661,7 @@ class E2gSnippet extends E2gPub {
             }
         }
 
-        if (isset($rgid)) {
+        if (!empty($rgid)) {
             $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
                     . 'WHERE status = 1 '
                     . 'AND dir_id IN (' . $rgid . ') ';
