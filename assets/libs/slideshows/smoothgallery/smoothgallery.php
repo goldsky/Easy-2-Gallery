@@ -330,15 +330,8 @@ if ($ssParams['ss_config'] == 'galleryset') {
 
         if (isset($galleries)) {
             foreach ($galleries as $k => $v) {
-                $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                        . 'WHERE dir_id = ' . $k . ' ';
-
-                if ($ssParams['ss_allowedratio'] != 'all') {
-                    $select .= 'AND width/height >=' . floatval($ssParams['ss_minratio']) . ' AND width/height<=' . floatval($ssParams['ss_maxratio']) . ' ';
-                }
-
-                $select .= 'AND status = 1 '
-                        . 'ORDER BY ' . $ssParams['ss_orderby'] . ' ' . $ssParams['ss_order'] . ' '
+                $select = $this->_fileSqlStatements('*', $ssParams['ss_allowedratio'], $k);
+                $select .= 'ORDER BY ' . $ssParams['ss_orderby'] . ' ' . $ssParams['ss_order'] . ' '
                         . ( $ssParams['ss_limit'] == 'none' ? '' : 'LIMIT 0,' . $ssParams['ss_limit'] . ' ' )
                 ;
                 $query = mysql_query($select) or die(__LINE__ . ' ' . mysql_error() . '<br />' . $select);
