@@ -54,13 +54,13 @@ class E2gSnippet extends E2gPub {
 
         // to avoid gallery's thumbnails display on the landingpage's page
         if ($modx->documentIdentifier != $landingPage) {
-            if (!isset($gid) && isset($fid) && !isset($slideshow)) {
+            if (empty($gid) && !empty($fid) && empty($slideshow)) {
                 return $this->_imgFile();
             }
-            if (isset($rgid) && !isset($slideshow)) {
+            if (!empty($rgid) && empty($slideshow)) {
                 return $this->_imgRandom();
             }
-            if (!isset($rgid) && !isset($slideshow)) {
+            if (empty($rgid) && empty($slideshow)) {
                 return $this->_gallery(); // default
             }
         }
