@@ -23,7 +23,7 @@ $e2gSnipCfg['static_fid'] = isset($fid) ? $fid : NULL;
 // RANDOMIZED GALLERY ID
 $e2gSnipCfg['rgid'] = isset($rgid) ? $rgid : NULL;
 // GALLERY ID
-if (!isset($gid) && !isset($fid)) {
+if (!isset($gid) && !isset($fid) && !isset($rgid)) {
     $gid = 1;
 }
 //$e2gSnipCfg['gid'] = (isset($_GET['gid']) && is_numeric($_GET['gid'])) ? $_GET['gid'] : (isset($gid) ? $gid : 1 );

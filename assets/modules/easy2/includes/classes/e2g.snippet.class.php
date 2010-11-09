@@ -64,10 +64,10 @@ class E2gSnippet extends E2gPub {
                 return $this->_gallery(); // default
             }
         }
-        if (isset($slideshow)) {
+        if (!empty($slideshow)) {
             return $this->_slideshow($slideshow);
         }
-        if (isset($landingPage) && isset($_GET['fid'])) {
+        if (!empty($landingPage) && !empty($_GET['fid'])) {
             return $this->_landingPage($_GET['fid']);
         }
     }
@@ -637,7 +637,7 @@ class E2gSnippet extends E2gPub {
         //******************************************************************/
         if ($galPh['parent_id'] > 0
                 && $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE
-                && $staticTag == $tag
+                && (!empty($staticTag) ?  $this->_checkTaggedFileIds($staticTag, $galPh['parent_id']) == TRUE  : NULL)
         ) {
             $galPh['back'] = '&laquo; <a href="'
                     // making flexible FURL or not
@@ -1521,30 +1521,11 @@ class E2gSnippet extends E2gPub {
         $errorImg = 'assets/modules/easy2/show.easy2gallery.php?w=' . $ssW . '&amp;h=' . $ssH . '&amp;th=5';
 
         if (!empty($gid) && $modx->documentIdentifier != $landingPage) {
-            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
 
-            if ($gid != '*') {
-                $selectFiles .= 'dir_id IN (' . $gid . ') AND ';
-            }
-
-            if (isset($whereFile)) {
-                $where = $this->_whereClause($whereFile);
-                if (!$where) {
-                    echo __LINE__ . ' : ' . $whereFile . '<br />';
-                    return FALSE;
-                } else {
-                    $selectFiles .= $where . ' AND ';
-                }
-            }
-
-            if ($ssAllowedRatio != 'all') {
-                $selectFiles .= 'width/height >=\'' . floatval($ssMinRatio) . '\' AND width/height<=\'' . floatval($ssMaxRatio) . '\' AND ';
-            }
-
-            $selectFiles .= 'status = 1 '
-                    . 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' '
-                    . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ', ' . $ssLimit )
-            ;
+            $selectFiles = $this->_fileSqlStatements('*', $ssAllowedRatio);
+            $selectFiles .= 'ORDER BY ' . $ssOrderBy . ' ' . $ssOrder . ' ';
+            $selectFiles .= ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ', ' . $ssLimit );
+            
             $querySelectFiles = mysql_query($selectFiles);
             if (!$querySelectFiles) {
                 echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
@@ -1599,16 +1580,9 @@ class E2gSnippet extends E2gPub {
         }
 
         if (!empty($fid)) {
-            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE id IN (' . $fid . ') ';
 
-            // disable this, since the file is accessed directly
-//            if ($ssAllowedRatio != 'all') {
-//                $selectFiles .= 'AND width/height >=\'' . floatval($ssMinRatio) . '\' OR width/height<=\'' . floatval($ssMaxRatio) . '\' ';
-//            }
-
-            $selectFiles .= 'AND status = 1 '
-            ;
+            $selectFiles = $this->_fileSqlStatements('*');
+            
             $querySelectFiles = mysql_query($selectFiles);
             if (!$querySelectFiles) {
                 echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
@@ -1662,17 +1636,11 @@ class E2gSnippet extends E2gPub {
         }
 
         if (!empty($rgid)) {
-            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE status = 1 '
-                    . 'AND dir_id IN (' . $rgid . ') ';
+            
+            $selectFiles = $this->_fileSqlStatements('*', $ssAllowedRatio, $rgid);
+            $selectFiles .= 'ORDER BY RAND() ';
+            $selectFiles .= ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ',' . $ssLimit . ' ' );
 
-            if ($ssAllowedRatio != 'all') {
-                $selectFiles .= 'AND width/height >=\'' . floatval($ssMinRatio) . '\' OR width/height<=\'' . floatval($ssMaxRatio) . '\' ';
-            }
-
-            $selectFiles .= 'ORDER BY RAND() '
-                    . ( $ssLimit == 'none' ? '' : 'LIMIT ' . ( $gpn * $ssLimit ) . ',' . $ssLimit . ' ' )
-            ;
             $querySelectFiles = mysql_query($selectFiles);
             if (!$querySelectFiles) {
                 echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
@@ -1772,9 +1740,8 @@ class E2gSnippet extends E2gPub {
             $modx->regClientStartupScript($js);
         }
 
-        $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE id = ' . $fileId
-        ;
+        $select = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id = ' . $fileId;
+        
         $query = mysql_query($select);
         if (!$query) {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select . '<br />';
@@ -2317,8 +2284,6 @@ class E2gSnippet extends E2gPub {
     private function _checkTaggedFileIds($tag, $id) {
         $modx = $this->modx;
         $tag = strtolower($tag);
-
-
 
         $selectTaggedFiles = 'SELECT id FROM ' . $modx->db->config['table_prefix'] . 'easy2_files ';
 
@@ -2906,18 +2871,37 @@ class E2gSnippet extends E2gPub {
      * @param string    $select     SELECT statement
      * @return string   The complete SQL's statement with additional parameters
      */
-    private function _fileSqlStatements($select) {
+    private function _fileSqlStatements($select, $allowedRatio = NULL, $dirId=NULL) {
         $modx = $this->modx;
         $tag = $this->e2gSnipCfg['tag'];
         $staticTag = $this->e2gSnipCfg['static_tag'];
-        $gid = $this->e2gSnipCfg['gid'];
-        $staticGid = $this->e2gSnipCfg['static_gid'];
+        $gid = !empty($dirId) ? $dirId : $this->e2gSnipCfg['gid'];
+        $staticGid = !empty($dirId) ? $dirId : $this->e2gSnipCfg['static_gid'];
         $fid = $this->e2gSnipCfg['fid'];
         $staticFid = $this->e2gSnipCfg['static_fid'];
 
         $whereFile = $this->e2gSnipCfg['where_file'];
         $excludeDirWebAccess = $this->_excludeWebAccess('dir');
         $excludeFileWebAccess = $this->_excludeWebAccess('file');
+
+
+        if (!empty($allowedRatio) && $allowedRatio != 'all') {
+            /**
+             * Filtering the slideshow size ratio
+             */
+            // create min-max slideshow width/height ratio
+            $xpldRatio = explode('-', $allowedRatio);
+
+            $minRatio = trim($xpldRatio[0]);
+            $minRatio = str_replace(',', '.', $minRatio);
+            $minRatio = @explode('.', $minRatio);
+            $minRatio = @implode('.', array(intval($minRatio[0]), intval($minRatio[1])));
+
+            $maxRatio = trim($xpldRatio[1]);
+            $maxRatio = str_replace(',', '.', $maxRatio);
+            $maxRatio = @explode('.', $maxRatio);
+            $maxRatio = @implode('.', array(intval($maxRatio[0]), intval($maxRatio[1])));
+        }
 
         $fileSqlStatements = 'SELECT ' . $select . ' FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE ';
 
@@ -2948,15 +2932,20 @@ class E2gSnippet extends E2gPub {
             }
         } else {
             if ($gid != '*') {
-                if (isset($fid) 
-                        && (isset($gid) ? $gid == $staticGid : NULL)
+                if (!empty($fid)
+                        && $gid == (!empty($staticGid) ? $staticGid : NULL)
                         ) {
-                    $fileSqlStatements .= 'id IN (' . $fid . ') OR ';
+                    $fileSqlStatements .= 'id IN (' . $fid . ') ';
                 }
-                if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
-                    $fileSqlStatements .= 'dir_id IN (' . $gid . ') ';
-                } else {
-                    $fileSqlStatements .= 'dir_id IN (' . $staticGid . ') ';
+                if (!empty($fid) && !empty($gid)) {
+                    $fileSqlStatements .= 'OR ';
+                }
+                if (!empty($gid)) {
+                    if ($this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE) {
+                        $fileSqlStatements .= 'dir_id IN (' . $gid . ') ';
+                    } else {
+                        $fileSqlStatements .= 'dir_id IN (' . $staticGid . ') ';
+                    }
                 }
                 $fileSqlStatements .= 'AND ';
             }
@@ -2975,6 +2964,10 @@ class E2gSnippet extends E2gPub {
 
         if ($excludeFileWebAccess !== FALSE) {
             $fileSqlStatements .= 'id NOT IN (' . $excludeFileWebAccess . ') AND ';
+        }
+
+        if (!empty($allowedRatio) && $allowedRatio != 'all') {
+            $fileSqlStatements .= 'width/height >=\'' . floatval($minRatio) . '\' AND width/height<=\'' . floatval($maxRatio) . '\' AND ';
         }
 
         $fileSqlStatements .= 'status = 1 ';
