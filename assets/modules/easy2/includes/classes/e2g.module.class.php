@@ -989,21 +989,20 @@ class E2gMod extends E2gPub {
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
                         $inf = @getimagesize($filePath);
-                        $newInf = array();
+                        $newInf = $this->_resizeImg($filePath, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
                         // RESIZE
-                        if ($e2g['resize_old_img'] == '1') {
-                            $newInf = $this->_resizeImg($filePath, $inf, $e2g['maxw'], $e2g['maxh'], $e2g['maxthq']);
+                        if ($e2g['resize_old_img'] == '1' && $newInf !== FALSE) {
+                            $size = $newInf['size'];
+                            $width = $newInf[0];
+                            $height = $newInf[1];
+                            $time = $newInf['time'];
                         } else {
+                            $size = filesize($filePath);
+                            $width = $inf[0];
+                            $height = $inf[1];
+                            $time = filemtime($filePath);
                             clearstatcache();
-                            $newInf = $inf;
-                            $newInf['size'] = filesize($filePath);
-                            $newInf['time'] = filemtime($filePath);
                         }
-
-                        $size = $newInf['size'];
-                        $width = $newInf[0];
-                        $height = $newInf[1];
-                        $time = $newInf['time'];
 
                         $updateFile = 'UPDATE ' . $modx->db->config['table_prefix'] . 'easy2_files '
                                 . "SET size='$size'"
