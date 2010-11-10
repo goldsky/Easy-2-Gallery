@@ -1054,11 +1054,6 @@ class E2gSnippet extends E2gPub {
             return NULL;
         }
 
-        // GLOBAL e2g CSS styles
-        if ($css !== '0' && file_exists(realpath($css))) {
-            $modx->regClientCSS($modx->config['base_url'] . $css, 'screen');
-        }
-
         // Load the library from database.
         $glibs = $this->_loadViewerConfigs($glib);
         if (!$glibs)
@@ -1078,6 +1073,11 @@ class E2gSnippet extends E2gPub {
             }
         }
 
+        // GLOBAL e2g CSS styles
+        if ($css !== '0' && file_exists(realpath($css))) {
+            $modx->regClientCSS($modx->config['base_url'] . $css, 'screen');
+        }
+
         // JS Libraries
         if (!empty($glibs[$glib]['headers_js'])
                 && $glibs[$glib]['autoload_js'] == '1'
@@ -1094,6 +1094,11 @@ class E2gSnippet extends E2gPub {
                 && $autoloadHtml != '0'
         ) {
             $modx->regClientStartupHTMLBlock($glibs[$glib]['headers_html']);
+        }
+
+        // GLOBAL e2g CSS styles
+        if ($js !== '0' && file_exists(realpath($js))) {
+            $modx->regClientStartupScript($js);
         }
 
         return TRUE;
