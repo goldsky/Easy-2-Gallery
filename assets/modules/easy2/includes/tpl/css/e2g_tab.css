@@ -1,0 +1,59 @@
+/* ================================================================
+This copyright notice must be untouched at all times.
+
+The original version of this stylesheet and the associated (x)html
+is available at http://www.cssplay.co.uk/menu/one_page.html
+Copyright (c) 2005-2007 Stu Nicholls. All rights reserved.
+This stylesheet and the assocaited (x)html may be modified in any
+way to fit your requirements.
+=================================================================== */
+
+/* a: roles
+Order: a, a:link {}
+       a:visited {}
+       a:hover, a:focus {}
+       a:active {}
+Note:  Pseudo-class names are not case-sensitive.
+*/
+
+.tabs {
+    margin-left: 36px;
+}
+
+.tabs .tabWrapper {
+    float: left;
+    padding-top: 5px;
+    text-decoration: none;
+}
+
+.tabs .tabWrapper .tabTitle {
+    float: left;
+    color: black;
+    background-color: #f4f4f4;
+    border: 1px solid #ccc;
+    padding: 2px 5px;
+    height: 20px;
+    line-height: 20px;
+}
+
+.tabs .tabWrapper .tabTitle:hover,
+.tabs .tabWrapper .tabTitle:focus {
+    cursor: pointer;
+    background-color: white;
+}
+
+.tabWrapper a.tabContent {
+    display: none;
+}
+
+/* contents */
+.tabWrapper:hover a.tabContent {
+    display: block;
+/*    position: absolute;*/
+    background-color: white;
+    border: 1px solid #cccccc;
+    margin-top: 25px;
+    margin-left: 0;
+    z-index: 1;
+    left: 0;
+}
