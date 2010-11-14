@@ -2943,7 +2943,7 @@ class E2gSnippet extends E2gPub {
                         ) {
                     $fileSqlStatements .= 'id IN (' . $fid . ') ';
                 }
-                if (!empty($fid) && empty($_GET['gid'])) {
+                if (!empty($fid) && !empty($gid) && empty($_GET['gid'])) {
                     $fileSqlStatements .= 'OR ';
                 }
                 if (!empty($gid)) {
