@@ -2227,7 +2227,8 @@ class E2gSnippet extends E2gPub {
         $xpldFids = explode(',', $id);
         foreach ($xpldFids as $fid) {
             if (!$check[$fid]) {
-                return $modx->sendErrorPage();
+                return FALSE;
+//                return $modx->sendErrorPage();
             }
         }
         return TRUE;
@@ -2942,7 +2943,7 @@ class E2gSnippet extends E2gPub {
                         ) {
                     $fileSqlStatements .= 'id IN (' . $fid . ') ';
                 }
-                if (!empty($fid) && !empty($gid)) {
+                if (!empty($fid) && empty($_GET['gid'])) {
                     $fileSqlStatements .= 'OR ';
                 }
                 if (!empty($gid)) {
