@@ -297,7 +297,7 @@ if (IN_MANAGER_MODE != 'true')
                                     $glibs = array();
                                     unset($glibs);
                                     foreach ($jsLibs as $k => $v) {
-                                        echo '<option value="' . $k . '"' . (($v['glib'] == $k) ? ' selected="selected"' : '') . '>' . $k . ' (' . $v['alias'] . ')</option>';
+                                        echo '<option value="' . $k . '"' . (($e2g['glib'] == $k) ? ' selected="selected"' : '') . '>' . $k . ' (' . $v['alias'] . ')</option>';
                                     }
                                     ?>
                                 </select>
