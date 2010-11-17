@@ -800,9 +800,7 @@ class E2gSnippet extends E2gPub {
         $imgSrc = $this->e2gSnipCfg['img_src'];
         $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
-        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE id IN (' . $fid . ') '
-                . 'AND status = 1 ';
+        $selectFiles = $this->_fileSqlStatements('*');
         $querySelectFiles = mysql_query($selectFiles);
         if (!$querySelectFiles) {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles . '<br />';
@@ -865,12 +863,8 @@ class E2gSnippet extends E2gPub {
         $imgSrc = $this->e2gSnipCfg['img_src'];
         $e2gWrapper = $this->e2gSnipCfg['e2g_wrapper'];
 
-        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE status = 1 '
-                . 'AND dir_id IN (' . $rgid . ') '
-                . 'ORDER BY RAND() '
-                . 'LIMIT 1'
-        ;
+        $selectFiles = $this->_fileSqlStatements('*', null, $rgid);
+        $selectFiles .= 'ORDER BY RAND() LIMIT 1';
 
         $querySelectFiles = mysql_query($selectFiles);
         $fileNumRows = mysql_num_rows($querySelectFiles);
@@ -2227,7 +2221,8 @@ class E2gSnippet extends E2gPub {
         $xpldFids = explode(',', $id);
         foreach ($xpldFids as $fid) {
             if (!$check[$fid]) {
-                return $modx->sendErrorPage();
+                return FALSE;
+//                return $modx->sendErrorPage();
             }
         }
         return TRUE;
@@ -2942,7 +2937,7 @@ class E2gSnippet extends E2gPub {
                         ) {
                     $fileSqlStatements .= 'id IN (' . $fid . ') ';
                 }
-                if (!empty($fid) && !empty($gid)) {
+                if (!empty($fid) && !empty($gid) && empty($_GET['gid'])) {
                     $fileSqlStatements .= 'OR ';
                 }
                 if (!empty($gid)) {
