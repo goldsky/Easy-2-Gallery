@@ -376,9 +376,9 @@ if (IN_MANAGER_MODE != 'true')
                             <td><b><?php echo $lng['order2']; ?>:</b></td>
                             <td><span style="color:green;">&amp;cat_orderby=</span>
                                 <select size="1" name="cat_orderby">
-                                    <option value="cat_id"<?php echo ($e2g['cat_id'] == 'cat_id' ? ' selected="selected"' : ''); ?>>cat_id (<?php echo $lng['cat_id']; ?>)</option>
-                                    <option value="cat_name"<?php echo ($e2g['cat_name'] == 'cat_name' ? ' selected="selected"' : ''); ?>>cat_name (<?php echo $lng['dir_name']; ?>)</option>
-                                    <option value="cat_alias"<?php echo ($e2g['cat_alias'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>cat_alias (<?php echo $lng['alias']; ?>)</option>
+                                    <option value="cat_id"<?php echo ($e2g['cat_orderby'] == 'cat_id' ? ' selected="selected"' : ''); ?>>cat_id (<?php echo $lng['cat_id']; ?>)</option>
+                                    <option value="cat_name"<?php echo ($e2g['cat_orderby'] == 'cat_name' ? ' selected="selected"' : ''); ?>>cat_name (<?php echo $lng['dir_name']; ?>)</option>
+                                    <option value="cat_alias"<?php echo ($e2g['cat_orderby'] == 'cat_alias' ? ' selected="selected"' : ''); ?>>cat_alias (<?php echo $lng['alias']; ?>)</option>
                                     <option value="random"<?php echo ($e2g['cat_orderby'] == 'random' ? ' selected="selected"' : ''); ?>>random (<?php echo $lng['random']; ?>)</option>
                                 </select>
                                 <span style="color:green;">&amp;cat_order=</span>
