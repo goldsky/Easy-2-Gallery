@@ -73,6 +73,7 @@
     background:#F4F4F4;
     border:1px solid #E8E8E8;
     color:gray;
+    text-decoration: none;
 }
 
 .e2gpnums a:hover {
@@ -219,7 +220,7 @@ div.e2g .thumb,
 div.e2g .dir {
     float: left;
     margin:7px;
-    /*width:154px;*/
+    width:154px;
 }
 
 div.e2g:after {
@@ -280,22 +281,20 @@ div.imagedesc {}
 .e2g_prevupnext {
     color: black;
     position: relative;
-    background-color: white;
+    width: 100%;
+    border: 0;
 }
 
 .e2g_prev {
-/*    background-color: blue;*/
+    width: 33%;
 }
 
 .e2g_up {
-    position: absolute;
     text-align: center;
-    left: 0;
-    right: 0;
-/*    background-color: yellow;*/
+    width: 34%;
 }
 
 .e2g_next {
     float: right;
-/*    background-color: green;*/
+    width: 33%;
 }
