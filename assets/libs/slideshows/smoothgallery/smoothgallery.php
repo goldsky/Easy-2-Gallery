@@ -288,10 +288,13 @@ if ($ssParams['ss_config'] == 'fullgallery'
         <a href="'
                 // making flexible FURL or not
                 . $modx->makeUrl(
-                        $modx->documentIdentifier
-                        , $modx->aliases
-                        , 'fid=' . $ssFiles['id'][$i])
-                . '" title="open image" class="open"></a>
+                        $modx->documentIdentifier,
+                        $modx->aliases,
+                        'sid=' . $ssParams['sid']
+                        . '&fid=' . $ssFiles['id'][$i]
+                )
+                . '#' . $ssParams['sid'] . '_' . $ssFiles['id'][$i] . '"'
+                . ' title="open image" class="open"></a>
         <img src="' . $ssFiles['resizedimg'][$i] . '" class="full" alt="" />
         <img src="' . $ssFiles['thumbsrc'][$i] . '" class="thumbnail" alt="" />
     </div>';

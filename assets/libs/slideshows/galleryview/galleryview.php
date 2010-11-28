@@ -209,7 +209,6 @@ if ($ssParams['ss_config'] == 'gallerylight'
     <div id="photos" class="galleryview">';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
         <div class="panel">
@@ -220,9 +219,6 @@ if ($ssParams['ss_config'] == 'gallerylight'
             </div>
         </div>
         ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
 
@@ -231,14 +227,10 @@ if ($ssParams['ss_config'] == 'gallerylight'
       ';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
             <li><img src="' . $ssFiles['thumbsrc'][$i] . '" alt="' . $ssFiles['title'][$i] . '" title="' . $ssFiles['title'][$i] . '" /></li>
             ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
@@ -261,7 +253,6 @@ if ($ssParams['ss_config'] == 'polaroid') {
         ';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
         <div class="panel">
@@ -272,9 +263,6 @@ if ($ssParams['ss_config'] == 'polaroid') {
             </div>
         </div>
         ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
 
@@ -283,14 +271,10 @@ if ($ssParams['ss_config'] == 'polaroid') {
         ';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
             <li><img src="' . $ssFiles['thumbsrc'][$i] . '" alt="' . $ssFiles['title'][$i] . '" title="' . $ssFiles['title'][$i] . '" /></li>
             ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
@@ -313,19 +297,21 @@ if ($ssParams['ss_config'] == 'filmstrip') {
         ';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
-    $ssParams['landingpage'] = $ssParams['landingpage'] != '' ? $ssParams['landingpage'] : $modx->documentIdentifier;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
             <li>
-                <a target="_self" href="' . $modx->makeUrl($ssParams['landingpage'], null, 'fid=' . $ssFiles['id'][$i]) . '&lp=' . $ssParams['landingpage'] . '">
+                <a target="_self" href="'
+                . $modx->makeUrl(
+                        $modx->documentIdentifier,
+                        $modx->aliases,
+                        'sid=' . $ssParams['sid']
+                        . '&fid=' . $ssFiles['id'][$i]
+                )
+                . '#' . $ssParams['sid'] . '_' . $ssFiles['id'][$i] . '">
                     <img src="' . $ssFiles['thumbsrc'][$i] . '" alt="' . $ssFiles['alias'][$i] . '" title="' . $ssFiles['title'][$i] . '" />
                 </a>
             </li>
             ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
@@ -346,7 +332,6 @@ if ($ssParams['ss_config'] == 'panel') {
     ';
 
     // ------------- start the images looping ------------- //
-    $j = 0;
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
         <div class="panel">
@@ -357,9 +342,6 @@ if ($ssParams['ss_config'] == 'panel') {
             </div>
         </div>
         ';
-        $j++;
-        if ($j == $ssParams['ss_limit'])
-            break;
     }
     // ------------- end the images looping ------------- //
     // ------------- close slideshow wrapper ------------- //
