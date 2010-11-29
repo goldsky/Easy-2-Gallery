@@ -1373,7 +1373,7 @@ class E2gSnippet extends E2gPub {
     private function _getSlideShowParams() {
         // database selection
         $ssParams['gdir'] = $this->e2gSnipCfg['gdir'];
-        $ssParams['gid'] = $this->e2gSnipCfg['gid'];
+        $ssParams['sid'] = $this->e2gSnipCfg['e2g_static_instances'];
         $ssParams['gid'] = $this->e2gSnipCfg['gid'];
         $ssParams['fid'] = $this->e2gSnipCfg['fid'];
         $ssParams['rgid'] = $this->e2gSnipCfg['rgid'];
@@ -1712,6 +1712,7 @@ class E2gSnippet extends E2gPub {
         $landingPage = $this->e2gSnipCfg['landingpage'];
 //        if ($modx->documentIdentifier != $landingPage)
 //            return NULL;
+        $e2gStaticInstances = $this->e2gSnipCfg['e2g_static_instances'];
         $page_tpl_css = $this->e2gSnipCfg['page_tpl_css'];
 
         // page settings
@@ -1829,6 +1830,7 @@ class E2gSnippet extends E2gPub {
             $e2gEvtParams[$k] = $v;
         }
 
+        $l['permalink'] = '<a href="#" name="' . $e2gStaticInstances . '_' . $fileId . '"></a> ';
         $l['landingpagepluginprerender'] = $this->_plugin('OnE2GWebLandingpagePrerender', $e2gEvtParams);
         $l['landingpagepluginrender'] = $this->_plugin('OnE2GWebLandingpageRender', $e2gEvtParams);
 
