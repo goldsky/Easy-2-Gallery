@@ -1,4 +1,4 @@
 Shadowbox.init({
 players: ["img", "iframe"],
-language: "en"
+language: "ru"
 });

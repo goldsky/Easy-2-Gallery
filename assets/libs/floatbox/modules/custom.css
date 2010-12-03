@@ -1,0 +1,50 @@
+/* Floatbox v3.52.2 */
+
+/* overlay color */
+div.fbOverlay_custom { background-color: #1b2642; }
+
+/* outerBorder and main floatbox color */
+div.fbBox_custom {
+	border-color: #da7b4d;
+	background-color: #eed39e;
+	background-image: url(/assets/libs/floatbox/graphics/blank.gif);  /* add a custom background image to the main floatbox area */
+}
+
+/* animated 'loading' graphic */
+#fbBox .fbBoxLoader_custom { background-image: url(/assets/libs/floatbox/graphics/loader_black_small.gif); }
+
+/* innerBorder color */
+#fbBox .fbMainDiv_custom { border-color: #b64; }
+
+/* resize button graphic in the top left corner */
+#fbBox .fbResizer_custom { background-image: url(/assets/libs/floatbox/graphics/resizer_custom.gif); }
+/* note: if you want the smaller resize button, change #fbResizer width and height to 19px
+   and also add "_small" to the resize gif name (e.g., graphics/resizer_black_small.gif) */
+
+/* resize dragger in the lower right corner */
+#fbBox .fbDragger_custom { background-image: url(/assets/libs/floatbox/graphics/dragger_custom.gif); }
+
+/* on-mouse-over upper nav graphics */
+#fbBox .fbOverlayPrev_custom { background-image: url(/assets/libs/floatbox/graphics/overlayPrev_custom.gif); }
+#fbBox .fbOverlayNext_custom { background-image: url(/assets/libs/floatbox/graphics/overlayNext_custom.gif); }
+
+/* 'image x of y' and indexLinks color */
+#fbBox .fbItemNumber_custom, #fbBox #fbIndexLinks.fbIndexLinks_custom, #fbBox #fbIndexLinks.fbIndexLinks_custom a:link, #fbBox #fbIndexLinks.fbIndexLinks_custom a:visited { color: #666; }
+
+/* caption, infoLink, printLink, & indexLinks:hover color */
+#fbBox .fbCaptionDiv_custom, #fbBox .fbInfoPanel_custom a:link, #fbBox .fbInfoPanel_custom a:visited, #fbBox #fbIndexLinks.fbIndexLinks_custom a:hover { color: #000; }
+
+/* lower nav graphics */
+#fbBox .fbPrev_custom { background-image: url(/assets/libs/floatbox/graphics/prev_custom.gif); }
+#fbBox .fbNext_custom { background-image: url(/assets/libs/floatbox/graphics/next_custom.gif); }
+
+/* lower nav greyed-out graphics */
+#fbBox .fbPrev_custom_off { background-image: url(/assets/libs/floatbox/graphics/prev_custom_off.gif); }
+#fbBox .fbNext_custom_off { background-image: url(/assets/libs/floatbox/graphics/next_custom_off.gif); }
+
+/* 'play' and 'pause' graphics */
+#fbBox .fbPlay_custom { background-image: url(/assets/libs/floatbox/graphics/play_custom.gif); }
+#fbBox .fbPause_custom { background-image: url(/assets/libs/floatbox/graphics/pause_custom.gif); }
+
+/* 'close' graphic */
+#fbBox .fbClose_custom { background-image: url(/assets/libs/floatbox/graphics/close_custom.gif); }
