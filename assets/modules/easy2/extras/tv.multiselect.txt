@@ -1,0 +1,29 @@
+http://modxcms.com/forums/index.php/topic,54972.0.html
+
+Template Variable
+
+Name: e2g-galleries
+Caption: e2g-galleries
+Description: Image gallery selection
+Input Type: Listbox (Multi-Select) (I still have no idea how to make the box gets longer, since MODx looks like limits the height)
+Input Option Values: @EVAL return $modx->runSnippet('getE2GTree');
+Widget: Delimited List
+Delimiter: , (comma)
+
+Don't forget to apply this TV to your Template in the Template Access check box.
+
+Snippets
+
+We need 2 snippets:
+1. 'getE2GTree' : getE2GTree.txt
+Description: The image gallery tree inside the 'e2g-galleries' Template Variable.
+
+2. 'getE2Gids' : getE2Gids.txt
+Description: TV Parser for Easy 2 Gallery's front-end snippet
+
+Snippet Call
+
+[!easy2? &gid=`[[getE2Gids? &give=`gid`]]` &fid=`[[getE2Gids? &give=`fid`]]`!]
+
+Please provide both parameters, since the TV also feeds both.
+Please notice the cached and uncached call.

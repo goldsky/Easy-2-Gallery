@@ -1,0 +1,35 @@
+// Greek
+/*
+fb.strings = {
+"hintClose": "Κλείσιμο (πλήκτρο: Esc)",
+"hintPrev": "Προηγούμενο (πλήκτρο: ←)",
+"hintNext": "Επόμενο (πλήκτρο: →)",
+"hintPlay": "Παρουσίαση (πλήκτρο: διάστημα)",
+"hintPause": "Παύση (πλήκτρο: διάστημα)",
+"hintResize": "Μεγεθυνση (πλήκτρο: Tab)",
+"imgCount": "Εικόνα %1 από %2",
+"nonImgCount": "Σελίδα %1 από %2",
+"mixedCount": "(%1 από %2)",
+"infoText": "Πληροφορίες",
+"printText": "Εκτύπωση",
+"flashVer": "Μια νεώτερη έκδοση του 'Flash Player' για να δείτε αυτό το περιεχόμενο.",
+"needPlayer": "'%1' για να δείτε αυτό το περιεχόμενο.",
+"newWindow": "Άνοιγμα σε νέο παράθυρο"
+};
+*/
+fb.strings = {
+hintClose: "\u039a\u03bb\u03b5\u03af\u03c3\u03b9\u03bc\u03bf (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: Esc)",
+hintPrev: "\u03a0\u03c1\u03bf\u03b7\u03b3\u03bf\u03cd\u03bc\u03b5\u03bd\u03bf (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: \u2190)",
+hintNext: "\u0395\u03c0\u03cc\u03bc\u03b5\u03bd\u03bf (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: \u2192)",
+hintPlay: "\u03a0\u03b1\u03c1\u03bf\u03c5\u03c3\u03af\u03b1\u03c3\u03b7 (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: \u03b4\u03b9\u03ac\u03c3\u03c4\u03b7\u03bc\u03b1)",
+hintPause: "\u03a0\u03b1\u03cd\u03c3\u03b7 (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: \u03b4\u03b9\u03ac\u03c3\u03c4\u03b7\u03bc\u03b1)",
+hintResize: "\u039c\u03b5\u03b3\u03b5\u03b8\u03c5\u03bd\u03c3\u03b7 (\u03c0\u03bb\u03ae\u03ba\u03c4\u03c1\u03bf: Tab)",
+imgCount: "\u0395\u03b9\u03ba\u03cc\u03bd\u03b1 %1 \u03b1\u03c0\u03cc %2",
+nonImgCount: "\u03a3\u03b5\u03bb\u03af\u03b4\u03b1 %1 \u03b1\u03c0\u03cc %2",
+mixedCount: "(%1 \u03b1\u03c0\u03cc %2)",
+infoText: "\u03a0\u03bb\u03b7\u03c1\u03bf\u03c6\u03bf\u03c1\u03af\u03b5\u03c2",
+printText: "\u0395\u03ba\u03c4\u03cd\u03c0\u03c9\u03c3\u03b7",
+flashVer: "\u039c\u03b9\u03b1 \u03bd\u03b5\u03ce\u03c4\u03b5\u03c1\u03b7 \u03ad\u03ba\u03b4\u03bf\u03c3\u03b7 \u03c4\u03bf\u03c5 'Flash Player' \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03b4\u03b5\u03af\u03c4\u03b5 \u03b1\u03c5\u03c4\u03cc \u03c4\u03bf \u03c0\u03b5\u03c1\u03b9\u03b5\u03c7\u03cc\u03bc\u03b5\u03bd\u03bf.",
+needPlayer: "'%1' \u03b3\u03b9\u03b1 \u03bd\u03b1 \u03b4\u03b5\u03af\u03c4\u03b5 \u03b1\u03c5\u03c4\u03cc \u03c4\u03bf \u03c0\u03b5\u03c1\u03b9\u03b5\u03c7\u03cc\u03bc\u03b5\u03bd\u03bf.",
+newWindow: "\u0386\u03bd\u03bf\u03b9\u03b3\u03bc\u03b1 \u03c3\u03b5 \u03bd\u03ad\u03bf \u03c0\u03b1\u03c1\u03ac\u03b8\u03c5\u03c1\u03bf"
+};
