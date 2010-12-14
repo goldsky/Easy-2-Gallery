@@ -110,6 +110,7 @@ $e2g_lang['english'] = array (
     'dir_cfg_desc' => '&lt;p&gt;Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.&lt;/p&gt;',
     'dir_create' => 'Create folder',
     'dir_create_err' => 'Could not create folder',
+    'dir_exists' => 'Folder exists',
     'dir_created' => 'New folder was created',
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',

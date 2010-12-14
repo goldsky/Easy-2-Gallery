@@ -224,12 +224,12 @@ class E2gMod extends E2gPub {
                     unset($_POST['clean_cache']);
                     $url = $index . '&amp;act=clean_cache';
                 } else {
-                    $url = html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES);
+                    $url = $_SERVER['HTTP_REFERER'];
                 }
 
                 $this->_saveConfig($_POST);
 
-                header('Location: ' . html_entity_decode($url));
+                header('Location: ' . html_entity_decode($url, ENT_NOQUOTES));
                 exit();
                 break;
 
@@ -3647,6 +3647,14 @@ class E2gMod extends E2gPub {
 
         // converting non-latin names with MODx's stripAlias function
         $dirName = htmlspecialchars($modx->stripAlias($post['name']), ENT_QUOTES);
+
+        //check the dir existance
+        if ($this->_validFolder('../' . $this->_e2gDecode($gdir . $dirName))) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_create_err'] . ' : ' . $lng['dir_exists'];
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->_e2gDecode($gdir . $dirName);
+            return FALSE;
+        }
+        
         $mkdir = mkdir('../' . $this->_e2gDecode($gdir . $dirName));
 
         if (!$mkdir) {
@@ -3881,6 +3889,7 @@ class E2gMod extends E2gPub {
          */
         $e2gMgrGroupsArray = $modx->db->makeArray($modx->db->query(
                                 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_users_mgr '));
+        $e2gMgrGroupIds = array();
         $countE2gMgrGroups = count($e2gMgrGroupsArray);
         for ($i = 0; $i < $countE2gMgrGroups; $i++) {
             $e2gMgrGroupIds[$e2gMgrGroupsArray[$i]['membergroup_id']] = $e2gMgrGroupsArray[$i]['membergroup_id'];
@@ -3909,17 +3918,19 @@ class E2gMod extends E2gPub {
         }
 
         // deleting e2g groups of non-exist modx groups
-        foreach ($e2gMgrGroupIds as $id) {
-            if (isset($modxMemberGroupIds[$id]))
-                continue;
+        if (!empty($e2gMgrGroupIds)) {
+            foreach ($e2gMgrGroupIds as $id) {
+                if (isset($modxMemberGroupIds[$id]))
+                    continue;
 
-            $deleteMgrUser = 'DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_users_mgr '
-                    . 'WHERE membergroup_id=\'' . $id . '\'';
-            $queryDeleteMgrUser = mysql_query($deleteMgrUser);
-            if (!$queryDeleteMgrUser) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['user_mgr_synchro_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-                return FALSE;
+                $deleteMgrUser = 'DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_users_mgr '
+                        . 'WHERE membergroup_id=\'' . $id . '\'';
+                $queryDeleteMgrUser = mysql_query($deleteMgrUser);
+                if (!$queryDeleteMgrUser) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['user_mgr_synchro_err'];
+                    $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+                    return FALSE;
+                }
             }
         }
 
