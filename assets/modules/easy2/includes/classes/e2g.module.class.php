@@ -3655,7 +3655,7 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
         
-        $mkdir = mkdir('../' . $this->_e2gDecode($gdir . $dirName));
+        $mkdir = @mkdir('../' . $this->_e2gDecode($gdir . $dirName));
 
         if (!$mkdir) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_create_err'] . ' : ' . $lng['err_undefined'];
