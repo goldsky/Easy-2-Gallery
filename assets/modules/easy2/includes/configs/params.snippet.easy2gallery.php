@@ -374,3 +374,6 @@ $e2gSnipCfg['pagination_splitter'] = isset($pagination_splitter) ? $pagination_s
 
 // use redirect link instead of popping up the image's iframe or go deeper into the directory's contents
 $e2gSnipCfg['use_redirect_link'] = ( isset($use_redirect_link) && $use_redirect_link == '1' ) ? TRUE : FALSE;
+
+// strip HTML tags
+$e2gSnipCfg['strip_html_tags'] = ( isset($strip_html_tags) && is_numeric($strip_html_tags) ) ? $strip_html_tags : $e2g['strip_html_tags'];

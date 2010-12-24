@@ -93,11 +93,21 @@ if (IN_MANAGER_MODE != 'true')
                 <tr>
                     <td colspan="2"><?php echo htmlspecialchars_decode($lng['e2g_wrapper_cfg_desc']); ?></td>
                 </tr>
+                <tr class="gridAltItem">
+                    <td><b><?php echo $lng['strip_html_tags_cfg']; ?>:</b></td>
+                    <td>
+                        <input type="radio" name="strip_html_tags" value="0" <?php echo ($e2g['strip_html_tags'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['no']; ?>
+                        <input type="radio" name="strip_html_tags" value="1" <?php echo ($e2g['strip_html_tags'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes'] . ' (' . $lng['recommended'] . ')'; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars_decode($lng['strip_html_tags_cfg_desc']); ?></td>
+                </tr>
                 <!--tr class="gridAltItem">
                     <td><b><?php echo $lng['ie6_allow_cfg']; ?>:</b></td>
                     <td>
                         <input type="radio" name="ie6_allow" value="0" <?php echo ($e2g['ie6_allow'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['no']; ?>
-                        <input type="radio" name="ie6_allow" value="1" <?php echo ($e2g['ie6_allow'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes'] . ' ' . $lng['recommended']; ?>
+                        <input type="radio" name="ie6_allow" value="1" <?php echo ($e2g['ie6_allow'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $lng['yes'] . ' (' . $lng['recommended'] . ')'; ?>
                     </td>
                 </tr>
                 <tr>

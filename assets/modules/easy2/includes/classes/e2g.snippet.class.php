@@ -1628,7 +1628,7 @@ class E2gSnippet extends E2gPub {
                 $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
                 $ssFiles['alias'][] = $row['alias'];
                 $ssFiles['name'][] = $row['alias'];
-                $ssFiles['description'][] = htmlspecialchars_decode($row['description'], ENT_QUOTES);
+                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
                 $ssFiles['tag'][] = $row['tag'];
                 $ssFiles['summary'][] = $row['summary'];
             }
@@ -1685,7 +1685,7 @@ class E2gSnippet extends E2gPub {
                 $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
                 $ssFiles['alias'][] = $row['alias'];
                 $ssFiles['name'][] = $row['alias'];
-                $ssFiles['description'][] = htmlspecialchars_decode($row['description'], ENT_QUOTES);
+                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
                 $ssFiles['tag'][] = $row['tag'];
                 $ssFiles['summary'][] = $row['summary'];
             }
@@ -1793,7 +1793,7 @@ class E2gSnippet extends E2gPub {
             $l['title'] = ($fetch['alias'] != '' ? $fetch['alias'] : $fetch['filename']);
             $l['alias'] = $fetch['alias'];
             $l['name'] = $fetch['alias'];
-            $l['description'] = htmlspecialchars_decode($fetch['description'], ENT_QUOTES);
+            $l['description'] = $this->_stripHTMLTags(htmlspecialchars_decode($fetch['description'], ENT_QUOTES));
 
             /**
              * Comments on the landing page
@@ -2720,10 +2720,14 @@ class E2gSnippet extends E2gPub {
 
     /**
      * Strips HTML tags
-     * @param <type> $string
-     * @param <type> $stripped
+     * @param   string  $string
+     * @param   array   $strippedTags
      */
     private function _stripHTMLTags($string, $strippedTags=array('p', 'div', 'span')) {
+        $stripHtmlTags = $this->e2gSnipCfg['strip_html_tags'];
+        if ($stripHtmlTags === '0')
+            return $string;
+        
         foreach ($strippedTags as $tag) {
             $string = preg_replace('~\<(.*?)' . $tag . '(.*?)\>~', '', $string);
         }

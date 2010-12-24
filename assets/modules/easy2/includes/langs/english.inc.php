@@ -10,18 +10,6 @@ $e2g_lang['english'] = array (
     'approve' => 'Approve',
     'approve_not' => 'Unapprove',
     'approved' => 'Approved',
-
-    'pagination_adjacents_cfg' => 'Pagination adjacents',
-    'pagination_adjacents_cfg_desc' => 'Number of pagination adjacents, in integer',
-    'pagination_spread_cfg' => 'Pagination\'s middle spread',
-    'pagination_spread_cfg_desc' => 'Number of pagination spread, in integer',
-    'pagination_text_previous_cfg' => 'Text for \'previous\'',
-    'pagination_text_previous_cfg_desc' => 'The text for previous\'s link, in string',
-    'pagination_text_next_cfg' => 'Text for \'next\'',
-    'pagination_text_next_cfg_desc' => 'The text for next\'s link, in string',
-    'pagination_splitter_cfg' => 'Pagination splitter',
-    'pagination_splitter_cfg_desc' => 'The splitter between the hidden pages, in string',
-
     'approved_not' => 'Unapproved',
     'archive' => 'Archive zip',
     'asc' => 'asc',
@@ -80,8 +68,8 @@ $e2g_lang['english'] = array (
     'copy' => 'Copy',
     'credit_lang_file' => 'Language file credit',
     'credit_lang_file_author' => 'Cx2, Temus, goldsky',
-    'credit_lang_file_date' => 'November 7, 2010',
-    'credit_lang_file_version' => '2.2',
+    'credit_lang_file_date' => 'December 24, 2010',
+    'credit_lang_file_version' => '2.3',
     'crumbs_separator_cfg' => 'Separator between the crumbs',
     'crumbs_separator_cfg_desc' => 'Pick any character, including the [space]',
     'crumbs_showAsLinks_cfg' => 'Crumb as a link',
@@ -110,12 +98,12 @@ $e2g_lang['english'] = array (
     'dir_cfg_desc' => '&lt;p&gt;Path to folder with &lt;strong class=&quot;warning&quot;&gt;trailing slash&lt;/strong&gt;, e.g.: assets/easy2gallery/.&lt;/p&gt;',
     'dir_create' => 'Create folder',
     'dir_create_err' => 'Could not create folder',
-    'dir_exists' => 'Folder exists',
     'dir_created' => 'New folder was created',
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',
     'dir_delete_fhdd' => 'folder has been removed from hd',
     'dir_deleted' => 'folder has been deleted',
+    'dir_exists' => 'Folder exists',
     'dir_hidden_inverse_err' => 'Folder has already been hidden',
     'dir_hidden_suc' => 'Folder has been hidden',
     'dir_hiddennot_inverse_err' => 'Folder has already visible',
@@ -265,7 +253,7 @@ $e2g_lang['english'] = array (
 &lt;ul&gt;
 &lt;li&gt;[field][,comma][operator][,comma][value]&lt;/li&gt;
 &lt;li&gt;They can have multiple clauses by using &#039;AND&#039; and/or &#039;OR&#039;&lt;/li&gt;
-&lt;li&gt;The Operator have to be a string, as following:           
+&lt;li&gt;The Operator have to be a string, as following:            
 &lt;ul&gt;
 &lt;li&gt;&quot;NULL safe equal&quot; =&amp;gt; &#039;&amp;lt;=&amp;gt;&#039;&lt;/li&gt;
 &lt;li&gt;&quot;equal&quot; =&amp;gt; &#039;=&#039;&lt;/li&gt;
@@ -392,7 +380,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                              
+&lt;li&gt;galleriffic                               
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -400,7 +388,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                              
+&lt;li&gt;smoothgallery                               
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -414,7 +402,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                              
+&lt;li&gt;galleryview                               
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -424,7 +412,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                              
+&lt;li&gt;contentflow                               
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -595,6 +583,16 @@ $e2g_lang['english'] = array (
     'order2_cfg_desc' => 'Folder sorting method',
     'order_cfg_desc' => 'Sorting method',
     'original' => 'original',
+    'pagination_adjacents_cfg' => 'Pagination adjacents',
+    'pagination_adjacents_cfg_desc' => 'Number of pagination adjacents, in integer',
+    'pagination_splitter_cfg' => 'Pagination splitter',
+    'pagination_splitter_cfg_desc' => 'The splitter between the hidden pages, in string',
+    'pagination_spread_cfg' => 'Pagination&#039;s middle spread',
+    'pagination_spread_cfg_desc' => 'Number of pagination spread, in integer',
+    'pagination_text_next_cfg' => 'Text for &#039;next&#039;',
+    'pagination_text_next_cfg_desc' => 'The text for next&#039;s link, in string',
+    'pagination_text_previous_cfg' => 'Text for &#039;previous&#039;',
+    'pagination_text_previous_cfg_desc' => 'The text for previous&#039;s link, in string',
     'path' => 'Path',
     'plugin_add_suc' => 'Added new plugin',
     'plugin_disabled' => 'Plugin disabled',
@@ -672,6 +670,8 @@ $e2g_lang['english'] = array (
     'ss_w_cfg' => 'Slideshow box width',
     'ss_w_cfg_desc' => 'For the div&#039;s class parameter',
     'stay_here' => 'stay here',
+    'strip_html_tags_cfg' => 'Stip HTML Tags',
+    'strip_html_tags_cfg_desc' => 'Strip HTML tags for the text/description output',
     'submit' => 'Save',
     'summary' => 'Summary',
     'synchro' => 'Synchronize',
