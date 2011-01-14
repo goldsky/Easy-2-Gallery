@@ -27,7 +27,7 @@ foreach ($e2gPages as $k => $v) {
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo MODX_SITE_URL; ?>assets/libs/highslide/highslide.css" />
-        <?php echo $this->_plugin('OnE2GModHeadCSSScript'); ?>
+        <?php echo $this->plugin('OnE2GModHeadCSSScript'); ?>
 
         <script type="text/javascript" src="media/script/tabpane.js"></script>
         <script type="text/javascript" src="<?php echo E2G_MODULE_URL; ?>includes/tpl/js/e2g_mod.js"></script>
@@ -84,7 +84,7 @@ foreach ($e2gPages as $k => $v) {
                 var w = im.width;
                 var h = im.height;
                 if ( w > 161 || h > 161 ) {
-                    ratio = w / h;
+                    var ratio = w / h;
                     if ( ratio <= 1 ) {
                         h = 161;
                         w = Math.round(161*ratio);
@@ -193,16 +193,128 @@ foreach ($e2gPages as $k => $v) {
                 }
             }
 
+            function xhrRequest() {
+                var xhr;
+                try {
+                    xhr = new XMLHttpRequest();
+                } catch(e) {
+                    var xmlHttpVersion = new Array( "MSXML2.xhr.6.0",
+                    "MSXML2.XMLHTTP.5.0",
+                    "MSXML2.XMLHTTP.4.0",
+                    "MSXML2.XMLHTTP.3.0",
+                    "MSXML2.XMLHTTP",
+                    "Microsoft.XMLHTTP"
+                );
+                    for (var i=0; i=xmlHttpVersion.length && !xhr; i++) {
+                        try {
+                            xhr = new ActiveXObject(xmlHttpVersion[i]);
+                        } catch (e) {}
+                    }
+                }
+                if (!xhr)
+                    alert("Error creating the XMLHttpRequestObject.");
+                else
+                    return xhr;
+            }
+
+            function viewDefaultThumbnails (path, pid) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("thumbnail");
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.default.thumb.php?";
+                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
+//                url += "<?php echo isset($_GET['pid']) ? '&pid=' . $_GET['pid'] : ''; ?>";
+                url += "&pid="+pid;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                        } else {
+                            container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
+            function viewDefaultGrid (path, pid) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("list");
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.default.grid.php?";
+                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
+                url += "&pid="+pid;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                        } else {
+                            container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
+            function viewTagThumbnails (path, tag) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("thumbnail");
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.tag.thumb.php?";
+                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
+                url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
+                url += "&path="+path+"&tag="+tag;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                        } else {
+                            container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
+            function viewTagGrid (path, tag) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("list");
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.tag.grid.php?";
+                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
+                url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
+                url += "&path="+path+"&tag="+tag;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                        } else {
+                            container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
             // default page preview
             function imPreview (imPath, i) {
                 var pElt = this.document.getElementById("rowPreview_"+i);
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
-                }
-                else {
+                } else {
                     pElt.style.display = "block";
+                    pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this, { objectType: 'ajax'})\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // comment preview
@@ -210,9 +322,10 @@ foreach ($e2gPages as $k => $v) {
                 var pElt = this.document.getElementById("rowPreview2_"+i);
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
+                } else {
+                    pElt.style.display = "block";
+                    pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
-                else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // ignored comment preview
@@ -220,9 +333,10 @@ foreach ($e2gPages as $k => $v) {
                 var pElt = this.document.getElementById("rowPreview3_"+i);
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
+                } else {
+                    pElt.style.display = "block";
+                    pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
-                else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // file edit page preview
@@ -230,9 +344,10 @@ foreach ($e2gPages as $k => $v) {
                 var pElt = this.document.getElementById("pElt4");
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
+                } else {
+                    pElt.style.display = "block";
+                    pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
-                else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
 
             // file comment page preview
@@ -240,9 +355,10 @@ foreach ($e2gPages as $k => $v) {
                 var pElt = this.document.getElementById("pElt5");
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
+                } else {
+                    pElt.style.display = "block";
+                    pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
-                else pElt.style.display = "block";
-                pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
             }
             
             // tag page preview
@@ -250,9 +366,10 @@ foreach ($e2gPages as $k => $v) {
                 var pElt = this.document.getElementById("rowPreview6_"+i);
                 if(pElt.style.display == "block") {
                     pElt.style.display = "none";
+                } else {
+                    pElt.style.display = "block";
+                    pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\">";
                 }
-                else pElt.style.display = "block";
-                pElt.innerHTML = "<img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\">";
             }
             //]]>
         </script>
@@ -280,9 +397,9 @@ foreach ($e2gPages as $k => $v) {
             hs.blockRightClick = true;
             hs.dimmingOpacity = 0.75;
         </script>
-        <?php echo $this->_plugin('OnE2GModHeadJSScript'); ?>
+        <?php echo $this->plugin('OnE2GModHeadJSScript'); ?>
 
-        <?php echo $this->_plugin('OnE2GModHeadScript'); ?>
+        <?php echo $this->plugin('OnE2GModHeadScript'); ?>
 
     </head>
     <body>
@@ -345,7 +462,7 @@ foreach ($e2gPages as $k => $v) {
         <div class="sectionBody">
             <div class="tab-pane" id="easy2Pane">
                 <script type="text/javascript">
-                    tpEasy2 = new WebFXTabPane(document.getElementById('easy2Pane'));
+                    var tpEasy2 = new WebFXTabPane(document.getElementById('easy2Pane'));
                 </script>
                 <?php
                     // $userRole == '1' is a Supreme Administrator role

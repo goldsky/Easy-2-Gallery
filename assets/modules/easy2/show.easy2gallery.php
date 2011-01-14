@@ -1,5 +1,8 @@
 <?php
 
+// harden it
+require_once('../../../manager/includes/protect.inc.php');
+
 /**
  * EASY 2 GALLERY
  * @uses file to show the image for Easy 2 Gallery Module

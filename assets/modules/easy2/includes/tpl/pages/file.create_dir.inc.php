@@ -13,7 +13,7 @@ if (IN_MANAGER_MODE != 'true')
     </li>
 </ul>
 <form name="list" action="<?php echo $index . '&amp;act=create_dir&amp;pid=' . $parentId; ?>" method="post">
-    <?php echo $this->_plugin('OnE2GFolderCreateFormPrerender'); ?>
+    <?php echo $this->plugin('OnE2GFolderCreateFormPrerender'); ?>
     <table id="dir_create" cellspacing="0" cellpadding="2" class="aForm" >
         <tr>
             <td><b><?php echo $lng['enter_dirname']; ?> :</b></td>
@@ -48,7 +48,7 @@ if (IN_MANAGER_MODE != 'true')
                 </tr>
             </table>
         </div>
-    </div><?php echo $this->_plugin('OnE2GFolderCreateFormRender'); ?>
+    </div><?php echo $this->plugin('OnE2GFolderCreateFormRender'); ?>
     <div style="margin-left: 90px;">
         <input type="submit" value="<?php echo $lng['save']; ?>" />
         <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="document.location.href='<?php echo $index; ?>&amp;pid=<?php echo $parentId; ?>'" />

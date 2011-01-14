@@ -344,7 +344,7 @@ if ($ssParams['ss_config'] == 'galleryset') {
                     unset($galleries[$k]);
 
                 while ($fetch = mysql_fetch_array($query)) {
-                    $path = $this->_getPath($fetch['dir_id']);
+                    $path = $this->getPath($fetch['dir_id']);
                     $ssFiles['id'][$k][] = $fetch['id'];
                     $ssFiles['dirid'][$k][] = $fetch['dir_id'];
                     $ssFiles['src'][$k][] = $ssParams['gdir'] . $path . $fetch['filename'];

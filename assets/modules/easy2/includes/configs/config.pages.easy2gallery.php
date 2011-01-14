@@ -68,12 +68,12 @@ $e2gPages = array(
         , 'file' => 'user.inc.php'
         , 'access' => '800'
     )
-    , 'config' => array(
+    , 'setting' => array(
         'e2gpg' => '9'
-        , 'title' => 'config'
+        , 'title' => 'setting'
         , 'link' => 'index.php?a=' . $_a . '&amp;id=' . $_i . '&amp;e2gpg=9'
-        , 'lng' => $lng['config']
-        , 'file' => 'configuration.inc.php'
+        , 'lng' => $lng['settings']
+        , 'file' => 'setting.inc.php'
         , 'access' => '900'
     )
 //    , 'option' => array(
@@ -95,13 +95,13 @@ $e2gPages = array(
 );
 
 $e2gFilePageTpls = array(
-    'file_default_table_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table.tpl'
-    , 'file_default_table_row_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table_row_dir.tpl'
-    , 'file_default_table_row_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_default_table_row_file.tpl'
-    , 'file_thumb_gal_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_gal.tpl'
-    , 'file_thumb_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_dir.tpl'
-    , 'file_thumb_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_thumb_file.tpl'
-    , 'file_tag_table_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table.tpl'
-    , 'file_tag_table_row_dir_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table_row_dir.tpl'
-    , 'file_tag_table_row_file_tpl' => 'assets/modules/easy2/includes/tpl/tpls/file_tag_table_row_file.tpl'
+    'file_default_table_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_default_table.tpl'
+    , 'file_default_table_row_dir_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_default_table_row_dir.tpl'
+    , 'file_default_table_row_file_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_default_table_row_file.tpl'
+    , 'file_thumb_gal_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_thumb_gal.tpl'
+    , 'file_thumb_dir_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_thumb_dir.tpl'
+    , 'file_thumb_file_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_thumb_file.tpl'
+    , 'file_tag_table_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_tag_table.tpl'
+    , 'file_tag_table_row_dir_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_tag_table_row_dir.tpl'
+    , 'file_tag_table_row_file_tpl' => E2G_MODULE_PATH . 'includes/tpl/chunks/file_tag_table_row_file.tpl'
 );

@@ -8,7 +8,7 @@
  * @author goldsky <goldsky@modx-id.com>
  * @version 1.4.0
  */
-class E2gPub { // public/protected class
+class E2gPub { // public/public class
     /**
      * Inherit MODx functions
      * @var mixed modx's API
@@ -27,7 +27,18 @@ class E2gPub { // public/protected class
     private $_e2g = array();
 
     public function __construct($modx, $e2gPubCfg) {
-        set_time_limit(0);
+        // Apache's timeout: 300 secs
+        if (function_exists('ini_get') && !ini_get('safe_mode')) {
+            if (function_exists('set_time_limit')) {
+                set_time_limit(300);
+            }
+            if (function_exists('ini_set')) {
+                if (ini_get('max_execution_time') !== 300) {
+                    ini_set('max_execution_time', 300);
+                }
+            }
+        }
+
         $this->modx = & $modx;
         $this->e2gPubCfg = $e2gPubCfg;
     }
@@ -41,7 +52,7 @@ class E2gPub { // public/protected class
      * @param  string $text the string to be encoded
      * @return string returns the encoding
      */
-    protected function e2gEncode($text, $callback=FALSE) {
+    public function e2gEncode($text, $callback=FALSE) {
         $e2gEncode = $this->e2gPubCfg['e2g_encode'];
 
         if ($e2gEncode == 'none') {
@@ -113,7 +124,7 @@ class E2gPub { // public/protected class
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    protected function e2gDecode($text, $callback=FALSE) {
+    public function e2gDecode($text, $callback=FALSE) {
         $e2gEncode = $this->e2gPubCfg['e2g_encode'];
 
         if ($e2gEncode == 'none') {
@@ -160,7 +171,7 @@ class E2gPub { // public/protected class
      * @param  string $field  database field
      * @return mixed  the directory's data in an array
      */
-    protected function getDirInfo($dirId, $field) {
+    public function getDirInfo($dirId, $field) {
         $modx = $this->modx;
 
         $dirInfo = array();
@@ -186,7 +197,7 @@ class E2gPub { // public/protected class
      * @param  string $field  database field
      * @return mixed  the file's data in an array
      */
-    protected function getFileInfo($fileId, $field) {
+    public function getFileInfo($fileId, $field) {
         $modx = $this->modx;
 
         $fileInfo = array();
@@ -212,7 +223,7 @@ class E2gPub { // public/protected class
      * @todo need a rework to make it more extendable
      * @param string $filename the filename
      */
-    protected function validExt($filename) {
+    public function validExt($filename) {
         $ext = strtolower(end(@explode('.', $filename)));
         $allowedExt = array(
             'jpg' => TRUE,
@@ -229,7 +240,7 @@ class E2gPub { // public/protected class
      * @author goldsky <goldsky@modx-id.com>
      * @param string $filename the filename
      */
-    protected function validFile($filename) {
+    public function validFile($filename) {
         $e2gDebug = $this->e2gPubCfg['e2g_debug'];
 
         $f = $this->basenameSafe($filename);
@@ -282,7 +293,7 @@ class E2gPub { // public/protected class
      * @author goldsky <goldsky@modx-id.com>
      * @param string $foldername the folder's name
      */
-    protected function validFolder($foldername) {
+    public function validFolder($foldername) {
         $e2gDebug = $this->e2gPubCfg['e2g_debug'];
 
         $openFolder = @opendir($foldername);
@@ -324,7 +335,7 @@ class E2gPub { // public/protected class
      * @param  string $path the file path
      * @return string the path's basename
      */
-    protected function basenameSafe($path) {
+    public function basenameSafe($path) {
         $path = rtrim($path, '/');
         $path = explode('/', $path);
 
@@ -356,7 +367,7 @@ class E2gPub { // public/protected class
      * @param string $suffix placeholder's suffix
      * @return string templated data
      */
-    protected function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
+    public function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
         foreach ($data as $k => $v) {
             $tpl = str_replace($prefix . (string) $k . $suffix, (string) $v, $tpl);
         }
@@ -368,7 +379,7 @@ class E2gPub { // public/protected class
      * @param string    $tpl Template
      * @return string   Template's content
      */
-    protected function getTpl($tpl) {
+    public function getTpl($tpl) {
         $modx = $this->modx;
         // this parameter convert $tpl to be a path
         $tplCfg = $this->e2gPubCfg[$tpl];
@@ -392,7 +403,7 @@ class E2gPub { // public/protected class
      * @param bool      $respectDisabling   using the disabled option as query filter
      * @return mixed    if TRUE, will return the indexfile. Otherwise this will return FALSE.
      */
-    protected function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
+    public function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
         $modx = $this->modx;
 
         if (!$e2gEvtName)
@@ -455,7 +466,7 @@ class E2gPub { // public/protected class
      * @param string    $gdir   gallery's ROOT path
      * @return string image's source
      */
-    protected function folderImg($gid, $gdir) {
+    public function folderImg($gid, $gdir) {
         $modx = $this->modx;
         $catThumbOrderBy = $this->e2gPubCfg['cat_thumb_orderby'];
         $catThumbOrder = $this->e2gPubCfg['cat_thumb_order'];
@@ -533,7 +544,7 @@ class E2gPub { // public/protected class
      * @param mixed     $format     output formats: string | array
      * @return string
      */
-    protected function getPath($dirId, $option='cat_name', $format='string') {
+    public function getPath($dirId, $option='cat_name', $format='string') {
         $modx = $this->modx;
 
         $selectDir = 'SELECT A.parent_id, A.cat_id,A.cat_name,A.cat_alias '
@@ -582,7 +593,7 @@ class E2gPub { // public/protected class
      * @param   string  $text       text to be cropped
      * @return  string  shorthened text
      */
-    protected function cropName($mbstring, $charSet, $nameLen, $text) {
+    public function cropName($mbstring, $charSet, $nameLen, $text) {
         if (empty($charSet) || empty($nameLen))
             return FALSE;
 
@@ -590,10 +601,10 @@ class E2gPub { // public/protected class
         if (trim(htmlspecialchars_decode($text)) == '') {
             $croppedName = '&nbsp;';
         } elseif ($mbstring) {
-            if (mb_strlen($text, $charSet) > (int)$nameLen)
-                $croppedName = mb_substr($text, 0, (int)$nameLen - 1, $charSet) . '...';
-        } elseif (strlen($text) >(int) $nameLen) {
-            $croppedName = substr($text, 0, (int)$nameLen - 1) . '...';
+            if (mb_strlen($text, $charSet) > (int) $nameLen)
+                $croppedName = mb_substr($text, 0, (int) $nameLen - 1, $charSet) . '...';
+        } elseif (strlen($text) > (int) $nameLen) {
+            $croppedName = substr($text, 0, (int) $nameLen - 1) . '...';
         }
         return $croppedName;
     }

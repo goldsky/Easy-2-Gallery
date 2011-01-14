@@ -28,7 +28,7 @@ echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
     <input type="hidden" name="cat_name" value="<?php echo $row['cat_name']; ?>" />
 
     <?php
-          echo $this->_plugin('OnE2GFolderEditFormPrerender');
+          echo $this->plugin('OnE2GFolderEditFormPrerender');
 
           // DO NOT CHANGE THE ROOT FOLDER'S NAME FROM HERE, USE CONFIG INSTEAD.
           if ($row['cat_id'] != '1') {
@@ -104,7 +104,7 @@ echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
                 </tr>
             </table>
         </div>
-    </div><?php echo $this->_plugin('OnE2GFolderEditFormRender'); ?>
+    </div><?php echo $this->plugin('OnE2GFolderEditFormRender'); ?>
     <div style="margin-left: 80px;">
         <input type="submit" value="<?php echo $lng['save']; ?>" />
         <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="document.location.href='<?php

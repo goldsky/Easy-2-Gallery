@@ -69,8 +69,8 @@ $output = '';
 
 // Load the core class file
 if (!class_exists('E2gPub')) {
-    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php'))) {
-        include E2G_SNIPPET_PATH . 'includes/classes/e2g.public.class.php';
+    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.public.class.php'))) {
+        include E2G_SNIPPET_PATH . 'includes/models/e2g.public.class.php';
     } else {
         echo "<h3>Missing Easy 2 Gallery core's class file.</h3>";
         return;
@@ -79,8 +79,8 @@ if (!class_exists('E2gPub')) {
 
 // Load the snippet's class file
 if (!class_exists('E2gSnippet')) {
-    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.snippet.class.php'))) {
-        include E2G_SNIPPET_PATH . "includes/classes/e2g.snippet.class.php";
+    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.snippet.class.php'))) {
+        include E2G_SNIPPET_PATH . "includes/models/e2g.snippet.class.php";
     } else {
         echo "<h3>Missing Easy 2 Gallery snippet's class file.</h3>";
         return;
@@ -98,4 +98,4 @@ else {
 }
 
 // Using a web access may result an empty output.
-echo $output;
+return $output;

@@ -1,5 +1,4 @@
 <?php
-if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 if (!isset($_GET['path'])) {
 ?>
@@ -58,7 +57,7 @@ if (!isset($_GET['path'])) {
             <span><?php echo $lng['movetofolder']; ?> :</span>
             <select name="newparent">
                 <option value="">&nbsp;</option>
-                <?php echo $this->_folderOptions(0); ?>
+                <?php echo $this->_getDirDropDownOptions(); ?>
             </select>
             <span><?php echo $lng['and']; ?></span>
             <input type="radio" name="gotofolder" value="gothere" checked="checked"/><?php echo $lng['go_there']; ?>

@@ -19,31 +19,38 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
         <td valign="top"><span class="h2title"><?php echo $lng['tag']; ?></span></td>
         <td valign="top">:</td>
         <td>
-            <a href="<?php echo $index; ?>&amp;tag=<?php echo $tag; ?>"><?php echo $tag ; ?></a>
+            <a href="<?php echo $index; ?>&amp;tag=<?php echo $tag; ?>"><?php echo $tag; ?></a>
         </td>
     </tr>
 </table>
 <br />
+<form name="list" action="" method="post">
+    <?php
+    $modView = $_SESSION['mod_view'];
+    switch ($modView) {
+        case 'list':
+    ?>
+            <div id="list"></div>
+            <script type="text/javascript">viewTagGrid('<?php echo $path['string'] ?>','<?php echo $tag ?>');</script>
+    <?php
+            break;
+        case 'thumbnails':
+            if (!isset($_GET['path'])): ?>
+                <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
+                echo $lng['select_all'];
+            endif;
+    ?>
+            <div id="thumbnail" class="e2g_wrapper"></div>
+            <script type="text/javascript">viewTagThumbnails('<?php echo $path['string'] ?>','<?php echo $tag ?>');</script>
+    <?php
+            break;
+        default:
+            break;
+    }
+
+    include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php';
+    ?>
+</form>
 <?php
-$modView = $_SESSION['mod_view'];
-switch ($modView) {
-    case 'list':
-        ob_start();
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.tag.view_list.inc.php';
-        $obGetContents = ob_get_contents();
-        ob_end_clean();
-        break;
-    case 'thumbnails':
-        ob_start();
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.tag.view_thumb.inc.php';
-        $obGetContents = ob_get_contents();
-        ob_end_clean();
-        break;
-    default:
-        break;
-}
-
-if (isset($_GET['view']))
-    header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-
-echo $obGetContents;
+    if (isset($_GET['view']))
+        header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));

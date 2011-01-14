@@ -5,13 +5,13 @@ if (IN_MANAGER_MODE != 'true')
 
 $galPh = array();
 
-if (!isset($_GET[path]))
+if (!isset($_GET['path']))
     $galPh['gal.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> ' . $lng['select_all'];
 else
     $galPh['gal.selectAll'] = '';
 
 $galPh['gal.fileThumbGalContent'] = '';
-$readDir = $this->_readDir($e2g['dir'], $path, $parentId);
+$readDir = $this->readDir($e2g['dir'], $path, $parentId);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
@@ -26,7 +26,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
     $dirPhRow['thumb.thumb'] = '';
     if (!empty($dirPhRow['thumb.id'])) {
         // search image for subdir
-        $folderImgInfos = $this->_folderImg($dirPhRow['thumb.id'], '../' . $e2g['dir']);
+        $folderImgInfos = $this->folderImg($dirPhRow['thumb.id'], '../' . $e2g['dir']);
 
         // if there is an empty folder, or invalid content
         if ($folderImgInfos === FALSE) {
@@ -48,8 +48,8 @@ for ($b = 0; $b < $countRowDirName; $b++) {
 ';
         } else {
             // path to subdir's thumbnail
-            $pathToImg = $this->_getPath($folderImgInfos['dir_id']);
-            $imgShaper = $this->_imgShaper('../' . $rootDir
+            $pathToImg = $this->getPath($folderImgInfos['dir_id']);
+            $imgShaper = $this->imgShaper('../' . $rootDir
                             , $pathToImg . $folderImgInfos['filename']
                             , $dirPhRow['thumb.mod_w']
                             , $dirPhRow['thumb.mod_w']
@@ -116,7 +116,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
         unset($imgPreview);
     }
 
-    $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_dir_tpl'), $dirPhRow);
+    $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_dir_tpl'), $dirPhRow);
 }
 
 $dirPhRow = array();
@@ -153,7 +153,7 @@ if ($countDeletedDirs > 0) {
 ';
 
         unset($imgPreview);
-        $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_dir_tpl'), $dirPhRow);
+        $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_dir_tpl'), $dirPhRow);
     }
 }
 
@@ -172,8 +172,8 @@ for ($b = 0; $b < $countRowFileName; $b++) {
     $filePhRow['thumb.thumb'] = '';
     if (!empty($filePhRow['thumb.id'])) {
         // path to subdir's thumbnail
-        $pathToImg = $this->_getPath($filePhRow['thumb.dirId']);
-        $imgShaper = $this->_imgShaper('../' . $rootDir
+        $pathToImg = $this->getPath($filePhRow['thumb.dirId']);
+        $imgShaper = $this->imgShaper('../' . $rootDir
                         , $pathToImg . $filePhRow['thumb.name']
                         , $filePhRow['thumb.mod_w']
                         , $filePhRow['thumb.mod_w']
@@ -239,7 +239,7 @@ for ($b = 0; $b < $countRowFileName; $b++) {
         unset($imgPreview);
     }
 
-    $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_file_tpl'), $filePhRow);
+    $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_file_tpl'), $filePhRow);
 }
 
 // deleted file
@@ -277,7 +277,7 @@ if ($countDeletedFiles > 0) {
             </a>
 ';
         unset($imgPreview);
-        $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_file_tpl'), $filePhRow);
+        $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_file_tpl'), $filePhRow);
     }
 }
 
@@ -287,4 +287,4 @@ $modBottomMenu = ob_get_contents();
 ob_end_clean();
 $galPh['bottomMenu'] = $modBottomMenu;
 
-echo $this->_filler($this->_getTpl('file_thumb_gal_tpl'), $galPh);
+echo $this->filler($this->getTpl('file_thumb_gal_tpl'), $galPh);

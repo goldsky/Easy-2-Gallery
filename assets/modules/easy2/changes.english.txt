@@ -3,6 +3,18 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+********** 1.4.0-Public Release **********
+Improvement:
++ Individual image scaling (http://code.google.com/p/easy2modx/issues/detail?id=23)
++ Editable the values of the current, previous and next navigation (http://code.google.com/p/easy2modx/issues/detail?id=25)
++ Folder sort order on Module side (http://code.google.com/p/easy2modx/issues/detail?id=26)
++ Added &paths and &files parameters to be used instead of gallery's / image's ID
++ Added the selective thumbnail to the directory
+
+Fixes:
++ Bug on the first usergroup selection (http://code.google.com/p/easy2modx/issues/detail?id=27)
++ UTF-8 filenaming
+
 ********** 1.4.0-Release Candidate 4 **********
 + Bug fixing on the chmod permissions
 + Bug fixing on the directory editing

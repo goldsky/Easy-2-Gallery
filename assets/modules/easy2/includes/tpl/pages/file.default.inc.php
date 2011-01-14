@@ -22,11 +22,11 @@ while ($l = mysql_fetch_array($resultdesc)) {
 mysql_free_result($resultdesc);
 ?>
 <table cellspacing="2" cellpadding="0">
-        <tr>
-            <td valign="top"><b>ID</b></td>
-            <td valign="top">:</td>
-            <td><?php echo $parent['cat_id']; ?></td>
-        </tr>
+    <tr>
+        <td valign="top"><b>ID</b></td>
+        <td valign="top">:</td>
+        <td><?php echo $parent['cat_id']; ?></td>
+    </tr>
     <tr>
         <td valign="top"><b><?php echo $lng['path']; ?></b></td>
         <td valign="top">:</td>
@@ -35,17 +35,18 @@ mysql_free_result($resultdesc);
             // signature of non recorded directory is an additional &path parameter in the address bar
             // otherwise then it's a recorded one.
             if (!isset($_GET['path'])) {
-                echo $this->_actionIcon('edit_dir', array(
+                echo $this->actionIcon('edit_dir', array(
                     'page' => 'edit_dir'
                     , 'dir_id' => $parentId
-                )); } ?>
+                    , 'pid' => $parentId
+                ));
+            }
+            ?>
             <b><?php echo $path['link']; ?></b>
         </td>
-    </tr>
-    <?php
+    </tr><?php
             // signature of non recorded directory = &path in the address bar
-            if (!isset($_GET['path'])) {
-    ?>
+            if (!isset($_GET['path'])) : ?>
                 <tr>
                     <td valign="top"><b><?php echo $lng['visible']; ?></b></td>
                     <td valign="top">:</td>
@@ -71,7 +72,7 @@ mysql_free_result($resultdesc);
         <tr>
             <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
             <td valign="top">:</td>
-            <td><?php echo $this->_createTagLinks($parent['cat_tag']); ?></td>
+            <td><?php echo $this->createTagLinks($parent['cat_tag']); ?></td>
         </tr>
         <tr>
             <td valign="top"><b><?php echo $lng['description']; ?></b></td>
@@ -82,32 +83,35 @@ mysql_free_result($resultdesc);
             <td valign="top"><b><?php echo $lng['redirect_link']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo $parent['cat_redirect_link']; ?></td>
-        </tr>
+        </tr><?php endif; ?>
+    </table><br />
 
-            <?php } ?>
-</table>
+    <form name="list" action="" method="post"><?php
+                $modView = $_SESSION['mod_view'];
+                switch ($modView) {
+                    case 'list':
+            ?>
+                        <div id="list"></div>
+                        <script type="text/javascript">viewDefaultGrid('<?php echo $path['string'] ?>','<?php echo $parentId ?>');</script>
+    <?php
+                        break;
+                    case 'thumbnails':
+                        if (!isset($_GET['path'])): ?>
+                            <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
+                            echo $lng['select_all'];
+                        endif;
+    ?>
+                        <div id="thumbnail" class="e2g_wrapper"></div>
+                        <script type="text/javascript">viewDefaultThumbnails('<?php echo $path['string'] ?>','<?php echo $parentId ?>');</script>
+    <?php
+                        break;
+                    default:
+                        break;
+                }
 
-<br />
+                include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php';
+    ?>
+            </form>
 <?php
-$modView = $_SESSION['mod_view'];
-switch ($modView) {
-    case 'list':
-        ob_start();
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_list.inc.php';
-        $obGetContents = ob_get_contents();
-        ob_end_clean();
-        break;
-    case 'thumbnails':
-        ob_start();
-        include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.view_thumb.inc.php';
-        $obGetContents = ob_get_contents();
-        ob_end_clean();
-        break;
-    default:
-        break;
-}
-
-if (isset($_GET['view']))
-    header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-
-echo $obGetContents;
+                if (isset($_GET['view']))
+                    header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));

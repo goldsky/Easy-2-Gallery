@@ -21,7 +21,7 @@ $galPh['th.w'] = 'W (px)';
 $galPh['th.h'] = 'H (px)';
 $galPh['td.fileDefaultTableContent'] = '';
 
-$readDir = $this->_readDir($e2g['dir'], $path, $parentId);
+$readDir = $this->readDir($e2g['dir'], $path, $parentId);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
@@ -37,7 +37,7 @@ for ($b = 0; $b < $countRowDirName; $b++) {
             . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
     ;
 
-    $galPh['td.fileDefaultTableContent'] .= $this->_filler($this->_getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
+    $galPh['td.fileDefaultTableContent'] .= $this->filler($this->getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
 }
 
 $dirPhRow = array();
@@ -50,7 +50,7 @@ if ($countDeletedDirs > 0) {
     $dirPhRow['td.rowDir'] = $dirPhRow['td.styledName'] .' ' . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.attributes']
     ;
 
-        $galPh['td.fileDefaultTableContent'] .= $this->_filler($this->_getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
+        $galPh['td.fileDefaultTableContent'] .= $this->filler($this->getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
     }
 }
 #########################        FILES         #########################
@@ -72,7 +72,7 @@ for ($b = 0; $b < $countRowFileName; $b++) {
                 <div class="imPreview" id="rowPreview_' . $filePhRow['td.rowNum'] . '" style="display:none;"></div>
 ';
 
-    $galPh['td.fileDefaultTableContent'] .= $this->_filler($this->_getTpl('file_default_table_row_file_tpl'), $filePhRow);
+    $galPh['td.fileDefaultTableContent'] .= $this->filler($this->getTpl('file_default_table_row_file_tpl'), $filePhRow);
 }
 
 // deleted file
@@ -84,7 +84,7 @@ if ($countDeletedFiles > 0) {
             $filePhRow['td.' . $k] = $v[$b];
         }
         $filePhRow['td.rowFile'] = $filePhRow['td.styledName'] . ' ' . $filePhRow['td.fid'] . ' ' . $filePhRow['td.attributes'];
-        $galPh['td.fileDefaultTableContent'] .= $this->_filler($this->_getTpl('file_default_table_row_file_tpl'), $filePhRow);
+        $galPh['td.fileDefaultTableContent'] .= $this->filler($this->getTpl('file_default_table_row_file_tpl'), $filePhRow);
     }
 }
 
@@ -94,4 +94,4 @@ $modBottomMenu = ob_get_contents();
 ob_end_clean();
 $galPh['bottomMenu'] = $modBottomMenu;
 
-echo $this->_filler($this->_getTpl('file_default_table_tpl'), $galPh);
+echo $this->filler($this->getTpl('file_default_table_tpl'), $galPh);

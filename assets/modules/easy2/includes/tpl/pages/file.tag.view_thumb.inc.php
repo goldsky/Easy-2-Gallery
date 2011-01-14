@@ -6,7 +6,7 @@ if (IN_MANAGER_MODE != 'true')
 $galPh = array();
 $galPh['gal.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /> ' . $lng['select_all'];
 $galPh['gal.fileThumbGalContent'] = '';
-$readTag = $this->_readTag($tag);
+$readTag = $this->readTag($tag);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
@@ -19,7 +19,7 @@ foreach ($readTag['dir'] as $dir) {
     $dirPhRow['thumb.thumb'] = '';
     if (!empty($dirPhRow['thumb.id'])) {
         // search image for subdir
-        $folderImgInfos = $this->_folderImg($dirPhRow['thumb.id'], '../' . $e2g['dir']);
+        $folderImgInfos = $this->folderImg($dirPhRow['thumb.id'], '../' . $e2g['dir']);
 
         // if there is an empty folder, or invalid content
         if ($folderImgInfos === FALSE) {
@@ -41,8 +41,8 @@ foreach ($readTag['dir'] as $dir) {
 ';
         } else {
             // path to subdir's thumbnail
-            $pathToImg = $this->_getPath($folderImgInfos['dir_id']);
-            $imgShaper = $this->_imgShaper('../' . $gdir
+            $pathToImg = $this->getPath($folderImgInfos['dir_id']);
+            $imgShaper = $this->imgShaper('../' . $gdir
                             , $pathToImg . $folderImgInfos['filename']
                             , $dirPhRow['thumb.mod_w']
                             , $dirPhRow['thumb.mod_w']
@@ -104,7 +104,7 @@ foreach ($readTag['dir'] as $dir) {
         unset($imgPreview);
     }
 
-    $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_dir_tpl'), $dirPhRow);
+    $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_dir_tpl'), $dirPhRow);
 }
 
 #########################     FILES      #########################
@@ -120,8 +120,8 @@ foreach ($readTag['file'] as $file) {
     $filePhRow['thumb.thumb'] = '';
     if (!empty($filePhRow['thumb.id'])) {
         // path to subdir's thumbnail
-        $pathToImg = $this->_getPath($filePhRow['thumb.dirId']);
-        $imgShaper = $this->_imgShaper('../' . $gdir
+        $pathToImg = $this->getPath($filePhRow['thumb.dirId']);
+        $imgShaper = $this->imgShaper('../' . $gdir
                         , $pathToImg . $filePhRow['thumb.name']
                         , $filePhRow['thumb.mod_w']
                         , $filePhRow['thumb.mod_w']
@@ -187,7 +187,7 @@ foreach ($readTag['file'] as $file) {
         unset($imgPreview);
     }
 
-    $galPh['gal.fileThumbGalContent'] .= $this->_filler($this->_getTpl('file_thumb_file_tpl'), $filePhRow);
+    $galPh['gal.fileThumbGalContent'] .= $this->filler($this->getTpl('file_thumb_file_tpl'), $filePhRow);
 }
 
 ob_start();
@@ -196,4 +196,4 @@ $modBottomMenu = ob_get_contents();
 ob_end_clean();
 $galPh['bottomMenu'] = $modBottomMenu;
 
-echo $this->_filler($this->_getTpl('file_thumb_gal_tpl'), $galPh);
+echo $this->filler($this->getTpl('file_thumb_gal_tpl'), $galPh);

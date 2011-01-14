@@ -274,53 +274,9 @@ if (IN_MANAGER_MODE != 'true')
                             <?php } ?>
                                 </ul>
                         <?php } ?>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-    <?php
-                                /**
-                                 * TODO making roles for module's accessibility
-                                 */
-    ?>
-                                <!--div class="tab-page" id="tabRoleSettings">
-                                    <h2 class="tab"><?php echo $lng['user_roles']; ?></h2>
-                                    <script type="text/javascript">
-                                        tpAccPerm.addTabPage( document.getElementById( 'tabRoleSettings') );
-                                    </script>
-
-                                    <table style="width: 100%;">
-                                        <tr>
-                                            <td class="tdLeft">
-                                                <div class="curveBox">
-                                                    <div class="h2title"><?php echo $lng['users_mgr_roles']; ?></div>
-    <?php
-                                $mgrRoles = $modx->db->makeArray($modx->db->query(
-                                                        'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'user_roles ORDER BY id ASC'));
-                                if (count($mgrRoles) > 0) {
-    ?>
-                                                                    <ul><?php
-                                    foreach ($mgrRoles as $mgrRole)
-                                        echo '<li>' . $mgrRole['name'] . ' - <em>' . $mgrRole['description'] . '</em></li>';
-    ?>
-                                                                </ul><?php } ?>
-                                            </div>
-                                        </td>
-                                        <td class="tdRight">
-                                            <div class="curveBox">
-                                                <div class="h2title"><?php echo $lng['user_e2g_mgr_roles']; ?></div>
-                                                <div><?php echo htmlspecialchars_decode($lng['user_e2g_mgr_roles_desc']); ?></div>
-<ul>
-<li>Create</li>
-<li>Edit</li>
-<li>Save</li>
-<li>Delete</li>
-</ul>
-</div>
-</td>
-</tr>
-</table>
-</div-->
-
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
 </div>

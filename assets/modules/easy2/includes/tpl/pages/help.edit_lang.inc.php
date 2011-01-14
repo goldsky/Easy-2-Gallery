@@ -61,7 +61,7 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
                         <tr style="border:1px dotted #000;">
                             <th style="border:1px dotted #000;">Keys</th>
                             <th style="border:1px dotted #000;">English</th>
-                            <th style="border:1px dotted #000;width:98%;"><?php echo $this->_e2gEncode($fileFirstName, 'ucfirst'); ?></th>
+                            <th style="border:1px dotted #000;width:98%;"><?php echo $this->e2gEncode($fileFirstName, 'ucfirst'); ?></th>
                         </tr>
                     <?php
                     foreach ($engs as $eng) {
@@ -92,7 +92,7 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
             <tr style="border:1px dotted #000;">
                 <th style="border:1px dotted #000;" width="20%">Keys</th>
                 <th style="border:1px dotted #000;" width="40%">English</th>
-                <th style="border:1px dotted #000;" width="40%"><?php echo $this->_e2gEncode($fileFirstName, 'ucfirst'); ?></th>
+                <th style="border:1px dotted #000;" width="40%"><?php echo $this->e2gEncode($fileFirstName, 'ucfirst'); ?></th>
             </tr>
             <?php
                     foreach ($engs as $eng) {

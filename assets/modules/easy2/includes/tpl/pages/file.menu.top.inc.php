@@ -54,7 +54,7 @@ if (!isset($_GET['tag']) && !isset($_GET['path'])) {
                 <?php echo $lng['gotofolder']; ?>:
                    <select name="newparent" onchange="submitform(1)">
                        <option value="">&nbsp;</option>
-                    <?php echo $this->_folderOptions(0, 1); ?>
+                    <?php echo $this->_getDirDropDownOptions(0, 1); ?>
                 </select>
             </li>
             <li style="float:right">

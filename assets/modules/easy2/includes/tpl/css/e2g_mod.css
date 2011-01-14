@@ -71,6 +71,14 @@ div.imPreview2 img {
     width: 200px;
 }
 
+span.thumbPreview {
+    display: block;
+}
+
+span.thumbPreview img {
+    display: block;
+}
+
 .topmenu a {
     text-decoration: none;
 }
@@ -403,6 +411,14 @@ span.navigation span.navigationBranch .active {
     position: relative;
 }
 
+.dir .boxcontent {
+/*    background: url('../icons/preloader-dir.gif') center no-repeat;*/
+}
+
+.thumb .boxcontent {
+    background: url('../icons/preloader-file.gif') center no-repeat;
+}
+
 /******************************************************************************/
 
 .dir .boxcontent .icons,
@@ -439,7 +455,6 @@ span.navigation span.navigationBranch .active {
     position: absolute;
     visibility: visible;
     background: url('../img/bg-white-opac70.png') repeat;
-/*    background: url('../img/bg-red-opac70.png') repeat;*/
     z-index: 1;
     bottom: 0;
 }

@@ -23,7 +23,7 @@ $galPh['th.h'] = 'H (px)';
 $galPh['td.fileTagTableContent'] = '';
 
 $tag = isset($tag) ? $tag : $_GET['tag'];
-$readTag = $this->_readTag($tag);
+$readTag = $this->readTag($tag);
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
@@ -39,7 +39,7 @@ foreach ($readTag['dir'] as $dir) {
             . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
     ;
 
-    $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
+    $galPh['td.fileTagTableContent'] .= $this->filler($this->getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
 }
 
 #########################        FILES         #########################
@@ -65,7 +65,7 @@ foreach ($readTag['file'] as $file) {
 ';
     }
 
-    $galPh['td.fileTagTableContent'] .= $this->_filler($this->_getTpl('file_tag_table_row_file_tpl'), $filePhRow);
+    $galPh['td.fileTagTableContent'] .= $this->filler($this->getTpl('file_tag_table_row_file_tpl'), $filePhRow);
 }
 
 ob_start();
@@ -74,4 +74,4 @@ $modBottomMenu = ob_get_contents();
 ob_end_clean();
 $galPh['bottomMenu'] = $modBottomMenu;
 
-echo $this->_filler($this->_getTpl('file_tag_table_tpl'), $galPh);
+echo $this->filler($this->getTpl('file_tag_table_tpl'), $galPh);

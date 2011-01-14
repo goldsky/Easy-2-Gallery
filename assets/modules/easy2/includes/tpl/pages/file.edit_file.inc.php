@@ -36,7 +36,7 @@ if (isset($_GET['tag'])) {
         ?>" method="post">
          <input type="hidden" name="file_id" value="<?php echo $row['id']; ?>" />
 
-    <?php echo $this->_plugin('OnE2GFileEditFormPrerender'); ?>
+    <?php echo $this->plugin('OnE2GFileEditFormPrerender'); ?>
 
            <table width="100%">
                <tr>
@@ -122,7 +122,7 @@ if (isset($_GET['tag'])) {
                     </td>
                 </tr>
             </table>
-        </div><?php echo $this->_plugin('OnE2GFileEditFormRender'); ?>
+        </div><?php echo $this->plugin('OnE2GFileEditFormRender'); ?>
         <div style="margin-left: 80px;">
             <input type="submit" value="<?php echo $lng['save']; ?>" />
             <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="document.location.href='<?php

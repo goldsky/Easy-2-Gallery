@@ -24,7 +24,7 @@ switch ($e->name) {
         include MODX_BASE_PATH . 'assets/modules/easy2/index.php';
         $buffer = ob_get_contents();
         ob_end_clean();
-        echo $buffer;
+        return $buffer;
         ?>
     </div>
 </div>
@@ -33,3 +33,5 @@ switch ($e->name) {
     default :
         break;
 }
+
+return;

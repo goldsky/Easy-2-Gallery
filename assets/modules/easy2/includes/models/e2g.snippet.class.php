@@ -24,7 +24,16 @@ class E2gSnippet extends E2gPub {
      * The internal variables of this class
      * @var mixed all the processing variables
      */
-    private $galPh = array();
+    private $_galPh = array();
+    /**
+     * Stores folders and files placeholders
+     * @var array
+     */
+    private $_dirPh;
+    private $_filePh;
+
+    private $_resultCountDirs = 0;
+    private $_resultCountFiles = 0;
 
     public function __construct($modx, $e2gSnipCfg) {
         parent::__construct($modx, $e2gSnipCfg);
@@ -267,7 +276,7 @@ class E2gSnippet extends E2gPub {
             unset($singleGid);
             foreach ($multipleGids as $singleGid) {
                 // get path from the $gid
-                $pathArray = $this->_getPath($singleGid, NULL, 'array');
+                $pathArray = $this->getPath($singleGid, NULL, 'array');
                 // get "folder's name" from $pathArray
                 $galPh['cat_name'] = is_array($pathArray) ? end($pathArray) : '';
 
@@ -287,11 +296,11 @@ class E2gSnippet extends E2gPub {
                     //*                             CRUMBS                             */
                     //******************************************************************/
 
-                    $crumbsPathArray = $this->_getPath($singleGid, $crumbsUse, 'array');
+                    $crumbsPathArray = $this->getPath($singleGid, $crumbsUse, 'array');
 
                     // To limit the CRUMBS paths.
                     if (($staticGid != '1') && !empty($crumbsPathArray) && !isset($tag)) {
-                        $staticPath = $this->_getPath($staticGid, NULL, 'array');
+                        $staticPath = $this->getPath($staticGid, NULL, 'array');
                         if (!$crumbsShowPrevious) {
                             $crumbsPathArray = array_slice($crumbsPathArray, (count($staticPath) - 1), NULL, TRUE);
                         }
@@ -333,7 +342,7 @@ class E2gSnippet extends E2gPub {
                             }
                             $breadcrumbs = substr_replace($breadcrumbs, '', 0, strlen($crumbsSeparator));
 
-//                            // unset the value of Easy 2's ROOT gallery ID/name
+                            // unset the value of Easy 2's ROOT gallery ID/name
 //                            unset($crumbsPathArray[1]);
                             // joining many of directory paths
                             $crumbsPathArray = implode('/', array_values($crumbsPathArray)) . '/';
@@ -452,8 +461,8 @@ class E2gSnippet extends E2gPub {
                         $galleryId = $singleGid;
                     }
 
-                    $galPh['cat_description'] = $this->_getDirInfo($galleryId, 'cat_description');
-                    $galPh['cat_title'] = $this->_getDirInfo($galleryId, 'cat_alias');
+                    $galPh['cat_description'] = $this->getDirInfo($galleryId, 'cat_description');
+                    $galPh['cat_title'] = $this->getDirInfo($galleryId, 'cat_alias');
 
                     $galPh['title'] = ($galPh['cat_title'] != '' ? $galPh['cat_title'] : $galPh['cat_name'] );
                     if ($galPh['title'] == '' && $galPh['cat_description'] == '') {
@@ -483,7 +492,7 @@ class E2gSnippet extends E2gPub {
                         $l['cat_tag'] = '';
                     }
 
-                    $folderImgInfos = $this->_folderImg($l['cat_id'], $gdir);
+                    $folderImgInfos = $this->folderImg($l['cat_id'], $gdir);
 
                     // if there is an empty folder, or invalid content
                     if (!$folderImgInfos)
@@ -492,7 +501,7 @@ class E2gSnippet extends E2gPub {
                     $l['count'] = $folderImgInfos['count'];
 
                     // path to subdir's thumbnail
-                    $getPath = $this->_getPath($folderImgInfos['dir_id']);
+                    $getPath = $this->getPath($folderImgInfos['dir_id']);
 
                     // Populate the grid with folder's thumbnails
                     if ($dirNumRows > 0
@@ -515,7 +524,7 @@ class E2gSnippet extends E2gPub {
                     }
 
                     $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] );
-                    $l['title'] = $this->_cropName($mbstring, $charSet, $catNameLen, $l['title']);
+                    $l['title'] = $this->cropName($mbstring, $charSet, $catNameLen, $l['title']);
 
                     if ($useRedirectLink === TRUE && !empty($l['cat_redirect_link'])) {
                         $l['link'] = $l['cat_redirect_link'];
@@ -543,7 +552,7 @@ class E2gSnippet extends E2gPub {
                     $l['dirpluginrender'] = $this->_plugin('OnE2GWebDirRender', $e2gEvtParams);
 
                     // fill up the dir list with content
-                    $_filler = $this->_filler($this->_getTpl('dir_tpl'), $l);
+                    $_filler = $this->filler($this->getTpl('dir_tpl'), $l);
                     $galPh['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
                     $i++;
                 } // while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC))
@@ -623,7 +632,7 @@ class E2gSnippet extends E2gPub {
                     continue;
 
                 // whether configuration setting is set with or without table, the template will adjust it
-                $_filler = $this->_filler($this->_getTpl('thumb_tpl'), $thumbPlacholders);
+                $_filler = $this->filler($this->getTpl('thumb_tpl'), $thumbPlacholders);
                 $galPh['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
                 $i++;
             } // while ($l = @mysql_fetch_array($querySelectFiles, MYSQL_ASSOC))
@@ -656,101 +665,101 @@ class E2gSnippet extends E2gPub {
         //*             joining between dirs and files pagination              */
         //**********************************************************************/
         if ($pagination == 1 && $orderBy != 'rand()' && $catOrderBy != 'rand()') {
-            // count the files again, this time WITHOUT limit!
-            if ($showOnly == 'folders') {
-                $fileCount = 0;
-            } elseif (!empty($gid)) {
-                $selectCountFiles = $this->_fileSqlStatements('COUNT(id)');
-                $querySelectCountFiles = mysql_query($selectCountFiles);
-                if (!$querySelectCountFiles) {
-                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
-                    return FALSE;
-                }
-                $resultCountFiles = mysql_result($querySelectCountFiles, 0, 0);
-                mysql_free_result($querySelectCountFiles);
-            }
-
-            $totalCount = $resultCountDirs + $resultCountFiles;
-
-            // Terminate all the outputs, when the result is empty.
-            if ($totalCount === 0)
-                return FALSE;
-
-            $galPh['page_num_class'] = $pageNumClass;
-            if ($totalCount <= $limit) {
-                $galPh['pages'] = '&nbsp;';
-            }
-            if ($totalCount > $limit) {
-
-                $galPh['pages'] = '';
-                $pages = array();
-                $pages['totalCount'] = $totalCount;
-                $pages['totalPageNum'] = ceil($totalCount / $limit);
-                $indexPage = $modx->makeUrl($modx->documentIdentifier, $modx->aliases, 'sid=' . $e2gStaticInstances);
-                $i = 0;
-                while ($i * $limit < $totalCount) {
-                    if ($i == $gpn) {
-                        $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
-                        $pages['currentPage'] = ($i + 1);
-                    } else {
-                        // using &tag parameter
-                        if (isset($staticTag)) {
-                            $permalinkName = $modx->stripAlias($e2gStaticInstances . '_' . $staticTag);
-                            // making flexible FURL or not
-                            $pagesLink = $indexPage . '&amp;tag=' . $staticTag
-                                    . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
-                        }
-                        // original &gid parameter
-                        else {
-                            $permalinkName = $e2gStaticInstances . '_' . ( isset($staticGid)
-                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-                                            $gid : $staticGid );
-                            $permalinkName = $modx->stripAlias($permalinkName);
-                            // making flexible FURL or not
-                            $pagesLink = $indexPage . ( isset($staticGid)
-                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-                                            '&amp;gid=' . $gid :
-                                            '&amp;gid=' . $staticGid )
-                                    . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
-                        }
-
-                        $pagesLink = str_replace(' ', '', $pagesLink);
-                        $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
-                    }
-
-                    if (isset($staticTag)) {
-                        $previousLink = $indexPage . '&amp;tag=' . $staticTag
-                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
-                        $nextLink = $indexPage . '&amp;tag=' . $staticTag
-                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
-                    } else {
-                        $previousLink = $indexPage
-                                . ( isset($staticGid)
-                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-                                        '&amp;gid=' . $gid :
-                                        '&amp;gid=' . $staticGid )
-                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
-                        $nextLink = $indexPage
-                                . ( isset($staticGid)
-                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-                                        '&amp;gid=' . $gid :
-                                        '&amp;gid=' . $staticGid )
-                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
-                    }
-
-                    $pages['previousLink'][$i + 1] = $previousLink;
-                    $pages['nextLink'][$i + 1] = $nextLink;
-
-                    $i++;
-                }
-                $galPh['pages'] .= $this->_paginationFormat($pages);
-            }
+//            // count the files again, this time WITHOUT limit!
+//            if ($showOnly == 'folders') {
+//                $fileCount = 0;
+//            } elseif (!empty($gid)) {
+//                $selectCountFiles = $this->_fileSqlStatements('COUNT(id)');
+//                $querySelectCountFiles = mysql_query($selectCountFiles);
+//                if (!$querySelectCountFiles) {
+//                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
+//                    return FALSE;
+//                }
+//                $resultCountFiles = mysql_result($querySelectCountFiles, 0, 0);
+//                mysql_free_result($querySelectCountFiles);
+//            }
+//
+//            $totalCount = $resultCountDirs + $resultCountFiles;
+//
+//            // Terminate all the outputs, when the result is empty.
+//            if ($totalCount === 0)
+//                return FALSE;
+//
+//            $galPh['page_num_class'] = $pageNumClass;
+//            if ($totalCount <= $limit) {
+//                $galPh['pages'] = '&nbsp;';
+//            }
+//            if ($totalCount > $limit) {
+//
+//                $galPh['pages'] = '';
+//                $pages = array();
+//                $pages['totalCount'] = $totalCount;
+//                $pages['totalPageNum'] = ceil($totalCount / $limit);
+//                $indexPage = $modx->makeUrl($modx->documentIdentifier, $modx->aliases, 'sid=' . $e2gStaticInstances);
+//                $i = 0;
+//                while ($i * $limit < $totalCount) {
+//                    if ($i == $gpn) {
+//                        $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
+//                        $pages['currentPage'] = ($i + 1);
+//                    } else {
+//                        // using &tag parameter
+//                        if (isset($staticTag)) {
+//                            $permalinkName = $modx->stripAlias($e2gStaticInstances . '_' . $staticTag);
+//                            // making flexible FURL or not
+//                            $pagesLink = $indexPage . '&amp;tag=' . $staticTag
+//                                    . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+//                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+//                        }
+//                        // original &gid parameter
+//                        else {
+//                            $permalinkName = $e2gStaticInstances . '_' . ( isset($staticGid)
+//                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+//                                            $gid : $staticGid );
+//                            $permalinkName = $modx->stripAlias($permalinkName);
+//                            // making flexible FURL or not
+//                            $pagesLink = $indexPage . ( isset($staticGid)
+//                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+//                                            '&amp;gid=' . $gid :
+//                                            '&amp;gid=' . $staticGid )
+//                                    . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+//                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+//                        }
+//
+//                        $pagesLink = str_replace(' ', '', $pagesLink);
+//                        $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
+//                    }
+//
+//                    if (isset($staticTag)) {
+//                        $previousLink = $indexPage . '&amp;tag=' . $staticTag
+//                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+//                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+//                        $nextLink = $indexPage . '&amp;tag=' . $staticTag
+//                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+//                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+//                    } else {
+//                        $previousLink = $indexPage
+//                                . ( isset($staticGid)
+//                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+//                                        '&amp;gid=' . $gid :
+//                                        '&amp;gid=' . $staticGid )
+//                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+//                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+//                        $nextLink = $indexPage
+//                                . ( isset($staticGid)
+//                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+//                                        '&amp;gid=' . $gid :
+//                                        '&amp;gid=' . $staticGid )
+//                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+//                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+//                    }
+//
+//                    $pages['previousLink'][$i + 1] = $previousLink;
+//                    $pages['nextLink'][$i + 1] = $nextLink;
+//
+//                    $i++;
+//                }
+//                $galPh['pages'] .= $this->_paginationFormat($pages);
+//            }
         }
 
         ########################## END OF PAGINATION ###########################
@@ -782,7 +791,121 @@ class E2gSnippet extends E2gPub {
                     , 'sid' => $galPh['sid']
                 ));
 
-        return $this->_filler($this->_getTpl('tpl'), $galPh);
+        return $this->filler($this->getTpl('tpl'), $galPh);
+    }
+
+    private function _getDirs ($parentId, $gpn) {
+        
+    }
+
+    private function _paginationNumbers ($gpn = 0) {
+        $totalCount = $resultCountDirs + $resultCountFiles;
+
+        // Terminate all the outputs, when the result is empty.
+        if ($totalCount === 0)
+            return FALSE;
+
+        $galPh['page_num_class'] = $pageNumClass;
+        if ($totalCount <= $limit) {
+            $galPh['pages'] = '&nbsp;';
+        }
+        if ($totalCount > $limit) {
+
+            $galPh['pages'] = '';
+            $pages = array();
+            $pages['totalCount'] = $totalCount;
+            $pages['totalPageNum'] = ceil($totalCount / $limit);
+            $indexPage = $modx->makeUrl($modx->documentIdentifier, $modx->aliases, 'sid=' . $e2gStaticInstances);
+            $i = 0;
+            while ($i * $limit < $totalCount) {
+                if ($i == $gpn) {
+                    $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
+                    $pages['currentPage'] = ($i + 1);
+                } else {
+                    // using &tag parameter
+                    if (isset($staticTag)) {
+                        $permalinkName = $modx->stripAlias($e2gStaticInstances . '_' . $staticTag);
+                        // making flexible FURL or not
+                        $pagesLink = $indexPage . '&amp;tag=' . $staticTag
+                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                                . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+                    }
+                    // original &gid parameter
+                    else {
+                        $permalinkName = $e2gStaticInstances . '_' . ( isset($staticGid)
+                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                        $gid : $staticGid );
+                        $permalinkName = $modx->stripAlias($permalinkName);
+                        // making flexible FURL or not
+                        $pagesLink = $indexPage . ( isset($staticGid)
+                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                        '&amp;gid=' . $gid :
+                                        '&amp;gid=' . $staticGid )
+                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                                . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+                    }
+
+                    $pagesLink = str_replace(' ', '', $pagesLink);
+                    $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
+                }
+
+                if (isset($staticTag)) {
+                    $previousLink = $indexPage . '&amp;tag=' . $staticTag
+                            . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                            . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+                    $nextLink = $indexPage . '&amp;tag=' . $staticTag
+                            . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                            . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+                } else {
+                    $previousLink = $indexPage
+                            . ( isset($staticGid)
+                            && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                    '&amp;gid=' . $gid :
+                                    '&amp;gid=' . $staticGid )
+                            . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                            . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+                    $nextLink = $indexPage
+                            . ( isset($staticGid)
+                            && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                    '&amp;gid=' . $gid :
+                                    '&amp;gid=' . $staticGid )
+                            . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                            . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+                }
+
+                $pages['previousLink'][$i + 1] = $previousLink;
+                $pages['nextLink'][$i + 1] = $nextLink;
+
+                $i++;
+            }
+            $galPh['pages'] .= $this->_paginationFormat($pages);
+        }
+
+        return $galPh;
+    }
+
+    private function _getCountDirs () {
+
+    }
+
+    private function _getCountFiles () {
+        $showOnly = $this->e2gSnipCfg['showonly'];
+
+        // count the files again, this time WITHOUT limit!
+        if ($showOnly == 'folders') {
+            $fileCount = 0;
+        } elseif (!empty($gid)) {
+            $selectCountFiles = $this->_fileSqlStatements('COUNT(id)');
+            $querySelectCountFiles = mysql_query($selectCountFiles);
+            if (!$querySelectCountFiles) {
+                echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
+                return FALSE;
+            }
+            $resultCountFiles = mysql_result($querySelectCountFiles, 0, 0);
+            mysql_free_result($querySelectCountFiles);
+        }
+
+        return $resultCountFiles;
     }
 
     /**
@@ -833,7 +956,7 @@ class E2gSnippet extends E2gPub {
                 return FALSE;
 
             // whether configuration setting is set with or without table, the template will adjust it
-            $_filler = $this->_filler($this->_getTpl('thumb_tpl'), $thumbPlaceholder);
+            $_filler = $this->filler($this->getTpl('thumb_tpl'), $thumbPlaceholder);
             $galPh['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
             $i++;
         }
@@ -845,7 +968,7 @@ class E2gSnippet extends E2gPub {
         // END the grid
         $galPh['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
-        return $this->_filler($this->_getTpl('tpl'), $galPh);
+        return $this->filler($this->getTpl('tpl'), $galPh);
     }
 
     /**
@@ -888,7 +1011,7 @@ class E2gSnippet extends E2gPub {
                 return FALSE;
 
             // whether configuration setting is set with or without table, the template will adjust it
-            $_filler = $this->_filler($this->_getTpl('rand_tpl'), $thumbPlaceholder);
+            $_filler = $this->filler($this->getTpl('rand_tpl'), $thumbPlaceholder);
             $galPh['content'] .= ( ($grid == 'css') ? $_filler : '<td>' . $_filler . '</td>');
         }
         mysql_free_result($querySelectFiles);
@@ -899,7 +1022,7 @@ class E2gSnippet extends E2gPub {
         // END the grid
         $galPh['content'] .= ( ($grid == 'css') ? '</div>' : '</tr></table>');
 
-        return $this->_filler($this->_getTpl('tpl'), $galPh);
+        return $this->filler($this->getTpl('tpl'), $galPh);
     }
 
     /**
@@ -923,8 +1046,8 @@ class E2gSnippet extends E2gPub {
         $e2gSnipCfg = $this->e2gSnipCfg;
 
         // decoding UTF-8
-        $gdir = $this->_e2gDecode($gdir);
-        $path = $this->_e2gDecode($path);
+        $gdir = $this->e2gDecode($gdir);
+        $path = $this->e2gDecode($path);
         if (empty($path))
             return FALSE;
 
@@ -951,11 +1074,11 @@ class E2gSnippet extends E2gPub {
                 . '.jpg';
 
         if (!class_exists('E2gThumb')) {
-            if (!file_exists(realpath(E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php'))) {
-                echo __LINE__ . ' : File <b>' . E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php</b> does not exist.';
+            if (!file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.public.thumbnail.class.php'))) {
+                echo __LINE__ . ' : File <b>' . E2G_SNIPPET_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';
                 return FALSE;
             } else {
-                include_once E2G_SNIPPET_PATH . 'includes/classes/e2g.public.thumbnail.class.php';
+                include_once E2G_SNIPPET_PATH . 'includes/models/e2g.public.thumbnail.class.php';
             }
         }
 
@@ -966,68 +1089,6 @@ class E2gSnippet extends E2gPub {
         } else {
             return FALSE;
         }
-    }
-
-    /**
-     * To get paths from the parent directory up to the Easy 2's ROOT gallery
-     * @param int       $dirId      parent directory's ID
-     * @param string    $option     output options: cat_name | cat_alias
-     * @param mixed     $format     output formats: string | array
-     * @return string
-     */
-    private function _getPath($dirId, $option='cat_name', $format='string') {
-        return parent::getPath($dirId, $option, $format);
-    }
-
-    /**
-     * To get directory's information
-     * @param  int    $dirId  gallery's ID
-     * @param  string $field  database field
-     * @return mixed  the directory's data in an array
-     */
-    private function _getDirInfo($dirId, $field) {
-        return parent::getDirInfo($dirId, $field);
-    }
-
-    /**
-     * To get file's information
-     * @param  int    $fileId  file's ID
-     * @param  string $field  database field
-     * @return mixed  the file's data in an array
-     */
-    private function _getFileInfo($fileId, $field) {
-        return parent::getFileInfo($fileId, $field);
-    }
-
-    /**
-     * Gallery's TEMPLATE function
-     * @param string $tpl = gallery's template (@FILE or chunk)
-     * @param string $data = template's array data
-     * @param string $prefix = placeholder's prefix
-     * @param string $suffix = placeholder's suffix
-     * @return string templated data
-     */
-    private function _filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
-        return parent::filler($tpl, $data, $prefix, $suffix);
-    }
-
-    /**
-     * Get template
-     * @param string    $tpl Template
-     * @return string   Template's content
-     */
-    private function _getTpl($tpl) {
-        return parent::getTpl($tpl);
-    }
-
-    /**
-     * To get thumbnail for each folder
-     * @param int       $gid    folder's ID
-     * @param string    $gdir   gallery's ROOT path
-     * @return string image's source
-     */
-    private function _folderImg($gid, $gdir) {
-        return parent::folderImg($gid, $gdir);
     }
 
     /**
@@ -1108,7 +1169,7 @@ class E2gSnippet extends E2gPub {
         $gdir = $this->e2gSnipCfg['gdir'];
 
         // check the picture existance before continue
-        if (!file_exists(realpath($gdir . $this->_getPath($row['dir_id']) . $row['filename']))) {
+        if (!file_exists(realpath($gdir . $this->getPath($row['dir_id']) . $row['filename']))) {
             return FALSE;
         }
 
@@ -1152,9 +1213,9 @@ class E2gSnippet extends E2gPub {
             return FALSE;
 
         $title = trim($row['alias']) != '' ? $row['alias'] : $row['filename'];
-        $row['title'] = $this->_cropName($mbstring, $charSet, $nameLen, $title);
+        $row['title'] = $this->cropName($mbstring, $charSet, $nameLen, $title);
 
-        $path = $this->_getPath($row['dir_id']);
+        $path = $this->getPath($row['dir_id']);
         $imgShaper = $this->_imgShaper($gdir, $path . $row['filename'], $row['w'], $row['h'], $thq);
         if ($imgShaper !== FALSE) {
             $row['src'] = $imgShaper;
@@ -1177,7 +1238,7 @@ class E2gSnippet extends E2gPub {
                 $row['link'] = 'assets/modules/easy2/show.easy2gallery.php?fid=' . $row['id'];
             } elseif ($imgSrc == 'original') {
                 // path to subdir's thumbnail
-                $path = $this->_getPath($row['dir_id']);
+                $path = $this->getPath($row['dir_id']);
                 $row['link'] = $gdir . $path . $row['filename'];
             }
         } // if ( isset($landingPage) )
@@ -1367,7 +1428,7 @@ class E2gSnippet extends E2gPub {
         $output['wrapper'] = $this->e2gSnipCfg['e2g_wrapper'];
         $output['sid'] = $this->e2gSnipCfg['e2g_static_instances'];
 
-        return $this->_filler($this->_getTpl('slideshow-tpl'), $output);
+        return $this->filler($this->getTpl('slideshow-tpl'), $output);
     }
 
     private function _getSlideShowParams() {
@@ -1532,7 +1593,7 @@ class E2gSnippet extends E2gPub {
             }
 
             while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->_getPath($row['dir_id']);
+                $path = $this->getPath($row['dir_id']);
 
                 $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
                                 $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
@@ -1553,7 +1614,7 @@ class E2gSnippet extends E2gPub {
                         }
                         unset($ssImg);
                     } elseif ($ssImgSrc == 'original') {
-                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                        $ssFiles['resizedimg'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                     }
 
                     // if the slideshow's images were created successfully
@@ -1566,7 +1627,7 @@ class E2gSnippet extends E2gPub {
 
                 $ssFiles['id'][] = $row['id'];
                 $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['src'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                 $ssFiles['filename'][] = $row['filename'];
                 $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
                 $ssFiles['alias'][] = $row['alias'];
@@ -1589,7 +1650,7 @@ class E2gSnippet extends E2gPub {
             }
 
             while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->_getPath($row['dir_id']);
+                $path = $this->getPath($row['dir_id']);
 
                 $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
                                 $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
@@ -1610,7 +1671,7 @@ class E2gSnippet extends E2gPub {
                         }
                         unset($ssImg);
                     } elseif ($ssImgSrc == 'original') {
-                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                        $ssFiles['resizedimg'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                     }
 
                     // if the slideshow's images were created successfully
@@ -1623,7 +1684,7 @@ class E2gSnippet extends E2gPub {
 
                 $ssFiles['id'][] = $row['id'];
                 $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['src'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                 $ssFiles['filename'][] = $row['filename'];
                 $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
                 $ssFiles['alias'][] = $row['alias'];
@@ -1646,7 +1707,7 @@ class E2gSnippet extends E2gPub {
                 return FALSE;
             }
             while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->_getPath($row['dir_id']);
+                $path = $this->getPath($row['dir_id']);
 
                 $thumbImg = $this->_imgShaper($gdir, $path . $row['filename'], $w, $h, $thq,
                                 $resizeType, $thbgRed, $thbgGreen, $thbgBlue);
@@ -1667,7 +1728,7 @@ class E2gSnippet extends E2gPub {
                         }
                         unset($ssImg);
                     } elseif ($ssImgSrc == 'original') {
-                        $ssFiles['resizedimg'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                        $ssFiles['resizedimg'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                     }
 
                     // if the slideshow's images were created successfully
@@ -1680,7 +1741,7 @@ class E2gSnippet extends E2gPub {
 
                 $ssFiles['id'][] = $row['id'];
                 $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->_e2gDecode($gdir . $path . $row['filename']);
+                $ssFiles['src'][] = $this->e2gDecode($gdir . $path . $row['filename']);
                 $ssFiles['filename'][] = $row['filename'];
                 $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
                 $ssFiles['alias'][] = $row['alias'];
@@ -1749,7 +1810,7 @@ class E2gSnippet extends E2gPub {
         }
 
         while ($fetch = mysql_fetch_array($query)) {
-            $path = $this->_getPath($fetch['dir_id']);
+            $path = $this->getPath($fetch['dir_id']);
 
             // goldsky -- only to switch between localhost and live site.
             // TODO: need review!
@@ -1766,7 +1827,7 @@ class E2gSnippet extends E2gPub {
                  * + WATERMARK-ing
                  */
                 if (!isset($lpW) || !isset($lpH)) {
-                    $imgSize = @getimagesize($gdir . $this->_e2gDecode($path . $fetch['filename']));
+                    $imgSize = @getimagesize($gdir . $this->e2gDecode($path . $fetch['filename']));
                     if (!isset($lpW))
                         $lpW = $imgSize[0];
                     if (!isset($lpH))
@@ -1834,7 +1895,7 @@ class E2gSnippet extends E2gPub {
         $l['landingpagepluginprerender'] = $this->_plugin('OnE2GWebLandingpagePrerender', $e2gEvtParams);
         $l['landingpagepluginrender'] = $this->_plugin('OnE2GWebLandingpageRender', $e2gEvtParams);
 
-        return $this->_filler($this->_getTpl('page_tpl'), $l);
+        return $this->filler($this->getTpl('page_tpl'), $l);
     }
 
     /**
@@ -1883,7 +1944,7 @@ class E2gSnippet extends E2gPub {
             $e = htmlspecialchars(trim($_POST['email']), ENT_QUOTES);
             $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-            if (!$this->_checkEmailAddress($e)) {
+            if (!$this->checkEmailAddress($e)) {
                 $_P['comment_body'] .= '<h2>' . $lngCmt['email_err'] . '</h2>';
             } elseif ($recaptcha == 1 && (trim($_POST['recaptcha_response_field']) == '')) {
                 $_P['comment_body'] .= '<h2>' . $lngCmt['recaptcha_err'] . '</h2>';
@@ -1964,7 +2025,7 @@ class E2gSnippet extends E2gPub {
             else
                 $l['name_w_mail'] = $l['author'];
 
-            $_P['comment_body'] .= $this->_filler($this->_getTpl('page_comments_row_tpl'), $l);
+            $_P['comment_body'] .= $this->filler($this->getTpl('page_comments_row_tpl'), $l);
             $rowClassNum++;
         }
         mysql_free_result($querySelectComments);
@@ -2011,16 +2072,7 @@ class E2gSnippet extends E2gPub {
         } else {
             $_P['recaptcha'] = '';
         }
-        return $this->_filler($this->_getTpl('page_comments_tpl'), $_P);
-    }
-
-    /**
-     * email validation
-     * @param  string $email
-     * @return bool   TRUE/FALSE
-     */
-    private function _checkEmailAddress($email) {
-        return parent::checkEmailAddress($email);
+        return $this->filler($this->getTpl('page_comments_tpl'), $_P);
     }
 
     /**
@@ -2130,31 +2182,6 @@ class E2gSnippet extends E2gPub {
                 } // if (empty($pluginIndexFile))
             } // foreach ($xpldTypes as $pluginType)
         } // foreach ($xpldPlugins as $p_category)
-    }
-
-    /**
-     * Unicode character encoding work around.<br />
-     * For human reading.<br />
-     * The value is set from the module's config page.
-     * @link http://a4esl.org/c/charset.html
-     * @param string $text the string to be encoded
-     * @return string returns the encoding
-     */
-    private function _e2gEncode($text, $callback=FALSE) {
-        return parent::e2gEncode($text, $callback);
-    }
-
-    /**
-     * Unicode character decoding work around.<br />
-     * For file system reading.<br />
-     * The value is set from the module's config page.
-     *
-     * @link http://a4esl.org/c/charset.html
-     * @param string $text the string to be decoded
-     * @return string returns the decoding
-     */
-    private function _e2gDecode($text, $callback=FALSE) {
-        return parent::e2gDecode($text, $callback);
     }
 
     /**
@@ -2483,7 +2510,7 @@ class E2gSnippet extends E2gPub {
         if (empty($parent['cat_id'])) {
             return FALSE;
         }
-        $parent['cat_name'] = $this->_getDirInfo($parent['cat_id'], 'cat_name');
+        $parent['cat_name'] = $this->getDirInfo($parent['cat_id'], 'cat_name');
 
         return $parent;
     }
@@ -2760,17 +2787,6 @@ class E2gSnippet extends E2gPub {
             return TRUE;
         }
         return FALSE;
-    }
-
-    /**
-     * Crop text by length
-     * @param   string  $charSet    character set
-     * @param   int     $nameLen    text's length
-     * @param   string  $text       text to be cropped
-     * @return  string  shorthened text
-     */
-    private function _cropName($mbstring, $charSet, $nameLen, $text) {
-        return parent::cropName($mbstring, $charSet, $nameLen, $text);
     }
 
     /**

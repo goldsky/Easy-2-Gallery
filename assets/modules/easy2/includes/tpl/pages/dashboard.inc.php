@@ -5,7 +5,7 @@ if (IN_MANAGER_MODE != 'true')
 $icon_ok = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_check.png" alt="OK" /> ';
 $icon_bad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="Not OK" /> ';
 
-echo $this->_plugin('OnE2GDashboardPrerender');
+echo $this->plugin('OnE2GDashboardPrerender');
 ?>
 <div class="dashboardContent">
     <table style="width: 100%;">
@@ -245,4 +245,4 @@ echo $this->_plugin('OnE2GDashboardPrerender');
     </table>
     <div class="clear">&nbsp;</div>
 </div>
-<?php echo $this->_plugin('OnE2GDashboardRender'); ?>
+<?php echo $this->plugin('OnE2GDashboardRender'); ?>

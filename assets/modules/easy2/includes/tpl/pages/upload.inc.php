@@ -8,7 +8,7 @@ if (IN_MANAGER_MODE != 'true')
         <p><b><?php echo $lng['upload_dir']; ?> :</b>
             <select name="newparent">
                 <option value="">&nbsp;</option>
-            <?php echo $this->_folderOptions(); ?>
+            <?php echo $this->_getDirDropDownOptions(); ?>
         </select>
         <span><?php echo $lng['and']; ?>: </span>
         <input type="radio" name="gotofolder" value="gothere" checked="checked"><?php echo $lng['go_there']; ?>
@@ -30,7 +30,7 @@ if (IN_MANAGER_MODE != 'true')
             <script type="text/javascript">
                 tpFileUpload = new WebFXTabPane(document.getElementById('tabFileUploadPane'), false);
             </script>
-        <?php echo $this->_plugin('OnE2GFileUploadFormPrerender', array('gdir' => $gdir)); ?>
+        <?php echo $this->plugin('OnE2GFileUploadFormPrerender', array('gdir' => $gdir)); ?>
         <div class="tab-page" id="tabFile">
             <h2 class="tab"><?php echo $lng['file']; ?></h2>
             <script type="text/javascript">
@@ -74,7 +74,7 @@ if (IN_MANAGER_MODE != 'true')
     <?php
         // This is only the base dir. Need to get the target folder!
         // @todo adding AJAX processor from the _folderOption() above.
-        echo $this->_plugin('OnE2GFileUploadFormRender', array(
+        echo $this->plugin('OnE2GFileUploadFormRender', array(
             'gdir' => $gdir
         ));
         if (class_exists('ZipArchive')) {
@@ -88,7 +88,7 @@ if (IN_MANAGER_MODE != 'true')
                     <li><?php echo htmlspecialchars_decode($lng['char_limitation']); ?></li>
                 </ul>
                 <br />
-        <?php echo $this->_plugin('OnE2GZipUploadFormPrerender', array('gdir' => $gdir)); ?>
+        <?php echo $this->plugin('OnE2GZipUploadFormPrerender', array('gdir' => $gdir)); ?>
             <table cellspacing="0" cellpadding="2">
                 <tr>
                     <td><b><?php echo $lng['archive']; ?>:</b></td>
@@ -96,7 +96,7 @@ if (IN_MANAGER_MODE != 'true')
                     <td><input type="submit" value="<?php echo $lng['upload']; ?>" /></td>
                 </tr>
             </table>
-        <?php echo $this->_plugin('OnE2GZipUploadFormRender', array('gdir' => $gdir)); ?>
+        <?php echo $this->plugin('OnE2GZipUploadFormRender', array('gdir' => $gdir)); ?>
         </div>
     <?php } ?>
 </form>

@@ -23,7 +23,7 @@ else {
     $textColor = imagecolorallocate($im, 233, 14, 91);
     $textHeight = isset($_GET['th']) ? $_GET['th'] : 2;
     $text = isset($_GET['text']) ? $_GET['text'] : 'Image error';
-    $y = $h/2 - $textHeight * 4;
+    $y = $h / 2 - $textHeight * 4;
     $textWidth = imagefontwidth($textHeight) * strlen($text);
     $center = ceil($w / 2);
     $x = $center - (ceil($textWidth / 2));
@@ -60,7 +60,7 @@ if (isset($_GET['mod_w']) || $_GET['mod_h']) {
     $textColor = imagecolorallocate($im, 233, 14, 91);
     $textHeight = isset($_GET['th']) ? $_GET['th'] : 2;
     $text = isset($_GET['text']) ? $_GET['text'] : 'Image error';
-    $y = $h/2 - $textHeight * 4;
+    $y = $h / 2 - $textHeight * 4;
     $textWidth = imagefontwidth($textHeight) * strlen($text);
     $center = ceil($w / 2);
     $x = $center - (ceil($textWidth / 2));
@@ -99,7 +99,12 @@ if (isset($_GET['mod_w']) || $_GET['mod_h']) {
 
 //$text_color = imagecolorallocate($im, 0, 0, 0);
 //imagestring($pic, 3, 5, 5, round(getmicrotime() - $timeStart, 4) . 's', $text_color);
-
+if (ob_get_contents ())
+    ob_end_clean ();
+header('Expires: Fri, 25 December 1980 00:00:00 GMT');
+header('Last-Modified: ' .  gmdate('D, d m Y H:i:s ') . 'GMT');
+header('Cache-Control: no-cache, must-revalidate');
+header('Pragme: no-cache');
 header('Content-type: image/jpeg');
 imagejpeg($pic);
 imagedestroy($pic);

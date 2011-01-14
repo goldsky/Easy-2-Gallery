@@ -1,8 +1,5 @@
 <?php
 
-if (IN_MANAGER_MODE != 'true')
-    die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-
 /**
  * EASY 2 GALLERY
  * Gallery Module Class for Easy 2 Gallery Module for MODx Evolution
@@ -33,9 +30,10 @@ class E2gMod extends E2gPub {
      * @var string language translation
      */
     public $lng;
+    public $_dirDropDownOptions = array();
 
     public function __construct($modx, $e2gModCfg, $e2g, $lng) {
-        parent::__construct($modx, $e2gModCfg);
+        parent::__construct($modx, $e2gModCfg, $e2g, $lng);
         $this->modx = & $modx;
         $this->e2gModCfg = $e2gModCfg;
         $this->e2g = $e2g;
@@ -60,7 +58,7 @@ class E2gMod extends E2gPub {
         $gdir = $this->e2gModCfg['gdir'];
         $rootDir = $this->e2gModCfg['dir'];
 
-        $getPathArray = $this->_getPath($parentId, NULL, 'array');
+        $getPathArray = $this->getPath($parentId, NULL, 'array');
         $path = array();
 
         // Create the ROOT gallery's link
@@ -227,7 +225,7 @@ class E2gMod extends E2gPub {
                     $url = $_SERVER['HTTP_REFERER'];
                 }
 
-                $this->_saveConfig($_POST);
+                $this->saveE2gSettings($_POST);
 
                 header('Location: ' . html_entity_decode($url, ENT_NOQUOTES));
                 exit();
@@ -242,7 +240,7 @@ class E2gMod extends E2gPub {
 
             // Add directory into database
             case 'add_dir':
-                $this->_addAll('../' . str_replace('../', '', $this->_e2gDecode($_GET['dir_path']) . '/'), $parentId);
+                $this->_addAll('../' . str_replace('../', '', $this->e2gDecode($_GET['dir_path']) . '/'), $parentId);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -455,13 +453,14 @@ class E2gMod extends E2gPub {
                 exit;
                 break;
         } // switch ($act)
-
-        ob_start();
+//        ob_start();
+//        include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
+//        $output = ob_get_contents();
+//        ob_end_clean();
+//
+//        return $output;
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
-        $output = ob_get_contents();
-        ob_end_clean();
-
-        echo $output;
+//        return '';
     }
 
     /**
@@ -472,7 +471,7 @@ class E2gMod extends E2gPub {
         $lng = $this->lng;
 
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->_validFolder($path) || empty($path))
+        if (!$this->validFolder($path) || empty($path))
             return $res;
         $fs = array();
         $fs = glob($path . '*');
@@ -510,7 +509,7 @@ class E2gMod extends E2gPub {
         $lng = $this->lng;
 
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->_validFolder($oldPath)) {
+        if (!$this->validFolder($oldPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['invalid_folder'] . ' : ' . $oldPath;
             return $res;
         }
@@ -521,7 +520,7 @@ class E2gMod extends E2gPub {
                 if (is_file($f)) {
                     $res['file'][] = $f;
                     $res['f']++;
-                } elseif ($this->_validFolder($f)) {
+                } elseif ($this->validFolder($f)) {
                     $res['dir'][] = $f;
                     $res['d']++;
                     // $res = result (file/dir/error)
@@ -530,7 +529,7 @@ class E2gMod extends E2gPub {
                     $res['d'] += $sres['d'];
                     $res['e'] = array_merge($res['e'], $sres['e']);
 
-                    $oldBasename = $this->_basenameSafe($f);
+                    $oldBasename = $this->basenameSafe($f);
                     $fNewPath .= '/' . $oldBasename;
                     $sres = $this->_moveAll($f, $newPath . $fNewPath);
                 }
@@ -557,32 +556,34 @@ class E2gMod extends E2gPub {
         $e2g = $this->e2g;
         $lng = $this->lng;
 
-        if (empty($path) || !$this->_validFolder($path)) {
+        if (empty($path) || !$this->validFolder($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['invalid_folder'] . ' : ' . $path;
             return FALSE;
         }
 
-        require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+        $_SESSION['dirDropDownOptions'] = array();
+
+        require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
         $tree = new TTree();
         $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
-        $name = $this->_basenameSafe($path);
-        $name = $this->_e2gEncode($name);
+        $name = $this->basenameSafe($path);
+        $name = $this->e2gEncode($name);
 
         // converting non-latin names with MODx's stripAlias function
         $nameAlias = $modx->stripAlias($name);
 
         if ($name != $nameAlias) {
             $basePath = dirname($path);
-            $rename = rename($path, $basePath . '/' . $this->_e2gDecode($nameAlias));
+            $rename = rename($path, $basePath . '/' . $this->e2gDecode($nameAlias));
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path . ' => ' . $basePath . '/' . $this->_e2gDecode($nameAlias);
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path . ' => ' . $basePath . '/' . $this->e2gDecode($nameAlias);
                 return FALSE;
             }
-            $this->_changeModOwnGrp('dir', $basePath . '/' . $this->_e2gDecode($nameAlias));
+            $this->_changeModOwnGrp('dir', $basePath . '/' . $this->e2gDecode($nameAlias));
 
             // glue them back
-            $path = $basePath . '/' . $this->_e2gDecode($nameAlias) . '/';
+            $path = $basePath . '/' . $this->e2gDecode($nameAlias) . '/';
             $name = $nameAlias;
         }
 
@@ -600,12 +601,12 @@ class E2gMod extends E2gPub {
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['dir_added'] . ' : ' . str_replace('../', '', $path);
 
         // invoke the plugin
-        $this->_plugin('OnE2GFolderAdd', array('gid' => $id, 'foldername' => $name));
+        $this->plugin('OnE2GFolderAdd', array('gid' => $id, 'foldername' => $name));
 
         /**
          * goldsky -- if there is no index.html inside folders, this will create it.
          */
-        $this->_createsIndexHtml($path, $lng['indexfile']);
+        $this->_createIndexHtml($path, $lng['indexfile']);
 
         $fs = array();
         $fs = @glob($path . '*');
@@ -614,18 +615,19 @@ class E2gMod extends E2gPub {
         // goldsky -- alter the maximum execution time
         if (function_exists('set_time_limit'))
             @set_time_limit(0);
+
         if ($fs != FALSE)
             foreach ($fs as $filePath) {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
 
-                if ($this->_validFolder($filePath)) {
+                if ($this->validFolder($filePath)) {
                     // goldsky -- if the path is a dir, go deeper as $path==$filePath
                     if (!$this->_addAll($filePath . '/', $id)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
-                } elseif ($this->_validFile($filePath)) {
+                } elseif ($this->validFile($filePath)) {
                     /**
                      * INSERT filename into database
                      */
@@ -661,22 +663,22 @@ class E2gMod extends E2gPub {
         }
 
         // RESIZE
-        $basename = $this->_basenameSafe($filePath);
-        $basename = $this->_e2gEncode($basename);
+        $basename = $this->basenameSafe($filePath);
+        $basename = $this->e2gEncode($basename);
 
         // converting non-latin names with MODx's stripAlias function
         $fileAlias = $modx->stripAlias($basename);
         if ($basename != $fileAlias) {
             $dirPath = dirname($filePath);
-            $rename = rename($filePath, $dirPath . '/' . $this->_e2gDecode($fileAlias));
+            $rename = rename($filePath, $dirPath . '/' . $this->e2gDecode($fileAlias));
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . '/' . $this->_e2gDecode($fileAlias);
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . '/' . $this->e2gDecode($fileAlias);
                 return FALSE;
             }
-            $this->_changeModOwnGrp('file', $dirPath . '/' . $this->_e2gDecode($fileAlias));
+            $this->_changeModOwnGrp('file', $dirPath . '/' . $this->e2gDecode($fileAlias));
 
-            $filePath = $dirPath . '/' . $this->_e2gDecode($fileAlias);
+            $filePath = $dirPath . '/' . $this->e2gDecode($fileAlias);
             $basename = $fileAlias;
         }
 
@@ -714,7 +716,7 @@ class E2gMod extends E2gPub {
         unset($insertFileQuery);
 
         // invoke the plugin
-        $this->_plugin('OnE2GFileAdd', array(
+        $this->plugin('OnE2GFileAdd', array(
             'fid' => mysql_insert_id()
             , 'filename' => $filteredName
             , 'pid' => $pid
@@ -739,7 +741,7 @@ class E2gMod extends E2gPub {
         $lng = $this->lng;
 
         // if both configs are not zeros
-        if ($w + $h != 0) {
+        if ($w + $h !== 0) {
 
             // fixing the zero values to get a proportional dimension
             if ($w == 0 && $h != 0) {
@@ -819,79 +821,45 @@ class E2gMod extends E2gPub {
                     $h = round($w * $inf[1] / $inf[0], 2);
                 }
             } // else if not oriented
+            // OPEN
+            if ($inf[2] == 1)
+                $im = imagecreatefromgif($filename);
+            elseif ($inf[2] == 2)
+                $im = imagecreatefromjpeg($filename);
+            elseif ($inf[2] == 3)
+                $im = imagecreatefrompng($filename);
+            else {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_create_err'] . ' ' . $filename;
+                return FALSE;
+            }
+
+            // CREATE NEW IMG
+            $pic = imagecreatetruecolor($w, $h);
+            $bgc = imagecolorallocate($pic, 255, 255, 255);
+            imagefill($pic, 0, 0, $bgc);
+            imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
+
+            // SAVE
+            if ($inf[2] == 1)
+                imagegif($pic, $filename);
+            elseif ($inf[2] == 2)
+                imagejpeg($pic, $filename, $thq);
+            elseif ($inf[2] == 3)
+                imagepng($pic, $filename);
+
+            imagedestroy($pic);
+            imagedestroy($im);
+
+            clearstatcache();
         } // if ( $w + $h !== 0 )
-        // OPEN
-        if ($inf[2] == 1)
-            $im = imagecreatefromgif($filename);
-        elseif ($inf[2] == 2)
-            $im = imagecreatefromjpeg($filename);
-        elseif ($inf[2] == 3)
-            $im = imagecreatefrompng($filename);
-        else {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_create_err'] . ' ' . $filename;
-            return FALSE;
-        }
 
-        // CREATE NEW IMG
-        $pic = imagecreatetruecolor($w, $h);
-        $bgc = imagecolorallocate($pic, 255, 255, 255);
-        imagefill($pic, 0, 0, $bgc);
-        imagecopyresampled($pic, $im, 0, 0, 0, 0, $w, $h, $inf[0], $inf[1]);
-
-        // SAVE
-        if ($inf[2] == 1)
-            imagegif($pic, $filename);
-        elseif ($inf[2] == 2)
-            imagejpeg($pic, $filename, $thq);
-        elseif ($inf[2] == 3)
-            imagepng($pic, $filename);
         $this->_changeModOwnGrp('file', $filename);
 
-        imagedestroy($pic);
-        imagedestroy($im);
-
-        clearstatcache();
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
         $newInf['time'] = filemtime($filename);
         return $newInf;
 //        return TRUE;
-    }
-
-    /**
-     * To get paths from the parent directory up to the Easy 2's ROOT gallery
-     * @param int       $dirId      parent directory's ID
-     * @param string    $option     output options: cat_name | cat_alias
-     * @param mixed     $format     output formats: string | array
-     * @return string
-     */
-    private function _getPath($dirId, $option='cat_name', $format='string') {
-        return parent::getPath($dirId, $option, $format);
-    }
-
-    /**
-     * To calculate the directory content
-     * @param string $path folder's/dir's path
-     */
-    private function _countFiles($path) {
-        $cnt = 0;
-        $fs = array();
-        $fs = glob($path . '/*.*');
-        if ($fs != FALSE) {
-            foreach ($fs as $f) {
-                if ($this->_validFile($f))
-                    $cnt++;
-                else
-                    continue;
-            }
-        }
-        $sd = array();
-        $sd = glob($path . '/*');
-        if ($sd != FALSE)
-            foreach ($sd as $d) {
-                $cnt += $this->_countFiles($d);
-            }
-        return $cnt;
     }
 
     /**
@@ -904,6 +872,10 @@ class E2gMod extends E2gPub {
         $modx = $this->modx;
         $e2g = $this->e2g;
         $lng = $this->lng;
+
+        // destroy the directory drop down menu.
+        // this will be created again atuomatically when this synchro is finished.
+        $_SESSION['dirDropDownOptions'] = array();
 
         // goldsky -- alter the maximum execution time
         if (function_exists('set_time_limit'))
@@ -949,7 +921,7 @@ class E2gMod extends E2gPub {
         /**
          * goldsky -- if there is no index.html inside folders, this will create it.
          */
-        $this->_createsIndexHtml($path, $lng['indexfile']);
+        $this->_createIndexHtml($path, $lng['indexfile']);
 
         $fs = array();
         $fs = @glob($path . '*'); // goldsky -- DO NOT USE a slash here!
@@ -963,9 +935,9 @@ class E2gMod extends E2gPub {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
 
-                $name = $this->_basenameSafe($filePath);
-                $name = $this->_e2gEncode($name);
-                if ($this->_validFolder($filePath)) { // as a folder/directory
+                $name = $this->basenameSafe($filePath);
+                $name = $this->e2gEncode($name);
+                if ($this->validFolder($filePath)) { // as a folder/directory
                     if ($name == '_thumbnails')
                         continue;
                     if (isset($mdirs[$name])) {
@@ -985,7 +957,7 @@ class E2gMod extends E2gPub {
                     }
                 }
                 // as an allowed file in the current directory
-                elseif ($this->_validFile($filePath)) {
+                elseif ($this->validFile($filePath)) {
                     if (isset($mfiles[$name])) {
                         // goldsky -- add the resizing of old images
                         $inf = @getimagesize($filePath);
@@ -1047,7 +1019,7 @@ class E2gMod extends E2gPub {
          */
         // Deleted physical dirs, DELETE record from database
         if (isset($mdirs) && count($mdirs) > 0) {
-            require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+            require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
             $tree = new TTree();
             $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
             foreach ($mdirs as $key => $value) {
@@ -1215,65 +1187,33 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * Replace the basename function with this to grab non-unicode character.
-     * @link http://drupal.org/node/278425#comment-2571500
-     */
-    private function _basenameSafe($path) {
-        return parent::basenameSafe($path);
-    }
-
-    /**
-     * To check the specified resource is a valid file.<br />
-     * It will be checked against the folder validation first.
-     * @author goldsky <goldsky@modx-id.com>
-     */
-    private function _validFile($filename) {
-        return parent::validFile($filename);
-    }
-
-    /**
-     * To check the specified resource is a valid folder, although it has a DOT in it.
-     * @author goldsky <goldsky@modx-id.com>
-     */
-    private function _validFolder($foldername) {
-        return parent::validFolder($foldername);
-    }
-
-    /**
-     * Unicode character encoding work around.<br />
-     * For human reading.<br />
-     * The value is set from the module's config page.
-     *
-     * @link http://a4esl.org/c/charset.html
-     * @param string $text the string to be encoded
-     * @return string returns the encoding
-     */
-    private function _e2gEncode($text, $callback=FALSE) {
-        return parent::e2gEncode($text, $callback);
-    }
-
-    /**
-     * Unicode character decoding work around.<br />
-     * For file system reading.<br />
-     * The value is set from the module's config page.
-     *
-     * @link http://a4esl.org/c/charset.html
-     * @param string $text the string to be decoded
-     * @return string returns the decoding
-     */
-    private function _e2gDecode($text, $callback=FALSE) {
-        return parent::e2gDecode($text, $callback);
-    }
-
-    /**
-     * get folders structure for select options.
+     * Get folders structure for select options, and put it into the property:
+     * 1. check the internal property first
+     * 2. create it if it doesn't exist
+     * This will lighten up the page when one page call the same method more than once.
      * @param   int     $parentid   Parent's ID
      * @param   bool    $selected   turn on the selected="selected" if the current folder is the selected folder
      * @param   string  $jsActions  Javascript's action
      * @return  string  The multiple options
      */
-    private function _folderOptions($parentid=0, $selected=0, $jsActions=NULL) {
+    private function _getDirDropDownOptions($parentid=0, $selected=0, $jsActions=NULL) {
+        if (!empty($this->_dirDropDownOptions[$parentid][$selected][$jsActions])) {
+            return $this->_dirDropDownOptions[$parentid][$selected][$jsActions];
+        }
+        $this->_dirDropDownOptions[$parentid][$selected][$jsActions] = $this->_dirDropDownOptions($parentid, $selected, $jsActions);
+        return $this->_dirDropDownOptions[$parentid][$selected][$jsActions];
+    }
+
+    /**
+     * create folders structure for select options.
+     * @param   int     $parentid   Parent's ID
+     * @param   bool    $selected   turn on the selected="selected" if the current folder is the selected folder
+     * @param   string  $jsActions  Javascript's action
+     * @return  string  The multiple options
+     */
+    private function _dirDropDownOptions($parentid=0, $selected=0, $jsActions=NULL) {
         $modx = $this->modx;
+        $parentid = !empty($parentid) ? $parentid : 0;
 
         $selectDirs = 'SELECT parent_id, cat_id, cat_name, cat_level '
                 . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
@@ -1338,7 +1278,7 @@ class E2gMod extends E2gPub {
 
             $numSub = @mysql_num_rows($querySelectSubFolders);
             if ($numSub > 0) {
-                $output .= $this->_folderOptions($childDir['cat_id'], $selected, $jsActions);
+                $output .= $this->_dirDropDownOptions($childDir['cat_id'], $selected, $jsActions);
             }
             mysql_free_result($querySelectSubFolders);
             //*********************************************************/
@@ -1409,26 +1349,6 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * To get directory's information
-     * @param  int    $dirId  gallery's ID
-     * @param  string $field  database field
-     * @return mixed  the directory's data in an array
-     */
-    private function _getDirInfo($dirId, $field) {
-        return parent::getDirInfo($dirId, $field);
-    }
-
-    /**
-     * To get file's information
-     * @param  int    $fileId  file's ID
-     * @param  string $field  database field
-     * @return mixed  the file's data in an array
-     */
-    private function _getFileInfo($fileId, $field) {
-        return parent::getFileInfo($fileId, $field);
-    }
-
-    /**
      * @author Jeff Miner mrjminer AT gmail DOT com
      * @link http://www.php.net/manual/en/features.file-upload.errors.php#99304
      * @param   int     $errorCode      Error code in number
@@ -1444,8 +1364,8 @@ class E2gMod extends E2gPub {
             'Failed to write file to disk.',
             'A PHP extension stopped the file upload.'
         );
-       $errorMessage = $errorType[$errorCode];
-       return $errorMessage;
+        $errorMessage = $errorType[$errorCode];
+        return $errorMessage;
     }
 
     /**
@@ -1539,7 +1459,7 @@ class E2gMod extends E2gPub {
                                 $unzipDirs[] = $modx->stripAlias($unzipDir);
                             }
                             $implodedDir = @implode('/', $unzipDirs);
-                            $mkdir = mkdir($path . $this->_e2gDecode($implodedDir), 0777);
+                            $mkdir = mkdir($path . $this->e2gDecode($implodedDir), 0777);
                             if (!$mkdir)
                                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['unzip_dir_err'] . ' <b>' . $path . $zipEntryName . '</b>';
                             else {
@@ -1558,7 +1478,7 @@ class E2gMod extends E2gPub {
                             $unzipFiles[] = $modx->stripAlias($unzipFile);
                         }
                         $implodedFile = @implode('/', $unzipFiles);
-                        $fd = fopen($path . $this->_e2gDecode($implodedFile), 'w');
+                        $fd = fopen($path . $this->e2gDecode($implodedFile), 'w');
                         if ($fd) {
                             fwrite($fd, $zipContent);
                             fclose($fd);
@@ -1593,7 +1513,7 @@ class E2gMod extends E2gPub {
      * @param   string  $text   language string
      * @return  mixed file creation
      */
-    private function _createsIndexHtml($dir, $text) {
+    private function _createIndexHtml($dir, $text) {
         if (!file_exists(realpath($dir . 'index.html'))) {
             // goldsky -- adds a cover file
             $indexHtml = $dir . 'index.html';
@@ -1606,16 +1526,6 @@ class E2gMod extends E2gPub {
                 $this->_changeModOwnGrp('file', $indexHtml);
             }
         }
-    }
-
-    /**
-     * Invoking the script with plugin, at any specified places.
-     * @param   string  $e2gEvtName     event trigger.
-     * @param   mixed   $e2gEvtParams   parameters array: depends on the event trigger.
-     * @return  mixed   if TRUE, will return the indexfile. Otherwise this will return FALSE.
-     */
-    private function _plugin($e2gEvtName, $e2gEvtParams=array()) {
-        return parent::plugin($e2gEvtName, $e2gEvtParams);
     }
 
     /**
@@ -1636,8 +1546,8 @@ class E2gMod extends E2gPub {
         }
         $error = 0;
         // CREATE PATH
-        $path = $this->_getPath($newParent);
-        $newParentPath .= $e2g['dir'].$path;
+        $path = $this->getPath($newParent);
+        $newParentPath .= $e2g['dir'] . $path;
         // UPLOAD IMAGES
         if (!empty($files['img']['tmp_name'][0])) {
             $j = 0;
@@ -1652,7 +1562,7 @@ class E2gMod extends E2gPub {
                     $error++;
                     continue;
                 }
-                
+
                 if (!is_uploaded_file($files['img']['tmp_name'][$i])) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' ' . $files['img']['name'][$i];
                     continue;
@@ -1693,13 +1603,13 @@ class E2gMod extends E2gPub {
                     continue;
                 }
 
-                if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->_e2gDecode($newParentPath . $filteredName))) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . '../' . $this->_e2gDecode($newParentPath . $filteredName);
+                if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->e2gDecode($newParentPath . $filteredName))) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['upload_err'] . ' : ' . '../' . $this->e2gDecode($newParentPath . $filteredName);
                 }
-                $this->_changeModOwnGrp('file', '../' . $this->_e2gDecode($newParentPath . $filteredName), FALSE);
+                $this->_changeModOwnGrp('file', '../' . $this->e2gDecode($newParentPath . $filteredName), FALSE);
 
                 // invoke the plugin
-                $this->_plugin('OnE2GFileUpload', array(
+                $this->plugin('OnE2GFileUpload', array(
                     'fid' => mysql_insert_id()
                     , 'filename' => $filteredName
                     , 'pid' => $newParent
@@ -1713,15 +1623,15 @@ class E2gMod extends E2gPub {
         // UPLOAD ZIP
         if ($files['zip']['size'] > 0) {
             if ($files['zip']['error'] !== 0) {
-                    $error++;
+                $error++;
                 $_SESSION['easy2err'][] = __LINE__ . ' : zip error # '
                         . $files['zip']['error'] . $lng['upload_err'] . ' : '
                         . $this->_fileUploadErrorMessage($files['zip']['error'])
                         . ' => ' . $files['zip']['name']
-                        ;
+                ;
                 return FALSE;
             }
-            $unzip = $this->_unzip(realpath($files['zip']['tmp_name']), realpath(MODX_BASE_PATH . $this->_e2gDecode($newParentPath)));
+            $unzip = $this->_unzip(realpath($files['zip']['tmp_name']), realpath(MODX_BASE_PATH . $this->e2gDecode($newParentPath)));
             if (!$unzip) {
                 $_SESSION['easy2err'][] = __LINE__ . ' <span class="warning"><b>' . $lng['upload_err']
                         . ($unzip === 0 ? 'Missing zip library (php_zip.dll / zip.so)' : '') . '</b></span><br /><br />';
@@ -1736,8 +1646,8 @@ class E2gMod extends E2gPub {
             $this->_cleanCache();
 
             // invoke the plugin
-            $this->_plugin('OnE2GZipUpload', array(
-                'path' => realpath(MODX_BASE_PATH . $this->_e2gDecode($newParentPath))
+            $this->plugin('OnE2GZipUpload', array(
+                'path' => realpath(MODX_BASE_PATH . $this->e2gDecode($newParentPath))
             ));
         }
         return TRUE;
@@ -2079,7 +1989,7 @@ class E2gMod extends E2gPub {
         );
         // Delete dirs
         if (!empty($post['dir'])) {
-            require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+            require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
             $tree = new TTree();
             $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
             foreach ($post['dir'] as $k => $v) {
@@ -2125,7 +2035,7 @@ class E2gMod extends E2gPub {
                     }
                 } // if (is_numeric($k))
                 if (!empty($v)) {
-                    $v = str_replace('../', '', $this->_e2gDecode($v));
+                    $v = str_replace('../', '', $this->e2gDecode($v));
                     $d = $this->_deleteAll('../' . $v . '/');
 
                     if (empty($d['e'])) {
@@ -2185,7 +2095,7 @@ class E2gMod extends E2gPub {
                     }
                 }
                 if (!empty($v)) {
-                    $v = str_replace('../', '', $this->_e2gDecode($v));
+                    $v = str_replace('../', '', $this->e2gDecode($v));
                     if (@unlink('../' . $v)) {
                         $res['ffp'][0]++;
                     } else {
@@ -2229,16 +2139,16 @@ class E2gMod extends E2gPub {
 
         ob_start();
         foreach ($post['dir'] as $k => $v) {
-            $_zipContents[] = realpath(MODX_BASE_PATH . $this->_e2gDecode($v));
+            $_zipContents[] = realpath(MODX_BASE_PATH . $this->e2gDecode($v));
         }
         foreach ($post['im'] as $k => $v) {
-            $_zipContents[] = realpath(MODX_BASE_PATH . $this->_e2gDecode($v));
+            $_zipContents[] = realpath(MODX_BASE_PATH . $this->e2gDecode($v));
         }
 
         $dirName = MODX_BASE_PATH . $gdir;
         $dirUrl = MODX_BASE_URL . $gdir;
-        $zipName = $dirName . $this->_getDirInfo($pid, 'cat_name') . '.zip';
-        $zipName = $this->_e2gDecode($zipName);
+        $zipName = $dirName . $this->getDirInfo($pid, 'cat_name') . '.zip';
+        $zipName = $this->e2gDecode($zipName);
 
         // delete existing zip file if there is any.
         @unlink($zipName);
@@ -2271,7 +2181,7 @@ class E2gMod extends E2gPub {
                         if (is_dir($currentDir . $node)) {
                             array_push($dirStack, $currentDir . $node . DIRECTORY_SEPARATOR);
                         }
-                        if ($this->_validFile($currentDir . $node)) {
+                        if ($this->validFile($currentDir . $node)) {
                             $filesToAdd[] = $node;
                         }
                     }
@@ -2288,7 +2198,7 @@ class E2gMod extends E2gPub {
                     } // foreach ($filesToAdd as $file)
                 } // while (!empty($dirStack))
             } // if (is_dir($_zipContent))
-            elseif ($this->_validFile($_zipContent)) {
+            elseif ($this->validFile($_zipContent)) {
                 $_zipContent = realpath($_zipContent);
                 $basename = end(@explode(DIRECTORY_SEPARATOR, $_zipContent));
                 $zip->addFile($_zipContent, $basename);
@@ -2341,11 +2251,11 @@ class E2gMod extends E2gPub {
             'dfp' => array(0, 0),
         );
 
-        $newDir = $rootDir . $this->_getPath($post['newparent']);
+        $newDir = $rootDir . $this->getPath($post['newparent']);
 
         // MOVING DIRS
         if (!empty($post['dir'])) {
-            require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+            require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
             $tree = new TTree();
             $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
             foreach ($post['dir'] as $k => $v) {
@@ -2355,13 +2265,13 @@ class E2gMod extends E2gPub {
                     $oldPath = $newPath = array();
 
                     $oldPath['origin'] = str_replace('../', '', $v);
-                    $oldPath['basename'] = $this->_basenameSafe($v);
-                    $oldPath['decoded'] = str_replace('../', '', $this->_e2gDecode($v));
+                    $oldPath['basename'] = $this->basenameSafe($v);
+                    $oldPath['decoded'] = str_replace('../', '', $this->e2gDecode($v));
                     $this->_changeModOwnGrp('dir', MODX_BASE_PATH . $oldPath['decoded']);
 
-                    $newPath['origin'] = $newDir . $this->_basenameSafe($v);
-                    $newPath['basename'] = $this->_basenameSafe($newPath['origin']);
-                    $newPath['decoded'] = $this->_e2gDecode($newPath['origin']);
+                    $newPath['origin'] = $newDir . $this->basenameSafe($v);
+                    $newPath['basename'] = $this->basenameSafe($newPath['origin']);
+                    $newPath['decoded'] = $this->e2gDecode($newPath['origin']);
 
                     // initiate the variables inside _moveAll functions.
                     $moveDir = $this->_moveAll(MODX_BASE_PATH . $oldPath['decoded'], MODX_BASE_PATH . $newPath['decoded']);
@@ -2369,11 +2279,11 @@ class E2gMod extends E2gPub {
                     if (is_numeric($k)) {
                         $ids = $tree->replace((int) $k, (int) $post['newparent']);
                         // goldsky -- the same result with this:
-                        // $ids = $tree->update((int) $k, $this->_basenameSafe($v), (int) $post['newparent']);
+                        // $ids = $tree->update((int) $k, $this->basenameSafe($v), (int) $post['newparent']);
                         if (!$ids) {
                             if (!empty($moveDir['e'])) {
                                 $_SESSION['easy2err'] = $moveDir['e'];
-                                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_move_err'] . ' : '. $oldPath['origin'] . ' => ' . $newPath['origin'];
+                                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_move_err'] . ' : ' . $oldPath['origin'] . ' => ' . $newPath['origin'];
                             }
                             if (!empty($tree->error))
                                 $_SESSION['easy2err'][] = __LINE__ . ' : Error: ' . $tree->error;
@@ -2444,17 +2354,17 @@ class E2gMod extends E2gPub {
                 if (!empty($v)) {
 
                     $oldFile['origin'] = str_replace('../', '', $v);
-                    $oldFile['basename'] = $this->_basenameSafe($v);
-                    $oldFile['decoded'] = str_replace('../', '', $this->_e2gDecode($v));
+                    $oldFile['basename'] = $this->basenameSafe($v);
+                    $oldFile['decoded'] = str_replace('../', '', $this->e2gDecode($v));
                     $this->_changeModOwnGrp('file', MODX_BASE_PATH . $oldFile['decoded']);
 
-                    $newFile['origin'] = $newDir . $this->_basenameSafe($v);
-                    $newFile['basename'] = $this->_basenameSafe($newFile['origin']);
-                    $newFile['decoded'] = $this->_e2gDecode($newFile['origin']);
+                    $newFile['origin'] = $newDir . $this->basenameSafe($v);
+                    $newFile['basename'] = $this->basenameSafe($newFile['origin']);
+                    $newFile['decoded'] = $this->e2gDecode($newFile['origin']);
 
                     if (is_file(realpath('../' . $newFile['decoded']))) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err']
-                                . ' <span style="color:red;">' . $this->_basenameSafe($v) . '</span>, ' . $lng['file_exists'] . '.';
+                                . ' <span style="color:red;">' . $this->basenameSafe($v) . '</span>, ' . $lng['file_exists'] . '.';
                         continue;
                     } else {
                         $moveFile = @rename('../' . $oldFile['decoded'], '../' . $newFile['decoded']);
@@ -2495,7 +2405,7 @@ class E2gMod extends E2gPub {
                                 mysql_free_result($filesCheckQuery);
                                 if (isset($filesCheck[$k]['filename'])) {
                                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['file_move_err']
-                                            . ' <span style="color:red;">' . $this->_basenameSafe($v) . '</span>, ' . $lng['file_exists'] . '.';
+                                            . ' <span style="color:red;">' . $this->basenameSafe($v) . '</span>, ' . $lng['file_exists'] . '.';
                                     continue;
                                 }
 
@@ -2560,7 +2470,7 @@ class E2gMod extends E2gPub {
 
         // the numeric keys are the member of the database
         if (is_numeric($get['dir_id'])) {
-            require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+            require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
             $tree = new TTree();
             $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
             $ids = $tree->delete((int) $get['dir_id']);
@@ -2584,10 +2494,10 @@ class E2gMod extends E2gPub {
         }
 
         if (!empty($get['dir_path'])) {
-            $dirPath = str_replace('../', '', $this->_e2gDecode($get['dir_path']));
+            $dirPath = str_replace('../', '', $this->e2gDecode($get['dir_path']));
             $res = $this->_deleteAll(realpath('../' . $dirPath . '/'));
         }
-        
+
         if ($ids !== FALSE && count($res['e']) === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $lng['dir_deleted'] : $lng['dirs_deleted']);
         } elseif (count($ids) > 0) {
@@ -2603,7 +2513,7 @@ class E2gMod extends E2gPub {
         }
 
         // invoke the plugin
-        $this->_plugin('OnE2GFolderDelete', array(
+        $this->plugin('OnE2GFolderDelete', array(
             'dir_ids' => $ids
             , 'file_ids' => $fileIds
         ));
@@ -2627,9 +2537,9 @@ class E2gMod extends E2gPub {
         }
 
         if (!empty($get['file_id']) && !empty($get['file_path'])) {
-            $fileName = $this->_getFileInfo($get['file_id'], 'filename');
-            $dirId = $this->_getFileInfo($get['file_id'], 'dir_id');
-            $dirPath = $this->_getPath($dirId);
+            $fileName = $this->getFileInfo($get['file_id'], 'filename');
+            $dirId = $this->getFileInfo($get['file_id'], 'dir_id');
+            $dirPath = $this->getPath($dirId);
             if ($e2g['dir'] . $dirPath . $fileName != $get['file_path']) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['fpath_err'];
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $dirPath . '/' . $fileName . ' != ' . $get['file_path'];
@@ -2640,7 +2550,7 @@ class E2gMod extends E2gPub {
         $res = array('db' => 0, 'fs' => 0, 'dber' => 0, 'fser' => 0);
         // the numeric key is the member of the database
         if (is_numeric($get['file_id'])) {
-            $fileName = $this->_getFileInfo($get['file_id'], 'filename');
+            $fileName = $this->getFileInfo($get['file_id'], 'filename');
             $deleteFile = 'DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . $get['file_id'];
             $queryDeleteFile = mysql_query($deleteFile);
             if (!$queryDeleteFile) {
@@ -2653,8 +2563,8 @@ class E2gMod extends E2gPub {
         }
         // for non-database member
         if (!empty($get['file_path'])) {
-            $baseName = $this->_basenameSafe($get['file_path']);
-            $filePath = str_replace('../', '', $this->_e2gDecode($get['file_path']));
+            $baseName = $this->basenameSafe($get['file_path']);
+            $filePath = str_replace('../', '', $this->e2gDecode($get['file_path']));
             $deletePhysical = @unlink('../' . $filePath);
             if (!$deletePhysical) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : #' . $lng['file_delete_err'] . ' : ' . $filePath;
@@ -2675,7 +2585,7 @@ class E2gMod extends E2gPub {
         }
 
         // invoke the plugin
-        $this->_plugin('OnE2GFileDelete', array('fid' => $get['file_id']));
+        $this->plugin('OnE2GFileDelete', array('fid' => $get['file_id']));
 
         return TRUE;
     }
@@ -2701,29 +2611,35 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * Save config into database or create the default file.
-     * @param   array   $post           Configuration values
+     * Save configs/settings into database or create the default file.
+     * @param   array   $entries        Configuration values
      * @param   bool    $build_default  Build default config file
      * @return  NULL
      */
-    private function _saveConfig($post, $build_default=FALSE) {
+    public function saveE2gSettings($entries, $build_default=FALSE) {
         $modx = $this->modx;
         $lng = $this->lng;
 
         // overriding empty values
-        $post['maxh'] = !empty($post['maxh']) ? $post['maxh'] : '0';
-        $post['maxw'] = !empty($post['maxw']) ? $post['maxw'] : '0';
-        $post['w'] = !empty($post['w']) ? $post['w'] : '140';
-        $post['h'] = !empty($post['h']) ? $post['h'] : '140';
+        $entries['maxh'] = !empty($entries['maxh']) ? $entries['maxh'] : '0';
+        $entries['maxw'] = !empty($entries['maxw']) ? $entries['maxw'] : '0';
+        $entries['w'] = !empty($entries['w']) ? $entries['w'] : '140';
+        $entries['h'] = !empty($entries['h']) ? $entries['h'] : '140';
 
         if ($build_default) {
+            if (!function_exists('fopen')
+                    || !function_exists('fwrite')
+                    || !function_exists('fclose')
+            ) {
+                return FALSE;
+            }
             // CHECK/CREATE DIRS
-            $post['dir'] = preg_replace('/^\/?(.+)$/', '\\1', $post['dir']);
-            $dirs = explode('/', substr($post['dir'], 0, -1));
+            $entries['dir'] = preg_replace('/^\/?(.+)$/', '\\1', $entries['dir']);
+            $dirs = explode('/', substr($entries['dir'], 0, -1));
             $npath = '..';
             foreach ($dirs as $dir) {
                 $npath .= '/' . $dir;
-                if ($this->_validFolder($npath) || empty($dir))
+                if ($this->validFolder($npath) || empty($dir))
                     continue;
 
                 if (mkdir($npath)) {
@@ -2732,10 +2648,10 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_create_err'] . ' "' . $npath . "'";
                 }
             }
-            ksort($post);
+            ksort($entries);
 
             $c = "<?php\r\n\$e2gDefault = array (\r\n";
-            foreach ($post as $k => $v) {
+            foreach ($entries as $k => $v) {
                 $c .= "        '$k' => " . (is_numeric($v) ? $v : "'" . addslashes($v) . "'") . ",\r\n";
             }
             $c .= ");\r\n?>";
@@ -2744,7 +2660,7 @@ class E2gMod extends E2gPub {
             fclose($f);
             return TRUE;
         } else {
-            ksort($post);
+            ksort($entries);
             $deleteConfigs = 'DELETE FROM ' . $modx->db->config['table_prefix'] . 'easy2_configs ';
             $queryDeleteConfigs = mysql_query($deleteConfigs);
             if (!$queryDeleteConfigs) {
@@ -2752,7 +2668,7 @@ class E2gMod extends E2gPub {
                 return FALSE;
             }
             // else
-            foreach ($post as $k => $v) {
+            foreach ($entries as $k => $v) {
                 $insertConfigs = 'INSERT INTO ' . $modx->db->config['table_prefix'] . 'easy2_configs '
                         . 'SET `cfg_key`=\'' . $k . '\', `cfg_val`=\'' . $v . '\'';
                 $queryInsertConfigs = mysql_query($insertConfigs);
@@ -2961,7 +2877,7 @@ class E2gMod extends E2gPub {
 
                     if (count($intTags) > 0) {
                         $impldIntTag = @implode(', ', $intTags);
-                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_exist'] . ' : ' . $impldIntTag . ' (' . $this->_basenameSafe($v) . ')';
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_exist'] . ' : ' . $impldIntTag . ' (' . $this->basenameSafe($v) . ')';
                     }
 
                     // store the new value of file's tag
@@ -3018,7 +2934,7 @@ class E2gMod extends E2gPub {
 
                     if (count($intTags) > 0) {
                         $intTags = implode(', ', $intTags);
-                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_exist'] . ' : ' . $intTags . ' (' . $this->_basenameSafe($v) . ')';
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_exist'] . ' : ' . $intTags . ' (' . $this->basenameSafe($v) . ')';
                     }
 
                     // store the new value of file's tag
@@ -3106,7 +3022,7 @@ class E2gMod extends E2gPub {
 
                     if (count($intTags) > 0) {
                         $intTags = @implode(', ', $intTags);
-                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_noexist'] . ' : ' . $intTags . ' (' . $this->_basenameSafe($v) . ')';
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_noexist'] . ' : ' . $intTags . ' (' . $this->basenameSafe($v) . ')';
                     }
 
                     // store the new value of file's tag
@@ -3162,7 +3078,7 @@ class E2gMod extends E2gPub {
                     sort($newTags, SORT_LOCALE_STRING);
                     if (count($intTags) > 0) {
                         $intTags = implode(', ', $intTags);
-                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_noexist'] . ' : ' . $intTags . ' (' . $this->_basenameSafe($v) . ')';
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['tag_err_noexist'] . ' : ' . $intTags . ' (' . $this->basenameSafe($v) . ')';
                     }
 
                     // store the new value of file's tag
@@ -3645,30 +3561,32 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
+        $_SESSION['dirDropDownOptions'] = array();
+
         // converting non-latin names with MODx's stripAlias function
         $dirName = htmlspecialchars($modx->stripAlias($post['name']), ENT_QUOTES);
 
         //check the dir existance
-        if ($this->_validFolder('../' . $this->_e2gDecode($gdir . $dirName))) {
+        if ($this->validFolder('../' . $this->e2gDecode($gdir . $dirName))) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_create_err'] . ' : ' . $lng['dir_exists'];
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->_e2gDecode($gdir . $dirName);
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->e2gDecode($gdir . $dirName);
             return FALSE;
         }
-        
-        $mkdir = @mkdir('../' . $this->_e2gDecode($gdir . $dirName));
+
+        $mkdir = @mkdir('../' . $this->e2gDecode($gdir . $dirName));
 
         if (!$mkdir) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['dir_create_err'] . ' : ' . $lng['err_undefined'];
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->_e2gDecode($gdir . $dirName);
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->e2gDecode($gdir . $dirName);
             return FALSE;
         }
 
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $lng['dir_created'] . ' : ' . $gdir . $dirName;
 
-        $this->_changeModOwnGrp('dir', '../' . $this->_e2gDecode($gdir . $dirName));
-        $this->_createsIndexHtml(MODX_BASE_PATH . $this->_e2gDecode($gdir . $dirName) . '/', $lng['indexfile']);
+        $this->_changeModOwnGrp('dir', '../' . $this->e2gDecode($gdir . $dirName));
+        $this->_createIndexHtml(MODX_BASE_PATH . $this->e2gDecode($gdir . $dirName) . '/', $lng['indexfile']);
 
-        require_once E2G_MODULE_PATH . 'includes/classes/TTree.class.php';
+        require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
         $tree = new TTree();
         $tree->table = $modx->db->config['table_prefix'] . 'easy2_dirs';
         $id = $tree->insert($dirName, $parentId);
@@ -3694,7 +3612,7 @@ class E2gMod extends E2gPub {
         }
 
         // invoke the plugin
-        $this->_plugin('OnE2GFolderCreateFormSave', array(
+        $this->plugin('OnE2GFolderCreateFormSave', array(
             'cat_id' => $id
             , 'cat_alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
             , 'cat_summary' => htmlspecialchars(trim($post['summary']), ENT_QUOTES)
@@ -3722,10 +3640,12 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
+        $_SESSION['dirDropDownOptions'] = array();
+
         $newDirName = $modx->stripAlias($post['new_cat_name']);
-        $newDirPath = $this->_e2gDecode($gdir . $newDirName);
+        $newDirPath = $this->e2gDecode($gdir . $newDirName);
         $oldDirName = $post['cat_name'];
-        $oldDirPath = $this->_e2gDecode($gdir . $oldDirName);
+        $oldDirPath = $this->e2gDecode($gdir . $oldDirName);
 
         $renameDirConfirm = FALSE;
         // check the CHMOD permission first, EXCLUDE the root gallery
@@ -3764,7 +3684,7 @@ class E2gMod extends E2gPub {
         $saveWebGroupsAccess = $this->_saveWebGroupsAccess($post['webGroups'], 'dir', $post['cat_id']);
 
         // invoke the plugin
-        $this->_plugin('OnE2GFolderEditFormSave', array(
+        $this->plugin('OnE2GFolderEditFormSave', array(
             'cat_id' => $post['cat_id']
             , 'cat_name' => ($renameDirConfirm === TRUE ? htmlspecialchars(trim($newDirName), ENT_QUOTES) : $oldDirName )
             , 'cat_alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
@@ -3797,8 +3717,8 @@ class E2gMod extends E2gPub {
         $newFilename = $modx->stripAlias($post['newfilename']);
         $filename = $post['filename'];
         $ext = $post['ext'];
-        $oldFilePath = $this->_e2gDecode($gdir . $filename . $ext);
-        $newFilePath = $this->_e2gDecode($gdir . $newFilename . $ext);
+        $oldFilePath = $this->e2gDecode($gdir . $filename . $ext);
+        $newFilePath = $this->e2gDecode($gdir . $newFilename . $ext);
 
         if ($newFilename != $filename) {
             // check the CHMOD permission first
@@ -3837,7 +3757,7 @@ class E2gMod extends E2gPub {
         $saveWebGroupsAccess = $this->_saveWebGroupsAccess($post['webGroups'], 'file', $post['file_id']);
 
         // invoke the plugin
-        $this->_plugin('OnE2GFileEditFormSave', array(
+        $this->plugin('OnE2GFileEditFormSave', array(
             'fid' => $_GET['file_id']
             , 'filename' => ($newFilename != $filename ? $newFilename : $filename)
             , 'alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
@@ -4281,801 +4201,6 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * Browsing the gallery
-     * @param   string  $rootDir    ROOT gallery's path
-     * @param   string  $path       path array: $path['string'] & $path['link']
-     * @param   int     $pid        parent's ID
-     * @return  mixed   show the module's page
-     */
-    private function _readDir($rootDir, $path, $pid) {
-        $modx = $this->modx;
-        $lng = $this->lng;
-        $index = $this->e2gModCfg['index'];
-        $modThumbW = $this->e2gModCfg['mod_w'];
-        $modThumbH = $this->e2gModCfg['mod_h'];
-        $modThumbThq = $this->e2gModCfg['mod_thq'];
-
-        $gdir = $rootDir . $path['string'];
-        $pathString = $path['string'];
-        $pidPath = $this->_getPath($pid);
-
-        if ($pathString == $pidPath) {
-            ####################################################################
-            ####                      MySQL Dir list                        ####
-            ####################################################################
-            $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs' . ' '
-                    . 'WHERE parent_id = ' . $pid . ' '
-                    . 'ORDER BY cat_name ASC'
-            ;
-            $querySelectDirs = mysql_query($selectDirs);
-            if (!$querySelectDirs) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-            }
-
-            $row = array(); // for return
-            $mdirs = array();
-            while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-                $mdirs[$l['cat_name']] = $l;
-            }
-            mysql_free_result($querySelectDirs);
-        }
-
-        $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-        $rowNum = 0;
-
-        //******************************************************************/
-        //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
-        //******************************************************************/
-        $dirs = @glob('../' . $this->_e2gDecode($gdir) . '*', GLOB_ONLYDIR);
-        if (FALSE !== $dirs) {
-            if (is_array($dirs))
-                natsort($dirs);
-
-            foreach ($dirs as $dirPath) {
-                $dirName = $this->_basenameSafe($dirPath);
-                $dirName = $this->_e2gEncode($dirName);
-                $dirName = urldecode($dirName);
-                if ($dirName == '_thumbnails')
-                    continue;
-
-                $dirStyledName = $dirName; // will be overridden for styling below
-                $dirNameUrlDecodeDirname = urldecode($dirName);
-                $dirPathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $dirName));
-                $dirCountFiles = $this->_countFiles($dirPath);
-
-                #################### Template placeholders #####################
-
-                $dirAlias = '';
-                $dirTag = '';
-                $dirTagLinks = '';
-                $dirCheckBox = '';
-                $dirAttributes = '';
-                $dirAttributeIcons = '';
-                $dirHref = '';
-                $dirIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
-                    width="16" height="16" border="0" alt="folder" title="'. $lng['dir'] .'" />
-                ';
-                if (!empty($mdirs[$dirName]['cat_redirect_link'])) {
-                    $dirIcon .= '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mdirs[$dirName]['cat_redirect_link'] . '" border="0" />
-                        ';
-                }
-                $dirButtons = '';
-
-                if (isset($mdirs[$dirName])) {
-                    $dirId = $mdirs[$dirName]['cat_id'];
-                    $dirAlias = $mdirs[$dirName]['cat_alias'];
-                    $dirTag = $mdirs[$dirName]['cat_tag'];
-                    $dirTagLinks = $this->_createTagLinks($dirTag);
-                    $dirTime = $this->_getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $dirPath);
-
-                    if (!isset($_GET['path'])) {
-                        // Checkbox
-                        $dirCheckBox = '
-                <input name="dir[' . $dirId . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                ';
-                    }
-                    if ($mdirs[$dirName]['cat_visible'] == '1') {
-                        $dirStyledName = '<b>' . $dirName . '</b>';
-                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
-                        $dirButtons = $this->_actionIcon('hide_dir', array(
-                                    'act' => 'hide_dir'
-                                    , 'dir_id' => $dirId
-                                    , 'pid' => $pid
-                                ));
-                    } else {
-                        $dirStyledName = '<i>' . $dirName . '</i>';
-                        $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                        $dirAttributeIcons = '
-                <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $dirId . '&amp;name=' . $dirName . '&amp;pid=' . $pid . '">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16"
-                        height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
-                </a>
-                ';
-                        $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
-                        $dirButtons = $this->_actionIcon('show_dir', array(
-                                    'act' => 'show_dir'
-                                    , 'dir_id' => $dirId
-                                    , 'pid' => $pid
-                                ));
-                    }
-                    // edit dir
-                    $dirButtons .= $this->_actionIcon('edit_dir', array(
-                                'page' => 'edit_dir'
-                                , 'dir_id' => $dirId
-                                , 'pid' => $pid
-                            ));
-                    // unset this to leave the deleted dirs from file system.
-                    unset($mdirs[$dirName]);
-                } // if (isset($mdirs[$dirName]))
-                else {
-                    /**
-                     * Existing dir in file system, but has not yet inserted into database
-                     */
-                    if (isset($_GET['path'])) {
-                        // Checkbox
-                        $dirCheckBox = '
-                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                    ';
-                    }
-                    if (isset($_GET['path']) && isset($pid) || $pid === 1) {
-                        // Checkbox
-                        $dirCheckBox = '
-                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                    ';
-                        // add dir
-                        $dirButtons .= $this->_actionIcon('add_dir', array(
-                                    'act' => 'add_dir'
-                                    , 'dir_path' => $dirPathRawUrlEncoded
-                                    , 'pid' => $pid
-                                ));
-                    }
-                    $dirTime = date($this->e2g['mod_date_format'], filemtime($dirPath));
-                    clearstatcache();
-                    $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';
-                    $dirAttributes = '<i>(' . $lng['new'] . ')</i>';
-                    $dirHref = $index . '&amp;path=' . (!empty($path['string']) ? $path['string'] : '') . $dirName;
-                    $dirId = NULL;
-                    $dirIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_add.png" width="16"
-                    height="16" alt="' . $lng['add_to_db'] . '" border="0" />
-                    ';
-                }
-
-                if (!empty($dirId)) {
-                    $dirButtons .= $this->_actionIcon('delete_dir', array(
-                                'act' => 'delete_dir'
-                                , 'dir_path' => $dirPathRawUrlEncoded
-                                , 'dir_id' => $dirId
-                                    )
-                                    , 'onclick="return confirmDeleteFolder();"'
-                    );
-                } else {
-                    $dirButtons .= $this->_actionIcon('delete_dir', array(
-                                'act' => 'delete_dir'
-                                , 'dir_path' => $dirPathRawUrlEncoded
-                                    )
-                                    , 'onclick="return confirmDeleteFolder();"'
-                    );
-                }
-
-                $row['dir']['rowNum'][] = $rowNum;
-                $row['dir']['rowClass'][] = $rowClass[$rowNum % 2];
-                $row['dir']['checkBox'][] = $dirCheckBox;
-                $row['dir']['id'][] = $dirId;
-                $row['dir']['gid'][] = empty($dirId) ? '' : '[id: ' . $dirId . ']';
-                $row['dir']['name'][] = $dirName;
-                $row['dir']['styledName'][] = $dirStyledName;
-                $row['dir']['path'][] = $dirPath;
-                $row['dir']['pathRawUrlEncoded'][] = $dirPathRawUrlEncoded;
-                $row['dir']['alias'][] = $dirAlias;
-                $row['dir']['title'][] = ( trim($dirAlias) != '' ? $dirAlias : $dirName);
-                $row['dir']['tagLinks'][] = $dirTagLinks;
-                $row['dir']['time'][] = $dirTime;
-                $row['dir']['count'][] = $dirCountFiles;
-                $row['dir']['attributes'][] = $dirAttributes;
-                $row['dir']['attributeIcons'][] = $dirAttributeIcons;
-                $row['dir']['href'][] = $dirHref;
-                $row['dir']['buttons'][] = $dirButtons;
-                $row['dir']['icon'][] = $dirIcon;
-                $row['dir']['size'][] = '---';
-                $row['dir']['w'][] = '---';
-                $row['dir']['h'][] = '---';
-                $row['dir']['mod_w'][] = $modThumbW;
-                $row['dir']['mod_h'][] = $modThumbH;
-                $row['dir']['mod_thq'][] = $modThumbThq;
-
-                $rowNum++;
-            } // foreach ($dirs as $dirPath)
-
-            /**
-             * Deleted dirs from file system, but still exists in database,
-             * which have been left from the above unsetting.
-             */
-            if (isset($mdirs) && count($mdirs) > 0) {
-                foreach ($mdirs as $v) {
-                    $row['deletedDir']['rowNum'][] = $rowNum;
-                    $row['deletedDir']['rowClass'][] = $rowClass[$rowNum % 2];
-                    $row['deletedDir']['checkBox'][] = '
-                    <input name="dir[' . $v['cat_id'] . ']" value="dir[' . $v['cat_id'] . ']" type="checkbox" style="border:0;padding:0" />
-                        ';
-                    $row['deletedDir']['id'][] = $v['cat_id'];
-                    $row['deletedDir']['gid'][] = '[id: ' . $v['cat_id'] . ']';
-                    $row['deletedDir']['name'][] = $v['cat_name'];
-                    $row['deletedDir']['styledName'][] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
-                    $row['deletedDir']['path'][] = '';
-                    $row['deletedDir']['alias'][] = $v['cat_alias'];
-                    $row['deletedDir']['title'][] = ( trim($v['cat_alias']) != '' ? $v['cat_alias'] : $v['cat_name']);
-                    $row['deletedDir']['tagLinks'][] = $this->_createTagLinks($v['cat_tag']);
-                    $row['deletedDir']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
-                    $row['deletedDir']['count'][] = intval("0");
-                    $row['deletedDir']['link'][] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
-                    $row['deletedDir']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
-                    $row['deletedDir']['attributeIcons'][] = '';
-
-                    $row['deletedDir']['href'][] = '';
-
-                    $row['deletedDir']['buttons'][] = $this->_actionIcon('delete_dir', array(
-                                    'act' => 'delete_dir'
-                                    , 'dir_id' => $v['cat_id']
-                                    , 'pid' => $pid
-                                    ), 'onclick="return confirmDeleteFolder();"');
-                    $deletedDirIcon = '
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png"
-                        width="16" height="16" border="0" alt="folder_delete.png" title="' . $lng['deleted'] . '" />
-                    ';
-                    if (!empty($v['cat_redirect_link'])) {
-                        $deletedDirIcon .= '
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                        height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mdirs[$dirName]['cat_redirect_link'] . '" border="0" />
-                            ';
-                    }
-                    $row['deletedDir']['icon'][] = $deletedDirIcon;
-
-                    $row['deletedDir']['mod_w'][] = $modThumbW;
-                    $row['deletedDir']['mod_h'][] = $modThumbH;
-                    $row['deletedDir']['mod_thq'][] = $modThumbThq;
-
-                    $rowNum++;
-                } // foreach ($mdirs as $k => $v)
-            } // if (isset($mdirs) && count($mdirs) > 0)
-        } // if (FALSE !== $dirs)
-        ############################# DIR LIST ENDS ############################
-
-
-        if ($pathString == $pidPath) {
-            ####################################################################
-            ####                      MySQL File list                       ####
-            ####################################################################
-            $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE dir_id = ' . $pid;
-            $querySelectFiles = mysql_query($selectFiles);
-            if (!$querySelectFiles) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-                return FALSE;
-            }
-            $mfiles = array();
-            while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-                $mfiles[$l['filename']] = $l;
-            }
-            mysql_free_result($querySelectFiles);
-        }
-
-        //******************************************************************/
-        //************* FILE content for the current directory *************/
-        //******************************************************************/
-        $files = @glob('../' . $this->_e2gDecode($gdir) . '*.*');
-        if (FALSE !== $files) {
-            if (is_array($files))
-                natsort($files);
-
-            foreach ($files as $filePath) {
-                if ($this->validFolder($filePath))
-                    continue;
-                if (!$this->validFile($filePath))
-                    continue;
-// TODO: Clean up this UTF-8 mess when adding file
-                $filename = $this->_basenameSafe($filePath);
-                $filename = $this->_e2gEncode($filename);
-                $fileStyledName = $filename; // will be overridden for styling below
-//echo __LINE__ . ' : $filename = ' . $filename . '<br />';
-                $fileNameUrlDecodeFilename = urldecode($filename);
-//echo __LINE__ . ' : $fileNameUrlDecodeFilename = ' . $fileNameUrlDecodeFilename . '<br />';
-                $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $filename));
-//echo __LINE__ . ' : $filePathRawUrlEncoded = ' . $filePathRawUrlEncoded . '<br />';
-                #################### Template placeholders #####################
-
-                $fileAlias = '';
-                $fileTag = '';
-                $fileTagLinks = '';
-                $fileCheckBox = '';
-                $fileAttributes = '';
-                $fileAttributeIcons = '';
-                $fileIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
-                ';
-                if (!empty($mfiles[$filename]['redirect_link'])) {
-                    $fileIcon .= '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $mfiles[$filename]['redirect_link'] . '" border="0" />
-                        ';
-                }
-                $fileButtons = '';
-
-                if (isset($mfiles[$filename])) {
-                    $fileId = $mfiles[$filename]['id'];
-                    $fileAlias = $mfiles[$filename]['alias'];
-                    $fileTagLinks = $this->_createTagLinks($mfiles[$filename]['tag']);
-                    if (!isset($_GET['path'])) {
-                        // Checkbox
-                        $fileCheckBox = '
-                <input name="im[' . $fileId . ']" value="' . $filePathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                ';
-                    }
-                    $tag = $mfiles[$filename]['tag'];
-                    $fileSize = round($mfiles[$filename]['size'] / 1024);
-                    $width = $mfiles[$filename]['width'];
-                    $height = $mfiles[$filename]['height'];
-                    $fileTime = $this->_getTime($mfiles[$filename]['date_added'], $mfiles[$filename]['last_modified'], $filePath);
-
-                    if ($mfiles[$filename]['status'] == '1') {
-                        $fileButtons = $this->_actionIcon('hide_file', array(
-                                    'act' => 'hide_file'
-                                    , 'file_id' => $fileId
-                                    , 'pid' => $pid
-                                ));
-                    } else {
-                        $fileStyledName = '<i>' . $filename . '</i>';
-                        $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                        $fileAttributeIcons = $this->_actionIcon('show_file', array(
-                                    'act' => 'show_file'
-                                    , 'file_id' => $fileId
-                                    , 'pid' => $pid
-                                ));
-                        $fileButtons = $this->_actionIcon('show_file', array(
-                                    'act' => 'show_file'
-                                    , 'file_id' => $fileId
-                                    , 'pid' => $pid
-                                ));
-                    }
-                    $fileButtons .= $this->_actionIcon('comments', array(
-                                'page' => 'comments'
-                                , 'file_id' => $fileId
-                                , 'pid' => $pid
-                            ));
-
-                    $fileButtons .= $this->_actionIcon('edit_file', array(
-                                'page' => 'edit_file'
-                                , 'file_id' => $fileId
-                                , 'pid' => $pid
-                            ));
-
-                    unset($mfiles[$filename]);
-                } else {
-                    /**
-                     * Existed files in file system, but not yet inserted into database
-                     */
-                    if (!isset($_GET['path'])) {
-                        // Checkbox
-                        $fileCheckBox = '
-                <input name="im[f' . $rowNum . ']" value="im[f' . $rowNum . ']" type="checkbox" style="border:0;padding:0" />
-                ';
-                    }
-                    $fileTime = date($this->e2g['mod_date_format'], filemtime($filePath));
-                    $fileStyledName = '<span style="color:gray"><b>' . $filename . '</b></span>';
-                    $fileAttributes = '<i>(' . $lng['new'] . ')</i>';
-                    $fileId = NULL;
-                    $fileIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_add.png" width="16" height="16" border="0" alt="" />
-                ';
-                    $fileAttributeIcons = '';
-                    if (empty($path['string'])) {
-                        // add file
-                        $fileButtons .= $this->_actionIcon('add_file', array(
-                                    'act' => 'add_file'
-                                    , 'file_path' => $filePathRawUrlEncoded
-                                    , 'pid' => $pid
-                                ));
-                    } else {
-                        $fileButtons = '';
-                    }
-                    $fileSize = round(filesize($filePath) / 1024);
-                    list($width, $height) = @getimagesize($filePath);
-                }
-
-                $fileButtons .= $this->_actionIcon('delete_file', array(
-                            'act' => 'delete_file'
-                            , 'pid' => $pid
-                            , 'file_id' => $fileId
-                            , 'file_path' => $filePathRawUrlEncoded
-                                )
-                                , 'onclick="return confirmDelete();"');
-
-                $row['file']['rowNum'][] = $rowNum;
-                $row['file']['rowClass'][] = $rowClass[$rowNum % 2];
-                $row['file']['checkBox'][] = $fileCheckBox;
-                $row['file']['dirId'][] = $pid;
-                $row['file']['id'][] = $fileId;
-                $row['file']['fid'][] = empty($fileId) ? '' : '[id:' . $fileId . ']';
-                $row['file']['name'][] = $filename;
-                $row['file']['styledName'][] = $fileStyledName;
-                $row['file']['alias'][] = $fileAlias;
-                $row['file']['title'][] = ( trim($fileAlias) != '' ? $fileAlias : $filename);
-                $row['file']['tagLinks'][] = $fileTagLinks;
-                $row['file']['path'][] = '../' . $gdir;
-                $row['file']['pathRawUrlEncoded'][] = $filePathRawUrlEncoded;
-                $row['file']['time'][] = $fileTime;
-                $row['file']['attributes'][] = $fileAttributes;
-                $row['file']['attributeIcons'][] = $fileAttributeIcons;
-                $row['file']['buttons'][] = $fileButtons;
-                $row['file']['icon'][] = $fileIcon;
-                $row['file']['size'][] = $fileSize;
-                $row['file']['w'][] = $width;
-                $row['file']['h'][] = $height;
-                $row['file']['mod_w'][] = $modThumbW;
-                $row['file']['mod_h'][] = $modThumbH;
-                $row['file']['mod_thq'][] = $modThumbThq;
-
-                $rowNum++;
-            } // foreach ($files as $filePath)
-
-            /**
-             * Deleted files from file system, but still exists in database
-             */
-            if (isset($mfiles) && count($mfiles) > 0) {
-                foreach ($mfiles as $k => $v) {
-                    $row['deletedFile']['rowNum'][] = $rowNum;
-                    $row['deletedFile']['rowClass'][] = $rowClass[$rowNum % 2];
-                    $row['deletedFile']['checkBox'][] = '
-                <input name="im[' . $v['id'] . ']" value="' . $v['id'] . '" type="checkbox" style="border:0;padding:0" />
-                ';
-                    $row['deletedFile']['dirId'][] = $pid;
-                    $row['deletedFile']['id'][] = $v['id'];
-                    $row['deletedFile']['fid'][] = '[id:' . $v['id'] . ']';
-                    $row['deletedFile']['name'][] = $v['filename'];
-                    $row['deletedFile']['styledName'][] = '<b style="color:red;"><u>' . $v['filename'] . '</u></b>';
-                    $row['deletedFile']['alias'][] = $v['alias'];
-                    $row['deletedFile']['title'][] = ( trim($v['alias']) != '' ? $v['alias'] : $v['filename']);
-                    $row['deletedFile']['tagLinks'][] = $this->_createTagLinks($v['tag']);
-                    $row['deletedFile']['path'][] = $gdir;
-                    $row['deletedFile']['pathRawUrlEncoded'][] = str_replace('%2F', '/', rawurlencode($gdir . $v['filename']));
-                    $row['deletedFile']['time'][] = $this->_getTime($v['date_added'], $v['last_modified'], '');
-                    $row['deletedFile']['attributes'][] = '<i>(' . $lng['deleted'] . ')</i>';
-                    $row['deletedFile']['attributeIcons'][] = '';
-
-                    $row['deletedFile']['buttons'][] = $this->_actionIcon('delete_file', array(
-                                'act' => 'delete_file'
-                                , 'file_id' => $v['id']
-                                , 'pid' => $pid
-                                    )
-                                    , 'onclick="return confirmDelete();"'
-                    );
-                    $row['deletedFile']['icon'][] = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
-                ';
-                    $row['deletedFile']['size'][] = round($v['size'] / 1024);
-                    $row['deletedFile']['w'][] = $v['width'];
-                    $row['deletedFile']['h'][] = $v['height'];
-                    $row['deletedFile']['mod_w'][] = $modThumbW;
-                    $row['deletedFile']['mod_h'][] = $modThumbH;
-                    $row['deletedFile']['mod_thq'][] = $modThumbThq;
-
-                    $rowNum++;
-                }
-            }
-        } // if (FALSE !== $files)
-        ############################ FILE LIST ENDS ############################
-        // return dir and file contents
-        return $row;
-    }
-
-    /**
-     * Browsing the gallery by tagging
-     * @param   string  $tag    the tag's value
-     * @return  mixed   show the module's page
-     */
-    private function _readTag($tag) {
-        $modx = $this->modx;
-        $lng = $this->lng;
-        $gdir = $this->e2gModCfg['gdir'];
-        $index = $this->e2gModCfg['index'];
-        $modThumbW = $this->e2gModCfg['mod_w'];
-        $modThumbH = $this->e2gModCfg['mod_h'];
-        $modThumbThq = $this->e2gModCfg['mod_thq'];
-
-        $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-        $rowNum = 0;
-
-        //******************************************************************/
-        //**************************** Dir tags ****************************/
-        //******************************************************************/
-        $selectDirs = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
-                . 'WHERE cat_tag LIKE \'%' . $tag . '%\' '
-                . 'ORDER BY cat_name ASC';
-        $querySelectDirs = mysql_query($selectDirs);
-        if (!$querySelectDirs) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-            return FALSE;
-        }
-        $row = array();
-        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-            // goldsky -- store the array to be connected between db <--> fs
-            $row['dir'][$l['cat_id']]['parent_id'] = $l['parent_id'];
-            $row['dir'][$l['cat_id']]['id'] = $l['cat_id'];
-            $row['dir'][$l['cat_id']]['name'] = $l['cat_name'];
-            $row['dir'][$l['cat_id']]['alias'] = $l['cat_alias'];
-            $row['dir'][$l['cat_id']]['tag'] = $l['cat_tag'];
-            $row['dir'][$l['cat_id']]['cat_visible'] = $l['cat_visible'];
-            $row['dir'][$l['cat_id']]['date_added'] = $l['date_added'];
-            $row['dir'][$l['cat_id']]['last_modified'] = $l['last_modified'];
-
-            ####################### Template placeholders ######################
-
-            $row['dir'][$l['cat_id']]['rowNum'] = $rowNum;
-            $row['dir'][$l['cat_id']]['rowClass'] = $rowClass[$rowNum % 2];
-            $dirPath = $gdir . $this->_getPath($l['parent_id']);
-            $row['dir'][$l['cat_id']]['checkBox'] = '
-                <input name="dir[' . $l['cat_id'] . ']" value="' . rawurldecode($dirPath . $l['cat_name']) . '" type="checkbox" style="border:0;padding:0" />
-                ';
-            $row['dir'][$l['cat_id']]['gid'] = '[id: ' . $l['cat_id'] . ']';
-            $row['dir'][$l['cat_id']]['path'] = $dirPath;
-            $row['dir'][$l['cat_id']]['pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($dirPath . $l['cat_name']));
-            $row['dir'][$l['cat_id']]['title'] = ( trim($l['cat_alias']) != '' ? $l['cat_alias'] : $l['cat_name']);
-            $row['dir'][$l['cat_id']]['tagLinks'] = $this->_createTagLinks($l['cat_tag']);
-            $row['dir'][$l['cat_id']]['time'] = $this->_getTime($l['date_added'], $l['last_modified'], $dirPath . $l['cat_name']);
-            $row['dir'][$l['cat_id']]['count'] = $this->_countFiles( '../' . $dirPath . $l['cat_name']);
-
-            $dirStyledName = $l['cat_name']; // will be overridden for styling below
-            $dirCheckBox = '';
-            $dirLink = '';
-            $dirAttributes = '';
-            $dirAttributeIcons = '';
-            $dirIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
-                    width="16" height="16" border="0" alt="" />
-                ';
-            if (!empty($l['cat_redirect_link'])) {
-                $dirIcon .= '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $l['cat_redirect_link'] . '" border="0" />
-                        ';
-            }
-            $dirButtons = '';
-
-            if ($l['cat_visible'] == '1') {
-                $dirStyledName = '<b>' . $l['cat_name'] . '</b>';
-                $dirButtons = $this->_actionIcon('hide_dir', array(
-                            'act' => 'hide_dir'
-                            , 'dir_id' => $l['cat_id']
-                            , 'pid' => $l['parent_id']
-                        ));
-            } else {
-                $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                $dirAttributeIcons = '
-                <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $l['cat_id'] . '&amp;pid=' . $l['parent_id'] . '">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
-                </a>
-                ';
-                $dirButtons = $this->_actionIcon('show_dir', array(
-                            'act' => 'show_dir'
-                            , 'dir_id' => $l['cat_id']
-                            , 'pid' => $l['parent_id']
-                        ));
-            }
-
-            $dirButtons .= $this->_actionIcon('edit_dir', array(
-                        'page' => 'edit_dir'
-                        , 'dir_id' => $l['cat_id']
-                        , 'tag' => $tag
-                    ));
-            $dirButtons .= $this->_actionIcon('delete_dir', array(
-                        'act' => 'delete_dir'
-                        , 'dir_path' => $dirPath . $l['cat_name']
-                        , 'dir_id' => $l['cat_id']
-                        , 'tag' => $tag
-                            )
-                            , 'onclick="return confirmDeleteFolder();"'
-            );
-
-            $row['dir'][$l['cat_id']]['styledName'] = $dirStyledName;
-            $row['dir'][$l['cat_id']]['attributes'] = $dirAttributes;
-            $row['dir'][$l['cat_id']]['attributeIcons'] = $dirAttributeIcons;
-            $row['dir'][$l['cat_id']]['href'] = $index . '&amp;pid=' . $l['cat_id'];
-            $row['dir'][$l['cat_id']]['buttons'] = $dirButtons;
-            $row['dir'][$l['cat_id']]['icon'] = $dirIcon;
-            $row['dir'][$l['cat_id']]['size'] = '---';
-            $row['dir'][$l['cat_id']]['w'] = '---';
-            $row['dir'][$l['cat_id']]['h'] = '---';
-            $row['dir'][$l['cat_id']]['mod_w'] = $modThumbW;
-            $row['dir'][$l['cat_id']]['mod_h'] = $modThumbH;
-            $row['dir'][$l['cat_id']]['mod_thq'] = $modThumbThq;
-
-            $rowNum++;
-        }
-
-        mysql_free_result($querySelectDirs);
-
-        //******************************************************************/
-        //*************************** FILE tags ****************************/
-        //******************************************************************/
-        $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE tag LIKE \'%' . $tag . '%\' '
-                . 'ORDER BY id ASC';
-        $querySelectFiles = mysql_query($selectFiles);
-        if (!$querySelectFiles) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-            return FALSE;
-        }
-        
-        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-            $row['file'][$l['id']]['id'] = $l['id'];
-            $row['file'][$l['id']]['dirId'] = $l['dir_id'];
-            $row['file'][$l['id']]['name'] = $l['filename'];
-            $row['file'][$l['id']]['size'] = round($l['size'] / 1024);
-            $row['file'][$l['id']]['w'] = $l['width'];
-            $row['file'][$l['id']]['h'] = $l['height'];
-            $row['file'][$l['id']]['alias'] = $l['alias'];
-            $row['file'][$l['id']]['tag'] = $l['tag'];
-            $row['file'][$l['id']]['date_added'] = $l['date_added'];
-            $row['file'][$l['id']]['last_modified'] = $l['last_modified'];
-            $row['file'][$l['id']]['status'] = $l['status'];
-
-            ####################### Template placeholders ######################
-
-            $fileStyledName = $l['filename']; // will be overridden for styling below
-            $fileAlias = '';
-            $fileTag = '';
-            $fileTagLinks = '';
-            $fileAttributes = '';
-            $fileAttributeIcons = '';
-            $fileIcon = '
-            <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
-            ';
-            if (!empty($l['redirect_link'])) {
-                $fileIcon .= '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $l['redirect_link'] . '" border="0" />
-                        ';
-            }
-            $fileButtons = '';
-
-            $row['file'][$l['id']]['rowNum'] = $rowNum;
-            $row['file'][$l['id']]['rowClass'] = $rowClass[$rowNum % 2];
-            $filePath = $gdir . $this->_getPath($l['dir_id']);
-            $fileNameUrlDecodeFilename = urldecode($l['filename']);
-            $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($filePath . $l['filename']));
-
-            if (!file_exists('../' . $filePath . $l['filename'])) {
-                $fileIcon = '
-                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
-                ';
-                $fileStyledName = '<b style="color:red;"><u>' . $l['filename'] . '</u></b>';
-                $fileAttributes = '<i>(' . $lng['deleted'] . ')</i>';
-            } else {
-                if ($l['status'] == '1') {
-                    $fileButtons = $this->_actionIcon('hide_file', array(
-                                'act' => 'hide_file'
-                                , 'file_id' => $l['id']
-                                , 'tag' => $tag
-                            ));
-                } else {
-                    $fileStyledName = '<i>' . $l['filename'] . '</i>';
-                    $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-                    $fileAttributeIcons = $this->_actionIcon('show_file', array(
-                                'act' => 'show_file'
-                                , 'file_id' => $l['id']
-                                , 'tag' => $tag
-                            ));
-                    $fileButtons = $this->_actionIcon('show_file', array(
-                                'act' => 'show_file'
-                                , 'file_id' => $l['id']
-                                , 'tag' => $tag
-                            ));
-                }
-            }
-
-            $fileButtons .= $this->_actionIcon('comments', array(
-                        'page' => 'comments'
-                        , 'file_id' => $l['id']
-                        , 'tag' => $tag
-                    ));
-
-            $fileButtons .= $this->_actionIcon('edit_file', array(
-                        'page' => 'edit_file'
-                        , 'file_id' => $l['id']
-                        , 'tag' => $tag
-                    ));
-
-            $fileButtons .= $this->_actionIcon('delete_file', array(
-                        'act' => 'delete_file'
-                        , 'pid' => $l['dir_id']
-                        , 'file_path' => $filePathRawUrlEncoded
-                        , 'file_id' => $l['id']
-                            )
-                            , 'onclick="return confirmDelete();"'
-            );
-
-            $row['file'][$l['id']]['checkBox'] = '
-                <input name="im[' . $l['id'] . ']" value="im[' . $l['id'] . ']" type="checkbox" style="border:0;padding:0" />
-                ';
-            $row['file'][$l['id']]['dirId'] = $l['dir_id'];
-            $row['file'][$l['id']]['fid'] = '[id:' . $l['id'] . ']';
-            $row['file'][$l['id']]['styledName'] = $fileStyledName;
-            $row['file'][$l['id']]['title'] = ( trim($l['alias']) != '' ? $l['alias'] : $l['filename']);
-            $row['file'][$l['id']]['tagLinks'] = $this->_createTagLinks($l['tag']);
-            $row['file'][$l['id']]['path'] = $filePath;
-            $row['file'][$l['id']]['pathRawUrlEncoded'] = $filePathRawUrlEncoded;
-            $row['file'][$l['id']]['time'] = $this->_getTime($l['date_added'], $l['last_modified'], $filePath . $l['filename']);
-            $row['file'][$l['id']]['attributes'] = $fileAttributes;
-            $row['file'][$l['id']]['attributeIcons'] = $fileAttributeIcons;
-            $row['file'][$l['id']]['buttons'] = $fileButtons;
-            $row['file'][$l['id']]['icon'] = $fileIcon;
-            $row['file'][$l['id']]['mod_w'] = $modThumbW;
-            $row['file'][$l['id']]['mod_h'] = $modThumbH;
-            $row['file'][$l['id']]['mod_thq'] = $modThumbThq;
-
-            $rowNum++;
-        }
-        mysql_free_result($querySelectFiles);
-
-        // return dir and file contents
-        return $row;
-    }
-
-    /**
-     * Select any available date from the selections
-     * @param date      $dateAdded      time when the object was added into the database
-     * @param date      $lastModified   last time when the object was modified
-     * @param string    $path           path
-     * @return date     time
-     */
-    private function _getTime($dateAdded, $lastModified, $path) {
-        $dateFormat = $this->e2g['mod_date_format'];
-
-        $getTime = (strtotime($lastModified) != FALSE) ? strtotime($lastModified) : strtotime($dateAdded);
-        if ($getTime == '' && isset($path)) {
-            $getTime = filemtime($path);
-            clearstatcache();
-        }
-
-        $getTime = @date($dateFormat, $getTime);
-
-        return $getTime;
-    }
-
-    /**
-     * Gallery's TEMPLATE function
-     * @param string $tpl = gallery's template (@FILE or chunk)
-     * @param string $data = template's array data
-     * @param string $prefix = placeholder's prefix
-     * @param string $suffix = placeholder's suffix
-     * @return string templated data
-     */
-    private function _filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
-        return parent::filler($tpl, $data, $prefix, $suffix);
-    }
-
-    /**
-     * Get template
-     * @param string    $tpl Template
-     * @return string   Template's content
-     */
-    private function _getTpl($tpl) {
-        return parent::getTpl($tpl);
-    }
-
-    /**
-     * To get thumbnail for each folder
-     * @param  int    $gid folder's ID
-     * @return string image's source
-     */
-    private function _folderImg($gid, $gdir) {
-        return parent::folderImg($gid, $gdir);
-    }
-
-    /**
      * To get and create thumbnails
      * @param  int    $gdir             from $_GET['gid']
      * @param  string $path             directory path of each of thumbnail
@@ -5091,7 +4216,7 @@ class E2gMod extends E2gPub {
      * @param  bool   $createWaterMark  create water mark
      * @return mixed  FALSE/the thumbail's path
      */
-    private function _imgShaper(
+    public function imgShaper(
     $gdir
     , $path
     , $w
@@ -5108,10 +4233,11 @@ class E2gMod extends E2gPub {
         $e2g = $this->e2g;
 
         // decoding UTF-8
-        $gdir = $this->_e2gDecode($gdir);
-        $path = $this->_e2gDecode($path);
-        if (empty($path))
+        $gdir = $this->e2gDecode($gdir);
+        $path = $this->e2gDecode($path);
+        if (empty($path)) {
             return FALSE;
+        }
 
         $w = !empty($w) ? $w : $e2gModCfg['mod_w'];
         $h = !empty($h) ? $h : $e2gModCfg['mod_h'];
@@ -5128,12 +4254,12 @@ class E2gMod extends E2gPub {
                 . '.jpg';
 
         if (!class_exists('E2gThumb')) {
-            if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/classes/e2g.public.thumbnail.class.php'))) {
-                echo __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/classes/e2g.public.thumbnail.class.php</b> does not exist.';
-                $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/classes/e2g.public.thumbnail.class.php</b> does not exist.';
+            if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php'))) {
+                echo __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';
+                $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';
                 return FALSE;
             } else {
-                include_once E2G_MODULE_PATH . 'includes/classes/e2g.public.thumbnail.class.php';
+                include_once E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php';
             }
         }
 
@@ -5146,12 +4272,58 @@ class E2gMod extends E2gPub {
     }
 
     /**
+     * To calculate the directory content
+     * @param string $path folder's/dir's path
+     */
+    public function countFiles($path) {
+        $cnt = 0;
+        $fs = array();
+        $fs = glob($path . '/*.*');
+        if ($fs != FALSE) {
+            foreach ($fs as $f) {
+                if ($this->validFile($f))
+                    $cnt++;
+                else
+                    continue;
+            }
+        }
+        $sd = array();
+        $sd = glob($path . '/*');
+        if ($sd != FALSE)
+            foreach ($sd as $d) {
+                $cnt += $this->countFiles($d);
+            }
+        return $cnt;
+    }
+
+    /**
+     * Select any available date from the selections
+     * @param date      $dateAdded      time when the object was added into the database
+     * @param date      $lastModified   last time when the object was modified
+     * @param string    $path           path
+     * @return date     time
+     */
+    public function getTime($dateAdded, $lastModified, $path) {
+        $dateFormat = $this->e2g['mod_date_format'];
+
+        $getTime = (strtotime($lastModified) != FALSE) ? strtotime($lastModified) : strtotime($dateAdded);
+        if ($getTime == '' && isset($path)) {
+            $getTime = filemtime($path);
+            clearstatcache();
+        }
+
+        $getTime = @date($dateFormat, $getTime);
+
+        return $getTime;
+    }
+
+    /**
      * Create Tags as links for the module's pages
      * @param string    $tags   The tags
      * @return string   The tag's links
      */
-    private function _createTagLinks($tags) {
-        $index = $this->e2gModCfg['index'];
+    public function createTagLinks($tags) {
+        $index = $this->e2gPubCfg['index'];
 
         if (empty($tags)) {
             return NULL;
@@ -5169,25 +4341,15 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * Crop text by length
-     * @param   string  $charSet    character set
-     * @param   int     $nameLen    text's length
-     * @param   string  $text       text to be cropped
-     * @return  string  shorthened text
-     */
-    private function _cropName($mbstring, $charSet, $nameLen, $text) {
-        return parent::cropName($mbstring, $charSet, $nameLen, $text);
-    }
-
-    /**
      * Button's link, image, and attributes
      * @param string    $buttonName     button's name
      * @param array     $getParams      $_GET parameters to be appended into the link
      * @param string    $attributes     additional space for styles, onclick event, or anything else.
+     * @param string    $index          change the URL if needed
      * @return string   The button's hyperlink and image.
      */
-    private function _actionIcon($buttonName, $getParams=array(), $attributes=NULL) {
-        $index = $this->e2gModCfg['index'];
+    public function actionIcon($buttonName, $getParams=array(), $attributes=NULL, $index=NULL) {
+        $index = !empty($index) ? $index : $this->e2gPubCfg['index'];
         $lng = $this->lng;
 
         if (!is_array($getParams) || empty($getParams)) {
@@ -5256,10 +4418,43 @@ class E2gMod extends E2gPub {
         }
 
 
-        $button .= '
-                </a>';
+        $button .= '</a>' . "\n";
 
         return $button;
+    }
+
+    public function sanitizedGets($_GET) {
+        $sanitizedGets = array();
+        if (empty($_GET)) {
+            return FALSE;
+        }
+        foreach ($_GET as $k => $v) {
+            if ($k != 'root'
+                    && $k != 'getpath'
+                    && $k != 'path'
+                    && $k != 'pid'
+                    && $k != 'tag'
+            ) {
+                unset($_GET[$k]);
+                continue;
+            }
+            switch ($k) {
+                case 'root':
+                case 'getpath':
+                case 'path':
+                    $xplds = @explode('/', $v);
+                    foreach ($xplds as $y => $x) {
+                        $xplds[$y] = $this->modx->stripAlias($x);
+                    }
+                    $v = @implode('/', $xplds);
+                    break;
+                default:
+                    $v = $this->modx->stripAlias($v);
+                    break;
+            }
+            $sanitizedGets[$k] = $v;
+        }
+        return $sanitizedGets;
     }
 
 }
