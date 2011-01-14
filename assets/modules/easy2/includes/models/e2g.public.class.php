@@ -44,6 +44,22 @@ class E2gPub { // public/public class
     }
 
     /**
+     * @author  Rin <http://forum.dklab.ru/profile.php?mode=viewprofile&u=3940>
+     * @link    http://forum.dklab.ru/viewtopic.php?p=91015#91015
+     * @return  bool    directly from the class.
+     */
+    public function loadUtfRin() {
+        /**
+         * using Unicode conversion class.
+         * @todo Need more work work on i18n stuff
+         */
+        include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.1/UTF8.php';
+        include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.1/ReflectionTypehint.php';
+
+        return null;
+    }
+
+    /**
      * Unicode character encoding work around.<br />
      * For human reading.<br />
      * The value is set from the module's config page.
@@ -92,12 +108,8 @@ class E2gPub { // public/public class
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
         if ($e2gEncode == 'UTF-8 (Rin)') {
-            /**
-             * using Unicode conversion class.
-             * @todo Need more work work on i18n stuff
-             */
-            include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
-            include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
+
+            $this->loadUtfRin();
 
             if ($callback == FALSE) {
                 // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
@@ -138,12 +150,9 @@ class E2gPub { // public/public class
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
         if ($e2gEncode == 'UTF-8 (Rin)') {
-            /**
-             * using Unicode conversion class.
-             * @todo Need more work work on i18n stuff
-             */
-            include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/UTF8.php';
-            include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.0/ReflectionTypehint.php';
+            
+            $this->loadUtfRin();
+
             $mbDetectEncoding = mb_detect_encoding($text);
             // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
             if ($mbDetectEncoding != 'ASCII' || $mbDetectEncoding != 'UTF-8') {

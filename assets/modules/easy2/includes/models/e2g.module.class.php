@@ -1384,8 +1384,7 @@ class E2gMod extends E2gPub {
         $e2gDebug = $this->e2gModCfg['e2g_debug'];
 
         if ($e2gEncode == 'UTF-8 (Rin)') {
-            include_once E2G_MODULE_PATH . 'includes/UTF8-2.1.0/UTF8.php';
-            include_once E2G_MODULE_PATH . 'includes/UTF8-2.1.0/ReflectionTypehint.php';
+            $this->loadUtfRin();
         }
 
         $r = substr($path, strlen($path) - 1, 1);

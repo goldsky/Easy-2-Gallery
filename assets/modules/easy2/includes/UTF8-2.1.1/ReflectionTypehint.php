@@ -12,7 +12,7 @@
  * @license  http://creativecommons.org/licenses/by-sa/3.0/
  * @author   Nasibullin Rinat: http://orangetie.ru/, http://rin-nas.moikrug.ru/
  * @charset  UTF-8
- * @version  1.0.4
+ * @version  1.0.6
  */
 class ReflectionTypehint
 {
@@ -60,7 +60,7 @@ class ReflectionTypehint
 			if (! isset($params[$i])) return true;
 			#$name  = $params[$i][2];
 			$hints = preg_split('~[|/,]~sSX', $params[$i][1]);
-			if (! self::_checkValueTypes($hints, $value))
+			if (! self::checkValueTypes($hints, $value))
 			{
 				$param_num = $i + 1;
 				$message = 'Argument %d passed to %s%s%s() must be an %s, %s given, ' . PHP_EOL
@@ -79,7 +79,7 @@ class ReflectionTypehint
 	 * (totally skip them correcting caller references).
 	 * If $return_frame is present, return only $return_frame matched caller, not all stacktrace.
 	 *
-	 * @param   string|null  $re_ignore
+	 * @param   string|null  $re_ignore     example: '~^' . preg_quote(__CLASS__, '~') . '(?![a-zA-Z\d])~sSX'
 	 * @param   int|null     $return_frame
 	 * @return  array
 	 */
@@ -98,7 +98,7 @@ class ReflectionTypehint
 			$next = isset($trace[$i+1])? $trace[$i+1] : null;
 
 			// Dummy frame before call_user_func*() frames.
-			if (! isset($t['file']))
+			if (! isset($t['file']) && $next)
 			{
 				$t['over_function'] = $trace[$i+1]['function'];
 				$t = $t + $trace[$i+1];
@@ -125,8 +125,14 @@ class ReflectionTypehint
 		return $a;
 	}
 
-
-	private static function _checkValueTypes(array $types, $value)
+	/**
+	 * Проверяет переменную на соответствие указанным типам
+	 *
+	 * @param   array  $types
+	 * @param   mixed  $value
+	 * @return  bool
+	 */
+	public static function checkValueTypes(array $types, $value)
 	{
 		foreach ($types as $type)
 		{
