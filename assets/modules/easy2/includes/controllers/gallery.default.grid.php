@@ -124,14 +124,14 @@ if ($getRequests['path'] == $pidPath) {
     mysql_free_result($querySelectFiles);
 }
 
-$rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-$rowNum = 0;
-
 //******************************************************************/
 //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
 //******************************************************************/
 $scanDirs = @glob('../../../../../' . $e2gMod->e2gDecode($gdir) . '*');
 if (FALSE !== $scanDirs):
+
+    $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
+    $rowNum = 0;
 ?>
 
     <table width="100%" cellpadding="2" cellspacing="0" class="grid" style="margin-bottom:10px;">
@@ -314,6 +314,7 @@ if (FALSE !== $scanDirs):
                 ;
 
                 echo $e2gMod->filler($e2gMod->getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
+                $rowNum++;
             } // if ($e2gMod->validFolder($scanPath))
             ############################# DIR LIST ENDS ############################
             //******************************************************************/
@@ -474,6 +475,7 @@ if (FALSE !== $scanDirs):
 ';
 
                 echo $e2gMod->filler($e2gMod->getTpl('file_default_table_row_file_tpl'), $filePhRow);
+                $rowNum++;
             } // if ($e2gMod->validFile($scanPath))
 
             ob_flush();
@@ -482,8 +484,6 @@ if (FALSE !== $scanDirs):
              * sleeps for 10 ms
              */
             usleep(10);
-
-            $rowNum++;
         } // foreach ($dirs as $scanPath)
         ob_end_flush();
 
@@ -598,8 +598,8 @@ if (FALSE !== $scanDirs):
                 $rowNum++;
             } // foreach ($mfiles as $k => $v)
         } // if (isset($mfiles) && count($mfiles) > 0)
-    ?>
-    
+?>
+
     </table><?php
         endif; // if (FALSE !== $scanDirs)
 
