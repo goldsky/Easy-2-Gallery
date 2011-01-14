@@ -665,101 +665,101 @@ class E2gSnippet extends E2gPub {
         //*             joining between dirs and files pagination              */
         //**********************************************************************/
         if ($pagination == 1 && $orderBy != 'rand()' && $catOrderBy != 'rand()') {
-//            // count the files again, this time WITHOUT limit!
-//            if ($showOnly == 'folders') {
-//                $fileCount = 0;
-//            } elseif (!empty($gid)) {
-//                $selectCountFiles = $this->_fileSqlStatements('COUNT(id)');
-//                $querySelectCountFiles = mysql_query($selectCountFiles);
-//                if (!$querySelectCountFiles) {
-//                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
-//                    return FALSE;
-//                }
-//                $resultCountFiles = mysql_result($querySelectCountFiles, 0, 0);
-//                mysql_free_result($querySelectCountFiles);
-//            }
-//
-//            $totalCount = $resultCountDirs + $resultCountFiles;
-//
-//            // Terminate all the outputs, when the result is empty.
-//            if ($totalCount === 0)
-//                return FALSE;
-//
-//            $galPh['page_num_class'] = $pageNumClass;
-//            if ($totalCount <= $limit) {
-//                $galPh['pages'] = '&nbsp;';
-//            }
-//            if ($totalCount > $limit) {
-//
-//                $galPh['pages'] = '';
-//                $pages = array();
-//                $pages['totalCount'] = $totalCount;
-//                $pages['totalPageNum'] = ceil($totalCount / $limit);
-//                $indexPage = $modx->makeUrl($modx->documentIdentifier, $modx->aliases, 'sid=' . $e2gStaticInstances);
-//                $i = 0;
-//                while ($i * $limit < $totalCount) {
-//                    if ($i == $gpn) {
-//                        $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
-//                        $pages['currentPage'] = ($i + 1);
-//                    } else {
-//                        // using &tag parameter
-//                        if (isset($staticTag)) {
-//                            $permalinkName = $modx->stripAlias($e2gStaticInstances . '_' . $staticTag);
-//                            // making flexible FURL or not
-//                            $pagesLink = $indexPage . '&amp;tag=' . $staticTag
-//                                    . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-//                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
-//                        }
-//                        // original &gid parameter
-//                        else {
-//                            $permalinkName = $e2gStaticInstances . '_' . ( isset($staticGid)
-//                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-//                                            $gid : $staticGid );
-//                            $permalinkName = $modx->stripAlias($permalinkName);
-//                            // making flexible FURL or not
-//                            $pagesLink = $indexPage . ( isset($staticGid)
-//                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-//                                            '&amp;gid=' . $gid :
-//                                            '&amp;gid=' . $staticGid )
-//                                    . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-//                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
-//                        }
-//
-//                        $pagesLink = str_replace(' ', '', $pagesLink);
-//                        $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
-//                    }
-//
-//                    if (isset($staticTag)) {
-//                        $previousLink = $indexPage . '&amp;tag=' . $staticTag
-//                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-//                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
-//                        $nextLink = $indexPage . '&amp;tag=' . $staticTag
-//                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
-//                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
-//                    } else {
-//                        $previousLink = $indexPage
-//                                . ( isset($staticGid)
-//                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-//                                        '&amp;gid=' . $gid :
-//                                        '&amp;gid=' . $staticGid )
-//                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-//                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
-//                        $nextLink = $indexPage
-//                                . ( isset($staticGid)
-//                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
-//                                        '&amp;gid=' . $gid :
-//                                        '&amp;gid=' . $staticGid )
-//                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
-//                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
-//                    }
-//
-//                    $pages['previousLink'][$i + 1] = $previousLink;
-//                    $pages['nextLink'][$i + 1] = $nextLink;
-//
-//                    $i++;
-//                }
-//                $galPh['pages'] .= $this->_paginationFormat($pages);
-//            }
+            // count the files again, this time WITHOUT limit!
+            if ($showOnly == 'folders') {
+                $fileCount = 0;
+            } elseif (!empty($gid)) {
+                $selectCountFiles = $this->_fileSqlStatements('COUNT(id)');
+                $querySelectCountFiles = mysql_query($selectCountFiles);
+                if (!$querySelectCountFiles) {
+                    echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountFiles . '<br />';
+                    return FALSE;
+                }
+                $resultCountFiles = mysql_result($querySelectCountFiles, 0, 0);
+                mysql_free_result($querySelectCountFiles);
+            }
+
+            $totalCount = $resultCountDirs + $resultCountFiles;
+
+            // Terminate all the outputs, when the result is empty.
+            if ($totalCount === 0)
+                return FALSE;
+
+            $galPh['page_num_class'] = $pageNumClass;
+            if ($totalCount <= $limit) {
+                $galPh['pages'] = '&nbsp;';
+            }
+            if ($totalCount > $limit) {
+
+                $galPh['pages'] = '';
+                $pages = array();
+                $pages['totalCount'] = $totalCount;
+                $pages['totalPageNum'] = ceil($totalCount / $limit);
+                $indexPage = $modx->makeUrl($modx->documentIdentifier, $modx->aliases, 'sid=' . $e2gStaticInstances);
+                $i = 0;
+                while ($i * $limit < $totalCount) {
+                    if ($i == $gpn) {
+                        $pages['pages'][$i + 1] = '<b>' . ($i + 1) . '</b> ';
+                        $pages['currentPage'] = ($i + 1);
+                    } else {
+                        // using &tag parameter
+                        if (isset($staticTag)) {
+                            $permalinkName = $modx->stripAlias($e2gStaticInstances . '_' . $staticTag);
+                            // making flexible FURL or not
+                            $pagesLink = $indexPage . '&amp;tag=' . $staticTag
+                                    . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+                        }
+                        // original &gid parameter
+                        else {
+                            $permalinkName = $e2gStaticInstances . '_' . ( isset($staticGid)
+                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                            $gid : $staticGid );
+                            $permalinkName = $modx->stripAlias($permalinkName);
+                            // making flexible FURL or not
+                            $pagesLink = $indexPage . ( isset($staticGid)
+                                    && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                            '&amp;gid=' . $gid :
+                                            '&amp;gid=' . $staticGid )
+                                    . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                                    . '&amp;gpn=' . $i . $customGetParams . '#' . $permalinkName;
+                        }
+
+                        $pagesLink = str_replace(' ', '', $pagesLink);
+                        $pages['pages'][$i + 1] = '<a href="' . $pagesLink . '">' . ($i + 1) . '</a> ';
+                    }
+
+                    if (isset($staticTag)) {
+                        $previousLink = $indexPage . '&amp;tag=' . $staticTag
+                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+                        $nextLink = $indexPage . '&amp;tag=' . $staticTag
+                                . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+                    } else {
+                        $previousLink = $indexPage
+                                . ( isset($staticGid)
+                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                        '&amp;gid=' . $gid :
+                                        '&amp;gid=' . $staticGid )
+                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                                . '&amp;gpn=' . ($i - 1) . $customGetParams . '#' . $permalinkName;
+                        $nextLink = $indexPage
+                                . ( isset($staticGid)
+                                && ( $this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) == TRUE ) ?
+                                        '&amp;gid=' . $gid :
+                                        '&amp;gid=' . $staticGid )
+                                . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($staticFid) ? '&amp;fid=' . $staticFid : '') )
+                                . '&amp;gpn=' . ($i + 1) . $customGetParams . '#' . $permalinkName;
+                    }
+
+                    $pages['previousLink'][$i + 1] = $previousLink;
+                    $pages['nextLink'][$i + 1] = $nextLink;
+
+                    $i++;
+                }
+                $galPh['pages'] .= $this->_paginationFormat($pages);
+            }
         }
 
         ########################## END OF PAGINATION ###########################

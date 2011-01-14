@@ -220,7 +220,7 @@ foreach ($e2gPages as $k => $v) {
             function viewDefaultThumbnails (path, pid) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.default.thumb.php?";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
 //                url += "<?php echo isset($_GET['pid']) ? '&pid=' . $_GET['pid'] : ''; ?>";
@@ -243,7 +243,7 @@ foreach ($e2gPages as $k => $v) {
             function viewDefaultGrid (path, pid) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("list");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.default.grid.php?";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&pid="+pid;
@@ -265,7 +265,7 @@ foreach ($e2gPages as $k => $v) {
             function viewTagThumbnails (path, tag) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.tag.thumb.php?";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.thumb.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&path="+path+"&tag="+tag;
@@ -287,7 +287,7 @@ foreach ($e2gPages as $k => $v) {
             function viewTagGrid (path, tag) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("list");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/gallery.tag.grid.php?";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.grid.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&path="+path+"&tag="+tag;
