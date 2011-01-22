@@ -968,6 +968,8 @@ class E2gMod extends E2gPub {
 
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_end_clean();
+
+                usleep(10);
             }
         } // if ($fs!=FALSE)
         /**
