@@ -81,11 +81,8 @@ class E2gMod extends E2gPub {
         $act = empty($_GET['act']) ? '' : $_GET['act'];
         switch ($act) {
             case 'synchro':
-//                if ($this->synchro(MODX_BASE_PATH . $this->e2g['dir'], 1)) {
-//                    $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['synchro_suc'];
-//                } else {
-//                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'];
-//                }
+                // AJAX report
+                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['synchro_suc'];
                 $this->_cleanCache();
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
@@ -2558,6 +2555,8 @@ class E2gMod extends E2gPub {
             $f = fopen(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php', 'w+');
             fwrite($f, $c);
             fclose($f);
+            
+            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['config_update_suc'];
             return TRUE;
         } else {
             ksort($entries);
@@ -4239,12 +4238,12 @@ class E2gMod extends E2gPub {
                 case 'path':
                     $xplds = @explode('/', $v);
                     foreach ($xplds as $y => $x) {
-                        $xplds[$y] = $this->modx->stripAlias($x);
+                        $xplds[$y] = $this->stripString($x);
                     }
                     $v = @implode('/', $xplds);
                     break;
                 default:
-                    $v = $this->modx->stripAlias($v);
+                    $v = $this->stripString($v);
                     break;
             }
             $sanitizedGets[$k] = $v;
@@ -4252,4 +4251,23 @@ class E2gMod extends E2gPub {
         return $sanitizedGets;
     }
 
+    public function stripString ($string, $chars = array('/', "'", '"', '(', ')', ';', '>', '<'), $allowedTags = array(), $preg=FALSE) {
+        $string = trim($string);
+
+        $allowedTagStr = @implode('', $allowedTags);
+        $string = strip_tags($string, $allowedTagStr);
+        $string = str_replace($chars, '', $string);
+        $string = preg_replace('/[[:space:]]/', ' ', $string);
+
+        if ($preg) {
+            $allowedTagPreg = (!empty($allowedTags) ? '|\\' . @implode('\\', $allowedTags) : '');
+            $string = preg_replace("/[^A-Za-z0-9_\-\.\/[[:space:]]" . $allowedTagPreg . "]/", '', $string);
+        }
+
+        $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+        $string = mysql_escape_string($string);
+
+        return $string;
+    }
+    
 }

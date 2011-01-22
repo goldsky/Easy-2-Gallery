@@ -334,6 +334,32 @@ if (IN_MANAGER_MODE != 'true')
                     </script>
                     <table cellspacing="0" cellpadding="2" width="100%">
                         <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['gal_desc']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;gal_desc= 0 | 1</span>
+                                <input name="gal_desc" type="radio" value="0"<?php echo ($this->e2g['gal_desc'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $this->lng['off']; ?></b>
+                                <input name="gal_desc" type="radio" value="1"<?php echo ($this->e2g['gal_desc'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $this->lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['gal_desc_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['gal_desc_continuous']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;gal_desc_continuous= 0 | 1</span>
+                                <input name="gal_desc_continuous" type="radio" value="0"<?php echo ($this->e2g['gal_desc_continuous'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $this->lng['off']; ?></b>
+                                <input name="gal_desc_continuous" type="radio" value="1"<?php echo ($this->e2g['gal_desc_continuous'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                                <b><?php echo $this->lng['on']; ?></b>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['gal_desc_continuous_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
                             <td width="180"><b><?php echo $this->lng['name_len']; ?>:</b></td>
                             <td><span style="color:green;">&amp;name_len=</span> <input name="name_len" type="text" value="<?php echo $this->e2g['name_len']; ?>" size="4" /></td>
                         </tr>

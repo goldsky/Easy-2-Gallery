@@ -217,9 +217,10 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
 
             function synchro(path, pid) {
                 var xhr = xhrRequest();
+                var report = document.getElementById("report");
                 var container = document.getElementById("thumbnail");
                 if (!container) {
-                    var container = document.getElementById("list");
+                    var container = document.getElementById("grid");
                 }
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
@@ -229,7 +230,8 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {
-                            container.innerHTML = xhr.responseText;
+                            window.location.href='<?php echo htmlspecialchars_decode($this->e2gModCfg['index']);?>&act=synchro';
+                            report.innerHTML = xhr.responseText;
                         } else {
                             container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
                         }
@@ -265,7 +267,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
 
             function viewDefaultGrid (path, pid) {
                 var xhr = xhrRequest();
-                var container = document.getElementById("list");
+                var container = document.getElementById("grid");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
@@ -450,7 +452,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
         $userRole = $_SESSION['e2gMgr']['role'];
         $userPermissionsArray = @explode(',', $userPermissions);
         ?>
-        <div><?php echo $err . $suc; ?></div>
+        <div id="report"><?php echo $err . $suc; ?></div>
         <div class="sectionHeader">
             <span>Easy 2 Gallery <?php echo E2G_VERSION; ?></span>
             <span class="navigation">

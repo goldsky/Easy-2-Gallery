@@ -91,7 +91,7 @@ mysql_free_result($resultdesc);
                 switch ($modView) {
                     case 'list':
             ?>
-                        <div id="list"></div>
+                        <div id="grid"></div>
                         <script type="text/javascript">viewDefaultGrid('<?php echo $path['string'] ?>','<?php echo $parentId ?>');</script>
     <?php
                         break;

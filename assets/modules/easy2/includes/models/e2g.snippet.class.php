@@ -390,9 +390,17 @@ class E2gSnippet extends E2gPub {
                 $galPh['permalink'] = '<a href="#" name="' . $permalinkName . '"></a>';
 
                 // gallery's description
+                $galPh['cat_description'] = '';
+                $galPh['title'] = '';
+                if ($this->e2gSnipCfg['gal_desc'] == '1'
+                        && $this->e2gSnipCfg['gal_desc_continuous'] == '0'
+                        && (int)$this->e2gSnipCfg['gpn'] > 0 
+                ) {
+                    $this->e2gSnipCfg['gal_desc'] = '0';
+                }
                 if ($this->e2gSnipCfg['gal_desc'] == '1'
                         // exclude the multiple gids (comma separated)
-                        && !strpos($this->e2gSnipCfg['static_gid'], ',')
+                        && !strstr($this->e2gSnipCfg['static_gid'], ',')
                 ) {
                     $galleryId = '';
                     if (!$this->_checkGidDecendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid'])) {
@@ -403,14 +411,13 @@ class E2gSnippet extends E2gPub {
 
                     $galPh['cat_description'] = $this->getDirInfo($galleryId, 'cat_description');
                     $galPh['cat_title'] = $this->getDirInfo($galleryId, 'cat_alias');
-
                     $galPh['title'] = ($galPh['cat_title'] != '' ? $galPh['cat_title'] : $galPh['cat_name'] );
-                    if ($galPh['title'] == '' && $galPh['cat_description'] == '') {
-                        $galPh['desc_class'] = 'style="display:none;"';
-                    }
-                } else {
+
+                }
+                if ($galPh['title'] == '' && $galPh['cat_description'] == '') {
                     $galPh['desc_class'] = 'style="display:none;"';
-                } // gallery's description
+                }
+
                 //******************************************************************/
                 //*       Fill up the current directory's thumbnails content       */
                 //******************************************************************/
@@ -1132,6 +1139,8 @@ class E2gSnippet extends E2gPub {
      * @return string the slideshow's images
      */
     private function _slideshow($slideshow) {
+        // gives the index file the shorthand to the modx's API
+        $modx = $this->modx;
         /**
          * added the &fid parameter inside the &slideshow, to open a full page of the clicked image
          * into the specified landingpage ID

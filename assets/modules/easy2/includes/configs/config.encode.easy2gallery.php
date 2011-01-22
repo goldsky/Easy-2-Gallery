@@ -3,7 +3,7 @@
 $e2gEncodes = array(
     'none' => array(
         'value' => 'none',
-        'lng' => $lng['none']
+        'lng' => $this->lng['none']
     )
     , 'UTF-8 (PHP)' => array(
         'value' => 'UTF-8',

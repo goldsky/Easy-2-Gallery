@@ -113,8 +113,6 @@ if (!$querySelectFiles) {
     die($msg);
 }
 
-
-
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 

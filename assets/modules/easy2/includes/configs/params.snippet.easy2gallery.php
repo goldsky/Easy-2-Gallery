@@ -120,7 +120,8 @@ $e2gSnipCfg['cat_thumb_order'] = preg_replace('/[^a-z]/i', '', $cat_thumb_order)
  * Options: 1 = On
  *          0 = Off
  */
-$e2gSnipCfg['gal_desc'] = (isset($gal_desc)) ? $gal_desc : 0;
+$e2gSnipCfg['gal_desc'] = (isset($gal_desc)) ? $gal_desc : $e2g['gal_desc'];
+$e2gSnipCfg['gal_desc_continuous'] = (isset($gal_desc_continuous)) ? $gal_desc_continuous : $e2g['gal_desc_continuous'];
 
 /**
  * TEMPLATES
