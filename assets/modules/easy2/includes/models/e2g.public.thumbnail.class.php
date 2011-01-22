@@ -229,8 +229,6 @@ class E2gThumb {
      * @return mixed image output
      */
     public function watermark($fp) {
-        $e2g = $this->e2gThumbCfg;
-
         $inf = @getimagesize($fp);
 
         if ($inf[2] == 1)
@@ -242,38 +240,38 @@ class E2gThumb {
         else
             return 'Imagecreate error';
 
-        if ($e2g['wmtype'] == 'text') {
+        if ($this->e2gThumbCfg['wmtype'] == 'text') {
             // X
-            $len = strlen($e2g['wmt']);
-            if ($e2g['wmpos1'] == 3)
+            $len = strlen($this->e2gThumbCfg['wmt']);
+            if ($this->e2gThumbCfg['wmpos1'] == 3)
                 $x = $inf[0] - 10 - ($len * 6);
-            elseif ($e2g['wmpos1'] == 2)
+            elseif ($this->e2gThumbCfg['wmpos1'] == 2)
                 $x = ($inf[0] - ($len * 6)) / 2;
             else
                 $x = 10;
 
             // Y
-            if ($e2g['wmpos2'] == 3)
+            if ($this->e2gThumbCfg['wmpos2'] == 3)
                 $y = $inf[1] - 20;
-            elseif ($e2g['wmpos2'] == 2)
+            elseif ($this->e2gThumbCfg['wmpos2'] == 2)
                 $y = ($inf[1] / 2) - 5;
             else
                 $y = 10;
 
             $text_color = imagecolorallocate($im, 0, 0, 0);
-            imagestring($im, 2, $x - 1, $y, $e2g['wmt'], $text_color);
-            imagestring($im, 2, $x + 1, $y, $e2g['wmt'], $text_color);
-            imagestring($im, 2, $x, $y - 1, $e2g['wmt'], $text_color);
-            imagestring($im, 2, $x, $y + 1, $e2g['wmt'], $text_color);
-            imagestring($im, 2, $x + 1, $y + 1, $e2g['wmt'], $text_color);
-            imagestring($im, 2, $x - 1, $y - 1, $e2g['wmt'], $text_color);
+            imagestring($im, 2, $x - 1, $y, $this->e2gThumbCfg['wmt'], $text_color);
+            imagestring($im, 2, $x + 1, $y, $this->e2gThumbCfg['wmt'], $text_color);
+            imagestring($im, 2, $x, $y - 1, $this->e2gThumbCfg['wmt'], $text_color);
+            imagestring($im, 2, $x, $y + 1, $this->e2gThumbCfg['wmt'], $text_color);
+            imagestring($im, 2, $x + 1, $y + 1, $this->e2gThumbCfg['wmt'], $text_color);
+            imagestring($im, 2, $x - 1, $y - 1, $this->e2gThumbCfg['wmt'], $text_color);
 
             $text_color = imagecolorallocate($im, 255, 255, 255);
-            imagestring($im, 2, $x, $y, $e2g['wmt'], $text_color);
+            imagestring($im, 2, $x, $y, $this->e2gThumbCfg['wmt'], $text_color);
         }
-        elseif ($e2g['wmtype'] == 'image') {
+        elseif ($this->e2gThumbCfg['wmtype'] == 'image') {
 
-            $wmfp = str_replace('../', '', $e2g['wmt']);
+            $wmfp = str_replace('../', '', $this->e2gThumbCfg['wmt']);
             if (!file_exists(realpath($wmfp))) {
                 return 'Water Mark file not found';
             }
@@ -295,18 +293,18 @@ class E2gThumb {
             $wm_h = imageSY($wmi);
 
             // X
-            $len = strlen($e2g['wmt']);
-            if ($e2g['wmpos1'] == 3)
+            $len = strlen($this->e2gThumbCfg['wmt']);
+            if ($this->e2gThumbCfg['wmpos1'] == 3)
                 $x = $inf[0] - 10 - $wm_w;
-            elseif ($e2g['wmpos1'] == 2)
+            elseif ($this->e2gThumbCfg['wmpos1'] == 2)
                 $x = ($inf[0] - $wm_w) / 2;
             else
                 $x = 10;
 
             // Y
-            if ($e2g['wmpos2'] == 3)
+            if ($this->e2gThumbCfg['wmpos2'] == 3)
                 $y = $inf[1] - 10 - $wm_h;
-            elseif ($e2g['wmpos2'] == 2)
+            elseif ($this->e2gThumbCfg['wmpos2'] == 2)
                 $y = ($inf[1] / 2) - $wm_h;
             else
                 $y = 10;

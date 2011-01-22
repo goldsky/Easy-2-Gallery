@@ -2,7 +2,7 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
-<div class="sectionBody"><?php echo htmlspecialchars_decode($lng['plugins_desc']); ?></div>
+<div class="sectionBody"><?php echo htmlspecialchars_decode($this->lng['plugins_desc']); ?></div>
 <div class="tab-pane" id="tabPluginPane">
     <script type="text/javascript">
         tpPlugin = new WebFXTabPane(document.getElementById('tabPluginPane'));
@@ -14,13 +14,13 @@ if (IN_MANAGER_MODE != 'true')
     if (isset($_GET['page']) && $_GET['page'] == 'edit_plugin') {
     ?>
         <div class="tab-page" id="tabPluginEdit">
-            <h2 class="tab"><?php echo $lng['edit']; ?></h2>
+            <h2 class="tab"><?php echo $this->lng['edit']; ?></h2>
             <script type="text/javascript">
                 tpPlugin.addTabPage( document.getElementById( 'tabPluginEdit') );
             </script>
-            <form action="<?php echo $index; ?>&amp;act=update_plugin" method="post">
+            <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=update_plugin" method="post">
             <?php
-            $select_plugins = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_plugins WHERE id=' . $_GET['ssid'];
+            $select_plugins = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins WHERE id=' . $_GET['ssid'];
             $query_plugins = mysql_query($select_plugins);
             if (!$query_plugins)
                 die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_plugins);
@@ -33,27 +33,27 @@ if (IN_MANAGER_MODE != 'true')
                 <input type="hidden" name="plugin_id" value="<?php echo $row['id']; ?>" />
                 <table cellspacing="0" cellpadding="2">
                     <tr>
-                        <td><b><?php echo $lng['name']; ?></b></td>
+                        <td><b><?php echo $this->lng['name']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="name" type="text" size="75" value="<?php echo $row['name']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td valign="top"><b><?php echo $lng['description']; ?></b></td>
+                        <td valign="top"><b><?php echo $this->lng['description']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="description" type="text" size="75" value="<?php echo $row['description']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng['plugin_disabled']; ?></b></td>
+                        <td><b><?php echo $this->lng['plugin_disabled']; ?></b></td>
                         <td valign="top">:</td>
                         <td><input name="disabled" type="checkbox" value="1" <?php echo ($row['disabled'] == 1 ? 'checked="checked" ' : ''); ?>/></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng['index_file']; ?></b></td>
+                        <td><b><?php echo $this->lng['index_file']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="index_file" type="text" size="75" value="<?php echo $row['indexfile']; ?>" /></td>
                     </tr>
                     <tr>
-                        <td valign="top"><b><?php echo $lng['events_system']; ?></b></td>
+                        <td valign="top"><b><?php echo $this->lng['events_system']; ?></b></td>
                         <td valign="top">:</td>
                         <td><ul>
                                 <li>Snippet <span style="color:green;font-style: italic;">(runtime)</span>:
@@ -82,7 +82,7 @@ if (IN_MANAGER_MODE != 'true')
                                     <table border="0">
                                         <tbody>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['header']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['header']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GModHeadScript'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GModHeadScript'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GModHeadScript</td>
@@ -93,17 +93,17 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td>&nbsp;</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['dashboard']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['dashboard']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GDashboardPrerender'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GDashboardPrerender'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GDashboardPrerender</td>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GDashboardRender'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GDashboardRender'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GDashboardRender</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['mgr_files']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['mgr_files']; ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['dir']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['dir']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFolderCreateFormPrerender'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GFolderCreateFormPrerender'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GFolderCreateFormPrerender</td>
@@ -122,7 +122,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFolderDelete'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GFolderDelete'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GFolderDelete</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['file']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['file']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFileUploadFormPrerender'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GFileUploadFormPrerender'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GFileUploadFormPrerender</td>
@@ -141,7 +141,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFileDelete'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GFileDelete'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GFileDelete</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['zip']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['zip']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GZipUploadFormPrerender'); ?>" <?php echo ( in_array($this->_getEventNum('OnE2GZipUploadFormPrerender'), $events) ? 'checked="checked" ' : ''); ?>/> OnE2GZipUploadFormPrerender</td>
@@ -156,9 +156,9 @@ if (IN_MANAGER_MODE != 'true')
                                 </li>
                             </ul>
                             <br />
-                            <input type="submit" value="<?php echo $lng['save']; ?>" /> &nbsp; &nbsp;
-                            <input type="reset" value="<?php echo $lng['reset']; ?>" /> &nbsp; &nbsp;
-                            <input type="button" value="<?php echo $lng['cancel']; ?>" onclick="history.go(-1)" /> &nbsp; &nbsp;
+                            <input type="submit" value="<?php echo $this->lng['save']; ?>" /> &nbsp; &nbsp;
+                            <input type="reset" value="<?php echo $this->lng['reset']; ?>" /> &nbsp; &nbsp;
+                            <input type="button" value="<?php echo $this->lng['cancel']; ?>" onclick="history.go(-1)" /> &nbsp; &nbsp;
                         </td>
                     </tr>
                 </table>
@@ -172,15 +172,15 @@ if (IN_MANAGER_MODE != 'true')
          */ else {
     ?>
             <div class="tab-page" id="tabPluginSettings">
-                <h2 class="tab"><?php echo $lng['settings']; ?></h2>
+                <h2 class="tab"><?php echo $this->lng['settings']; ?></h2>
                 <script type="text/javascript">
                     tpPlugin.addTabPage( document.getElementById( 'tabPluginSettings') );
                 </script>
-                <p><b><?php echo $lng['click_edit']; ?></b></p>
-        <!--                    <form action="<?php echo $index; ?>&amp;act=save_plugin" method="post">-->
+                <p><b><?php echo $this->lng['click_edit']; ?></b></p>
+        <!--                    <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_plugin" method="post">-->
                 <ul>
             <?php
-            $select_plugins = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_plugins ';
+            $select_plugins = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins ';
             $query_plugins = mysql_query($select_plugins);
             if (!$query_plugins)
                 die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_plugins);
@@ -192,11 +192,11 @@ if (IN_MANAGER_MODE != 'true')
             ?>
                     <li>
                 <?php echo ($row['disabled'] == 1 ? '<span class="disabled">' : ''); ?>
-                    <a href="<?php echo $index . '&amp;page=edit_plugin&amp;ssid=' . $row['id']; ?>"title="edit"><b><?php echo $row['name']; ?></b></a>
+                    <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=edit_plugin&amp;ssid=' . $row['id']; ?>"title="edit"><b><?php echo $row['name']; ?></b></a>
                 <?php echo ($row['disabled'] == 1 ? '</span>' : ''); ?>
                     (<?php echo $row['id']; ?>) - <?php echo htmlspecialchars_decode($row['description']); ?>
-                    <br /><i><?php echo $lng['index_file']; ?></i>: <?php echo $row['indexfile']; ?>
-                    <br /><i><?php echo $lng['events_system']; ?></i>:
+                    <br /><i><?php echo $this->lng['index_file']; ?></i>: <?php echo $row['indexfile']; ?>
+                    <br /><i><?php echo $this->lng['events_system']; ?></i>:
                 <?php
                     $event_names = array();
                     $events = @explode(',', $row['events']);
@@ -216,35 +216,35 @@ if (IN_MANAGER_MODE != 'true')
     </div><!--tabPluginSettings-->
     <?php } ?>
         <div class="tab-page" id="tabPluginAdd">
-            <h2 class="tab"><?php echo $lng['add']; ?></h2>
+            <h2 class="tab"><?php echo $this->lng['add']; ?></h2>
             <script type="text/javascript">
                 tpPlugin.addTabPage( document.getElementById( 'tabPluginAdd') );
             </script>
 
-            <form action="<?php echo $index; ?>&amp;act=save_plugin" method="post">
+            <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_plugin" method="post">
                 <table cellspacing="0" cellpadding="2">
                     <tr>
-                        <td><b><?php echo $lng['name']; ?></b></td>
+                        <td><b><?php echo $this->lng['name']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="name" type="text" size="75" /></td>
                     </tr>
                     <tr>
-                        <td valign="top"><b><?php echo $lng['description']; ?></b></td>
+                        <td valign="top"><b><?php echo $this->lng['description']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="description" type="text" size="75" /></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng['plugin_disabled']; ?></b></td>
+                        <td><b><?php echo $this->lng['plugin_disabled']; ?></b></td>
                         <td valign="top">:</td>
                         <td><input name="disabled" type="checkbox" size="75" /></td>
                     </tr>
                     <tr>
-                        <td><b><?php echo $lng['index_file']; ?></b></td>
+                        <td><b><?php echo $this->lng['index_file']; ?></b></td>
                         <td valign="top">:</td>
                         <td> <input name="index_file" type="text" size="75" /></td>
                     </tr>
                     <tr>
-                        <td valign="top"><b><?php echo $lng['events_system']; ?></b></td>
+                        <td valign="top"><b><?php echo $this->lng['events_system']; ?></b></td>
                         <td valign="top">:</td>
                         <td><ul>
                                 <li>Snippet <span style="color:green;font-style: italic;">(runtime)</span>:
@@ -273,7 +273,7 @@ if (IN_MANAGER_MODE != 'true')
                                     <table border="0">
                                         <tbody>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['header']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['header']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GModHeadScript'); ?>" /> OnE2GModHeadScript</td>
@@ -284,17 +284,17 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td>&nbsp;</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['dashboard']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['dashboard']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GDashboardPrerender'); ?>" /> OnE2GDashboardPrerender</td>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GDashboardRender'); ?>" /> OnE2GDashboardRender</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $lng['mgr_files']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;border-top: 1px dotted #ccc;"><?php echo $this->lng['mgr_files']; ?></td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['dir']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['dir']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFolderCreateFormPrerender'); ?>" /> OnE2GFolderCreateFormPrerender</td>
@@ -313,7 +313,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFolderDelete'); ?>" /> OnE2GFolderDelete</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['file']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['file']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFileUploadFormPrerender'); ?>" /> OnE2GFileUploadFormPrerender</td>
@@ -332,7 +332,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GFileDelete'); ?>" /> OnE2GFileDelete</td>
                                             </tr>
                                             <tr>
-                                                <td colspan="2" style="font-weight:bold;"><?php echo $lng['zip']; ?></td>
+                                                <td colspan="2" style="font-weight:bold;"><?php echo $this->lng['zip']; ?></td>
                                             </tr>
                                             <tr>
                                                 <td><input type="checkbox" name="events[]" value="<?php echo $this->_getEventNum('OnE2GZipUploadFormPrerender'); ?>" /> OnE2GZipUploadFormPrerender</td>
@@ -347,8 +347,8 @@ if (IN_MANAGER_MODE != 'true')
                                 </li>
                             </ul>
                             <br />
-                            <input type="submit" value="<?php echo $lng['save']; ?>" /> &nbsp; &nbsp;
-                            <input type="reset" value="<?php echo $lng['reset']; ?>" /> &nbsp; &nbsp;
+                            <input type="submit" value="<?php echo $this->lng['save']; ?>" /> &nbsp; &nbsp;
+                            <input type="reset" value="<?php echo $this->lng['reset']; ?>" /> &nbsp; &nbsp;
                     </td>
                 </tr>
             </table>

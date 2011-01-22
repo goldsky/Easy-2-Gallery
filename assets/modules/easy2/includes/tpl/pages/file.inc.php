@@ -14,7 +14,7 @@ switch ($page) {
 
     case 'edit_dir' :
         if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $lng['id_err'];
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['id_err'];
             header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
             exit();
         }
@@ -43,7 +43,7 @@ switch ($page) {
 
     case 'openexplorer':
         if (isset($_POST['newparent']))
-            header('Location: ' . html_entity_decode($index . '&amp;pid=' . $_POST['newparent']));
+            header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $_POST['newparent']));
         exit();
         break;
 

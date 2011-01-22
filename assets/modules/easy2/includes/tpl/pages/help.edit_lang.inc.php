@@ -36,21 +36,21 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
 
     <h2 style="text-align: right;"><?php echo $_GET['langfile']; ?></h2>
     <hr />
-    <form action="<?php echo $index; ?>&amp;act=save_lang" name="edit_lang" method="post">
+    <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_lang" name="edit_lang" method="post">
         <input type="hidden" name="lang" value="<?php echo $fileFirstName; ?>" />
         <input type="hidden" name="langfile" value="<?php echo $_GET['langfile']; ?>" />
         
         <div>
             <input type="submit" name="submit" value="Save"  />
             <input type="reset" name="reset" value="Reset" />
-            <input type="button" name="cancel" value="Cancel" onclick="document.location.href='<?php echo $index; ?>'" />
+            <input type="button" name="cancel" value="Cancel" onclick="document.location.href='<?php echo $this->e2gModCfg['index']; ?>'" />
         </div>
         <table width="100%" style="background-color:#eee;">
             <tr>
                 <td width="50%">
                     <table cellpadding="2" cellspacing="0" width="100%">
                         <tr>
-                            <td style="font-size: large; font-weight: bold;" nowrap="nowrap"><?php echo $lng['credit_lang_file']; ?></td>
+                            <td style="font-size: large; font-weight: bold;" nowrap="nowrap"><?php echo $this->lng['credit_lang_file']; ?></td>
                             <td style="font-size: large; font-weight: bold;" width="100%">
                                 <input type="text" size="" style="width:98%;" name="<?php echo $engs['credit_lang_file']['key']; ?>"
                                        value="<?php echo $others['credit_lang_file']['value']; ?>" />
@@ -137,7 +137,7 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
             <div>
                 <input type="submit" name="submit" value="Save"  />
                 <input type="reset" name="reset" value="Reset" />
-                <input type="button" name="cancel" value="Cancel" onclick="document.location.href='<?php echo $index; ?>'" />
+                <input type="button" name="cancel" value="Cancel" onclick="document.location.href='<?php echo $this->e2gModCfg['index']; ?>'" />
             </div>
         </form>
 

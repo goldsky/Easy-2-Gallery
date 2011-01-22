@@ -1,30 +1,28 @@
 <?php
 // disabled for:
 // http://modxcms.com/forums/index.php/topic,23177.msg308887.html#msg308887
-// header('content-type: text/html;' . $lng['charset']);
+// header('content-type: text/html;' . $this->lng['charset']);
 // http://modxcms.com/forums/index.php/topic,23177.msg309172.html#msg309172
-// $setlocale = @explode(',', trim(trim($lng['setlocale'], "setlocale("), ')'));
+// $setlocale = @explode(',', trim(trim($this->lng['setlocale'], "setlocale("), ')'));
 // call_user_func_array('setlocale', array(constant(trim($setlocale[0])), trim($setlocale[1])));
 
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-$_t = $this->e2gModCfg['_t'];
+
 $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
 
-// loading the hyperlinks ($e2gPages)
-// require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
-$e2gpg = $this->e2gModCfg['e2gpg'];
-foreach ($e2gPages as $k => $v) {
-    $e2gPage[$v['e2gpg']] = $e2gPages[$k];
+$this->e2gModCfg['e2gpg'] = $this->e2gModCfg['e2gpg'];
+foreach ($this->e2gModCfg['e2gPages'] as $v) {
+    $e2gPage[$v['e2gpg']] = $v;
 }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>        
-        <title>Easy 2 Gallery <?php echo E2G_VERSION; ?> | <?php echo $e2gPage[$e2gpg]['lng']; ?></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $lng['charset']; ?>" />
-        <link rel="stylesheet" type="text/css" href="media/style/<?php echo $_t; ?>/style.css" />
+        <title>Easy 2 Gallery <?php echo E2G_VERSION; ?> | <?php echo $e2gPage[$this->e2gModCfg['e2gpg']]['lng']; ?></title>
+        <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $this->lng['charset']; ?>" />
+        <link rel="stylesheet" type="text/css" href="media/style/<?php echo $this->e2gModCfg['_t']; ?>/style.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo MODX_SITE_URL; ?>assets/libs/highslide/highslide.css" />
         <?php echo $this->plugin('OnE2GModHeadCSSScript'); ?>
@@ -34,26 +32,26 @@ foreach ($e2gPages as $k => $v) {
         <script type="text/javascript">
             //<![CDATA[
             function confirmDelete() {
-                return (confirm("<?php echo $lng['js_delete_confirm']; ?>"));
+                return (confirm("<?php echo $this->lng['js_delete_confirm']; ?>"));
             }
 
             function confirmDeleteFolder() {
-                return (confirm("<?php echo $lng['js_delete_folder_confirm']; ?>"));
+                return (confirm("<?php echo $this->lng['js_delete_folder_confirm']; ?>"));
             }
 
             function ignoreIPAddress() {
-                return (confirm("<?php echo $lng['js_ignore_ip_address_confirm']; ?>"));
+                return (confirm("<?php echo $this->lng['js_ignore_ip_address_confirm']; ?>"));
             }
 
             function unignoreIPAddress() {
-                return (confirm("<?php echo $lng['js_unignore_ip_address_confirm']; ?>"));
+                return (confirm("<?php echo $this->lng['js_unignore_ip_address_confirm']; ?>"));
             }
 
             function addField () {
                 var im = document.getElementById("imFields");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
+                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $this->lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
                 im.appendChild(di);
                 return true;
             }
@@ -62,7 +60,7 @@ foreach ($e2gPages as $k => $v) {
                 var sl = document.getElementById("secondElt");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
+                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $this->lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
                 sl.appendChild(di);
                 return true;
             }
@@ -71,7 +69,7 @@ foreach ($e2gPages as $k => $v) {
                 var pl = document.getElementById("secondElt");
                 var di = document.createElement("DIV");
                 var fi = document.getElementById("firstElt");
-                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
+                di.innerHTML = '<a href="javascript:;" onclick="this.parentNode.parentNode.removeChild(this.parentNode);" style="color:red;text-decoration:none;"><b style="letter-spacing:4px"> &times; <?php echo $this->lng['remove']; ?><\/b><\/a>'+fi.innerHTML;
                 pl.appendChild(di);
                 return true;
             }
@@ -95,7 +93,7 @@ foreach ($e2gPages as $k => $v) {
                 }
                 var imBox = this.document.getElementById("imBox");
                 if ( w == 0 || h == 0 ) {
-                    imBox.innerHTML = '<?php echo $lng['uim_preview_err']; ?>';
+                    imBox.innerHTML = '<?php echo $this->lng['uim_preview_err']; ?>';
                 } else {
                     imBox.innerHTML = '<img src="'+imSrc+'" width="'+w+'" height="'+h+'" alt="" />';
                 }
@@ -106,53 +104,53 @@ foreach ($e2gPages as $k => $v) {
                 if (i==1) {
                     var index=document.forms["topmenu"].newparent.selectedIndex;
                     if (document.forms["topmenu"].newparent.options[index].value != "") {
-                        window.location.href= '<?php echo html_entity_decode($index); ?>&pid='+ document.forms["topmenu"].newparent.options[index].value;
+                        window.location.href= '<?php echo html_entity_decode($this->e2gModCfg['index']); ?>&pid='+ document.forms["topmenu"].newparent.options[index].value;
                     }
                 }
                 if (i=='1b') {
                     document.forms["topmenu"].action=
-                        "<?php echo html_entity_decode($index); ?>&pid=<?php echo $_POST['newparent']; ?>&page=openexplorer";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']); ?>&pid=<?php echo $_POST['newparent']; ?>&page=openexplorer";
                     document.forms["topmenu"].submit();
                 }
                 if (i==2) {
                     var index=document.forms["topmenu"].opentag.selectedIndex;
                     if (document.forms["topmenu"].opentag.options[index].value != "") {
-                        window.location.href= '<?php echo html_entity_decode($index); ?>&tag='+ document.forms["topmenu"].opentag.options[index].value;
+                        window.location.href= '<?php echo html_entity_decode($this->e2gModCfg['index']); ?>&tag='+ document.forms["topmenu"].opentag.options[index].value;
                     }
                 }
                 if (i==3) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=show_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=show_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==4) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=hide_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=hide_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==5) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=delete_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=delete_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==6) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=download_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=download_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==7) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=move_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=move_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==8) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=tag_add_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_add_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==9) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($index) . '&act=tag_remove_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_remove_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
             }
@@ -160,17 +158,17 @@ foreach ($e2gPages as $k => $v) {
             function submitcomment(i) {
                 if (i==1) {
                     document.forms["listComments"].action=
-                        "<?php echo html_entity_decode($index) . '&act=com_list_actions'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=com_list_actions'; ?>";
                     document.forms["listComments"].submit();
                 }
                 if (i==2) {
                     document.forms["listHiddenComments"].action=
-                        "<?php echo html_entity_decode($index) . '&act=com_list_actions'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=com_list_actions'; ?>";
                     document.forms["listHiddenComments"].submit();
                 }
                 if (i==3) {
                     document.forms["fileComments"].action=
-                        "<?php echo html_entity_decode($index) . '&act=com_list_actions'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=com_list_actions'; ?>";
                     document.forms["fileComments"].submit();
                 }
             }
@@ -178,17 +176,17 @@ foreach ($e2gPages as $k => $v) {
             function savecomment(i) {
                 if (i==1) {
                     document.forms["listComments"].action=
-                        "<?php echo html_entity_decode($index . $filtered) . '&act=com_save'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index'] . $filtered) . '&act=com_save'; ?>";
                     document.forms["listComments"].submit();
                 }
                 if (i==2) {
                     document.forms["listHiddenComments"].action=
-                        "<?php echo html_entity_decode($index) . '&act=com_save'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=com_save'; ?>";
                     document.forms["listHiddenComments"].submit();
                 }
                 if (i==3) {
                     document.forms["fileComments"].action=
-                        "<?php echo html_entity_decode($index) . '&page=comments&file_id=' . $_GET['file_id'] . '&pid=' . $_GET['pid'] . '&act=com_save'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&page=comments&file_id=' . $_GET['file_id'] . '&pid=' . $_GET['pid'] . '&act=com_save'; ?>";
                     document.forms["fileComments"].submit();
                 }
             }
@@ -217,13 +215,38 @@ foreach ($e2gPages as $k => $v) {
                     return xhr;
             }
 
+            function synchro(path, pid) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("thumbnail");
+                if (!container) {
+                    var container = document.getElementById("list");
+                }
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
+                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
+                url += "<?php echo isset($_GET['tag']) ? '&getpath=' . $_GET['tag'] : ''; ?>";
+                url += "&pid="+pid;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                        } else {
+                            container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
             function viewDefaultThumbnails (path, pid) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
-//                url += "<?php echo isset($_GET['pid']) ? '&pid=' . $_GET['pid'] : ''; ?>";
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -373,7 +396,7 @@ foreach ($e2gPages as $k => $v) {
             }
             //]]>
         </script>
-        <script type="text/javascript" src="<?php echo MODX_SITE_URL . $e2g['tinymcefolder']; ?>/tiny_mce.js"></script>
+        <script type="text/javascript" src="<?php echo MODX_SITE_URL . $this->e2g['tinymcefolder']; ?>/tiny_mce.js"></script>
         <script type="text/javascript">
             tinyMCE.init({
                 mode : "textareas",
@@ -434,7 +457,7 @@ foreach ($e2gPages as $k => $v) {
                 <span class="navigationTitle">Menu</span>
                 <span class="navigationTree">
                     <?php
-                    foreach ($e2gPages as $k => $v) {
+                    foreach ($this->e2gModCfg['e2gPages'] as $k => $v) {
                         // $userRole == '1' is a Supreme Administrator role
                         if ($userRole == '1'
                                 || in_array($v['access'], $userPermissionsArray)
@@ -442,12 +465,12 @@ foreach ($e2gPages as $k => $v) {
                         ) {
                     ?>
                             <span class="navigationBranch">
-                        <?php if ($e2gpg != $v['e2gpg']) {
+                        <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
                         ?>
                                 <a href="<?php echo $v['link']; ?>">
                             <?php } ?>
-                            <span<?php echo (($e2gpg == $v['e2gpg']) ? ' class="active"' : ''); ?>> <?php echo $v['lng']; ?></span>
-                            <?php if ($e2gpg != $v['e2gpg']) {
+                            <span<?php echo (($this->e2gModCfg['e2gpg'] == $v['e2gpg']) ? ' class="active"' : ''); ?>> <?php echo $v['lng']; ?></span>
+                            <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
                             ?>
                             </a>
                         <?php } ?>
@@ -467,11 +490,11 @@ foreach ($e2gPages as $k => $v) {
                 <?php
                     // $userRole == '1' is a Supreme Administrator role
                     if ($userRole == '1'
-                            || in_array($e2gPage[$e2gpg]['access'], $userPermissionsArray)
-                            || $e2gPage[$e2gpg]['title'] == 'dashboard'
+                            || in_array($e2gPage[$this->e2gModCfg['e2gpg']]['access'], $userPermissionsArray)
+                            || $e2gPage[$this->e2gModCfg['e2gpg']]['title'] == 'dashboard'
                     ) {
                 ?>
-                        <div class="pageTitle"><span><?php echo $e2gPage[$e2gpg]['lng']; ?></span></div>
+                        <div class="pageTitle"><span><?php echo $e2gPage[$this->e2gModCfg['e2gpg']]['lng']; ?></span></div>
                 <?php
                     }
                 ?>
@@ -479,10 +502,10 @@ foreach ($e2gPages as $k => $v) {
                 <?php
                     // $userRole == '1' is a Supreme Administrator role
                     if ($userRole == '1'
-                            || in_array($e2gPage[$e2gpg]['access'], $userPermissionsArray)
-                            || $e2gPage[$e2gpg]['title'] == 'dashboard'
+                            || in_array($e2gPage[$this->e2gModCfg['e2gpg']]['access'], $userPermissionsArray)
+                            || $e2gPage[$this->e2gModCfg['e2gpg']]['title'] == 'dashboard'
                     ) {
-                        include_once $e2gPage[$e2gpg]['file'];
+                        include_once $e2gPage[$this->e2gModCfg['e2gpg']]['file'];
                     }
                 ?>
                 </div>

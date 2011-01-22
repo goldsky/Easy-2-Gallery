@@ -7,7 +7,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             tpOption = new WebFXTabPane(document.getElementById('tabOptionPane'));
         </script>
         <div class="tab-page" id="tabOptionGeneral">
-            <h2 class="tab"><?php echo $lng['general'] ; ?></h2>
+            <h2 class="tab"><?php echo $this->lng['general'] ; ?></h2>
             <script type="text/javascript">
                 tpOption.addTabPage( document.getElementById( 'tabOptionGeneral') );
             </script>
@@ -18,7 +18,7 @@ if (IN_MANAGER_MODE != 'true') die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Ple
             </ul>
         </div>
         <div class="tab-page" id="tabOptionSettings">
-            <h2 class="tab"><?php echo $lng['settings'] ; ?></h2>
+            <h2 class="tab"><?php echo $this->lng['settings'] ; ?></h2>
             <script type="text/javascript">
                 tpOption.addTabPage( document.getElementById( 'tabOptionSettings') );
             </script>

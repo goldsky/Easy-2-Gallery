@@ -6,7 +6,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 
 $parent = array();
 // Description of the current directory
-$qdesc = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
+$qdesc = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
         . 'WHERE cat_id = ' . $parentId;
 
 $resultdesc = mysql_query($qdesc);
@@ -28,7 +28,7 @@ mysql_free_result($resultdesc);
         <td><?php echo $parent['cat_id']; ?></td>
     </tr>
     <tr>
-        <td valign="top"><b><?php echo $lng['path']; ?></b></td>
+        <td valign="top"><b><?php echo $this->lng['path']; ?></b></td>
         <td valign="top">:</td>
         <td>
             <?php
@@ -48,39 +48,39 @@ mysql_free_result($resultdesc);
             // signature of non recorded directory = &path in the address bar
             if (!isset($_GET['path'])) : ?>
                 <tr>
-                    <td valign="top"><b><?php echo $lng['visible']; ?></b></td>
+                    <td valign="top"><b><?php echo $this->lng['visible']; ?></b></td>
                     <td valign="top">:</td>
                     <td>
             <?php
                 if ($parent['cat_visible'] == 1)
-                    echo htmlspecialchars_decode($lng['visible'], ENT_QUOTES);
+                    echo htmlspecialchars_decode($this->lng['visible'], ENT_QUOTES);
                 else
-                    echo '<span style="color:red;font-weight:bold;font-style:italic;">' . htmlspecialchars_decode($lng['hidden'], ENT_QUOTES) . '</span>';
+                    echo '<span style="color:red;font-weight:bold;font-style:italic;">' . htmlspecialchars_decode($this->lng['hidden'], ENT_QUOTES) . '</span>';
             ?>
             </td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['enter_new_alias']; ?></b></td>
+            <td valign="top"><b><?php echo $this->lng['enter_new_alias']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo $parent['cat_alias']; ?></td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['summary']; ?></b></td>
+            <td valign="top"><b><?php echo $this->lng['summary']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo htmlspecialchars_decode($parent['cat_summary'], ENT_QUOTES); ?></td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['tag']; ?></b></td>
+            <td valign="top"><b><?php echo $this->lng['tag']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo $this->createTagLinks($parent['cat_tag']); ?></td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['description']; ?></b></td>
+            <td valign="top"><b><?php echo $this->lng['description']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo htmlspecialchars_decode($parent['cat_description'], ENT_QUOTES); ?></td>
         </tr>
         <tr>
-            <td valign="top"><b><?php echo $lng['redirect_link']; ?></b></td>
+            <td valign="top"><b><?php echo $this->lng['redirect_link']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo $parent['cat_redirect_link']; ?></td>
         </tr><?php endif; ?>
@@ -98,7 +98,7 @@ mysql_free_result($resultdesc);
                     case 'thumbnails':
                         if (!isset($_GET['path'])): ?>
                             <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
-                            echo $lng['select_all'];
+                            echo $this->lng['select_all'];
                         endif;
     ?>
                         <div id="thumbnail" class="e2g_wrapper"></div>

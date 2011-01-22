@@ -8,18 +8,18 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $index; ?>">
-            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $lng['back']; ?>
+        <a href="<?php echo $this->e2gModCfg['index']; ?>">
+            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
         </a>
     </li>
 </ul>
 
 <table cellspacing="2" cellpadding="0">
     <tr>
-        <td valign="top"><span class="h2title"><?php echo $lng['tag']; ?></span></td>
+        <td valign="top"><span class="h2title"><?php echo $this->lng['tag']; ?></span></td>
         <td valign="top">:</td>
         <td>
-            <a href="<?php echo $index; ?>&amp;tag=<?php echo $tag; ?>"><?php echo $tag; ?></a>
+            <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;tag=<?php echo $tag; ?>"><?php echo $tag; ?></a>
         </td>
     </tr>
 </table>
@@ -37,7 +37,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
         case 'thumbnails':
             if (!isset($_GET['path'])): ?>
                 <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
-                echo $lng['select_all'];
+                echo $this->lng['select_all'];
             endif;
     ?>
             <div id="thumbnail" class="e2g_wrapper"></div>

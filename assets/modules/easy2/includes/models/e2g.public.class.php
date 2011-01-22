@@ -69,9 +69,7 @@ class E2gPub { // public/public class
      * @return string returns the encoding
      */
     public function e2gEncode($text, $callback=FALSE) {
-        $e2gEncode = $this->e2gPubCfg['e2g_encode'];
-
-        if ($e2gEncode == 'none') {
+        if ($this->e2gPubCfg['e2g_encode'] == 'none') {
             if ($callback == FALSE) {
                 $convertedText = $text;
             }
@@ -86,7 +84,7 @@ class E2gPub { // public/public class
             return $convertedText;
         }
 
-        if ($e2gEncode == 'UTF-8') {
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8') {
             if ($callback == FALSE) {
                 $convertedText = utf8_encode($text);
             }
@@ -107,7 +105,7 @@ class E2gPub { // public/public class
          * Using the class from <br />
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
-        if ($e2gEncode == 'UTF-8 (Rin)') {
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)') {
 
             $this->loadUtfRin();
 
@@ -137,20 +135,18 @@ class E2gPub { // public/public class
      * @return string returns the decoding
      */
     public function e2gDecode($text, $callback=FALSE) {
-        $e2gEncode = $this->e2gPubCfg['e2g_encode'];
-
-        if ($e2gEncode == 'none') {
+        if ($this->e2gPubCfg['e2g_encode'] == 'none') {
             return $text;
         }
-        if ($e2gEncode == 'UTF-8') {
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8') {
             return utf8_decode($text);
         }
         /**
          * Using the class from <br />
          * http://forum.dklab.ru/viewtopic.php?p=91015#91015
          */
-        if ($e2gEncode == 'UTF-8 (Rin)') {
-            
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)') {
+
             $this->loadUtfRin();
 
             $mbDetectEncoding = mb_detect_encoding($text);
@@ -171,7 +167,7 @@ class E2gPub { // public/public class
             }
             else
                 return $text;
-        } // if ($e2gEncode == 'UTF-8 (Rin)')
+        } // if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)')
     }
 
     /**
@@ -181,13 +177,10 @@ class E2gPub { // public/public class
      * @return mixed  the directory's data in an array
      */
     public function getDirInfo($dirId, $field) {
-        $modx = $this->modx;
-
         $dirInfo = array();
 
-        $q = 'SELECT ' . $field . ' FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs '
-                . 'WHERE cat_id=' . $dirId . ' '
-        ;
+        $q = 'SELECT ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE cat_id=' . $dirId . ' ';
 
         if (!($res = mysql_query($q)))
             return ('Wrong field.');
@@ -207,13 +200,10 @@ class E2gPub { // public/public class
      * @return mixed  the file's data in an array
      */
     public function getFileInfo($fileId, $field) {
-        $modx = $this->modx;
-
         $fileInfo = array();
 
-        $q = 'SELECT ' . $field . ' FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE id=' . $fileId . ' '
-        ;
+        $q = 'SELECT ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+                . 'WHERE id=' . $fileId . ' ';
 
         if (!($res = mysql_query($q)))
             return ('Wrong field.');
@@ -250,12 +240,10 @@ class E2gPub { // public/public class
      * @param string $filename the filename
      */
     public function validFile($filename) {
-        $e2gDebug = $this->e2gPubCfg['e2g_debug'];
-
         $f = $this->basenameSafe($filename);
         $f = $this->e2gEncode($f);
         if ($this->validFolder($filename)) {
-            if ($e2gDebug == 1) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
                 echo __LINE__ . ' : <b style="color:red;">' . $filename . '</b> is not a file, it\'s a valid folder.';
             }
             return FALSE;
@@ -269,26 +257,26 @@ class E2gPub { // public/public class
                     'image/png' => TRUE
                 );
                 if (!empty($size["mime"]) && $allowedExt[$size["mime"]] && $fp) {
-                    if ($e2gDebug == 1) {
+                    if ($this->e2gPubCfg['e2g_debug'] == 1) {
                         $fileInfo = 'Filename <b style="color:red;">' . $f . '</b> is a valid image file: ' . $size["mime"] . ' - ' . $size[3];
                     }
                     else
                         return TRUE;
                 } else {
-                    if ($e2gDebug == 1)
+                    if ($this->e2gPubCfg['e2g_debug'] == 1)
                         $fileInfo = 'Filename <b style="color:red;">' . $f . '</b> is an invalid image file: ' . $size[2] . ' - ' . $size[3];
                     else {
                         return FALSE;
                     }
                 }
             } else {
-                if ($e2gDebug == 1)
+                if ($this->e2gPubCfg['e2g_debug'] == 1)
                     $fileInfo .= 'Filename <b style="color:red;">' . $f . '</b> is NOT exists.<br />';
                 else {
                     return FALSE;
                 }
             }
-            if ($e2gDebug == 1)
+            if ($this->e2gPubCfg['e2g_debug'] == 1)
                 return $fileInfo;
             else
                 return TRUE;
@@ -303,16 +291,14 @@ class E2gPub { // public/public class
      * @param string $foldername the folder's name
      */
     public function validFolder($foldername) {
-        $e2gDebug = $this->e2gPubCfg['e2g_debug'];
-
         $openFolder = @opendir($foldername);
         if (!$openFolder) {
-            if ($e2gDebug == 1) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
                 echo __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.';
             }
             return FALSE;
         } else {
-            if ($e2gDebug == 1) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
                 echo '<h2>' . $foldername . '</h2>';
                 echo '<ul>';
                 $file = array();
@@ -330,14 +316,14 @@ class E2gPub { // public/public class
             }
             closedir($openFolder);
         }
-        if ($e2gDebug == 1) {
+        if ($this->e2gPubCfg['e2g_debug'] == 1) {
             echo __LINE__ . ' : <br /><b style="color:red;">' . $foldername . '</b> is a valid folder.';
             return FALSE;
         }
 
         return TRUE;
     }
-
+    
     /**
      * Replace the basename function with this to grab non-unicode character.
      * @link http://drupal.org/node/278425#comment-2571500
@@ -389,15 +375,11 @@ class E2gPub { // public/public class
      * @return string   Template's content
      */
     public function getTpl($tpl) {
-        $modx = $this->modx;
-        // this parameter convert $tpl to be a path
-        $tplCfg = $this->e2gPubCfg[$tpl];
-
-        if (file_exists(realpath($tplCfg))) {
-            $tplContent = file_get_contents($tplCfg);
+        if (file_exists(realpath($this->e2gPubCfg[$tpl]))) {
+            $tplContent = file_get_contents($this->e2gPubCfg[$tpl]);
             return $tplContent;
-        } elseif (!empty($modx->chunkCache[$tplCfg])) {
-            $tplContent = $modx->chunkCache[$tplCfg];
+        } elseif (!empty($this->modx->chunkCache[$this->e2gPubCfg[$tpl]])) {
+            $tplContent = $this->modx->chunkCache[$this->e2gPubCfg[$tpl]];
             return $tplContent;
         } else {
             echo 'Template ' . $tpl . ' is not found!<br />';
@@ -413,8 +395,6 @@ class E2gPub { // public/public class
      * @return mixed    if TRUE, will return the indexfile. Otherwise this will return FALSE.
      */
     public function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
-        $modx = $this->modx;
-
         if (!$e2gEvtName)
             return FALSE;
         if (!file_exists(realpath(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php')))
@@ -429,8 +409,8 @@ class E2gPub { // public/public class
             }
         }
 
-        $selectIndexFile = 'SELECT p.indexfile FROM ' . $modx->db->config['table_prefix'] . 'easy2_plugins p '
-                . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_plugin_events e '
+        $selectIndexFile = 'SELECT p.indexfile FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins p '
+                . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'easy2_plugin_events e '
                 . 'ON p.id=e.pluginid '
                 . 'WHERE ';
         if ($e2gPluginName != NULL)
@@ -476,18 +456,14 @@ class E2gPub { // public/public class
      * @return string image's source
      */
     public function folderImg($gid, $gdir) {
-        $modx = $this->modx;
-        $catThumbOrderBy = $this->e2gPubCfg['cat_thumb_orderby'];
-        $catThumbOrder = $this->e2gPubCfg['cat_thumb_order'];
-
         // http://modxcms.com/forums/index.php/topic,23177.msg273448.html#msg273448
         // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
         $selectFiles = 'SELECT F.* '
-                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_files F '
+                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files F '
                 . 'WHERE F.dir_id IN ('
                 . 'SELECT A.cat_id FROM '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
+                . $this->modx->db->config['table_prefix'] . 'easy2_dirs A, '
+                . $this->modx->db->config['table_prefix'] . 'easy2_dirs B '
                 . 'WHERE ('
                 . 'B.cat_id=' . $gid . ' '
                 . 'AND A.cat_left >= B.cat_left '
@@ -499,10 +475,10 @@ class E2gPub { // public/public class
                 . ') '
                 . 'AND F.status = 1 '
         ;
-        if ($catThumbOrderBy == 'random') {
+        if ($this->e2gPubCfg['cat_thumb_orderby'] == 'random') {
             $selectFiles .= 'ORDER BY rand() ';
         } else {
-            $selectFiles .= 'ORDER BY F.' . $catThumbOrderBy . ' ' . $catThumbOrder . ' ';
+            $selectFiles .= 'ORDER BY F.' . $this->e2gPubCfg['cat_thumb_orderby'] . ' ' . $this->e2gPubCfg['cat_thumb_order'] . ' ';
         }
 
         $queryFiles = mysql_query($selectFiles);
@@ -554,11 +530,9 @@ class E2gPub { // public/public class
      * @return string
      */
     public function getPath($dirId, $option='cat_name', $format='string') {
-        $modx = $this->modx;
-
         $selectDir = 'SELECT A.parent_id, A.cat_id,A.cat_name,A.cat_alias '
-                . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_dirs A, '
-                . $modx->db->config['table_prefix'] . 'easy2_dirs B '
+                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs A, '
+                . $this->modx->db->config['table_prefix'] . 'easy2_dirs B '
                 . 'WHERE B.cat_id=' . $dirId . ' '
                 . 'AND B.cat_left BETWEEN A.cat_left AND A.cat_right '
                 . 'ORDER BY A.cat_left ASC '

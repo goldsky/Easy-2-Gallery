@@ -141,6 +141,13 @@ if (is_dir(E2G_MODULE_PATH . 'install')) {
     return require_once E2G_MODULE_PATH . 'install/index.php';
 }
 
+if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php'))) {
+    require_once E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+    $e2gPages = $e2gModCfg['e2gPages'];
+} else {
+    return 'Missing pages configuration';
+}
+        
 /**
  * EXECUTE MODULE
  */
@@ -160,16 +167,13 @@ if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
 
 if (class_exists('E2gPub') && class_exists('E2gMod')) {
     $e2gModule = new E2gMod($modx, $e2gModCfg, $e2g, $lng);
-    $e2gModule->e2gpub_cfg = $e2gModCfg;
-    $e2gModule->e2gpub_e2g = $e2g;
-    $e2gModule->e2gpub_lng = $lng;
 
     if ($_SESSION['saveE2gSettings']) {
         $e2gModule->saveE2gSettings($e2g);
         $_SESSION['saveE2gSettings'] = false;
     }
 
-    $output = $e2gModule->explore($e2g);
+    $output = $e2gModule->explore();
 }
 
 return $output;

@@ -7,42 +7,42 @@ if (IN_MANAGER_MODE != 'true')
         tpHelp = new WebFXTabPane( document.getElementById( 'tabHelpPane' ) );
     </script>
     <div class="tab-page" id="tabHelpParameters">
-        <h2 class="tab"><?php echo $lng['help_params_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['help_params_title']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpParameters' ) );
         </script>
-        <?php echo htmlspecialchars_decode($lng['help_params_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_params_content'], ENT_QUOTES); ?>
     </div>
     <div class="tab-page" id="tabHelpTemplates">
-        <h2 class="tab"><?php echo $lng['help_tpl_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['help_tpl_title']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpTemplates' ) );
         </script>
-        <?php echo htmlspecialchars_decode($lng['help_tpl_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_tpl_content'], ENT_QUOTES); ?>
     </div>
     <div class="tab-page" id="tabHelpSlideshows">
-        <h2 class="tab"><?php echo $lng['help_slideshow_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['help_slideshow_title']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpSlideshows' ) );
         </script>
-        <?php echo htmlspecialchars_decode($lng['help_slideshow_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_slideshow_content'], ENT_QUOTES); ?>
     </div>
     <div class="tab-page" id="tabHelpPlugins">
-        <h2 class="tab"><?php echo $lng['help_plugins_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['help_plugins_title']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpPlugins' ) );
         </script>
-        <?php echo htmlspecialchars_decode($lng['help_plugins_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_plugins_content'], ENT_QUOTES); ?>
     </div>
     <div class="tab-page" id="tabHelpAdvance">
-        <h2 class="tab"><?php echo $lng['help_advance_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['help_advance_title']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpAdvance' ) );
         </script>
-        <?php echo htmlspecialchars_decode($lng['help_advance_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_advance_content'], ENT_QUOTES); ?>
     </div>
     <div class="tab-page" id="tabHelpTranslation">
-        <h2 class="tab"><?php echo $lng['translation']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['translation']; ?></h2>
         <script type="text/javascript">
             tpHelp.addTabPage( document.getElementById( 'tabHelpTranslation' ) );
         </script>
@@ -59,8 +59,8 @@ if (IN_MANAGER_MODE != 'true')
                                     $ext = end(@explode('.', $file));
                                     if ($ext != 'php')
                                         continue;
-//                                echo '<li><a href="'.$index.'&amp;page=edit_lang&amp;lang='.$xpldfilename[0].'" >'.$file.'</a></li>';
-                                    echo '<li><a href="' . $index . '&amp;page=edit_lang&amp;langfile=' . $file . '" >' . $file . '</a></li>';
+//                                echo '<li><a href="'.$this->e2gModCfg['index'].'&amp;page=edit_lang&amp;lang='.$xpldfilename[0].'" >'.$file.'</a></li>';
+                                    echo '<li><a href="' . $this->e2gModCfg['index'] . '&amp;page=edit_lang&amp;langfile=' . $file . '" >' . $file . '</a></li>';
                                 }
                                 closedir($dh);
                             }
@@ -96,10 +96,10 @@ if (IN_MANAGER_MODE != 'true')
                         <p>&nbsp;</p>
                     </div>
                     <div class="tab-page" id="tabHelpInfo">
-                        <h2 class="tab"><?php echo $lng['help_moreinfo_title']; ?></h2>
+                        <h2 class="tab"><?php echo $this->lng['help_moreinfo_title']; ?></h2>
                         <script type="text/javascript">
                             tpHelp.addTabPage( document.getElementById( 'tabHelpInfo' ) );
                         </script>
-        <?php echo htmlspecialchars_decode($lng['help_moreinfo_content'], ENT_QUOTES); ?>
+        <?php echo htmlspecialchars_decode($this->lng['help_moreinfo_content'], ENT_QUOTES); ?>
     </div>
 </div>

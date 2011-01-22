@@ -1,14 +1,14 @@
 <?php
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
-$filesLink = $e2gPages['files']['link'];
+$filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
 ?>
 <div class="tab-pane" id="tabCommentsMgrPane">
     <script type="text/javascript">
         tpCommentsMgr = new WebFXTabPane(document.getElementById('tabCommentsMgrPane'));
     </script>
     <div class="tab-page" id="tabAllComments">
-        <h2 class="tab"><?php echo $lng['comments_all_title']; ?></h2>
+        <h2 class="tab"><?php echo $this->lng['comments_all_title']; ?></h2>
         <script type="text/javascript">
             tpCommentsMgr.addTabPage( document.getElementById( 'tabAllComments') );
         </script>
@@ -31,34 +31,34 @@ $filesLink = $e2gPages['files']['link'];
                                     <td colspan="3">
                                         <!-- Table headers -->
                                         <input type="checkbox" onclick="selectAllComments(this.checked); void(0);" style="border:0;" />
-                                    <?php echo $lng['select_all']; ?>&nbsp;&nbsp; | &nbsp;
+                                    <?php echo $this->lng['select_all']; ?>&nbsp;&nbsp; | &nbsp;
                                     <?php
-                                    echo (!$_GET['filter'] ? '<b>' : '<a href="' . $index . '" style="text-decoration: underline;">');
-                                    echo $lng['all'];
+                                    echo (!$_GET['filter'] ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '" style="text-decoration: underline;">');
+                                    echo $this->lng['all'];
                                     echo (!$_GET['filter'] ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_approved' ? '<b>' : '<a href="' . $index . '&amp;filter=comments_approved" style="text-decoration: underline;">');
-                                    echo $lng['approved'];
+                                    echo ($_GET['filter'] == 'comments_approved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_approved" style="text-decoration: underline;">');
+                                    echo $this->lng['approved'];
                                     echo ($_GET['filter'] == 'comments_approved' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_unapproved' ? '<b>' : '<a href="' . $index . '&amp;filter=comments_unapproved" style="text-decoration: underline;">');
-                                    echo $lng['approved_not'];
+                                    echo ($_GET['filter'] == 'comments_unapproved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_unapproved" style="text-decoration: underline;">');
+                                    echo $this->lng['approved_not'];
                                     echo ($_GET['filter'] == 'comments_unapproved' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_visible' ? '<b>' : '<a href="' . $index . '&amp;filter=comments_visible" style="text-decoration: underline;">');
-                                    echo $lng['visible'];
+                                    echo ($_GET['filter'] == 'comments_visible' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_visible" style="text-decoration: underline;">');
+                                    echo $this->lng['visible'];
                                     echo ($_GET['filter'] == 'comments_visible' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_hidden' ? '<b>' : '<a href="' . $index . '&amp;filter=comments_hidden" style="text-decoration: underline;">');
-                                    echo $lng['hidden'];
+                                    echo ($_GET['filter'] == 'comments_hidden' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_hidden" style="text-decoration: underline;">');
+                                    echo $this->lng['hidden'];
                                     echo ($_GET['filter'] == 'comments_hidden' ? '</b>' : '</a>');
                                     ?>
                                 </td>
@@ -68,10 +68,10 @@ $filesLink = $e2gPages['files']['link'];
                                      * The comment rows
                                      */
                                     $selectComments = 'SELECT c.*, f.filename, f.dir_id, i.ign_ip_address '
-                                            . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_comments AS c '
-                                            . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_files AS f '
+                                            . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments AS c '
+                                            . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'easy2_files AS f '
                                             . 'ON c.file_id=f.id '
-                                            . 'LEFT JOIN ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip AS i '
+                                            . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip AS i '
                                             . 'ON i.ign_ip_address=c.ip_address ';
                                     if (isset($_GET['filter'])) {
                                         $selectComments .= 'WHERE ';
@@ -93,7 +93,7 @@ $filesLink = $e2gPages['files']['link'];
                                     $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
                                     $rowNum = 0; // only for row coloring
                                     while ($l = mysql_fetch_array($queryComments, MYSQL_ASSOC)) {
-                                        $filePath = str_replace('%2F', '/', rawurlencode($gdir . $path['string'] . $l['filename']));
+                                        $filePath = str_replace('%2F', '/', rawurlencode($this->e2gModCfg['gdir'] . $path['string'] . $l['filename']));
                             ?>
                                         <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                                             <td valign="top" width="20">
@@ -104,13 +104,13 @@ $filesLink = $e2gPages['files']['link'];
                                     ?>
                                             <a href="<?php echo $filesLink; ?>&amp;pid=<?php echo $l['dir_id']; ?>&amp;page=openexplorer"><?php echo $path['string']; ?></a><br />
                                     <?php } ?>
-                                        <a href="<?php echo $index . $filtered; ?>&amp;page=comments&amp;file_id=<?php echo $l['file_id']; ?>&amp;pid=<?php echo $l['dir_id']; ?>">
+                                        <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;page=comments&amp;file_id=<?php echo $l['file_id']; ?>&amp;pid=<?php echo $l['dir_id']; ?>">
                                             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/comments.png" width="16" height="16"
-                                                 alt="<?php echo $lng['comments']; ?>" title="<?php echo $lng['comments']; ?>" border="0" />
+                                                 alt="<?php echo $this->lng['comments']; ?>" title="<?php echo $this->lng['comments']; ?>" border="0" />
                                         </a>
                                         <a href="<?php echo $filesLink; ?>&amp;page=edit_file&amp;file_id=<?php echo $l['file_id']; ?>&amp;pid=<?php echo $l['dir_id']; ?>">
                                             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/picture_edit.png" width="16" height="16"
-                                                 alt="<?php echo $lng['edit']; ?>" title="<?php echo $lng['edit']; ?>" border="0" />
+                                                 alt="<?php echo $this->lng['edit']; ?>" title="<?php echo $this->lng['edit']; ?>" border="0" />
                                         </a>
                                         <b>
                                             <a href="javascript:void(0)" onclick="imPreview2('<?php echo $filePath; ?>', <?php echo $rowNum; ?>);">
@@ -128,7 +128,7 @@ $filesLink = $e2gPages['files']['link'];
                                             if ($l['ign_ip_address']) {
                                         ?>
                                                 <a href="<?php
-                                                echo $index
+                                                echo $this->e2gModCfg['index']
                                                 . $filtered
                                                 . '&amp;page=comments'
                                                 . '&amp;act=unignore_ip'
@@ -137,12 +137,12 @@ $filesLink = $e2gPages['files']['link'];
                                         ?>"
                                                 onclick="return unignoreIPAddress();">
                                                  <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/flag_green.gif" border="0"
-                                                      alt="<?php echo $lng['unignore']; ?>" title="<?php echo $lng['unignore']; ?>" />
+                                                      alt="<?php echo $this->lng['unignore']; ?>" title="<?php echo $this->lng['unignore']; ?>" />
                                              </a>
                                         <?php } else {
                                         ?>
                                                 <a href="<?php
-                                                echo $index
+                                                echo $this->e2gModCfg['index']
                                                 . $filtered
                                                 . '&amp;act=ignore_ip'
                                                 . '&amp;file_id=' . $l['file_id']
@@ -153,7 +153,7 @@ $filesLink = $e2gPages['files']['link'];
                                         ?>"
                                                 onclick="return ignoreIPAddress();">
                                                  <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/flag_red.gif" border="0"
-                                                      alt="<?php echo $lng['ignore']; ?>" title="<?php echo $lng['ignore']; ?>" />
+                                                      alt="<?php echo $this->lng['ignore']; ?>" title="<?php echo $this->lng['ignore']; ?>" />
                                              </a>
                                         <?php } ?> )
                                         </div>
@@ -165,11 +165,11 @@ $filesLink = $e2gPages['files']['link'];
                                              * The comment's information
                                              */
                                             echo $l['date_added'];
-                                            echo ' | ' . ($l['approved'] == 1 ? '<span style="color:green;">' . $lng['approved'] . '</span>' : '<span style="color:red;">' . $lng['approved_not'] . '</span>');
-                                            echo ' | ' . ($l['status'] == 1 ? '<span style="color:green;">' . $lng['visible'] . '</span>' : '<span style="color:red;">' . $lng['hidden'] . '</span>');
+                                            echo ' | ' . ($l['approved'] == 1 ? '<span style="color:green;">' . $this->lng['approved'] . '</span>' : '<span style="color:red;">' . $this->lng['approved_not'] . '</span>');
+                                            echo ' | ' . ($l['status'] == 1 ? '<span style="color:green;">' . $this->lng['visible'] . '</span>' : '<span style="color:red;">' . $this->lng['hidden'] . '</span>');
                                             if ($l['date_edited'] != null || $l['date_edited'] != '') {
                                                 echo ' | edited: ' . $l['date_edited'];
-                                                $editor = $modx->getLoginUserName($l['edited_by']);
+                                                $editor = $this->modx->getLoginUserName($l['edited_by']);
                                                 echo ', by: ' . $editor;
                                             }
                                             ?>
@@ -193,26 +193,26 @@ $filesLink = $e2gPages['files']['link'];
                                              */
                                             if (isset($_GET['act']) && $_GET['act'] == 'com_edit' && $_GET['comid'] == $l['id']) {
                                             ?>
-                                                <a href="javascript:void(0)" onclick="savecomment(1)"><?php echo $lng['save']; ?></a> |
-                                                <a href="javascript:history.go(-1)"><?php echo $lng['cancel']; ?></a>
+                                                <a href="javascript:void(0)" onclick="savecomment(1)"><?php echo $this->lng['save']; ?></a> |
+                                                <a href="javascript:history.go(-1)"><?php echo $this->lng['cancel']; ?></a>
                                             <?php
                                             }
                                             if (!isset($_GET['act'])) {
                                                 if ($l['approved'] != '1') {
                                             ?>
-                                                    <a href="<?php echo $index . $filtered; ?>&amp;act=com_approve&amp;comid=<?php echo $l['id']; ?>"><?php echo $lng['approve']; ?></a> |
+                                                    <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_approve&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['approve']; ?></a> |
                                             <?php
                                                 }
                                                 if ($l['status'] == '1') {
                                             ?>
-                                                    <a href="<?php echo $index . $filtered; ?>&amp;act=com_hide&amp;comid=<?php echo $l['id']; ?>"><?php echo $lng['hide']; ?></a> |
+                                                    <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_hide&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['hide']; ?></a> |
                                             <?php } else {
                                             ?>
-                                                    <a href="<?php echo $index . $filtered; ?>&amp;act=com_unhide&amp;comid=<?php echo $l['id']; ?>"><?php echo $lng['hide_not']; ?></a> |
+                                                    <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_unhide&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['hide_not']; ?></a> |
                                             <?php } ?>
-                                                <a href="<?php echo $index . $filtered; ?>&amp;act=com_edit&amp;comid=<?php echo $l['id']; ?>"><?php echo $lng['edit']; ?></a> |
+                                                <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_edit&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['edit']; ?></a> |
                                                 <a href="<?php
-                                                echo $index
+                                                echo $this->e2gModCfg['index']
                                                 . $filtered
                                                 . '&amp;act=ignore_ip'
                                                 . '&amp;file_id=' . $l['file_id']
@@ -221,8 +221,8 @@ $filesLink = $e2gPages['files']['link'];
                                                 . '&amp;e=' . $l['email']
                                                 ;
                                             ?>"
-                                                onclick="return ignoreIPAddress();"><?php echo $lng['spam']; ?></a> |
-                                             <a href="<?php echo $index . $filtered; ?>&amp;act=com_delete&amp;comid=<?php echo $l['id']; ?>"><?php echo $lng['delete']; ?></a>
+                                                onclick="return ignoreIPAddress();"><?php echo $this->lng['spam']; ?></a> |
+                                             <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_delete&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['delete']; ?></a>
                                          </div>
                                         <?php } ?>
                                         </div>
@@ -237,18 +237,18 @@ $filesLink = $e2gPages['files']['link'];
                             ?>
                                     </table>
                                     <ul class="actionButtons">
-                                        <li><b><?php echo $lng['withselected']; ?>: </b>
+                                        <li><b><?php echo $this->lng['withselected']; ?>: </b>
                                             <select name="listCommentActions">
                                                 <option value="">&nbsp;</option>
-                                                <option value="approve"><?php echo $lng['approve']; ?></option>
-                                                <option value="unapprove"><?php echo $lng['approve_not']; ?></option>
-                                                <option value="unhide"><?php echo $lng['hide_not']; ?></option>
-                                                <option value="hide"><?php echo $lng['hide']; ?></option>
-                                                <option value="delete"><?php echo $lng['delete']; ?></option>
+                                                <option value="approve"><?php echo $this->lng['approve']; ?></option>
+                                                <option value="unapprove"><?php echo $this->lng['approve_not']; ?></option>
+                                                <option value="unhide"><?php echo $this->lng['hide_not']; ?></option>
+                                                <option value="hide"><?php echo $this->lng['hide']; ?></option>
+                                                <option value="delete"><?php echo $this->lng['delete']; ?></option>
                                             </select>
                                             <a href="javascript:void(0)" onclick="submitcomment(1)">
                                                 <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/action_go.gif" alt="" />
-                                                <span><?php echo $lng['go']; ?></span>
+                                                <span><?php echo $this->lng['go']; ?></span>
                                             </a>
                                         </li>
                                     </ul>
@@ -259,24 +259,24 @@ $filesLink = $e2gPages['files']['link'];
         <?php } ?>
                                 </div>
                                 <div class="tab-page" id="tabIgnoredIP">
-                                    <h2 class="tab"><?php echo $lng['ip_ignored_title']; ?></h2>
+                                    <h2 class="tab"><?php echo $this->lng['ip_ignored_title']; ?></h2>
                                     <script type="text/javascript">
                                         tpCommentsMgr.addTabPage( document.getElementById( 'tabIgnoredIP') );
                                     </script>
-                                    <form name="listIgnoreIPs" action="<?php echo $index . $filtered; ?>&amp;act=unignored_all_ips" method="post">
+                                    <form name="listIgnoreIPs" action="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=unignored_all_ips" method="post">
                                         <table width="100%" cellpadding="5" cellspacing="1" class="grid" style="margin-bottom:10px">
                                             <tr>
                                                 <th width="20"><input type="checkbox" onclick="selectAllIgnoreIPs(this.checked); void(0);" style="border:0;" /></th>
-                                                <th><?php echo $lng['actions']; ?></th>
-                                                <th><?php echo $lng['date']; ?></th>
-                                                <th><?php echo $lng['ip_address']; ?></th>
-                                                <th><?php echo $lng['author']; ?></th>
-                                                <th><?php echo $lng['email']; ?></th>
+                                                <th><?php echo $this->lng['actions']; ?></th>
+                                                <th><?php echo $this->lng['date']; ?></th>
+                                                <th><?php echo $this->lng['ip_address']; ?></th>
+                                                <th><?php echo $this->lng['author']; ?></th>
+                                                <th><?php echo $this->lng['email']; ?></th>
                                             </tr>
                 <?php
                                     $ign_ip_res = mysql_query(
                                                     'SELECT DISTINCT ign_ip_address, ign_date, ign_username, ign_email '
-                                                    . 'FROM ' . $modx->db->config['table_prefix'] . 'easy2_ignoredip '
+                                                    . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip '
                                                     . 'ORDER BY id DESC');
                                     $rowNum = 0; // only for row coloring
                                     while ($ign = mysql_fetch_array($ign_ip_res, MYSQL_ASSOC)) {
@@ -286,7 +286,7 @@ $filesLink = $e2gPages['files']['link'];
                                                 <input name="unignored_ip[]" value="<?php echo $ign['ign_ip_address']; ?>" type="checkbox" style="border:0;padding:0" /></td>
                                             <td width="20">
                                                 <a href="<?php
-                                        echo $index
+                                        echo $this->e2gModCfg['index']
                                         . $filtered
                                         . '&amp;page=comments'
                                         . '&amp;act=unignore_ip'
@@ -295,7 +295,7 @@ $filesLink = $e2gPages['files']['link'];
                 ?>"
                                         onclick="return unignoreIPAddress();">
                                          <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/flag_green.gif" border="0"
-                                              alt="<?php echo $lng['unignore']; ?>" title="<?php echo $lng['unignore']; ?>" />
+                                              alt="<?php echo $this->lng['unignore']; ?>" title="<?php echo $this->lng['unignore']; ?>" />
                                      </a>
                                  </td>
                                  <td><?php echo $ign['ign_date']; ?></td>
@@ -308,7 +308,7 @@ $filesLink = $e2gPages['files']['link'];
                                     }
                 ?>
                                 </table>
-                                <input type="submit" value="<?php echo $lng['unignore']; ?>" name="unignore" style="font-weight:bold;color:red" />
+                                <input type="submit" value="<?php echo $this->lng['unignore']; ?>" name="unignore" style="font-weight:bold;color:red" />
         </form>
     </div>
 </div>
