@@ -33,7 +33,7 @@ class E2gThumb {
 
     /**
      * To get and create thumbnails
-     * @param  int    $gdir             from $_GET['gid']
+     * @param  string $gdir             root dir
      * @param  string $path             directory path of each of thumbnail
      * @param  int    $w                thumbnail width
      * @param  int    $h                thumbnail height

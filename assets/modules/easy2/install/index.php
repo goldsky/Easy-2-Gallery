@@ -554,6 +554,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `modified_by` TINYINT(4) NULL DEFAULT NULL,
                         `cat_visible` TINYINT(4) NOT NULL DEFAULT \'1\',
                         `cat_redirect_link` VARCHAR(255) NULL DEFAULT NULL,
+                        `cat_thumb_id` INT(50) UNSIGNED NULL DEFAULT NULL,
                         PRIMARY KEY (`cat_id`),
                         INDEX `cat_left` (`cat_left`)
                         ) TYPE=MyISAM';
@@ -652,11 +653,20 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // added_by
     addField('easy2_dirs', 'added_by', 'TINYINT(4) UNSIGNED NULL DEFAULT NULL', 'AFTER date_added');
     // modified_by
-    addField('easy2_dirs', 'modified_by', 'TINYINT(4) NULL DEFAULT NULL', 'AFTER last_modified');
+    addField('easy2_dirs', 'modified_by', 'TINYINT(4) UNSIGNED NULL DEFAULT NULL', 'AFTER last_modified');
     // cat_redirect_link
     addField('easy2_dirs', 'cat_redirect_link', 'VARCHAR(255) NULL DEFAULT NULL', 'AFTER modified_by');
     #******************************************
     # ENDS UPDATING DIR TABLE FOR 1.4.0 RC-2 **
+    #******************************************
+
+    #*******************************************
+    # START UPDATING DIR TABLE FOR 1.4.0 PL   **
+    #*******************************************
+    // cat_redirect_link
+    addField('easy2_dirs', 'cat_thumb_id', 'INT(50) UNSIGNED NULL DEFAULT NULL', 'AFTER cat_redirect_link');
+    #******************************************
+    # ENDS UPDATING DIR TABLE FOR 1.4.0 PL   **
     #******************************************
 
     $res = mysql_query('SELECT cat_right FROM ' . $GLOBALS['table_prefix'] . 'easy2_dirs WHERE cat_id=1');
