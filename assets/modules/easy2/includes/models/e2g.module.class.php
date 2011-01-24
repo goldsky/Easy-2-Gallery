@@ -3524,7 +3524,9 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
         // Adding web group access
-        $saveWebGroupsAccess = $this->_saveWebGroupsAccess($post['webGroups'], 'dir', $post['cat_id']);
+        if (!empty($post['webGroups'])) {
+            $this->_saveWebGroupsAccess($post['webGroups'], 'dir', $post['cat_id']);
+        }
 
         // invoke the plugin
         $this->plugin('OnE2GFolderEditFormSave', array(
@@ -3594,7 +3596,9 @@ class E2gMod extends E2gPub {
         }
 
         // Adding webGroup access
-        $saveWebGroupsAccess = $this->_saveWebGroupsAccess($post['webGroups'], 'file', $post['file_id']);
+        if (!empty($post['webGroups'])) {
+            $this->_saveWebGroupsAccess($post['webGroups'], 'file', $post['file_id']);
+        }
 
         // invoke the plugin
         $this->plugin('OnE2GFileEditFormSave', array(
