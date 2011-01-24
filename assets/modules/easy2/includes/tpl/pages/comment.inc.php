@@ -93,6 +93,7 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                     $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
                                     $rowNum = 0; // only for row coloring
                                     while ($l = mysql_fetch_array($queryComments, MYSQL_ASSOC)) {
+                                        $path['string'] = $this->getPath($l['dir_id']);
                                         $filePath = str_replace('%2F', '/', rawurlencode($this->e2gModCfg['gdir'] . $path['string'] . $l['filename']));
                             ?>
                                         <tr <?php echo $rowClass[$rowNum % 2]; ?> >

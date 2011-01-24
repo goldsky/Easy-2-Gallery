@@ -998,7 +998,6 @@ class E2gSnippet extends E2gPub {
         ########################################################################
 
         $glibs = $this->_loadViewerConfigs($this->e2gSnipCfg['glib'], $row['id']);
-        $this->modx->setPlaceholder('easy2:fid', $row['id']);
 
         $row['glibact'] = '';
         if (isset($this->e2gSnipCfg['landingpage']) || $this->e2gSnipCfg['glib'] == '0') {
@@ -1087,12 +1086,16 @@ class E2gSnippet extends E2gPub {
         return $row;
     }
 
+    /**
+     * Load the Javascript viewer's into each of images
+     * @param <type> $glib
+     * @param <type> $fid
+     * @return <type>
+     */
     private function _loadViewerConfigs($glib, $fid=NULL) {
         // SLIDESHOW
         $this->modx->setPlaceholder('easy2:show_group', $this->e2gSnipCfg['show_group']);
         $fid = !empty($fid) ? $fid : $this->e2gSnipCfg['fid'];
-//        $this->modx->toPlaceholder('fid', $fid, 'easy2:');
-        $this->modx->setPlaceholder('easy2:fid', $fid);
 
         // if &glib=`0`, empty($glib) returns TRUE.
         // http://us2.php.net/empty
@@ -1130,6 +1133,9 @@ class E2gSnippet extends E2gPub {
         // work around for non-parsed placeholder inside the <head> tag
         $glibs[$glib]['headers_html'] = str_replace('[+easy2:show_group+]', $this->e2gSnipCfg['show_group'], $glibs[$glib]['headers_html']);
         $glibs[$glib]['headers_html'] = str_replace('[+easy2:fid+]', $fid, $glibs[$glib]['headers_html']);
+
+        $glibs[$glib]['glibact'] =  str_replace('[+easy2:show_group+]', $this->e2gSnipCfg['show_group'], $glibs[$glib]['glibact']);
+        $glibs[$glib]['glibact'] =  str_replace('[+easy2:fid+]', $fid, $glibs[$glib]['glibact']);
 
         return $glibs;
     }
