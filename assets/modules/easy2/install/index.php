@@ -1139,8 +1139,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         $select = 'SELECT id FROM ' . $GLOBALS['table_prefix'] . 'site_plugins WHERE name=\'easy2\'';
         $query = mysql_query($select);
         if (mysql_num_rows($query) == 0) {
-            $plugin = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\';';
-            $plugin .= 'return $o;';
+            $plugin = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\';' . "\n";
+            $plugin .= 'return $o;' . "\n";
             $insert = 'INSERT INTO ' . $GLOBALS['table_prefix'] . 'site_plugins '
                     . '(name,description,plugincode) '
                     . "VALUES ('easy2', 'Easy 2 Gallery plugin','" . mysql_escape_string($plugin) . "')"
