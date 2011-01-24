@@ -1086,8 +1086,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // MODULE
 
     if (empty($e2g['mod_id']) || $e2g['mod_id'] == '') {
-        $mod = '$o = include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';';
-        $mod .= 'return $o;';
+        $mod = '$o = include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';' . "\n";
+        $mod .= 'return $o;' . "\n";
         $res = mysql_query('UPDATE ' . $GLOBALS['table_prefix'] . 'site_modules SET modulecode = \'' . mysql_escape_string($mod) . '\' WHERE id =\'' . $_GET['id'] . '\'');
         if ($res) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['mod_updated'];
@@ -1103,8 +1103,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     if (empty($snippetId) || $snippetId == '') {
         $res = mysql_query('SELECT id FROM ' . $GLOBALS['table_prefix'] . 'site_snippets WHERE name =\'easy2\'');
-        $snippet = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';';
-        $snippet .= 'return $o;';
+        $snippet = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';' . "\n";
+        $snippet .= 'return $o;' . "\n";
         if (mysql_num_rows($res) == 0) {
             $sql = "INSERT INTO " . $GLOBALS['table_prefix'] . "site_snippets "
                     . "(name, description, snippet, moduleguid, locked, properties, category) "
