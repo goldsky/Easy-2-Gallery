@@ -1088,9 +1088,9 @@ class E2gSnippet extends E2gPub {
 
     /**
      * Load the Javascript viewer's into each of images
-     * @param <type> $glib
-     * @param <type> $fid
-     * @return <type>
+     * @param   string  $glib   library's name
+     * @param   int     $fid    file ID
+     * @return  array   the JS configurations
      */
     private function _loadViewerConfigs($glib, $fid=NULL) {
         // SLIDESHOW
