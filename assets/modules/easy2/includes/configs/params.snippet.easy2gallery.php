@@ -340,6 +340,7 @@ $e2gSnipCfg['crumbs_showPrevious'] = isset($crumbs_showPrevious) ? $crumbs_showP
  * Previous/Up/Next Navigation
  */
 $e2gSnipCfg['nav_prevUpNext'] = ( isset($nav_prevUpNext) && is_numeric($nav_prevUpNext) ) ? $nav_prevUpNext : $e2g['nav_prevUpNext'];
+$e2gSnipCfg['nav_prevUpNextTitle'] = ( isset($nav_prevUpNextTitle) ) ? $nav_prevUpNextTitle : $e2g['nav_prevUpNextTitle'];
 $e2gSnipCfg['nav_prevSymbol'] = ( isset($nav_prevSymbol) ) ? $nav_prevSymbol : $e2g['nav_prevSymbol'];
 $e2gSnipCfg['nav_upSymbol'] = ( isset($nav_upSymbol) ) ? $nav_upSymbol : $e2g['nav_upSymbol'];
 $e2gSnipCfg['nav_nextSymbol'] = ( isset($nav_nextSymbol) ) ? $nav_nextSymbol : $e2g['nav_nextSymbol'];

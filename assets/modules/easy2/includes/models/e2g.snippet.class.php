@@ -310,6 +310,11 @@ class E2gSnippet extends E2gPub {
                         if ($navPrev !== FALSE) {
                             $galPh['prev_cat_link'] = $navPrev['link'];
                             $galPh['prev_cat_name'] = $navPrev['cat_name'];
+                            $galPh['prev_cat_alias'] = $navPrev['cat_alias'];
+                            $galPh['prev_title'] = !empty($navPrev[$this->e2gSnipCfg['nav_prevUpNextTitle']]) ?
+                                    $navPrev[$this->e2gSnipCfg['nav_prevUpNextTitle']] :
+                                    $navPrev['cat_name'];
+
                             $galPh['prev_cat_symbol'] = $this->e2gSnipCfg['nav_prevSymbol'];
                             if (isset($this->e2gSnipCfg['static_tag']))
                                 $galPh['prev_cat_permalink'] = '#' . $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
@@ -318,7 +323,7 @@ class E2gSnippet extends E2gPub {
 
                             // complete link
                             $galPh['prev_link'] = '<a href="' . $galPh['prev_cat_link'] . $galPh['prev_cat_permalink'] . '">'
-                                    . $galPh['prev_cat_symbol'] . ' ' . $galPh['prev_cat_name']
+                                    . $galPh['prev_cat_symbol'] . ' ' . $galPh['prev_title']
                                     . '</a>';
                         }
 
@@ -326,6 +331,11 @@ class E2gSnippet extends E2gPub {
                         if ($navUp !== FALSE) {
                             $galPh['up_cat_link'] = $navUp['link'];
                             $galPh['up_cat_name'] = $navUp['cat_name'];
+                            $galPh['up_cat_alias'] = $navUp['cat_alias'];
+                            $galPh['up_title'] = !empty($navUp[$this->e2gSnipCfg['nav_prevUpNextTitle']]) ?
+                                    $navUp[$this->e2gSnipCfg['nav_prevUpNextTitle']] :
+                                    $navUp['cat_name'];
+
                             $galPh['up_cat_symbol'] = $this->e2gSnipCfg['nav_upSymbol'];
                             if (isset($this->e2gSnipCfg['static_tag']))
                                 $galPh['up_cat_permalink'] = '#' . $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
@@ -334,7 +344,7 @@ class E2gSnippet extends E2gPub {
 
                             // complete link
                             $galPh['up_link'] = '<a href="' . $galPh['up_cat_link'] . $galPh['up_cat_permalink'] . '">'
-                                    . $galPh['up_cat_symbol'] . ' ' . $galPh['up_cat_name']
+                                    . $galPh['up_cat_symbol'] . ' ' . $galPh['up_title']
                                     . '</a>';
                         }
 
@@ -342,6 +352,11 @@ class E2gSnippet extends E2gPub {
                         if ($navNext !== FALSE) {
                             $galPh['next_cat_link'] = $navNext['link'];
                             $galPh['next_cat_name'] = $navNext['cat_name'];
+                            $galPh['next_cat_alias'] = $navNext['cat_alias'];
+                            $galPh['next_title'] = !empty($navNext[$this->e2gSnipCfg['nav_prevUpNextTitle']]) ?
+                                    $navNext[$this->e2gSnipCfg['nav_prevUpNextTitle']] :
+                                    $navNext['cat_name'];
+
                             $galPh['next_cat_symbol'] = $this->e2gSnipCfg['nav_nextSymbol'];
                             if (isset($this->e2gSnipCfg['static_tag']))
                                 $galPh['next_cat_permalink'] = '#' . $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
@@ -350,7 +365,7 @@ class E2gSnippet extends E2gPub {
 
                             // complete link
                             $galPh['next_link'] = '<a href="' . $galPh['next_cat_link'] . $galPh['next_cat_permalink'] . '">'
-                                    . $galPh['next_cat_name'] . ' ' . $galPh['next_cat_symbol']
+                                    . $galPh['next_title'] . ' ' . $galPh['next_cat_symbol']
                                     . '</a>';
                         }
                     } // if ($this->e2gSnipCfg['nav_prevUpNext'] == 1)
@@ -2130,12 +2145,13 @@ class E2gSnippet extends E2gPub {
             return FALSE;
         } else {
             $prevUpNext = array();
+            $field = $this->e2gSnipCfg['nav_prevUpNextTitle'] == 'cat_alias' ? 'cat_alias' : 'cat_name';
 
             if ($direction == 'prev') {
                 if (isset($this->e2gSnipCfg['static_tag'])) {
-                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $catOrderBy, $catOrder, -1);
+                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, $field, $catOrderBy, $catOrder, -1);
                 } else {
-                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $catOrderBy, $catOrder, -1);
+                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, $field, $catOrderBy, $catOrder, -1);
                 }
                 if (!empty($sibling)) {
                     $prevUpNext['cat_id'] = $sibling['cat_id'];
@@ -2149,6 +2165,7 @@ class E2gSnippet extends E2gPub {
                         $prevUpNext['link'] .= '&amp;tag=' . $this->e2gSnipCfg['static_tag'];
                     }
                     $prevUpNext['cat_name'] = $sibling['cat_name'];
+                    $prevUpNext[$field] = $sibling[$field];
                 } else {
                     return FALSE;
                 }
@@ -2169,11 +2186,12 @@ class E2gSnippet extends E2gPub {
                     $prevUpNext['link'] .= '&amp;tag=' . $this->e2gSnipCfg['static_tag'];
                 }
                 $prevUpNext['cat_name'] = $parent['cat_name'];
+                $prevUpNext[$field] = $parent[$field];
             } elseif ($direction == 'next') {
                 if (isset($this->e2gSnipCfg['static_tag'])) {
-                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, 'cat_name', $catOrderBy, $catOrder, 1);
+                    $sibling = $this->_getSiblingInfo('tag', $dynamicKey, $field, $catOrderBy, $catOrder, 1);
                 } else {
-                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, 'cat_name', $catOrderBy, $catOrder, 1);
+                    $sibling = $this->_getSiblingInfo(NULL, $dynamicKey, $field, $catOrderBy, $catOrder, 1);
                 }
                 if (!empty($sibling)) {
                     $prevUpNext['cat_id'] = $sibling['cat_id'];
@@ -2187,6 +2205,7 @@ class E2gSnippet extends E2gPub {
                         $prevUpNext['link'] .= '&amp;tag=' . $this->e2gSnipCfg['static_tag'];
                     }
                     $prevUpNext['cat_name'] = $sibling['cat_name'];
+                    $prevUpNext[$field] = $sibling[$field];
                 } else {
                     return FALSE;
                 }
@@ -2242,7 +2261,7 @@ class E2gSnippet extends E2gPub {
      * @return string   Sibling's info on TRUE return, or EMPTY on FALSE
      */
     private function _getSiblingInfo($trigger, $dynamicId, $field, $catOrderBy, $catOrder, $siblingCounter) {
-        $selectChildren = 'SELECT a.cat_id, a.cat_tag, a.' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs a '
+        $selectChildren = 'SELECT a.* FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs a '
                 . 'WHERE a.parent_id IN ('
                 . 'SELECT b.parent_id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs b '
                 . 'WHERE ';
@@ -2264,7 +2283,8 @@ class E2gSnippet extends E2gPub {
 
         $selectChildren .= 'AND (SELECT count(F.id) FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files F '
                 . 'WHERE F.dir_id IN '
-                . '(SELECT a.cat_id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs c, '
+                . '(SELECT c.cat_id FROM '
+                . $this->modx->db->config['table_prefix'] . 'easy2_dirs c, '
                 . $this->modx->db->config['table_prefix'] . 'easy2_dirs d '
                 . 'WHERE (d.cat_id = a.cat_id '
                 . 'AND c.cat_left >= d.cat_left '
@@ -2285,6 +2305,7 @@ class E2gSnippet extends E2gPub {
         while ($row = mysql_fetch_array($queryChildren)) {
             $siblings['cat_id'][] = $row['cat_id'];
             $siblings['cat_tag'][] = $row['cat_tag'];
+            $siblings['cat_name'][] = $row['cat_name'];
             $siblings[$field][] = $row[$field];
         }
 
@@ -2304,11 +2325,13 @@ class E2gSnippet extends E2gPub {
                     $thesibling['cat_id'] = $siblings['cat_id'][$j];
                     $thesibling['cat_tag'] = $siblings['cat_tag'][$j];
                     $thesibling['cat_name'] = $siblings['cat_name'][$j];
+                    $thesibling[$field] = $siblings[$field][$j];
                 }
             } else {
                 if ($siblings['cat_id'][$i] == $dynamicId) {
                     $thesibling['cat_id'] = $siblings['cat_id'][$j];
                     $thesibling['cat_name'] = $siblings['cat_name'][$j];
+                    $thesibling[$field] = $siblings[$field][$j];
                 }
             }
         }

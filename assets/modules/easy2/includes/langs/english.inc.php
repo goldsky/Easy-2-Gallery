@@ -68,8 +68,8 @@ $e2g_lang['english'] = array (
     'copy' => 'Copy',
     'credit_lang_file' => 'Language file credit',
     'credit_lang_file_author' => 'Cx2, Temus, goldsky',
-    'credit_lang_file_date' => 'December 24, 2010',
-    'credit_lang_file_version' => '2.3',
+    'credit_lang_file_date' => 'January 31, 2011',
+    'credit_lang_file_version' => '2.4',
     'crumbs_separator_cfg' => 'Separator between the crumbs',
     'crumbs_separator_cfg_desc' => 'Pick any character, including the [space]',
     'crumbs_showAsLinks_cfg' => 'Crumb as a link',
@@ -257,7 +257,7 @@ $e2g_lang['english'] = array (
 &lt;ul&gt;
 &lt;li&gt;[field][,comma][operator][,comma][value]&lt;/li&gt;
 &lt;li&gt;They can have multiple clauses by using &#039;AND&#039; and/or &#039;OR&#039;&lt;/li&gt;
-&lt;li&gt;The Operator have to be a string, as following:              
+&lt;li&gt;The Operator have to be a string, as following:                
 &lt;ul&gt;
 &lt;li&gt;&quot;NULL safe equal&quot; =&amp;gt; &#039;&amp;lt;=&amp;gt;&#039;&lt;/li&gt;
 &lt;li&gt;&quot;equal&quot; =&amp;gt; &#039;=&#039;&lt;/li&gt;
@@ -384,7 +384,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                                 
+&lt;li&gt;galleriffic                                   
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -392,7 +392,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                                 
+&lt;li&gt;smoothgallery                                   
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -406,7 +406,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                                 
+&lt;li&gt;galleryview                                   
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -416,7 +416,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                                 
+&lt;li&gt;contentflow                                   
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -572,6 +572,8 @@ $e2g_lang['english'] = array (
     'nav_nextSymbol_cfg_desc' => 'Text or html image tag link for next navigation symbol',
     'nav_prevSymbol_cfg' => 'Text or image tag',
     'nav_prevSymbol_cfg_desc' => 'Text or html image tag link for previous navigation symbol',
+    'nav_prevUpNextTitle_cfg' => 'Title for navigation',
+    'nav_prevUpNextTitle_cfg_desc' => '&lt;p&gt;Title selection for the navigation. If Alias is selected but the database empty, it&#039;ll reverted back as the folder&#039;s name&lt;/p&gt;',
     'nav_upSymbol_cfg' => 'Text or image tag',
     'nav_upSymbol_cfg_desc' => 'Text or html image tag link for upper navigation symbol',
     'new' => 'New',

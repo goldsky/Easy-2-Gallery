@@ -103,16 +103,6 @@ if (IN_MANAGER_MODE != 'true')
                 <tr>
                     <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['strip_html_tags_cfg_desc']); ?></td>
                 </tr>
-                <!--tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['ie6_allow_cfg']; ?>:</b></td>
-                    <td>
-                        <input type="radio" name="ie6_allow" value="0" <?php echo ($this->e2g['ie6_allow'] == '0' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['no']; ?>
-                        <input type="radio" name="ie6_allow" value="1" <?php echo ($this->e2g['ie6_allow'] == '1' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['yes'] . ' (' . $this->lng['recommended'] . ')'; ?>
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['ie6_allow_cfg_desc']); ?></td>
-                </tr-->
             </table>
         </div>
         <div class="tab-page" id="tabImagesSettings">
@@ -562,6 +552,19 @@ if (IN_MANAGER_MODE != 'true')
                             <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['enable']); ?></td>
                         </tr>
                         <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['nav_prevUpNextTitle_cfg']; ?>:</b></td>
+                            <td>
+                                <span style="color:green;">&amp;nav_prevUpNextTitle= cat_name | alias</span>
+                                    <select name="nav_prevUpNextTitle">
+                                        <option value="cat_name"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_name' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['dir_name']; ?></option>
+                                        <option value="cat_alias"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_alias' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['alias']; ?></option>
+                                    </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['nav_prevUpNextTitle_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
                             <td><b><?php echo $this->lng['nav_prevSymbol_cfg']; ?>:</b></td>
                             <td>
                                 <span style="color:green;">&amp;nav_prevSymbol=</span> <input name="nav_prevSymbol" type="text" value="<?php echo $this->e2g['nav_prevSymbol']; ?>" size="70" />
@@ -654,9 +657,6 @@ if (IN_MANAGER_MODE != 'true')
                         <tr>
                             <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['pagination_splitter_cfg_desc']); ?></td>
                         </tr>
-
-
-
                     </table>
                 </div>
             </div>
@@ -888,28 +888,7 @@ if (IN_MANAGER_MODE != 'true')
                 <tr>
                     <td colspan="2"><?php echo $this->lng['classname']; ?></td>
                 </tr>
-
-
-                <!--Deprecated-->
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['cfg_back_class']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;back_class=</span> <input name="back_class" type="text" value="<?php echo $this->e2g['back_class']; ?>" size="20" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo $this->lng['classname']; ?> (Deprecated. Please, specified this directly on the template, instead.)</td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['cfg_pagenum_class']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;pagenum_class=</span> <input name="pagenum_class" type="text" value="<?php echo $this->e2g['pagenum_class']; ?>" size="20" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo $this->lng['classname']; ?> (Deprecated. Please, specified this directly on the template, instead.)</td>
-                </tr>
-                <!--Deprecated-->
-
-
             </table>
-
         </div>
         <div class="tab-page" id="tabWatermarks">
             <h2 class="tab"><?php echo $this->lng['watermarks']; ?></h2>
