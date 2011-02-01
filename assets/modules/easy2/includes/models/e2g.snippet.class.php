@@ -2171,9 +2171,9 @@ class E2gSnippet extends E2gPub {
                 }
             } elseif ($direction == 'up') {
                 if (isset($this->e2gSnipCfg['static_tag'])) {
-                    $parent = $this->_getParentInfo('tag', $dynamicKey, 'cat_name');
+                    $parent = $this->_getParentInfo('tag', $dynamicKey, $field);
                 } else {
-                    $parent = $this->_getParentInfo(NULL, $dynamicKey, 'cat_name');
+                    $parent = $this->_getParentInfo(NULL, $dynamicKey, $field);
                 }
                 $prevUpNext['cat_id'] = $parent['cat_id'];
                 $prevUpNext['link'] = $this->modx->makeUrl(
@@ -2223,7 +2223,7 @@ class E2gSnippet extends E2gPub {
      * @return string   parent's info on TRUE return, or EMPTY on FALSE
      */
     private function _getParentInfo($trigger, $dynamicId, $field) {
-        $selectParent = 'SELECT parent_id, ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs ';
+        $selectParent = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs ';
 
         if ($dynamicId != '*') {
             if ($trigger == 'tag') {
@@ -2246,6 +2246,8 @@ class E2gSnippet extends E2gPub {
             return FALSE;
         }
         $parent['cat_name'] = $this->getDirInfo($parent['cat_id'], 'cat_name');
+        if ($field != 'cat_name')
+            $parent[$field] = $this->getDirInfo($parent['cat_id'], $field);
 
         return $parent;
     }
