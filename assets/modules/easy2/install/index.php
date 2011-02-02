@@ -1284,8 +1284,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                             echo '</li>';
                         }
 
-                        // PHP magic_quotes_gpc()
-                        if (function_exists('get_magic_quotes_gpc')) {
+                        if (get_magic_quotes_gpc()) {
 //        $disabled = 'disabled="disabled"';
                             echo '<li>';
                             echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
