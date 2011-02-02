@@ -79,8 +79,9 @@ if (!class_exists('E2gPub')) {
 
 // Load the snippet's class file
 if (!class_exists('E2gSnippet')) {
-    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.snippet.class.php'))) {
-        include E2G_SNIPPET_PATH . "includes/models/e2g.snippet.class.php";
+    $snippetClassFile = E2G_SNIPPET_PATH . 'includes/models/e2g.snippet.class.php';
+    if (file_exists(realpath($snippetClassFile))) {
+        include $snippetClassFile;
     } else {
         echo "<h3>Missing Easy 2 Gallery snippet's class file.</h3>";
         return;

@@ -448,7 +448,7 @@ class E2gMod extends E2gPub {
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
 //        return '';
     }
-    
+
     /**
      * To delete all files/folders that have been selected with the checkbox
      * @param string $path file's/folder's path
@@ -608,7 +608,7 @@ class E2gMod extends E2gPub {
                      * INSERT filename into database
                      */
                     if (!$this->_addFile($filePath, $id)) {
-                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
                 }
@@ -617,6 +617,29 @@ class E2gMod extends E2gPub {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_end_clean();
             }
+        return TRUE;
+    }
+
+    private function _checkFolders ($filePath, $pid) {
+        if (!$this->validFile($filePath)) {
+            return FALSE;
+        }
+        $basename = $this->basenameSafe($filePath);
+        $basename = $this->e2gEncode($basename);
+
+        $basePath = realpath($this->e2gEncode($filePath));
+        $rootPath = realpath(MODX_BASE_PATH . $this->e2gModCfg['dir']);
+        $basePath = str_replace($rootPath, '', $basePath);
+        $basePath = trim($basePath, DIRECTORY_SEPARATOR);
+
+        $pathArray = @explode (DIRECTORY_SEPARATOR, $basePath);
+        $pathArrayReverse = array_reverse($pathArray);
+        unset($pathArrayReverse[0]);
+
+        if ($pathArrayReverse[1] != $this->getDirInfo($pid, 'cat_name')) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_db_notexists_err'] . ' : ' . $pathArrayReverse[1];
+            return FALSE;
+        }
         return TRUE;
     }
 
@@ -633,7 +656,10 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-        // RESIZE
+        // if the folder also new, adding this file will recursively adding its parent folder(s), too
+        if (!$this->_checkFolders($filePath, $pid))
+                return FALSE;
+
         $basename = $this->basenameSafe($filePath);
         $basename = $this->e2gEncode($basename);
 
@@ -2557,7 +2583,7 @@ class E2gMod extends E2gPub {
             $f = fopen(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php', 'w+');
             fwrite($f, $c);
             fclose($f);
-            
+
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['config_update_suc'];
             return TRUE;
         } else {
@@ -4244,12 +4270,12 @@ class E2gMod extends E2gPub {
                 case 'path':
                     $xplds = @explode('/', $v);
                     foreach ($xplds as $y => $x) {
-                        $xplds[$y] = $this->stripString($x);
+                        $xplds[$y] = $this->sanitizedString($x);
                     }
                     $v = @implode('/', $xplds);
                     break;
                 default:
-                    $v = $this->stripString($v);
+                    $v = $this->sanitizedString($v);
                     break;
             }
             $sanitizedGets[$k] = $v;
@@ -4257,23 +4283,4 @@ class E2gMod extends E2gPub {
         return $sanitizedGets;
     }
 
-    public function stripString ($string, $chars = array('/', "'", '"', '(', ')', ';', '>', '<'), $allowedTags = array(), $preg=FALSE) {
-        $string = trim($string);
-
-        $allowedTagStr = @implode('', $allowedTags);
-        $string = strip_tags($string, $allowedTagStr);
-        $string = str_replace($chars, '', $string);
-        $string = preg_replace('/[[:space:]]/', ' ', $string);
-
-        if ($preg) {
-            $allowedTagPreg = (!empty($allowedTags) ? '|\\' . @implode('\\', $allowedTags) : '');
-            $string = preg_replace("/[^A-Za-z0-9_\-\.\/[[:space:]]" . $allowedTagPreg . "]/", '', $string);
-        }
-
-        $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-        $string = mysql_escape_string($string);
-
-        return $string;
-    }
-    
 }

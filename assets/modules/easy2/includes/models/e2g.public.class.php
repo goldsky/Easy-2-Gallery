@@ -171,6 +171,33 @@ class E2gPub { // public/public class
     }
 
     /**
+     * Sanitizing string from specified characters
+     * @param   string  $string         the text
+     * @param   array   $chars          filtered characters
+     * @param   array   $allowedTags    allowed characters
+     * @param   bool    $preg           using preg_match
+     * @return  string  filtered string
+     */
+    public function sanitizedString ($string, $chars = array('/', "'", '"', '(', ')', ';', '>', '<'), $allowedTags = array(), $preg=FALSE) {
+        $string = trim($string);
+
+        $allowedTagStr = @implode('', $allowedTags);
+        $string = strip_tags($string, $allowedTagStr);
+        $string = str_replace($chars, '', $string);
+        $string = preg_replace('/[[:space:]]/', ' ', $string);
+
+        if ($preg) {
+            $allowedTagPreg = (!empty($allowedTags) ? '|\\' . @implode('\\', $allowedTags) : '');
+            $string = preg_replace("/[^A-Za-z0-9_\-\.\/[[:space:]]" . $allowedTagPreg . "]/", '', $string);
+        }
+
+        $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
+        $string = mysql_escape_string($string);
+
+        return $string;
+    }
+
+    /**
      * To get directory's information
      * @param  int    $dirId  gallery's ID
      * @param  string $field  database field

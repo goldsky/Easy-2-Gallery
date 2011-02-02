@@ -231,13 +231,13 @@ if ($getRequests['path'] == $pidPath) {
                     $dirCheckBox = '
                     <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                     ';
-                    // add dir
-                    $dirButtons .= $e2gMod->actionIcon('add_dir', array(
-                                'act' => 'add_dir'
-                                , 'dir_path' => $dirPathRawUrlEncoded
-                                , 'pid' => $getRequests['pid']
-                                    ), null, $index);
                 }
+                // add dir
+                $dirButtons .= $e2gMod->actionIcon('add_dir', array(
+                            'act' => 'add_dir'
+                            , 'dir_path' => $dirPathRawUrlEncoded
+                            , 'pid' => $getRequests['pid']
+                                ), null, $index);
                 $dirTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanPath));
                 clearstatcache();
                 $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';

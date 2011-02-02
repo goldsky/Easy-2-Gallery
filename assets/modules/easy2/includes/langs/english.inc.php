@@ -99,6 +99,7 @@ $e2g_lang['english'] = array (
     'dir_create' => 'Create folder',
     'dir_create_err' => 'Could not create folder',
     'dir_created' => 'New folder was created',
+    'dir_db_notexists_err' => 'Parent folder does not exist in database',
     'dir_delete_err' => 'Could not delete folders',
     'dir_delete_fdb' => 'folder has been removed from DB',
     'dir_delete_fhdd' => 'folder has been removed from hd',
