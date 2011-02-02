@@ -338,7 +338,6 @@ class E2gSnippet extends E2gPub {
             }
 
             $dirThumbs = $this->_dirThumbs();
-            $dirThumbs = !empty($dirThumbs) ? $dirThumbs : array();
         } // else of if ($this->e2gSnipCfg['showonly'] == 'images')
         //******************************************************************/
         //*             FILE content for the current directory             */
@@ -349,9 +348,10 @@ class E2gSnippet extends E2gPub {
                 && !empty($this->e2gSnipCfg['gid'])
         ) {
             $fileThumbs = $this->_fileThumbs();
-            $fileThumbs = !empty($fileThumbs) ? $fileThumbs : array();
         }
 
+        $dirThumbs = !empty($dirThumbs) ? $dirThumbs : array();
+        $fileThumbs = !empty($fileThumbs) ? $fileThumbs : array();
         $galThumbs = array_merge($dirThumbs, $fileThumbs);
 
         // START the grid
