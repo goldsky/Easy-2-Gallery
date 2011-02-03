@@ -30,8 +30,12 @@ class E2gMod extends E2gPub {
      * @var string language translation
      */
     public $lng;
-    public $_dirDropDownOptions = array();
-
+    /**
+     * Folders as the Drop down option
+     * @var string drop down option
+     */
+    private $_dirDropDownOptions = array();
+    
     public function __construct($modx, $e2gModCfg, $e2g, $lng) {
         parent::__construct($modx, $e2gModCfg, $e2g, $lng);
         $this->modx = & $modx;
@@ -2200,7 +2204,8 @@ class E2gMod extends E2gPub {
 
                 //************* FILE SYSTEM UPDATE *************//
                 if (!empty($v)) {
-                    $oldPath = $newPath = array();
+                    $oldPath = array();
+                    $newPath = array();
 
                     $oldPath['origin'] = str_replace('../', '', $v);
                     $oldPath['basename'] = $this->basenameSafe($v);
@@ -4004,13 +4009,24 @@ class E2gMod extends E2gPub {
         }
 
         if ($changeGroup === TRUE) {
-            $modxPath = "index.php";
+            if (file_exists(realpath("index.php"))) {
+                $modxPath = "index.php";
+            } elseif (file_exists(realpath("../../../../../manager/index.php"))) {
+                $modxPath = "../../../../../manager/index.php";
+            } else {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' manager/index.php was not detected';
+                return FALSE;
+            }
             $modxStat = stat($modxPath);
             clearstatcache();
             $ownerCore = $modxStat['uid'];
             $groupCore = $modxStat['gid'];
             $oldFullPath = $fullPath;
             $oldStat = stat($oldFullPath);
+            if (!$oldStat) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' stat error:' . $oldStat;
+                return FALSE;
+            }
             clearstatcache();
             $ownerOld = $oldStat['uid'];
             $groupOld = $oldStat['gid'];
@@ -4104,7 +4120,8 @@ class E2gMod extends E2gPub {
 
     /**
      * To calculate the directory content
-     * @param string $path folder's/dir's path
+     * @param   string  $path       folder's/dir's path
+     * @return  int     file numbers
      */
     public function countFiles($path) {
         $cnt = 0;

@@ -111,7 +111,6 @@ if (!$querySelectFiles) {
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
 $rowNum = 0;
-
 ?>
 <table width="100%" cellpadding="2" cellspacing="0" class="grid" style="margin-bottom:10px;">
     <tr>
@@ -157,12 +156,23 @@ if (!isset($getRequests['getpath'])):
                 <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . rawurldecode($dirPath . $fetchDir['cat_name']) . '" type="checkbox" style="border:0;padding:0" />
                 ';
                 $dirPhRow['td.gid'] = '[id: ' . $fetchDir['cat_id'] . ']';
-                $dirPhRow['td.path'] = $dirPath;
+                $dirPhRow['td.path'] = '<a href="' . $index . '&amp;pid=' . $fetchDir['parent_id'] . '">' . $dirPath . '</a>';
                 $dirPhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($dirPath . $fetchDir['cat_name']));
                 $dirPhRow['td.title'] = ( trim($fetchDir['cat_alias']) != '' ? $fetchDir['cat_alias'] : $fetchDir['cat_name']);
                 $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag']);
                 $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], '../../../../../' . $dirPath . $fetchDir['cat_name']);
-                $dirPhRow['td.count'] = $e2gMod->countFiles('../../../../../' . $dirPath . $fetchDir['cat_name']);
+
+                switch ($e2g['mod_foldersize']) {
+                    case 'auto':
+                        $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles('../../../../../' . $dirPath . $fetchDir['cat_name']) . ' )';
+                        break;
+                    case 'ajax':
+                        $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'../../../../../' . $dirPath . $fetchDir['cat_name'] . '\', \'' . $fetchDir['cat_id'] . '\')">folder size</a></span></span> )';
+                        break;
+                    default:
+                        $dirPhRow['td.count'] = '';
+                        break;
+                }
 
                 $dirStyledName = $fetchDir['cat_name']; // will be overridden for styling below
                 $dirCheckBox = '';
@@ -232,7 +242,7 @@ if (!isset($getRequests['getpath'])):
                 $dirPhRow['td.rowDir'] = '<a href="' . $dirPhRow['td.href'] . '">'
                         . $dirPhRow['td.styledName']
                         . '</a> '
-                        . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
+                        . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.count'] . ' ' . $dirPhRow['td.attributes']
                 ;
 
                 echo $e2gMod->filler($e2gMod->getTpl('file_tag_table_row_dir_tpl'), $dirPhRow);
@@ -337,7 +347,7 @@ if (!isset($getRequests['getpath'])):
                 $filePhRow['td.styledName'] = $fileStyledName;
                 $filePhRow['td.title'] = ( trim($fetchFile['alias']) != '' ? $fetchFile['alias'] : $fetchFile['filename']);
                 $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag']);
-                $filePhRow['td.path'] = $filePath;
+                $filePhRow['td.path'] = '<a href="' . $index . '&amp;pid=' . $fetchFile['dir_id'] . '">' . $filePath . '</a>';
                 $filePhRow['td.pathRawUrlEncoded'] = $filePathRawUrlEncoded;
                 $filePhRow['td.time'] = $e2gMod->getTime($fetchFile['date_added'], $fetchFile['last_modified'], '../../../../../' . $filePath . $fetchFile['filename']);
                 $filePhRow['td.attributes'] = $fileAttributes;

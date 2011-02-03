@@ -63,6 +63,17 @@ if (IN_MANAGER_MODE != 'true')
                     <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['mod_view_cfg_desc']); ?></td>
                 </tr>
                 <tr class="gridAltItem">
+                    <td><b><?php echo $this->lng['mod_foldersize']; ?>:</b></td>
+                    <td>
+                        <input type="radio" name="mod_foldersize" value="disabled" <?php echo ($this->e2g['mod_foldersize'] == 'disabled' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['disabled']; ?>
+                        <input type="radio" name="mod_foldersize" value="auto" <?php echo ($this->e2g['mod_foldersize'] == 'auto' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['auto']; ?>
+                        <input type="radio" name="mod_foldersize" value="ajax" <?php echo ($this->e2g['mod_foldersize'] == 'ajax' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['ajax']; ?>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['mod_foldersize_desc']); ?></td>
+                </tr>
+                <tr class="gridAltItem">
                     <td><b><?php echo $this->lng['mod_date_format']; ?>:</b></td>
                     <td>
                         <input name="mod_date_format" size="30" type="text" value="<?php echo $this->e2g['mod_date_format']; ?>" />

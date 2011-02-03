@@ -214,6 +214,29 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     return xhr;
             }
 
+            function countFiles(path, pid) {
+                var xhr = xhrRequest();
+                var container = document.getElementById("countfiles_"+pid);
+                var oldcontainer = document.getElementById("countfileslink_"+pid);
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.countfiles.php?";
+                url += "&path="+path;
+                url += "&pid="+pid;
+                if (xhr && container) {
+                    xhr.onreadystatechange = function() {
+                        if (xhr.readyState == 4 && xhr.status == 200) {
+                            container.innerHTML = xhr.responseText;
+                            container.removeChild(oldcontainer);
+                        } else {
+                            container.innerHTML = " <img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader10x10.gif\" \/>";
+                        }
+                    }
+                    xhr.open("GET", url, true);
+                    xhr.send(null);
+                } else {
+                    alert ("Your browser does not support HTTP Request!");
+                }
+            }
+
             function synchro(path, pid) {
                 var xhr = xhrRequest();
                 var report = document.getElementById("report");

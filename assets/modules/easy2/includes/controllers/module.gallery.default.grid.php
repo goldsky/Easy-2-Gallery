@@ -98,6 +98,10 @@ if ($getRequests['path'] == $pidPath) {
         $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
         die($msg);
     }
+    $fetchDirs = array();
+    while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        $fetchDirs[] = $l;
+    }
 
     ####################################################################
     ####                      MySQL File list                       ####
@@ -108,6 +112,10 @@ if ($getRequests['path'] == $pidPath) {
     if (!$querySelectFiles) {
         $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
         die($msg);
+    }
+    $fetchFiles = array();
+    while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        $fetchFiles[] = $l;
     }
 }
 
@@ -132,7 +140,7 @@ $rowNum = 0;
 <?php
     #########################     DIRECTORIES      #########################
     $dirPhRow = array();
-    while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+    foreach ($fetchDirs as $fetchDir) {
         // goldsky -- store the array to be connected between db <--> fs
         $dirPhRow['td.parent_id'] = $fetchDir['parent_id'];
         $dirPhRow['td.id'] = $fetchDir['cat_id'];
@@ -145,19 +153,28 @@ $rowNum = 0;
 
         ####################### Template placeholders ######################
 
-        $dirPhRow['td.rowNum'] = $rowNum;
-        $dirPhRow['td.rowClass'] = $rowClass[$rowNum % 2];
-        $dirPath = $gdir . $e2gMod->getPath($fetchDir['parent_id']);
-        $dirPhRow['td.checkBox'] = '
-                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . rawurldecode($dirPath . $fetchDir['cat_name']) . '" type="checkbox" style="border:0;padding:0" />
-                ';
         $dirPhRow['td.gid'] = '[id: ' . $fetchDir['cat_id'] . ']';
-        $dirPhRow['td.path'] = $dirPath;
-        $dirPhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($dirPath . $fetchDir['cat_name']));
+        $dirPhRow['td.path'] = $gdir;
+        $dirPhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchDir['cat_name']));
         $dirPhRow['td.title'] = ( trim($fetchDir['cat_alias']) != '' ? $fetchDir['cat_alias'] : $fetchDir['cat_name']);
         $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag']);
-        $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], '../../../../../' . $dirPath . $fetchDir['cat_name']);
-        $dirPhRow['td.count'] = $e2gMod->countFiles('../../../../../' . $dirPath . $fetchDir['cat_name']);
+        $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], '../../../../../' . $gdir . $fetchDir['cat_name']);
+        $dirPhRow['td.rowNum'] = $rowNum;
+        $dirPhRow['td.rowClass'] = $rowClass[$rowNum % 2];
+        $dirPhRow['td.checkBox'] = '
+                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . $dirPhRow['td.pathRawUrlEncoded'] . '" type="checkbox" style="border:0;padding:0" />
+                ';
+        switch ($e2g['mod_foldersize']) {
+            case 'auto':
+                $dirPhRow['td.count'] = '( '. $e2gMod->countFiles('../../../../../' . $gdir . $fetchDir['cat_name']) . ' )';
+                break;
+            case 'ajax':
+                $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'../../../../../' . $gdir . $fetchDir['cat_name'] . '\', \'' . $fetchDir['cat_id'] . '\')">folder size</a></span></span> )';
+                break;
+            default:
+                $dirPhRow['td.count'] = '';
+                break;
+        }
 
         $dirStyledName = $fetchDir['cat_name']; // will be overridden for styling below
         $dirCheckBox = '';
@@ -212,7 +229,7 @@ $rowNum = 0;
                 ));
         $dirButtons .= $e2gMod->actionIcon('delete_dir', array(
                     'act' => 'delete_dir'
-                    , 'dir_path' => $dirPath . $fetchDir['cat_name']
+                    , 'dir_path' => $gdir . $fetchDir['cat_name']
                     , 'dir_id' => $fetchDir['cat_id']
                     , 'pid' => $getRequests['pid']
                         ), 'onclick="return confirmDeleteFolder();"', $index);
@@ -235,7 +252,7 @@ $rowNum = 0;
         $dirPhRow['td.rowDir'] = '<a href="' . $dirPhRow['td.href'] . '">'
                 . $dirPhRow['td.styledName']
                 . '</a> '
-                . $dirPhRow['td.gid'] . ' (' . $dirPhRow['td.count'] . ') ' . $dirPhRow['td.attributes']
+                . $dirPhRow['td.gid'] . ' ' . $dirPhRow['td.count'] . ' ' . $dirPhRow['td.attributes']
         ;
 
         echo $e2gMod->filler($e2gMod->getTpl('file_default_table_row_dir_tpl'), $dirPhRow);
@@ -246,7 +263,7 @@ $rowNum = 0;
 
     #########################        FILES         #########################
     $filePhRow = array();
-    while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+    foreach ($fetchFiles as $fetchFile) {
         $filePhRow['td.id'] = $fetchFile['id'];
         $filePhRow['td.dirId'] = $fetchFile['dir_id'];
         $filePhRow['td.name'] = $fetchFile['filename'];
@@ -280,8 +297,7 @@ $rowNum = 0;
 
         $filePhRow['td.rowNum'] = $rowNum;
         $filePhRow['td.rowClass'] = $rowClass[$rowNum % 2];
-        $fileNameUrlDecodeFilename = urldecode($fetchFile['filename']);
-        $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
+        $filePhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
 
         if (!file_exists(realpath('../../../../../' . $gdir . $fetchFile['filename']))) {
             $fileIcon = '
@@ -327,7 +343,7 @@ $rowNum = 0;
         $fileButtons .= $e2gMod->actionIcon('delete_file', array(
                     'act' => 'delete_file'
                     , 'pid' => $fetchFile['dir_id']
-                    , 'file_path' => $filePathRawUrlEncoded
+                    , 'file_path' => $filePhRow['td.pathRawUrlEncoded']
                     , 'file_id' => $fetchFile['id']
                         ), 'onclick="return confirmDelete();"', $index);
 
@@ -340,7 +356,6 @@ $rowNum = 0;
         $filePhRow['td.title'] = ( trim($fetchFile['alias']) != '' ? $fetchFile['alias'] : $fetchFile['filename']);
         $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag']);
         $filePhRow['td.path'] = $gdir;
-        $filePhRow['td.pathRawUrlEncoded'] = $filePathRawUrlEncoded;
         $filePhRow['td.time'] = $e2gMod->getTime($fetchFile['date_added'], $fetchFile['last_modified'], '../../../../../' . $gdir . $fetchFile['filename']);
         $filePhRow['td.attributes'] = $fileAttributes;
         $filePhRow['td.attributeIcons'] = $fileAttributeIcons;

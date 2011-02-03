@@ -13,7 +13,6 @@
         </div>
         <div class="dirinfo">
             <div class="dirname">
-<!--                <b>[+easy2:thumb.link+]</b> [+easy2:thumb.gid+] ([+easy2:thumb.count+])-->
                 [+easy2:thumb.rowDir+]
             </div>
         </div>

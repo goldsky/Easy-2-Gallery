@@ -99,6 +99,10 @@ if ($getRequests['path'] == $pidPath) {
         $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
         die($msg);
     }
+    $fetchDirs = array();
+    while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        $fetchDirs[] = $l;
+    }
 
     ####################################################################
     ####                      MySQL File list                       ####
@@ -110,6 +114,10 @@ if ($getRequests['path'] == $pidPath) {
         $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
         die($msg);
     }
+    $fetchFiles = array();
+    while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        $fetchFiles[] = $l;
+    }
 }
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
@@ -118,7 +126,7 @@ $rowNum = 0;
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 
-while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+foreach ($fetchDirs as $fetchDir) {
     // goldsky -- store the array to be connected between db <--> fs
     $dirPhRow['thumb.parent_id'] = $fetchDir['parent_id'];
     $dirPhRow['thumb.id'] = $fetchDir['cat_id'];
@@ -131,19 +139,15 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
 
     ####################### Template placeholders ######################
 
-    $dirPhRow['thumb.rowNum'] = $rowNum;
-    $dirPhRow['thumb.rowClass'] = $rowClass[$rowNum % 2];
-    $dirPhRow['thumb.checkBox'] = '
-                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . rawurldecode($gdir . $fetchDir['cat_name']) . '" type="checkbox" style="border:0;padding:0" />
-                ';
     $dirPhRow['thumb.gid'] = '[id: ' . $fetchDir['cat_id'] . ']';
     $dirPhRow['thumb.path'] = $gdir;
     $dirPhRow['thumb.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchDir['cat_name']));
     $dirPhRow['thumb.title'] = ( trim($fetchDir['cat_alias']) != '' ? $fetchDir['cat_alias'] : $fetchDir['cat_name']);
-    $dirPhRow['thumb.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag']);
-    $dirPhRow['thumb.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], $gdir . $fetchDir['cat_name']);
-    $dirPhRow['thumb.count'] = $e2gMod->countFiles('../../../../../' . $gdir . $fetchDir['cat_name']);
-
+    $dirPhRow['thumb.rowNum'] = $rowNum;
+    $dirPhRow['thumb.rowClass'] = $rowClass[$rowNum % 2];
+    $dirPhRow['thumb.checkBox'] = '
+                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . $dirPhRow['thumb.pathRawUrlEncoded'] . '" type="checkbox" style="border:0;padding:0" />
+                ';
     $dirStyledName = $fetchDir['cat_name']; // will be overridden for styling below
     $dirCheckBox = '';
     $dirLink = '';
@@ -156,7 +160,7 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
     if (!empty($fetchDir['cat_redirect_link'])) {
         $dirIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $fetchFileng['redirect_link'] . ': ' . $fetchDir['cat_redirect_link'] . '" border="0" />
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchDir['cat_redirect_link'] . '" border="0" />
                         ';
     }
     $dirButtons = '';
@@ -169,10 +173,10 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
                     , 'pid' => $fetchDir['parent_id']
                         ), null, $index);
     } else {
-        $dirAttributes = '<i>(' . $fetchFileng['hidden'] . ')</i>';
+        $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
         $dirAttributeIcons = '
                 <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $fetchDir['cat_id'] . '&amp;pid=' . $fetchDir['parent_id'] . '">
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $fetchFileng['hidden'] . '" title="' . $fetchFileng['hidden'] . '" border="0" />
+                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
                 </a>
                 ';
         $dirButtons = $e2gMod->actionIcon('show_dir', array(
@@ -311,7 +315,7 @@ mysql_free_result($querySelectDirs);
 #########################     FILES      #########################
 $filePhRow = array();
 
-while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+foreach ($fetchFiles as $fetchFile) {
     $filePhRow['thumb.id'] = $fetchFile['id'];
     $filePhRow['thumb.dirId'] = $fetchFile['dir_id'];
     $filePhRow['thumb.name'] = $fetchFile['filename'];
@@ -338,22 +342,21 @@ while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
     if (!empty($fetchFile['redirect_link'])) {
         $fileIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
-                    height="16" alt="link" title="' . $fetchFileng['redirect_link'] . ': ' . $fetchFile['redirect_link'] . '" border="0" />
+                    height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchFile['redirect_link'] . '" border="0" />
                         ';
     }
     $fileButtons = '';
 
     $filePhRow['thumb.rowNum'] = $rowNum;
     $filePhRow['thumb.rowClass'] = $rowClass[$rowNum % 2];
-    $fileNameUrlDecodeFilename = urldecode($fetchFile['filename']);
-    $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
+    $filePhRow['thumb.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
 
     if (!file_exists(realpath('../../../../../' . $gdir . $fetchFile['filename']))) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
         $fileStyledName = '<b style="color:red;"><u>' . $fetchFile['filename'] . '</u></b>';
-        $fileAttributes = '<i>(' . $fetchFileng['deleted'] . ')</i>';
+        $fileAttributes = '<i>(' . $lng['deleted'] . ')</i>';
     } else {
         if ($fetchFile['status'] == '1') {
             $fileButtons = $e2gMod->actionIcon('hide_file', array(
@@ -393,20 +396,17 @@ while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
                 'act' => 'delete_file'
                 , 'pid' => $getRequests['pid']
                 , 'file_id' => $fileId
-                , 'file_path' => $filePathRawUrlEncoded
+                , 'file_path' => $filePhRow['thumb.pathRawUrlEncoded']
                     ), 'onclick="return confirmDelete();"', $index);
 
     $filePhRow['thumb.checkBox'] = '
-                <input name="im[' . $fetchFile['id'] . ']" value="im[' . $fetchFile['id'] . ']" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fetchFile['id'] . ']" value="'.$filePhRow['thumb.pathRawUrlEncoded'].'" type="checkbox" style="border:0;padding:0" />
                 ';
     $filePhRow['thumb.dirId'] = $fetchFile['dir_id'];
     $filePhRow['thumb.fid'] = '[id:' . $fetchFile['id'] . ']';
     $filePhRow['thumb.styledName'] = $fileStyledName;
     $filePhRow['thumb.title'] = ( trim($fetchFile['alias']) != '' ? $fetchFile['alias'] : $fetchFile['filename']);
-    $filePhRow['thumb.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag']);
     $filePhRow['thumb.path'] = $gdir;
-    $filePhRow['thumb.pathRawUrlEncoded'] = $filePathRawUrlEncoded;
-    $filePhRow['thumb.time'] = $e2gMod->getTime($fetchFile['date_added'], $fetchFile['last_modified'], $gdir . $fetchFile['filename']);
     $filePhRow['thumb.attributes'] = $fileAttributes;
     $filePhRow['thumb.attributeIcons'] = $fileAttributeIcons;
     $filePhRow['thumb.buttons'] = $fileButtons;

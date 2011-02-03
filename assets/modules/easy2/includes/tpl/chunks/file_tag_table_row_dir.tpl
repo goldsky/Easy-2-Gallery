@@ -5,7 +5,6 @@
             <td valign="top">[+easy2:td.path+]</td>
             <td valign="top" nowrap="nowrap">[+easy2:td.icon+]</td>
             <td>
-<!--                [+easy2:td.link+] [+easy2:td.gid+] ([+easy2:td.count+]) [+easy2:td.attributes+]-->
                 [+easy2:td.rowDir+]
             </td>
             <td>[+easy2:td.alias+]</td>
