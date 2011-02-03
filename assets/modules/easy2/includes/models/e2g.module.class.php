@@ -439,13 +439,13 @@ class E2gMod extends E2gPub {
                 exit;
                 break;
         } // switch ($act)
-//        ob_start();
-//        include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
-//        $output = ob_get_contents();
-//        ob_end_clean();
-//
-//        return $output;
+        ob_start();
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
+        $output = ob_get_contents();
+        ob_end_clean();
+
+        return $output;
+//        include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
 //        return '';
     }
 

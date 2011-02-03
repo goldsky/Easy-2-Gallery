@@ -22,18 +22,22 @@ while ($l = mysql_fetch_array($resultdesc)) {
 mysql_free_result($resultdesc);
 ?>
 <table cellspacing="2" cellpadding="0">
-    <tr>
-        <td valign="top"><b>ID</b></td>
-        <td valign="top">:</td>
-        <td><?php echo $parent['cat_id']; ?></td>
-    </tr>
+    <?php
+    // signature of non recorded directory is an additional &path parameter in the address bar
+    // otherwise then it's a recorded one.
+    if (!isset($_GET['path'])) {
+    ?>
+        <tr>
+            <td valign="top"><b>ID</b></td>
+            <td valign="top">:</td>
+            <td><?php echo $parent['cat_id']; ?></td>
+        </tr>
+    <?php } ?>
     <tr>
         <td valign="top"><b><?php echo $this->lng['path']; ?></b></td>
         <td valign="top">:</td>
         <td>
             <?php
-            // signature of non recorded directory is an additional &path parameter in the address bar
-            // otherwise then it's a recorded one.
             if (!isset($_GET['path'])) {
                 echo $this->actionIcon('edit_dir', array(
                     'page' => 'edit_dir'
@@ -44,9 +48,9 @@ mysql_free_result($resultdesc);
             ?>
             <b><?php echo $path['link']; ?></b>
         </td>
-    </tr><?php
-            // signature of non recorded directory = &path in the address bar
-            if (!isset($_GET['path'])) : ?>
+    </tr>
+    <?php if (!isset($_GET['path'])) {
+    ?>
                 <tr>
                     <td valign="top"><b><?php echo $this->lng['visible']; ?></b></td>
                     <td valign="top">:</td>
@@ -83,35 +87,42 @@ mysql_free_result($resultdesc);
             <td valign="top"><b><?php echo $this->lng['redirect_link']; ?></b></td>
             <td valign="top">:</td>
             <td><?php echo $parent['cat_redirect_link']; ?></td>
-        </tr><?php endif; ?>
-    </table><br />
+        </tr><?php } ?>
+</table><br />
 
-    <form name="list" action="" method="post"><?php
-                $modView = $_SESSION['mod_view'];
-                switch ($modView) {
-                    case 'list':
-            ?>
-                        <div id="grid"></div>
-                        <script type="text/javascript">viewDefaultGrid('<?php echo $path['string'] ?>','<?php echo $parentId ?>');</script>
+<form name="list" action="" method="post">
     <?php
-                        break;
-                    case 'thumbnails':
-                        if (!isset($_GET['path'])): ?>
-                            <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
-                            echo $this->lng['select_all'];
-                        endif;
+            $processorFile = isset($_GET['path']) ? 'rescanhd' : 'dbfiles';
+            switch ($_SESSION['mod_view']) {
+                case 'list':
     ?>
-                        <div id="thumbnail" class="e2g_wrapper"></div>
-                        <script type="text/javascript">viewDefaultThumbnails('<?php echo $path['string'] ?>','<?php echo $parentId ?>');</script>
+                    <div id="grid"></div>
+                    <script type="text/javascript">
+                        viewDefaultGrid('<?php echo $path['string'] ?>','<?php echo $parentId ?>','<?php echo $processorFile; ?>');
+                    </script>
     <?php
-                        break;
-                    default:
-                        break;
-                }
+                    break;
+                case 'thumbnails':
+                    if (!isset($_GET['path'])) {
+    ?>
+                        <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />
+    <?php
+                        echo $this->lng['select_all'];
+                    }
+    ?>
+                    <div id="thumbnail" class="e2g_wrapper"></div>
+                    <script type="text/javascript">
+                        viewDefaultThumbnails('<?php echo $path['string'] ?>','<?php echo $parentId ?>','<?php echo $processorFile; ?>');
+                    </script>
+    <?php
+                    break;
+                default:
+                    break;
+            }
 
-                include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php';
+            include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.bottom.inc.php';
     ?>
-            </form>
+        </form>
 <?php
-                if (isset($_GET['view']))
-                    header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+            if (isset($_GET['view']))
+                header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));

@@ -178,7 +178,7 @@ class E2gPub { // public/public class
      * @param   bool    $preg           using preg_match
      * @return  string  filtered string
      */
-    public function sanitizedString ($string, $chars = array('/', "'", '"', '(', ')', ';', '>', '<'), $allowedTags = array(), $preg=FALSE) {
+    public function sanitizedString($string, $chars = array('/', "'", '"', '(', ')', ';', '>', '<'), $allowedTags = array(), $preg=FALSE) {
         $string = trim($string);
 
         $allowedTagStr = @implode('', $allowedTags);
@@ -199,9 +199,9 @@ class E2gPub { // public/public class
 
     /**
      * To get directory's information
-     * @param  int    $dirId  gallery's ID
-     * @param  string $field  database field
-     * @return mixed  the directory's data in an array
+     * @param   int     $dirId  gallery's ID
+     * @param   string  $field  database field
+     * @return  string  the directory's data
      */
     public function getDirInfo($dirId, $field) {
         $dirInfo = array();
@@ -222,9 +222,9 @@ class E2gPub { // public/public class
 
     /**
      * To get file's information
-     * @param  int    $fileId  file's ID
-     * @param  string $field  database field
-     * @return mixed  the file's data in an array
+     * @param   int     $fileId  file's ID
+     * @param   string  $field  database field
+     * @return  string  the file's data
      */
     public function getFileInfo($fileId, $field) {
         $fileInfo = array();
@@ -350,7 +350,7 @@ class E2gPub { // public/public class
 
         return TRUE;
     }
-    
+
     /**
      * Replace the basename function with this to grab non-unicode character.
      * @link http://drupal.org/node/278425#comment-2571500
@@ -477,14 +477,73 @@ class E2gPub { // public/public class
     }
 
     /**
-     * To get thumbnail for each folder
+     * To get thumbnail for each folder, from manual selection or DB generated
      * @param int       $gid    folder's ID
      * @param string    $gdir   gallery's ROOT path
      * @return string image's source
      */
     public function folderImg($gid, $gdir) {
-        // http://modxcms.com/forums/index.php/topic,23177.msg273448.html#msg273448
-        // ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
+
+        $excludeDirWebAccess = $this->excludeWebAccess('dir');
+        $excludeFileWebAccess = $this->excludeWebAccess('file');
+
+        /**
+         * Select the file from the manual selected thumbnail
+         */
+        $selectDbFile = 'SELECT cat_thumb_id '
+                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE cat_id = ' . $gid . ' ';
+
+        if ($excludeDirWebAccess !== FALSE) {
+            $selectDbFile .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ') ';
+        }
+
+        if ($excludeFileWebAccess !== FALSE) {
+            $selectDbFile .= 'AND cat_thumb_id NOT IN (' . $excludeFileWebAccess . ') ';
+        }
+
+        $queryDbFile = mysql_query($selectDbFile);
+        if (!$queryDbFile) {
+            $o = __LINE__ . ': __METHOD__ = ' . __METHOD__ . '<br />';
+            $o .= mysql_error() . '<br />' . $selectDbFile . '<br />';
+            echo $o;
+            return FALSE;
+        }
+
+        while ($l = mysql_fetch_array($queryDbFile, MYSQL_ASSOC)) {
+            $catThumbId = $l['cat_thumb_id'];
+        }
+
+        if (!empty($catThumbId)) {
+            $catThumbPath = $this->getPath($this->getFileInfo($catThumbId, 'dir_id'));
+            $catThumbName = $this->getFileInfo($catThumbId, 'filename');
+            if (file_exists(realpath($gdir . $catThumbPath . $catThumbName))) {
+                $selectThumbFile = 'SELECT * '
+                        . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+                        . 'WHERE id = ' . $catThumbId
+                ;
+                $queryThumbFile = mysql_query($selectThumbFile);
+                if (!$queryThumbFile) {
+                    $o = __LINE__ . ': __METHOD__ = ' . __METHOD__ . '<br />';
+                    $o .= mysql_error() . '<br />' . $selectThumbFile . '<br />';
+                    echo $o;
+                    return FALSE;
+                }
+
+                while ($l = mysql_fetch_array($queryThumbFile, MYSQL_ASSOC)) {
+                    $file = $l;
+                }
+                mysql_free_result($queryThumbFile);
+                
+                return $file;
+            }
+        }
+
+        /**
+         * Select the file from DB generated
+         * http://modxcms.com/forums/index.php/topic,23177.msg273448.html#msg273448
+         * ddim -- http://modxcms.com/forums/index.php/topic,48314.msg286241.html#msg286241
+         */
         $selectFiles = 'SELECT F.* '
                 . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files F '
                 . 'WHERE F.dir_id IN ('
@@ -496,12 +555,21 @@ class E2gPub { // public/public class
                 . 'AND A.cat_left >= B.cat_left '
                 . 'AND A.cat_right <= B.cat_right '
                 . 'AND A.cat_level >= B.cat_level '
-//                . 'AND A.cat_visible = 1'
+//                . 'AND A.cat_visible = 1'         // disabled, because Module needs to see them ALL
                 . ') '
                 . 'ORDER BY A.cat_level ASC '
                 . ') '
                 . 'AND F.status = 1 '
         ;
+
+        if ($excludeDirWebAccess !== FALSE) {
+            $selectDbFile .= 'AND A.cat_id NOT IN (' . $excludeDirWebAccess . ') ';
+        }
+
+        if ($excludeFileWebAccess !== FALSE) {
+            $selectDbFile .= 'AND F.id NOT IN (' . $excludeFileWebAccess . ') ';
+        }
+
         if ($this->e2gPubCfg['cat_thumb_orderby'] == 'random') {
             $selectFiles .= 'ORDER BY rand() ';
         } else {
@@ -547,6 +615,73 @@ class E2gPub { // public/public class
          * returned as folder's thumbnail's info array
          */
         return $folderImgInfos;
+    }
+
+    /**
+     * Filter the web access to the restricted galleries/pictures.
+     * @param string $type  dir/file selection
+     * @return string the excluded ids from the SQL parameter
+     */
+    public function excludeWebAccess($type) {
+        // if in the manager mode, don't use this
+        if (IN_MANAGER_MODE !== "false") {
+            return FALSE;
+        }
+        
+        /**
+         * Get all the restricted list ids
+         */
+        $allWebAccess = array();
+        $allWebAccessQuery = 'SELECT DISTINCT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access WHERE '
+                . ' type=\'' . $type . '\' ';
+        $allWebAccess = $this->modx->db->makeArray($this->modx->db->query($allWebAccessQuery));
+
+        if (empty($allWebAccess))
+            return FALSE;
+
+        foreach ($allWebAccess as $k => $v) {
+            $allWebAccess[$k] = $v['id'];
+        }
+
+        /**
+         * Filtering the logged in member resources
+         */
+        if (empty($_SESSION['webUserGroupNames'])) {
+            $allWebAccessString = @implode(',', $allWebAccess);
+            return $allWebAccessString;
+        }
+
+        $webUserGroupNames = $_SESSION['webUserGroupNames'];
+
+        foreach ($webUserGroupNames as $groupName) {
+            $webUserGroupIdQuery = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'webgroup_names '
+                    . 'WHERE name=\'' . $groupName . '\'';
+            $webUserGroupId = '';
+            $webUserGroupId = $this->modx->db->getValue($this->modx->db->query($webUserGroupIdQuery));
+            if (empty($webUserGroupId))
+                continue;
+
+            $userWebAccessQuery = 'SELECT DISTINCT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access WHERE '
+                    . 'webgroup_id=\'' . $webUserGroupId . '\' '
+                    . 'AND type=\'' . $type . '\' ';
+
+            $userWebAccess = array();
+            $userWebAccess = $this->modx->db->makeArray($this->modx->db->query($userWebAccessQuery));
+        }
+
+        foreach ($userWebAccess as $k => $v) {
+            $userWebAccess[$k] = $v['id'];
+        }
+
+        /**
+         * Get the difference
+         */
+        $excludeWebAccess = array_diff($allWebAccess, $userWebAccess);
+        if (empty($excludeWebAccess)) {
+            return FALSE;
+        }
+        $excludeWebAccessString = @implode(',', $excludeWebAccess);
+        return $excludeWebAccessString;
     }
 
     /**

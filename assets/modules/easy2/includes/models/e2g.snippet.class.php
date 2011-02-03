@@ -1977,14 +1977,18 @@ class E2gSnippet extends E2gPub {
 
     /**
      * CHECK THE REAL DESCENDANT OF fid ROOT
-     * @param int       $id         the decendant file's ID
-     * @param int       $staticId  the original file's ID
+     * @param int       $parentIds  parent's IDs in an array
+     * @param int       $staticId   the original file's ID
      * @return bool     TRUE | FALSE
-     * @todo is this function disposabled?
      */
-    private function _checkFidDecendant($id, $staticId) {
-        $selectFiles = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
-                . 'WHERE id IN (' . $staticId . ') '
+    private function _checkFidDecendant($parentIds, $id) {
+        // for global variable: '*' (star), always returns TRUE
+        if ($staticId == '*')
+            return TRUE;
+
+        $parentIds = @implode (',', $parentIds);
+        $selectFiles = 'SELECT f.id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files AS f '
+                . 'WHERE dir_id IN (' . $parentIds . ') '
         ;
         $querySelectFiles = mysql_query($selectFiles);
         if (!$querySelectFiles) {
@@ -2032,7 +2036,7 @@ class E2gSnippet extends E2gPub {
                 $selectTaggedDirs .= 'OR LOWER(cat_tag) LIKE \'%' . $xpldDirTags[$i] . '%\' ';
         }
 
-        $excludeDirWebAccess = $this->_excludeWebAccess('dir');
+        $excludeDirWebAccess = $this->excludeWebAccess('dir');
 
         if ($excludeDirWebAccess !== FALSE) {
             $selectTaggedDirs .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ') ';
@@ -2085,7 +2089,7 @@ class E2gSnippet extends E2gPub {
                 $selectTaggedFiles .= 'OR LOWER(tag) LIKE \'%' . $xpldFileTags[$i] . '%\' ';
         }
 
-        $excludeFileWebAccess = $this->_excludeWebAccess('file');
+        $excludeFileWebAccess = $this->excludeWebAccess('file');
 
         if ($excludeFileWebAccess !== FALSE) {
             $selectFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
@@ -2444,68 +2448,6 @@ class E2gSnippet extends E2gPub {
     }
 
     /**
-     * Filter the web access to the restricted galleries/pictures.
-     * @param string $type  dir/file selection
-     * @return string the excluded ids from the SQL parameter
-     */
-    private function _excludeWebAccess($type) {
-        /**
-         * Get all the restricted list ids
-         */
-        $allWebAccess = array();
-        $allWebAccessQuery = 'SELECT DISTINCT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access WHERE '
-                . ' type=\'' . $type . '\' ';
-        $allWebAccess = $this->modx->db->makeArray($this->modx->db->query($allWebAccessQuery));
-
-        if (empty($allWebAccess))
-            return FALSE;
-
-        foreach ($allWebAccess as $k => $v) {
-            $allWebAccess[$k] = $v['id'];
-        }
-
-        /**
-         * Filtering the logged in member resources
-         */
-        if (empty($_SESSION['webUserGroupNames'])) {
-            $allWebAccessString = @implode(',', $allWebAccess);
-            return $allWebAccessString;
-        }
-
-        $webUserGroupNames = $_SESSION['webUserGroupNames'];
-
-        foreach ($webUserGroupNames as $groupName) {
-            $webUserGroupIdQuery = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'webgroup_names '
-                    . 'WHERE name=\'' . $groupName . '\'';
-            $webUserGroupId = '';
-            $webUserGroupId = $this->modx->db->getValue($this->modx->db->query($webUserGroupIdQuery));
-            if (empty($webUserGroupId))
-                continue;
-
-            $userWebAccessQuery = 'SELECT DISTINCT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access WHERE '
-                    . 'webgroup_id=\'' . $webUserGroupId . '\' '
-                    . 'AND type=\'' . $type . '\' ';
-
-            $userWebAccess = array();
-            $userWebAccess = $this->modx->db->makeArray($this->modx->db->query($userWebAccessQuery));
-        }
-
-        foreach ($userWebAccess as $k => $v) {
-            $userWebAccess[$k] = $v['id'];
-        }
-
-        /**
-         * Get the difference
-         */
-        $excludeWebAccess = array_diff($allWebAccess, $userWebAccess);
-        if (empty($excludeWebAccess)) {
-            return FALSE;
-        }
-        $excludeWebAccessString = @implode(',', $excludeWebAccess);
-        return $excludeWebAccessString;
-    }
-
-    /**
      * Strips HTML tags
      * @param   string  $string
      * @param   array   $strippedTags
@@ -2550,7 +2492,7 @@ class E2gSnippet extends E2gPub {
      * @return string   The complete SQL's statement with additional parameters
      */
     private function _dirSqlStatement($select, $prefix = NULL) {
-        $excludeDirWebAccess = $this->_excludeWebAccess('dir');
+        $excludeDirWebAccess = $this->excludeWebAccess('dir');
 
         $prefixDot = '';
         if (isset($prefix))
@@ -2650,9 +2592,8 @@ class E2gSnippet extends E2gPub {
         $this->e2gSnipCfg['fid'] = $this->e2gSnipCfg['fid'];
         $this->e2gSnipCfg['static_fid'] = $this->e2gSnipCfg['static_fid'];
 
-        $excludeDirWebAccess = $this->_excludeWebAccess('dir');
-        $excludeFileWebAccess = $this->_excludeWebAccess('file');
-
+        $excludeDirWebAccess = $this->excludeWebAccess('dir');
+        $excludeFileWebAccess = $this->excludeWebAccess('file');
 
         if (!empty($allowedRatio) && $allowedRatio != 'all') {
             /**

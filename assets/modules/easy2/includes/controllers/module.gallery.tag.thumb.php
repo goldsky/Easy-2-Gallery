@@ -66,13 +66,13 @@ if (file_exists(realpath('../langs/' . $modx->config['manager_language'] . '.inc
         }
     }
 
-    $fetchFileng = $e2g_lang[$modx->config['manager_language']];
+    $lng = $e2g_lang[$modx->config['manager_language']];
 } else {
     include '../langs/english.inc.php';
-    $fetchFileng = $e2g_lang['english'];
+    $lng = $e2g_lang['english'];
 }
 
-$e2gMod = new E2gMod($modx, $e2gModCfg, $e2g, $fetchFileng);
+$e2gMod = new E2gMod($modx, $e2gModCfg, $e2g, $lng);
 
 $getRequests = $e2gMod->sanitizedGets($_GET);
 if (empty($getRequests)) {
@@ -85,9 +85,6 @@ $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 $rootDir = '../../../../../' . $e2g['dir'];
 $tag = $getRequests['tag'];
 $gdir = $e2g['dir'] . $getRequests['path'];
-
-$rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-$rowNum = 0;
 
 //******************************************************************/
 //**************************** Dir tags ****************************/
@@ -112,6 +109,9 @@ if (!$querySelectFiles) {
     $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
     die($msg);
 }
+
+$rowClass = array(' class="gridAltItem"', ' class="gridItem"');
+$rowNum = 0;
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
@@ -202,9 +202,9 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
     $dirPhRow['thumb.size'] = '---';
     $dirPhRow['thumb.w'] = '---';
     $dirPhRow['thumb.h'] = '---';
-    $dirPhRow['thumb.mod_w'] = $modThumbW;
-    $dirPhRow['thumb.mod_h'] = $modThumbH;
-    $dirPhRow['thumb.mod_thq'] = $modThumbThq;
+    $dirPhRow['thumb.mod_w'] = $e2g['mod_w'];
+    $dirPhRow['thumb.mod_h'] = $e2g['mod_h'];
+    $dirPhRow['thumb.mod_thq'] = $e2g['mod_thq'];
 
     ############################################################################
 
@@ -364,7 +364,7 @@ while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
     $fileNameUrlDecodeFilename = urldecode($fetchFile['filename']);
     $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($filePath . $fetchFile['filename']));
 
-    if (!file_exists('../../../../../' . $filePath . $fetchFile['filename'])) {
+    if (!file_exists(realpath('../../../../../' . $filePath . $fetchFile['filename']))) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -427,9 +427,9 @@ while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
     $filePhRow['thumb.attributeIcons'] = $fileAttributeIcons;
     $filePhRow['thumb.buttons'] = $fileButtons;
     $filePhRow['thumb.icon'] = $fileIcon;
-    $filePhRow['thumb.mod_w'] = $modThumbW;
-    $filePhRow['thumb.mod_h'] = $modThumbH;
-    $filePhRow['thumb.mod_thq'] = $modThumbThq;
+    $filePhRow['thumb.mod_w'] = $e2g['mod_w'];
+    $filePhRow['thumb.mod_h'] = $e2g['mod_h'];
+    $filePhRow['thumb.mod_thq'] = $e2g['mod_thq'];
 
     ############################################################################
 

@@ -11,7 +11,6 @@ if (IN_MANAGER_MODE != 'true')
 
 $filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
 
-$this->e2gModCfg['e2gpg'] = $this->e2gModCfg['e2gpg'];
 foreach ($this->e2gModCfg['e2gPages'] as $v) {
     $e2gPage[$v['e2gpg']] = $v;
 }
@@ -243,10 +242,13 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 }
             }
 
-            function viewDefaultThumbnails (path, pid) {
+            function viewDefaultThumbnails (path, pid, procFile) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
+                if (procFile=='rescanhd')
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.thumb.php?";
+                else
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&pid="+pid;
@@ -265,10 +267,13 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 }
             }
 
-            function viewDefaultGrid (path, pid) {
+            function viewDefaultGrid (path, pid, procFile) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("grid");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
+                if (procFile=='rescanhd')
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.grid.php?";
+                else
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
                 url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&pid="+pid;

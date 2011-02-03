@@ -85,9 +85,6 @@ $rootDir = '../../../../../' . $e2g['dir'];
 $tag = $getRequests['tag'];
 $gdir = $e2g['dir'] . $getRequests['path'];
 
-$rowClass = array(' class="gridAltItem"', ' class="gridItem"');
-$rowNum = 0;
-
 //******************************************************************/
 //**************************** Dir tags ****************************/
 //******************************************************************/
@@ -111,6 +108,10 @@ if (!$querySelectFiles) {
     $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
     die($msg);
 }
+
+$rowClass = array(' class="gridAltItem"', ' class="gridItem"');
+$rowNum = 0;
+
 ?>
 <table width="100%" cellpadding="2" cellspacing="0" class="grid" style="margin-bottom:10px;">
     <tr>
@@ -222,9 +223,9 @@ if (!isset($getRequests['getpath'])):
                 $dirPhRow['td.size'] = '---';
                 $dirPhRow['td.w'] = '---';
                 $dirPhRow['td.h'] = '---';
-                $dirPhRow['td.mod_w'] = $modThumbW;
-                $dirPhRow['td.mod_h'] = $modThumbH;
-                $dirPhRow['td.mod_thq'] = $modThumbThq;
+                $dirPhRow['td.mod_w'] = $e2g['mod_w'];
+                $dirPhRow['td.mod_h'] = $e2g['mod_h'];
+                $dirPhRow['td.mod_thq'] = $e2g['mod_thq'];
 
                 ########################################################################
 
@@ -343,9 +344,9 @@ if (!isset($getRequests['getpath'])):
                 $filePhRow['td.attributeIcons'] = $fileAttributeIcons;
                 $filePhRow['td.buttons'] = $fileButtons;
                 $filePhRow['td.icon'] = $fileIcon;
-                $filePhRow['td.mod_w'] = $modThumbW;
-                $filePhRow['td.mod_h'] = $modThumbH;
-                $filePhRow['td.mod_thq'] = $modThumbThq;
+                $filePhRow['td.mod_w'] = $e2g['mod_w'];
+                $filePhRow['td.mod_h'] = $e2g['mod_h'];
+                $filePhRow['td.mod_thq'] = $e2g['mod_thq'];
 
                 ########################################################################
 
