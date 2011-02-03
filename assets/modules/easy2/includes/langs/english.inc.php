@@ -197,6 +197,7 @@ $e2g_lang['english'] = array (
     'files_moved_fdb' => 'files have been updated in DB',
     'files_moved_fhdd' => 'files have been moved in HD',
     'files_uploaded' => 'files have been uploaded',
+    'folder_size' => 'count files',
     'folders' => 'Folders',
     'folders_hidden' => 'Hidden Folders',
     'fpath_err' => 'path or id of image is undefined',

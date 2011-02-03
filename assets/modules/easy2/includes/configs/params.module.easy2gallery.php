@@ -126,9 +126,3 @@ $e2gModCfg['index'] = isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a='
 $e2gModCfg['blank_index'] = MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
         . '&amp;id=' . $e2gModCfg['_i']
         . ( $alienparams != '' ? $alienparams : '' );
-
-// ERROR REPORTING
-if ($e2gModCfg['e2g_debug'] == 1) {
-    error_reporting(E_ALL);
-    $old_error_handler = set_error_handler("error_handler");
-}

@@ -555,7 +555,8 @@ class E2gMod extends E2gPub {
 
         if ($name != $nameAlias) {
             $basePath = dirname($path);
-            $rename = rename($path, $basePath . '/' . $this->e2gDecode($nameAlias));
+            $newPath = $basePath . '/' . $this->e2gDecode($nameAlias);
+            $rename = rename(realpath($path), realpath($newPath));
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_rename_err'];
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path . ' => ' . $basePath . '/' . $this->e2gDecode($nameAlias);

@@ -2,6 +2,8 @@
 
 $_a = isset($_a) ? $_a : (int) $_GET['a'];
 $_i = isset($_i) ? $_i : (int) $_GET['id'];
+$lng = !empty($lng) ? $lng : array();
+$e2gPages = !empty($e2gPages) ? $e2gPages : array();
 
 $e2gPages = array(
     'dashboard' => array(
