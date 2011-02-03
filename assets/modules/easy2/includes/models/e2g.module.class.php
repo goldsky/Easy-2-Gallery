@@ -507,6 +507,10 @@ class E2gMod extends E2gPub {
                     $res['file'][] = $f;
                     $res['f']++;
                 } elseif ($this->validFolder($f)) {
+                    $oldBasename = $this->basenameSafe($f);
+                    $fNewPath .= '/' . $oldBasename;
+                    $sres = $this->_moveAll($f, $newPath . $fNewPath);
+
                     $res['dir'][] = $f;
                     $res['d']++;
                     // $res = result (file/dir/error)
@@ -515,9 +519,6 @@ class E2gMod extends E2gPub {
                     $res['d'] += $sres['d'];
                     $res['e'] = array_merge($res['e'], $sres['e']);
 
-                    $oldBasename = $this->basenameSafe($f);
-                    $fNewPath .= '/' . $oldBasename;
-                    $sres = $this->_moveAll($f, $newPath . $fNewPath);
                 }
             }
         }
