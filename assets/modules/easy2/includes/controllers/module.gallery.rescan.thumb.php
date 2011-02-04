@@ -228,7 +228,7 @@ if (FALSE !== $scanDirs) :
             clearstatcache();
             $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';
             $dirAttributes = '<i>(' . $lng['new'] . ')</i>';
-            $dirHref = $index . '&amp;path=' . (!empty($getRequests['getpath']) ? $getRequests['getpath'] : '') . $dirName;
+            $dirHref = $index . '&amp;path=' . (!empty($getRequests['getpath']) ? $getRequests['getpath'] . '/' : '') . $dirName;
             $dirId = NULL;
             $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_add.png" width="16"
