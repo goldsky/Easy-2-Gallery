@@ -333,7 +333,7 @@ if ($ssParams['ss_config'] == 'galleryset') {
 
         if (isset($galleries)) {
             foreach ($galleries as $k => $v) {
-                $select = $this->_fileSqlStatements('*', $ssParams['ss_allowedratio'], $k);
+                $select = $this->_fileSqlStatement('*', $ssParams['ss_allowedratio'], $k);
                 $select .= 'ORDER BY ' . $ssParams['ss_orderby'] . ' ' . $ssParams['ss_order'] . ' '
                         . ( $ssParams['ss_limit'] == 'none' ? '' : 'LIMIT 0,' . $ssParams['ss_limit'] . ' ' )
                 ;
@@ -426,7 +426,7 @@ if ($ssParams['ss_config'] == 'zoom') {
 
     // ------------- start the images looping ------------- //
     for ($i = 0; $i < $ssFiles['count']; $i++) {
-        $dim = getimagesize($this->_e2gDecode($ssFiles['src'][$i]));
+        $dim = getimagesize($this->e2gDecode($ssFiles['src'][$i]));
         $width[$i] = $dim[0];
         $height[$i] = $dim[1];
         $imageRatio[$i] = $width[$i] / $height[$i];
@@ -435,7 +435,7 @@ if ($ssParams['ss_config'] == 'zoom') {
     <div class="imageElement">
         <h3>' . $ssFiles['title'][$i] . '</h3>
         <p>' . $ssFiles['description'][$i] . '</p>
-        <a href="' . str_replace('%2F', '/', rawurlencode($this->_e2gDecode($ssFiles['src'][$i]))) . '" title="open image" class="open"></a>
+        <a href="' . str_replace('%2F', '/', rawurlencode($this->e2gDecode($ssFiles['src'][$i]))) . '" title="open image" class="open"></a>
         <img src="' . $ssFiles['resizedimg'][$i] . '" class="full" alt="" '
                 . ( ( ($ssParams['ss_w'] / $ssParams['ss_h']) < $imageRatio[$i] ) ? 'height="' . $ssParams['ss_h'] . 'px" ' : 'width="' . $ssParams['ss_w'] . 'px" ' )
                 . '/>
