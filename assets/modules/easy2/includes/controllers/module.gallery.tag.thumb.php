@@ -100,8 +100,10 @@ if (!$querySelectDirs) {
 
 $fetchDirs = array();
 while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-    $fetchDirs[] = $l;
+    $fetchDirs[$l['cat_name']] = $l;
 }
+mysql_free_result($querySelectDirs);
+uksort($fetchDirs, "strnatcmp");
 
 //******************************************************************/
 //*************************** FILE tags ****************************/
@@ -117,8 +119,10 @@ if (!$querySelectFiles) {
 
 $fetchFiles = array();
 while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-    $fetchFiles[] = $l;
+    $fetchFiles[$l['filename']] = $l;
 }
+mysql_free_result($querySelectFiles);
+uksort($fetchFiles, "strnatcmp");
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
 $rowNum = 0;
@@ -327,9 +331,6 @@ foreach ($fetchDirs as $fetchDir) {
     $rowNum++;
 }
 
-mysql_free_result($querySelectDirs);
-
-
 #########################     FILES      #########################
 $filePhRow = array();
 
@@ -515,7 +516,5 @@ foreach ($fetchFiles as $fetchFile) {
     echo $e2gMod->filler($e2gMod->getTpl('file_thumb_file_tpl'), $filePhRow);
     $rowNum++;
 }
-mysql_free_result($querySelectFiles);
-
 
 exit ();

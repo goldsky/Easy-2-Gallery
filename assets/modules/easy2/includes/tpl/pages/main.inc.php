@@ -245,14 +245,14 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var container = document.getElementById("grid");
                 }
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
-                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "<?php echo isset($_GET['tag']) ? '&getpath=' . $_GET['tag'] : ''; ?>";
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {
-                            window.location.href='<?php echo htmlspecialchars_decode($this->e2gModCfg['index']);?>&act=synchro';
+                            window.location.href='<?php echo htmlspecialchars_decode($this->e2gModCfg['index']); ?>&act=synchro';
                             report.innerHTML = xhr.responseText;
                         } else {
                             container.innerHTML = "<img src=\"<?php echo E2G_MODULE_URL; ?>includes\/tpl\/icons\/preloader-file.gif\" \/>";
@@ -272,7 +272,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.thumb.php?";
                 else
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
-                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&pid="+pid;
                 if (xhr && container) {
@@ -297,7 +297,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.grid.php?";
                 else
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
-                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>&path="+path;
+                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&pid="+pid;
                 if (xhr && container) {
@@ -319,7 +319,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.thumb.php?";
-                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
+                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>";
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {
@@ -341,7 +341,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("list");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.grid.php?";
-                url += "a=<?php echo $_GET['a'];?>&id=<?php echo $_GET['id'];?>&e2gpg=<?php echo $_GET['e2gpg'];?>";
+                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>";
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {

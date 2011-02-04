@@ -101,8 +101,10 @@ if ($getRequests['path'] == $pidPath) {
     }
     $fetchDirs = array();
     while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-        $fetchDirs[] = $l;
+        $fetchDirs[$l['cat_name']] = $l;
     }
+    mysql_free_result($querySelectDirs);
+    uksort($fetchDirs, "strnatcmp");
 
     ####################################################################
     ####                      MySQL File list                       ####
@@ -116,8 +118,10 @@ if ($getRequests['path'] == $pidPath) {
     }
     $fetchFiles = array();
     while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-        $fetchFiles[] = $l;
+        $fetchFiles[$l['filename']] = $l;
     }
+    mysql_free_result($querySelectFiles);
+    uksort($fetchFiles, "strnatcmp");
 }
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
@@ -303,14 +307,11 @@ foreach ($fetchDirs as $fetchDir) {
             }
         }
     }
-    
+
     echo $e2gMod->filler($e2gMod->getTpl('file_thumb_dir_tpl'), $dirPhRow);
 
     $rowNum++;
 }
-
-mysql_free_result($querySelectDirs);
-
 
 #########################     FILES      #########################
 $filePhRow = array();
@@ -395,12 +396,12 @@ foreach ($fetchFiles as $fetchFile) {
     $fileButtons .= $e2gMod->actionIcon('delete_file', array(
                 'act' => 'delete_file'
                 , 'pid' => $getRequests['pid']
-                , 'file_id' => $fileId
+                , 'file_id' => $fetchFile['id']
                 , 'file_path' => $filePhRow['thumb.pathRawUrlEncoded']
                     ), 'onclick="return confirmDelete();"', $index);
 
     $filePhRow['thumb.checkBox'] = '
-                <input name="im[' . $fetchFile['id'] . ']" value="'.$filePhRow['thumb.pathRawUrlEncoded'].'" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fetchFile['id'] . ']" value="' . $filePhRow['thumb.pathRawUrlEncoded'] . '" type="checkbox" style="border:0;padding:0" />
                 ';
     $filePhRow['thumb.dirId'] = $fetchFile['dir_id'];
     $filePhRow['thumb.fid'] = '[id:' . $fetchFile['id'] . ']';
@@ -468,10 +469,9 @@ foreach ($fetchFiles as $fetchFile) {
         }
         unset($imgShaper);
     }
-    
+
     echo $e2gMod->filler($e2gMod->getTpl('file_thumb_file_tpl'), $filePhRow);
     $rowNum++;
 }
-mysql_free_result($querySelectFiles);
 
 exit ();

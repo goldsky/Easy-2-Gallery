@@ -35,7 +35,7 @@ class E2gMod extends E2gPub {
      * @var string drop down option
      */
     private $_dirDropDownOptions = array();
-    
+
     public function __construct($modx, $e2gModCfg, $e2g, $lng) {
         parent::__construct($modx, $e2gModCfg, $e2g, $lng);
         $this->modx = & $modx;
@@ -86,7 +86,6 @@ class E2gMod extends E2gPub {
         switch ($act) {
             case 'synchro':
                 // AJAX report
-                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['synchro_suc'];
                 $this->_cleanCache();
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
@@ -458,11 +457,14 @@ class E2gMod extends E2gPub {
      * @param string $path file's/folder's path
      */
     private function _deleteAll($path) {
+        $path = realpath($path);
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->validFolder($path) || empty($path))
+        if (!$this->validFolder($path) || empty($path)) {
             return $res;
+        }
+
         $fs = array();
-        $fs = glob($path . '*');
+        $fs = glob($path . '/*');
         if ($fs != FALSE) {
             foreach ($fs as $f) {
                 // using original file check, not _validFile($f), because it will delete not only images.
@@ -518,7 +520,6 @@ class E2gMod extends E2gPub {
                     $res['f'] += $sres['f'];
                     $res['d'] += $sres['d'];
                     $res['e'] = array_merge($res['e'], $sres['e']);
-
                 }
             }
         }
@@ -556,10 +557,10 @@ class E2gMod extends E2gPub {
         if ($name != $nameAlias) {
             $basePath = dirname($path);
             $newPath = $basePath . '/' . $this->e2gDecode($nameAlias);
-            $rename = rename(realpath($path), realpath($newPath));
+            $rename = rename(realpath($path), $newPath);
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path . ' => ' . $basePath . '/' . $this->e2gDecode($nameAlias);
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . realpath($path) . ' => ' . $newPath;
                 return FALSE;
             }
             $this->_changeModOwnGrp('dir', $basePath . '/' . $this->e2gDecode($nameAlias));
@@ -626,7 +627,7 @@ class E2gMod extends E2gPub {
         return TRUE;
     }
 
-    private function _checkFolders ($filePath, $pid) {
+    private function _checkFolders($filePath, $pid) {
         if (!$this->validFile($filePath)) {
             return FALSE;
         }
@@ -638,7 +639,7 @@ class E2gMod extends E2gPub {
         $basePath = str_replace($rootPath, '', $basePath);
         $basePath = trim($basePath, DIRECTORY_SEPARATOR);
 
-        $pathArray = @explode (DIRECTORY_SEPARATOR, $basePath);
+        $pathArray = @explode(DIRECTORY_SEPARATOR, $basePath);
         $pathArrayReverse = array_reverse($pathArray);
         unset($pathArrayReverse[0]);
 
@@ -664,7 +665,7 @@ class E2gMod extends E2gPub {
 
         // if the folder also new, adding this file will recursively adding its parent folder(s), too
         if (!$this->_checkFolders($filePath, $pid))
-                return FALSE;
+            return FALSE;
 
         $basename = $this->basenameSafe($filePath);
         $basename = $this->e2gEncode($basename);
@@ -869,6 +870,12 @@ class E2gMod extends E2gPub {
      * @param string    $cfg    module's configuration
      */
     public function synchro($path, $pid) {
+        $path = realpath($path);
+        if (!$this->validFolder($path) || empty($path)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path;
+            return FALSE;
+        }
+
         $timeStart = microtime(TRUE);
         /**
          * STORE variable arrays for synchronizing comparison
@@ -912,7 +919,7 @@ class E2gMod extends E2gPub {
         $this->_createIndexHtml($path, $this->lng['indexfile']);
 
         $fs = array();
-        $fs = @glob($path . '*'); // goldsky -- DO NOT USE a slash here!
+        $fs = @glob($path . '/*');
         natsort($fs);
 
         /**
@@ -1075,9 +1082,8 @@ class E2gMod extends E2gPub {
 
         $timeEnd = microtime(TRUE);
         $timeTotal = $timeEnd - $timeStart;
-        if ($this->e2g['e2g_debug'] == '1') {
-            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . "Syncronized $path in $timeTotal seconds\n";
-        }
+
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['synchro_suc'] . ' (' . $timeTotal . 's)';
         return TRUE;
     }
 
@@ -1384,102 +1390,103 @@ class E2gMod extends E2gPub {
 
         $zip = new ZipArchive;
         $zipOpen = $zip->open($file);
-        if ($zipOpen === TRUE) {
-            $fileCount = 0;
-            $dirCount = 0;
-
-            if ($zip->numFiles > 0) {
-                for ($i = 0; $i < $zip->numFiles; $i++) {
-                    ob_start();
-
-                    $zipEntryName = $zip->getNameIndex($i);
-                    $zipContent = $zip->getFromIndex($i);
-                    /**
-                     * ENCODING OPTIONS TO GET FILENAMES AND END SLASH
-                     */
-                    if ($this->e2gModCfg['e2g_encode'] == 'none') {
-                        $r = substr($zipEntryName, strlen($zipEntryName) - 1, 1);
-                    }
-                    if ($this->e2gModCfg['e2g_encode'] == 'UTF-8') {
-                        $zipEntryName = utf8_decode($zipEntryName);
-                        $r = substr($zipEntryName, strlen($zipEntryName) - 1, 1);
-                    }
-                    if ($this->e2gModCfg['e2g_encode'] == 'UTF-8 (Rin)') {
-                        /**
-                         * @uses Unicode conversion class.
-                         * @todo : need more work on i18n stuff
-                         */
-                        $mbDetectEncoding = mb_detect_encoding($zipOpen);
-
-                        // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-                        if ($mbDetectEncoding != 'ASCII' && $mbDetectEncoding != 'UTF-8') {
-                            if (!$mbDetectEncoding) {
-                                $zipEntryName = UTF8::convert_from($zipEntryName, "ASCII");
-                            } else {
-                                $zipEntryName = UTF8::convert_from($zipEntryName, $mbDetectEncoding);
-                            }
-                        }
-                        $r = UTF8::substr($zipEntryName, UTF8::strlen($zipEntryName) - 1, 1);
-                    }
-
-                    // DETECT the directory entry
-                    if ($r == '/') {
-                        // creates directory
-                        if (!is_dir($path . $zipEntryName)) {
-                            $xpldZipEntryName = array();
-                            $unzipDirs = array();
-                            // converting non-latin names with MODx's stripAlias function
-                            $xpldZipEntryName = @explode('/', $zipEntryName);
-                            foreach ($xpldZipEntryName as $unzipDir) {
-                                $unzipDirs[] = $this->modx->stripAlias($unzipDir);
-                            }
-                            $implodedDir = @implode('/', $unzipDirs);
-                            $mkdir = mkdir($path . $this->e2gDecode($implodedDir), 0777);
-                            if (!$mkdir)
-                                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['unzip_dir_err'] . ' <b>' . $path . $zipEntryName . '</b>';
-                            else {
-                                $dirCount++;
-                                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dirs_uploaded'] . ' ' . $path . $zipEntryName;
-                            }
-                        }
-                    } else {
-                        // creates/copy the file
-                        $xpldZipEntryName = array();
-                        $unzipFiles = array();
-                        // creates/copy the file
-                        // converting non-latin names with MODx's stripAlias function
-                        $xpldZipEntryName = @explode('/', $zipEntryName);
-                        foreach ($xpldZipEntryName as $unzipFile) {
-                            $unzipFiles[] = $this->modx->stripAlias($unzipFile);
-                        }
-                        $implodedFile = @implode('/', $unzipFiles);
-                        $fd = fopen($path . $this->e2gDecode($implodedFile), 'w');
-                        if ($fd) {
-                            fwrite($fd, $zipContent);
-                            fclose($fd);
-                            $this->_changeModOwnGrp('file', $path . $implodedFile);
-
-                            $fileCount++;
-                            if ($this->e2gModCfg['e2g_debug'] == '1')
-                                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['files_uploaded'] . ' ' . $path . $zipEntryName;
-                        }
-                        else {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['unzip_file_err'] . ' <b>' . $path . $zipEntryName . '</b>';
-                        }
-                    }
-                    ob_end_clean();
-                } // for($i = 0; $i < $zip->numFiles; $i++)
-            } // if ( $zip->numFiles > 0)
-
-            $zip->close();
-            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $dirCount . ' ' . $this->lng['dirs_uploaded'] . '.';
-            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $fileCount . ' ' . $this->lng['files_uploaded'] . '.';
-
-            return TRUE;
-        } else {
+        
+        if ($zipOpen !== TRUE) {
             $_SESSION['easy2err'][] = __LINE__ . ' Error : ' . $this->lng['zip_open_err'] . ' <b>' . $file . '</b>';
             return FALSE;
         }
+
+        $fileCount = 0;
+        $dirCount = 0;
+
+        if ($zip->numFiles > 0) {
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                ob_start();
+
+                $zipEntryName = $zip->getNameIndex($i);
+                $zipContent = $zip->getFromIndex($i);
+                /**
+                 * ENCODING OPTIONS TO GET FILENAMES AND END SLASH
+                 */
+                if ($this->e2gModCfg['e2g_encode'] == 'none') {
+                    $r = substr($zipEntryName, strlen($zipEntryName) - 1, 1);
+                }
+                if ($this->e2gModCfg['e2g_encode'] == 'UTF-8') {
+                    $zipEntryName = utf8_decode($zipEntryName);
+                    $r = substr($zipEntryName, strlen($zipEntryName) - 1, 1);
+                }
+                if ($this->e2gModCfg['e2g_encode'] == 'UTF-8 (Rin)') {
+                    /**
+                     * @uses Unicode conversion class.
+                     * @todo : need more work on i18n stuff
+                     */
+                    $mbDetectEncoding = mb_detect_encoding($zipOpen);
+
+                    // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+                    if ($mbDetectEncoding != 'ASCII' && $mbDetectEncoding != 'UTF-8') {
+                        if (!$mbDetectEncoding) {
+                            $zipEntryName = UTF8::convert_from($zipEntryName, "ASCII");
+                        } else {
+                            $zipEntryName = UTF8::convert_from($zipEntryName, $mbDetectEncoding);
+                        }
+                    }
+                    $r = UTF8::substr($zipEntryName, UTF8::strlen($zipEntryName) - 1, 1);
+                }
+
+                // DETECT the directory entry
+                if ($r == '/') {
+                    // creates directory
+                    if (!is_dir($path . $zipEntryName)) {
+                        $xpldZipEntryName = array();
+                        $unzipDirs = array();
+                        // converting non-latin names with MODx's stripAlias function
+                        $xpldZipEntryName = @explode('/', $zipEntryName);
+                        foreach ($xpldZipEntryName as $unzipDir) {
+                            $unzipDirs[] = $this->modx->stripAlias($unzipDir);
+                        }
+                        $implodedDir = @implode('/', $unzipDirs);
+                        $mkdir = mkdir($path . $this->e2gDecode($implodedDir), 0777);
+                        if (!$mkdir)
+                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['unzip_dir_err'] . ' <b>' . $path . $zipEntryName . '</b>';
+                        else {
+                            $dirCount++;
+                            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dirs_uploaded'] . ' ' . $path . $zipEntryName;
+                        }
+                    }
+                } else {
+                    // creates/copy the file
+                    $xpldZipEntryName = array();
+                    $unzipFiles = array();
+                    // creates/copy the file
+                    // converting non-latin names with MODx's stripAlias function
+                    $xpldZipEntryName = @explode('/', $zipEntryName);
+                    foreach ($xpldZipEntryName as $unzipFile) {
+                        $unzipFiles[] = $this->modx->stripAlias($unzipFile);
+                    }
+                    $implodedFile = @implode('/', $unzipFiles);
+                    $fd = fopen($path . $this->e2gDecode($implodedFile), 'w');
+                    if ($fd) {
+                        fwrite($fd, $zipContent);
+                        fclose($fd);
+                        $this->_changeModOwnGrp('file', $path . $implodedFile);
+
+                        $fileCount++;
+                        if ($this->e2gModCfg['e2g_debug'] == '1')
+                            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['files_uploaded'] . ' ' . $path . $zipEntryName;
+                    }
+                    else {
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['unzip_file_err'] . ' <b>' . $path . $zipEntryName . '</b>';
+                    }
+                }
+                ob_end_clean();
+            } // for($i = 0; $i < $zip->numFiles; $i++)
+        } // if ( $zip->numFiles > 0)
+
+        $zip->close();
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $dirCount . ' ' . $this->lng['dirs_uploaded'] . '.';
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $fileCount . ' ' . $this->lng['files_uploaded'] . '.';
+
+        return TRUE;
     }
 
     /**
@@ -1489,9 +1496,8 @@ class E2gMod extends E2gPub {
      * @return  mixed file creation
      */
     private function _createIndexHtml($dir, $text) {
-        if (!file_exists(realpath($dir . 'index.html'))) {
-            // goldsky -- adds a cover file
-            $indexHtml = $dir . 'index.html';
+        $indexHtml = realpath($dir) . DIRECTORY_SEPARATOR . 'index.html';
+        if (!file_exists($indexHtml)) {
             $fh = fopen($indexHtml, 'w');
             if (!$fh)
                 $_SESSION['easy2err'][] = __LINE__ . " : Could not open file " . $indexHtml;
@@ -1516,6 +1522,7 @@ class E2gMod extends E2gPub {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['upload_err'] . ' : ' . $this->lng['upload_empty'];
             return FALSE;
         }
+
         $error = 0;
         // CREATE PATH
         $path = $this->getPath($newParent);
@@ -1593,13 +1600,13 @@ class E2gMod extends E2gPub {
                 $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $j . ' ' . $this->lng['files_uploaded'] . '.';
         } // Upload images
         // UPLOAD ZIP
-        if ($files['zip']['size'] > 0) {
+        if (!empty($files['zip']['name'])) {
             if ($files['zip']['error'] !== 0) {
                 $error++;
-                $_SESSION['easy2err'][] = __LINE__ . ' : zip error # '
-                        . $files['zip']['error'] . $this->lng['upload_err'] . ' : '
+                $_SESSION['easy2err'][] = __LINE__ . ' : zip error # ' . $files['zip']['error'];
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['upload_err'] . ' : '
                         . $this->_fileUploadErrorMessage($files['zip']['error'])
-                        . ' => ' . $files['zip']['name']
+                        . ' (' . $files['zip']['name'] . ')'
                 ;
                 return FALSE;
             }
@@ -1610,11 +1617,7 @@ class E2gMod extends E2gPub {
             }
 
             @unlink($files['zip']['tmp_name']);
-            if ($this->synchro('../' . $this->e2g['dir'], 1)) {
-                $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['synchro_suc'];
-            } else {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'];
-            }
+            $this->synchro('../' . $this->e2g['dir'], 1);
             $this->_cleanCache();
 
             // invoke the plugin
@@ -1946,7 +1949,7 @@ class E2gMod extends E2gPub {
             foreach ($post['dir'] as $k => $v) {
                 // the numeric keys are the member of the database
                 if (is_numeric($k)) {
-                    $ids = $tree->delete((int) $k);
+                    $ids = $tree->delete(intval($k));
                     $implodedDirIds = implode(',', $ids);
                     $selectFileIds = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                             . 'WHERE dir_id IN(' . $implodedDirIds . ')';
@@ -1987,7 +1990,7 @@ class E2gMod extends E2gPub {
                 } // if (is_numeric($k))
                 if (!empty($v)) {
                     $v = str_replace('../', '', $this->e2gDecode($v));
-                    $d = $this->_deleteAll('../' . $v . '/');
+                    $d = $this->_deleteAll('../' . $v);
 
                     if (empty($d['e'])) {
                         $res['dfp'][0] += $d['d'];
@@ -2047,7 +2050,8 @@ class E2gMod extends E2gPub {
                 }
                 if (!empty($v)) {
                     $v = str_replace('../', '', $this->e2gDecode($v));
-                    if (@unlink('../' . $v)) {
+                    $vRealPath = realpath('../' . $v);
+                    if (@unlink($vRealPath)) {
                         $res['ffp'][0]++;
                     } else {
                         $res['ffp'][1]++;
@@ -2419,7 +2423,7 @@ class E2gMod extends E2gPub {
             $fileIds = array();
             $res = mysql_query(
                             'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
-                            . 'WHERE dir_id IN(' . implode(',', $ids) . ')'
+                            . 'WHERE dir_id IN(' . @implode(',', $ids) . ')'
             );
             while ($l = mysql_fetch_row($res)) {
                 $fileIds[] = $l[0];
@@ -2429,15 +2433,15 @@ class E2gMod extends E2gPub {
             if (count($fileIds) > 0) {
                 mysql_query(
                         'DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments '
-                        . 'WHERE file_id IN(' . implode(',', $fileIds) . ')');
+                        . 'WHERE file_id IN(' . @implode(',', $fileIds) . ')');
             }
             mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
-                    . 'WHERE dir_id IN(' . implode(',', $ids) . ')');
+                    . 'WHERE dir_id IN(' . @implode(',', $ids) . ')');
         }
 
         if (!empty($get['dir_path'])) {
             $dirPath = str_replace('../', '', $this->e2gDecode($get['dir_path']));
-            $res = $this->_deleteAll(realpath('../' . $dirPath . '/'));
+            $res = $this->_deleteAll('../' . $dirPath);
         }
 
         if ($ids !== FALSE && count($res['e']) === 0) {
@@ -2503,12 +2507,17 @@ class E2gMod extends E2gPub {
         if (!empty($get['file_path'])) {
             $baseName = $this->basenameSafe($get['file_path']);
             $filePath = str_replace('../', '', $this->e2gDecode($get['file_path']));
-            $deletePhysical = @unlink('../' . $filePath);
-            if (!$deletePhysical) {
+            $fileRealPath = realpath('../' . $filePath);
+            if (empty($fileRealPath)) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : #' . $this->lng['file_delete_err'] . ' : ' . $filePath;
-                $res['fser']++;
             } else {
-                $res['fs']++;
+                $deletePhysical = @unlink($fileRealPath);
+                if (!$deletePhysical) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : #' . $this->lng['file_delete_err'] . ' : ' . $filePath;
+                    $res['fser']++;
+                } else {
+                    $res['fs']++;
+                }
             }
         }
 
@@ -2613,8 +2622,9 @@ class E2gMod extends E2gPub {
             }
 
             // delete the config file, because this will always be checked as an upgrade option
-            if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
-                $unlinkConfigFile = unlink(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php');
+            $oldConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php');
+            if (file_exists($oldConfigFile)) {
+                $unlinkConfigFile = @unlink($oldConfigFile);
                 if (!$unlinkConfigFile) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_del_err'];
                 } else {

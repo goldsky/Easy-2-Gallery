@@ -11,10 +11,5 @@
             [+easy2:thumb.thumb+]
             <div class="attributes">[+easy2:thumb.icon+][+easy2:thumb.attributeIcons+]</div>
         </div>
-        <div class="dirinfo">
-            <div class="dirname">
-                [+easy2:thumb.rowDir+]
-            </div>
-        </div>
     </div>
 </div>

@@ -98,17 +98,31 @@ if (!$querySelectDirs) {
     die($msg);
 }
 
+$fetchDirs = array();
+while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+    $fetchDirs[$l['cat_name']] = $l;
+}
+mysql_free_result($querySelectDirs);
+uksort($fetchDirs, "strnatcmp");
+
 //******************************************************************/
 //*************************** FILE tags ****************************/
 //******************************************************************/
 $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
         . 'WHERE tag LIKE \'%' . $tag . '%\' '
-        . 'ORDER BY id ASC';
+        . 'ORDER BY filename ASC';
 $querySelectFiles = mysql_query($selectFiles);
 if (!$querySelectFiles) {
     $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
     die($msg);
 }
+
+$fetchFiles = array();
+while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+    $fetchFiles[$l['filename']] = $l;
+}
+mysql_free_result($querySelectFiles);
+uksort($fetchFiles, "strnatcmp");
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
 $rowNum = 0;
@@ -134,7 +148,7 @@ $galPh['td.fileTagTableContent'] = '';
 
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
-while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+foreach ($fetchDirs as $fetchDir) {
     // goldsky -- store the array to be connected between db <--> fs
     $dirPhRow['td.parent_id'] = $fetchDir['parent_id'];
     $dirPhRow['td.id'] = $fetchDir['cat_id'];
@@ -213,7 +227,7 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
                 'page' => 'edit_dir'
                 , 'dir_id' => $fetchDir['cat_id']
                 , 'tag' => $tag
-            ), null, $index);
+                    ), null, $index);
     $dirButtons .= $e2gMod->actionIcon('delete_dir', array(
                 'act' => 'delete_dir'
                 , 'dir_path' => $dirPath . $fetchDir['cat_name']
@@ -246,11 +260,9 @@ while ($fetchDir = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
     $rowNum++;
 }
 
-mysql_free_result($querySelectDirs);
-
 #########################        FILES         #########################
 $filePhRow = array();
-while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+foreach ($fetchFiles as $fetchFile) {
     $filePhRow['td.id'] = $fetchFile['id'];
     $filePhRow['td.dirId'] = $fetchFile['dir_id'];
     $filePhRow['td.name'] = $fetchFile['filename'];
@@ -375,7 +387,6 @@ while ($fetchFile = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
     $galPh['td.fileTagTableContent'] .= $e2gMod->filler($e2gMod->getTpl('file_tag_table_row_file_tpl'), $filePhRow);
     $rowNum++;
 }
-mysql_free_result($querySelectFiles);
 
 echo $e2gMod->filler($e2gMod->getTpl('file_tag_table_tpl'), $galPh);
 

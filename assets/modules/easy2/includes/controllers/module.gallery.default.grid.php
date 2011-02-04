@@ -101,15 +101,18 @@ if ($getRequests['path'] == $pidPath) {
     }
     $fetchDirs = array();
     while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
-        $fetchDirs[] = $l;
+        $fetchDirs[$l['cat_name']] = $l;
     }
     mysql_free_result($querySelectDirs);
+    uksort($fetchDirs, "strnatcmp");
 
     ####################################################################
     ####                      MySQL File list                       ####
     ####################################################################
     $selectFiles = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_files '
-            . 'WHERE dir_id = ' . $getRequests['pid'];
+            . 'WHERE dir_id = ' . $getRequests['pid'] . ' '
+            . 'ORDER BY filename ASC'
+    ;
     $querySelectFiles = mysql_query($selectFiles);
     if (!$querySelectFiles) {
         $msg = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
@@ -117,9 +120,10 @@ if ($getRequests['path'] == $pidPath) {
     }
     $fetchFiles = array();
     while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-        $fetchFiles[] = $l;
+        $fetchFiles[$l['filename']] = $l;
     }
     mysql_free_result($querySelectFiles);
+    uksort($fetchFiles, "strnatcmp");
 }
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
@@ -231,7 +235,7 @@ foreach ($fetchDirs as $fetchDir) {
                 'page' => 'edit_dir'
                 , 'dir_id' => $fetchDir['cat_id']
                 , 'pid' => $getRequests['pid']
-            ), null, $index);
+                    ), null, $index);
     $dirButtons .= $e2gMod->actionIcon('delete_dir', array(
                 'act' => 'delete_dir'
                 , 'dir_path' => $gdir . $fetchDir['cat_name']

@@ -156,7 +156,7 @@ if (FALSE !== $scanDirs):
                 $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles($scanPath) . ' )';
                 break;
             case 'ajax':
-                $dirPhRow['td.count'] = '( <span id="countfiles_' . $dirPathRawUrlEncoded . '"><span id="countfileslink_' . $dirPathRawUrlEncoded . '"><a href="javascript:;" onclick="countFiles(\'' . $scanPath . '\', \'' . $dirPathRawUrlEncoded . '\')">folder size</a></span></span> )';
+                $dirPhRow['td.count'] = '( <span id="countfiles_' . $dirPathRawUrlEncoded . '"><span id="countfileslink_' . $dirPathRawUrlEncoded . '"><a href="javascript:;" onclick="countFiles(\'' . $scanPath . '\', \'' . $dirPathRawUrlEncoded . '\')">' . $lng['folder_size'] . '</a></span></span> )';
                 break;
             default:
                 $dirPhRow['td.count'] = '';

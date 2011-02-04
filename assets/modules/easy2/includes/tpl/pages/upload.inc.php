@@ -23,6 +23,7 @@ if (IN_MANAGER_MODE != 'true')
     </ul>
     <p><?php echo $this->lng['upload_dir'] . ': <b>' . $this->e2gModCfg['gdir'] . '</b>'; ?></p>
     <input type="hidden" name="newparent" value="<?php echo $_GET['pid']; ?>" />
+    <input type="hidden" name="gotofolder" value="gothere" />
     <?php } ?>
         <p><b><?php echo $this->lng['extension_valid']; ?> :</b> .jpeg, .jpg, .gif, .png</p>
         <p><b><?php echo $this->lng['upload_limit']; ?> :</b> <?php echo ini_get('upload_max_filesize'); ?></p>
