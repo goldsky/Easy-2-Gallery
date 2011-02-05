@@ -546,7 +546,7 @@ class E2gPub { // public/public class
         if (!empty($catThumbId)) {
             $catThumbPath = $this->getPath($this->getFileInfo($catThumbId, 'dir_id'));
             $catThumbName = $this->getFileInfo($catThumbId, 'filename');
-            if (file_exists(realpath($gdir . $catThumbPath . $catThumbName))) {
+            if (file_exists(realpath($this->e2gDecode($gdir . $catThumbPath . $catThumbName)))) {
                 $selectThumbFile = 'SELECT * '
                         . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                         . 'WHERE id = ' . $catThumbId
@@ -631,7 +631,7 @@ class E2gPub { // public/public class
         foreach ($files as $file) {
             // search image for subdir
             $getPath = $this->getPath($file['dir_id']);
-            $imagePath = $gdir . $getPath . $file['filename'];
+            $imagePath = $this->e2gDecode($gdir . $getPath . $file['filename']);
             if (!$this->validFile($imagePath)) {
                 continue;
             } else {

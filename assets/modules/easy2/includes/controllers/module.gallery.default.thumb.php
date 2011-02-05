@@ -153,7 +153,7 @@ foreach ($fetchDirs as $fetchDir) {
     $dirPhRow['thumb.rowNum'] = $rowNum;
     $dirPhRow['thumb.rowClass'] = $rowClass[$rowNum % 2];
     $dirPhRow['thumb.checkBox'] = '
-                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . $dirPhRow['thumb.pathRawUrlEncoded'] . '" type="checkbox" style="border:0;padding:0" />
+                <input name="dir[' . $fetchDir['cat_id'] . ']" value="' . $gdir . $fetchDir['cat_name'] . '" type="checkbox" style="border:0;padding:0" />
                 ';
     $dirStyledName = $fetchDir['cat_name']; // will be overridden for styling below
     $dirCheckBox = '';
@@ -285,14 +285,14 @@ foreach ($fetchDirs as $fetchDir) {
                 /**
                  * $imgShaper returns the URL to the image
                  */
-                $dirPhRow['thumb.src'] = $imgShaper;
+                $dirPhRow['thumb.src'] = $e2gMod->e2gEncode($imgShaper);
 
                 /**
                  * @todo: AJAX call to the image
                  */
                 $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
-                <img src="' . '../' . str_replace('../', '', $imgShaper)
+                <img src="' . '../' . str_replace('../', '', $dirPhRow['thumb.src'])
                         . '" alt="' . $dirPhRow['thumb.name']
                         . '" title="' . $dirPhRow['thumb.title']
                         . '" width="' . $dirPhRow['thumb.mod_w']
@@ -300,7 +300,7 @@ foreach ($fetchDirs as $fetchDir) {
                         . '" class="thumb-dir" />
                 <span class="preloader" id="thumbDir_' . $dirPhRow['thumb.rowNum'] . '">
                     <script type="text/javascript">
-                        thumbDir(\'' . '../' . str_replace('../', '', $imgShaper) . '\','
+                        thumbDir(\'' . '../' . str_replace('../', '', $dirPhRow['thumb.src']) . '\','
                         . $dirPhRow['thumb.rowNum'] . ');
                     </script>
                 </span>
@@ -355,7 +355,7 @@ foreach ($fetchFiles as $fetchFile) {
     $filePhRow['thumb.rowClass'] = $rowClass[$rowNum % 2];
     $filePhRow['thumb.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
 
-    if (!file_exists(realpath('../../../../../' . $gdir . $fetchFile['filename']))) {
+    if (!file_exists(realpath('../../../../../' . $e2gMod->e2gDecode($gdir . $fetchFile['filename'])))) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -404,7 +404,7 @@ foreach ($fetchFiles as $fetchFile) {
                     ), 'onclick="return confirmDelete();"', $index);
 
     $filePhRow['thumb.checkBox'] = '
-                <input name="im[' . $fetchFile['id'] . ']" value="' . $filePhRow['thumb.pathRawUrlEncoded'] . '" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fetchFile['id'] . ']" value="' . $gdir . $fetchFile['filename'] . '" type="checkbox" style="border:0;padding:0" />
                 ';
     $filePhRow['thumb.dirId'] = $fetchFile['dir_id'];
     $filePhRow['thumb.fid'] = '[id:' . $fetchFile['id'] . ']';
@@ -461,13 +461,13 @@ foreach ($fetchFiles as $fetchFile) {
             </a>
 ';
         } else {
-            $filePhRow['thumb.src'] = $imgShaper;
+            $filePhRow['thumb.src'] = $e2gMod->e2gEncode($imgShaper);
             $filePhRow['thumb.thumb'] = '
             <a href="../' . $filePhRow['thumb.pathRawUrlEncoded']
                     . '" class="highslide" onclick="return hs.expand(this, { objectType: \'ajax\'})" '
                     . 'title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
                     . '">
-                <img src="' . '../' . str_replace('../', '', $imgShaper)
+                <img src="' . '../' . str_replace('../', '', $filePhRow['thumb.src'])
                     . '" alt="' . $filePhRow['thumb.pathRawUrlEncoded'] . $filePhRow['thumb.name']
                     . '" title="' . $filePhRow['thumb.title']
                     . '" width="' . $filePhRow['thumb.mod_w']

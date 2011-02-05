@@ -457,14 +457,18 @@ class E2gMod extends E2gPub {
      * @param string $path file's/folder's path
      */
     private function _deleteAll($path) {
-        $path = realpath($path);
+echo __LINE__ . ' : $path = ' . $path . '<br />';
+        $realPath = realpath($path);
+echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
+//die();
+
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->validFolder($path) || empty($path)) {
+        if (empty($realPath) || !$this->validFolder($realPath)) {
             return $res;
         }
-
+        
         $fs = array();
-        $fs = glob($path . DIRECTORY_SEPARATOR . '*');
+        $fs = glob($realPath . DIRECTORY_SEPARATOR . '*');
         if ($fs != FALSE) {
             foreach ($fs as $f) {
                 // using original file check, not _validFile($f), because it will delete not only images.
@@ -482,7 +486,7 @@ class E2gMod extends E2gPub {
                 }
             }
         }
-        if (count($res['e']) == 0 && @rmdir($path))
+        if (count($res['e']) == 0 && @rmdir($realPath))
             $res['d']++;
         else
             $res['e'][] = __LINE__ . ' : ' . $this->lng['dir_delete_err'] . ' : ' . $path;
@@ -548,10 +552,16 @@ class E2gMod extends E2gPub {
      * @param string $cfg   module's configuration
      * @param string $lng   language translation
      */
-    private function _addAll($path, $pid) {
+    private function _addAll($path, $pid, $userId=null) {
         $realPath = realpath($path);
+        $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
+        
         if (empty($realPath) || !$this->validFolder($realPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $path;
+            return FALSE;
+        }
+        if (empty($userId)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
             return FALSE;
         }
 
@@ -590,11 +600,13 @@ class E2gMod extends E2gPub {
         $this->modx->db->query(
                 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'SET date_added=NOW() '
-                . ', added_by=\'' . $this->modx->getLoginUserID() . '\' '
+                . ', added_by=\'' . $userId . '\' '
                 . 'WHERE cat_id=' . $id
         );
 
-        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dir_added'] . ' : ' . str_replace('../', '', $this->e2gEncode(dirname($path))) . '/' . $name;
+        $suc = str_replace('../', '', $this->e2gEncode(dirname($path))) . '/' . $name;
+        $suc = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->e2gEncode(dirname($path))) . '/' . $name;
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dir_added'] . ' : ' . $suc;
 
         // invoke the plugin
         $this->plugin('OnE2GFolderAdd', array('gid' => $id, 'foldername' => $name));
@@ -615,7 +627,7 @@ class E2gMod extends E2gPub {
 
                 if ($this->validFolder($filePath)) {
                     // goldsky -- if the path is a dir, go deeper as $realPath==$filePath
-                    if (!$this->_addAll($filePath, $id)) {
+                    if (!$this->_addAll($filePath, $id, $userId)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
@@ -623,7 +635,7 @@ class E2gMod extends E2gPub {
                     /**
                      * INSERT filename into database
                      */
-                    if (!$this->_addFile($filePath, $id)) {
+                    if (!$this->_addFile($filePath, $id, $userId)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
@@ -673,14 +685,21 @@ class E2gMod extends E2gPub {
 
     /**
      * To add file from the upload form or add file button into the database
-     * @param string $f filename
-     * @param int $pid current parent ID
-     * @param string $cfg module's configuration
+     * @param  string   $f      filename
+     * @param  int      $pid    current parent ID
+     * @param  string   $userId logged in user's ID, for database signature
+     * @return bool     TRUE | FALSE
      */
-    private function _addFile($filePath, $pid) {
+    private function _addFile($filePath, $pid, $userId=null) {
         $fileRealPath = realpath($filePath);
+        $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
+        
         if (empty($fileRealPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
+            return FALSE;
+        }
+        if (empty($userId)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'];
             return FALSE;
         }
 
@@ -735,16 +754,15 @@ class E2gMod extends E2gPub {
                 . ", width='$width'"
                 . ", height='$height'"
                 . ", date_added=NOW()"
-                . ", added_by='" . $this->modx->getLoginUserID() . "'"
+                . ", added_by='$userId'"
                 . ", last_modified='$time'"
-                . ", modified_by='" . $this->modx->getLoginUserID() . "'"
+                . ", modified_by='$userId'"
         ;
         $queryInsertFile = mysql_query($insertFile);
         if (!$queryInsertFile) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertFile;
             return FALSE;
         }
-        mysql_free_result($queryInsertFile);
 
         // invoke the plugin
         $this->plugin('OnE2GFileAdd', array(
@@ -890,20 +908,33 @@ class E2gMod extends E2gPub {
 //        return TRUE;
     }
 
+    public function getLoginUserID() {
+        return $this->modx->getLoginUserID();
+    }
+    
     /**
      * To synchronize between physical gallery contents and database
      * @param string    $path   path to file or folder
      * @param int       $pid    current parent ID
-     * @param string    $cfg    module's configuration
+     * @param string    $userId logged in user's ID, for database signature
      */
-    public function synchro($path, $pid) {
+    public function synchro($path, $pid, $userId=null) {
         $path = realpath($path);
+        $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
+        
         if (!$this->validFolder($path) || empty($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path;
+            return __LINE__ . ' : ' . $path;
             return FALSE;
         }
         if (empty($pid)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
+            return __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
+            return FALSE;
+        }
+        if (empty($userId)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
+            return __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
             return FALSE;
         }
 
@@ -917,6 +948,7 @@ class E2gMod extends E2gPub {
         $querySelectDirs = mysql_query($selectDirs);
         if (!$querySelectDirs) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
+            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
             return FALSE;
         }
 
@@ -933,6 +965,7 @@ class E2gMod extends E2gPub {
         $querySelectFile = mysql_query($selectFiles);
         if (!$querySelectFile) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
             return FALSE;
         }
 
@@ -975,7 +1008,8 @@ class E2gMod extends E2gPub {
                         continue;
                     if (isset($mdirs[$name])) {
                         if (!$this->synchro($filePath , $mdirs[$name]['id'])) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
+                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
+                            return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
                             return FALSE;
                         }
                         unset($mdirs[$name]);
@@ -983,8 +1017,9 @@ class E2gMod extends E2gPub {
                         /**
                          * INSERT folder's and file's names into database
                          */
-                        if (!$this->_addAll($filePath , $pid)) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
+                        if (!$this->_addAll($filePath , $pid, $userId)) {
+                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
+                            return __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
                             return FALSE;
                         }
                     }
@@ -1014,7 +1049,7 @@ class E2gMod extends E2gPub {
                                 . ", width='$width'"
                                 . ", height='$height'"
                                 . ", last_modified='$time'"
-                                . ", modified_by='" . $this->modx->getLoginUserID() . "' "
+                                . ", modified_by='" . $userId . "' "
                                 . "WHERE filename='$name'"
                         ;
 
@@ -1030,7 +1065,8 @@ class E2gMod extends E2gPub {
                         /**
                          * INSERT filename into database
                          */
-                        if (!$this->_addFile($filePath, $pid)) {
+
+                        if (!$this->_addFile($filePath, $pid, $userId)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
                             return FALSE;
                         }
@@ -4424,6 +4460,7 @@ class E2gMod extends E2gPub {
                     && $k != 'getpath'
                     && $k != 'path'
                     && $k != 'pid'
+                    && $k != 'uid'
                     && $k != 'tag'
             ) {
                 unset($_GET[$k]);
