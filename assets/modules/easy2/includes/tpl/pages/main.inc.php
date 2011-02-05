@@ -237,7 +237,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 }
             }
 
-            function synchro(path, pid) {
+            function synchro(path, pid, uid) {
                 var xhr = xhrRequest();
                 var report = document.getElementById("report");
                 var container = document.getElementById("thumbnail");
@@ -249,6 +249,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
                 url += "<?php echo isset($_GET['tag']) ? '&tag=' . $_GET['tag'] : ''; ?>";
                 url += "&pid="+pid;
+                url += "&uid="+uid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
                         if (xhr.readyState == 4 && xhr.status == 200) {

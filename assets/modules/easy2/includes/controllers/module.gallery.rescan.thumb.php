@@ -141,7 +141,7 @@ if (FALSE !== $scanDirs) :
         } else {
             $dirName = basename($scanDir);
         }
-        
+
         $dirName = $e2gMod->e2gEncode($dirName);
         $dirName = urldecode($dirName);
         if ($dirName == '_thumbnails')
@@ -335,14 +335,14 @@ if (FALSE !== $scanDirs) :
                     /**
                      * $imgShaper returns the URL to the image
                      */
-                    $dirPhRow['thumb.src'] = $imgShaper;
+                    $dirPhRow['thumb.src'] = $e2gMod->e2gEncode($imgShaper);
 
                     /**
                      * @todo: AJAX call to the image
                      */
                     $dirPhRow['thumb.thumb'] = '
             <a href="' . $dirPhRow['thumb.href'] . '">
-                <img src="' . '../' . str_replace('../', '', $imgShaper)
+                <img src="' . '../' . str_replace('../', '', $dirPhRow['thumb.src'])
                             . '" alt="' . $dirPhRow['thumb.name']
                             . '" title="' . $dirPhRow['thumb.name']
                             . '" width="' . $dirPhRow['thumb.mod_w']
@@ -350,7 +350,7 @@ if (FALSE !== $scanDirs) :
                             . '" class="thumb-dir" />
                 <span class="preloader" id="thumbDir_' . $dirPhRow['thumb.rowNum'] . '">
                     <script type="text/javascript">
-                        thumbDir(\'' . '../' . str_replace('../', '', $imgShaper) . '\','
+                        thumbDir(\'' . '../' . str_replace('../', '', $dirPhRow['thumb.src']) . '\','
                             . $dirPhRow['thumb.rowNum'] . ');
                     </script>
                 </span>
@@ -506,7 +506,7 @@ if (FALSE !== $scanFiles) :
         } else {
             $filename = basename($scanFile);
         }
-        
+
         $filename = $e2gMod->e2gEncode($filename);
         $fileNameUrlDecodeFilename = urldecode($filename);
         $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $filename));
@@ -658,13 +658,13 @@ if (FALSE !== $scanFiles) :
                 </a>
     ';
             } else {
-                $filePhRow['thumb.src'] = $imgShaper;
+                $filePhRow['thumb.src'] = $e2gMod->e2gEncode($imgShaper);
                 $filePhRow['thumb.thumb'] = '
             <a href="../' . $filePhRow['thumb.pathRawUrlEncoded']
                         . '" class="highslide" onclick="return hs.expand(this, { objectType: \'ajax\'})" '
                         . 'title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
                         . '">
-                <img src="' . '../' . str_replace('../', '', $imgShaper)
+                <img src="' . '../' . str_replace('../', '', $filePhRow['thumb.src'])
                         . '" alt="' . $filePhRow['thumb.pathRawUrlEncoded'] . $filePhRow['thumb.name']
                         . '" title="' . $filePhRow['thumb.name']
                         . '" width="' . $filePhRow['thumb.mod_w']

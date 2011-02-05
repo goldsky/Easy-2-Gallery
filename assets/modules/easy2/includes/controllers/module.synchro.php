@@ -86,10 +86,13 @@ $rootDir = '../../../../../' . $e2g['dir'];
 $pidPath = $e2gMod->getPath($getRequests['pid']);
 $gdir = $e2g['dir'] . $getRequests['path'];
 
-if ($e2gMod->synchro('../../../../../' . $getRequests['path'], $getRequests['pid'])) {
+$userId = $getRequests['uid'];
+
+$synchro = $e2gMod->synchro('../../../../../' . $getRequests['path'], $getRequests['pid'], $userId);
+if ($synchro) {
     echo '<div class="success" style="padding-left: 10px;">' . __LINE__ . ' : ' . $lng['synchro_suc'] . '</div>';
 } else {
-    echo '<div class="warning" style="padding-left: 10px;">' . __LINE__ . ' : ' . $lng['synchro_err'] . '</div>';
+    echo '<div class="warning" style="padding-left: 10px;">' . __LINE__ . ' : ' . $lng['synchro_err'] . ' : ' . $synchro . '</div>';
 }
 
 exit();

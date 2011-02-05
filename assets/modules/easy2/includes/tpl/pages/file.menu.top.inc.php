@@ -39,7 +39,7 @@ if (!isset($_GET['tag']) && !isset($_GET['path'])) {
             ?>
 
             <li>
-                <a href="javascript:;" onclick="synchro('<?php echo $this->e2g['dir']; ?>', '1');">
+                <a href="javascript:;" onclick="synchro('<?php echo $this->e2g['dir']; ?>', '1','<?php echo $this->modx->getLoginUserID(); ?>');">
                     <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/refresh.png" alt="" /> <?php echo $this->lng['synchro']; ?>
                 </a>
             </li>
