@@ -171,7 +171,7 @@ foreach ($fetchDirs as $fetchDir) {
     $dirPhRow['td.path'] = '<a href="' . $index . '&amp;pid=' . $fetchDir['parent_id'] . '">' . $dirPath . '</a>';
     $dirPhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($dirPath . $fetchDir['cat_name']));
     $dirPhRow['td.title'] = ( trim($fetchDir['cat_alias']) != '' ? $fetchDir['cat_alias'] : $fetchDir['cat_name']);
-    $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag']);
+    $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag'], $index);
     $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], '../../../../../' . $dirPath . $fetchDir['cat_name']);
     switch ($e2g['mod_foldersize']) {
         case 'auto':
@@ -349,13 +349,13 @@ foreach ($fetchFiles as $fetchFile) {
                     ), 'onclick="return confirmDelete();"', $index);
 
     $filePhRow['td.checkBox'] = '
-                <input name="im[' . $fetchFile['id'] . ']" value="im[' . $fetchFile['id'] . ']" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fetchFile['id'] . ']" value="' . $filePathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                 ';
     $filePhRow['td.dirId'] = $fetchFile['dir_id'];
     $filePhRow['td.fid'] = '[id:' . $fetchFile['id'] . ']';
     $filePhRow['td.styledName'] = $fileStyledName;
     $filePhRow['td.title'] = ( trim($fetchFile['alias']) != '' ? $fetchFile['alias'] : $fetchFile['filename']);
-    $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag']);
+    $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag'], $index);
     $filePhRow['td.path'] = '<a href="' . $index . '&amp;pid=' . $fetchFile['dir_id'] . '">' . $filePath . '</a>';
     $filePhRow['td.pathRawUrlEncoded'] = $filePathRawUrlEncoded;
     $filePhRow['td.time'] = $e2gMod->getTime($fetchFile['date_added'], $fetchFile['last_modified'], '../../../../../' . $filePath . $fetchFile['filename']);

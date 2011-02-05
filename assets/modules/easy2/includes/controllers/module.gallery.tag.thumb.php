@@ -495,7 +495,7 @@ foreach ($fetchFiles as $fetchFile) {
                 . $filePhRow['thumb.pathRawUrlEncoded']
                 . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
                 . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
-                . '&amp;text=' . __LINE__ . '-'
+                . '&amp;text=' . __LINE__ . '-' . $lng['new']
         ;
         $filePhRow['thumb.thumb'] = '
             <a href="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']

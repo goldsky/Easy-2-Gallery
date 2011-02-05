@@ -83,9 +83,19 @@ $index = $e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
+$rootDir = rtrim($rootDir, '/') . '/'; // just to make sure there is a slash at the end path
+$rootRealPath = realpath($rootDir);
+if (empty($rootRealPath)) {
+    echo __LINE__ . ' : Root Path is not real : ' . $rootDir . '<br />';
+    die();
+}
 $pidPath = $e2gMod->getPath($getRequests['pid']);
+$decodedPath = $e2gMod->e2gDecode($getRequests['path']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-
+/**
+ * $getRequests['path'] = synchronized folder's path!
+ * $getRequests['getpath'] = unsynchronized folder's path!
+ */
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -114,34 +124,36 @@ $rowNum = 0;
 //******************************************************************/
 //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
 //******************************************************************/
-$scanDirs = @glob('../../../../../' . $e2gMod->e2gDecode($gdir) . '*', GLOB_ONLYDIR);
+$scanDirs = @glob($rootDir . $decodedPath . '/*', GLOB_ONLYDIR);
 if (FALSE !== $scanDirs) :
     if (is_array($scanDirs))
         natsort($scanDirs);
 
-    foreach ($scanDirs as $scanPath) {
+    foreach ($scanDirs as $scanDir) {
         ob_start();
-        if (!$e2gMod->validFolder($scanPath)) {
+        if (!$e2gMod->validFolder($scanDir)) {
             continue;
-        } // if ($e2gMod->validFolder($scanPath))
-        $dirName = $e2gMod->basenameSafe($scanPath);
+        } // if ($e2gMod->validFolder($scanDir))
+
+        $realPathDir = realpath($scanDir);
+        if (!empty($realPathDir)) {
+            $dirName = $e2gMod->basenameSafe($realPathDir);
+        } else {
+            $dirName = basename($scanDir);
+        }
+        
         $dirName = $e2gMod->e2gEncode($dirName);
         $dirName = urldecode($dirName);
         if ($dirName == '_thumbnails')
             continue;
 
-        $dirStyledName = $dirName; // will be overridden for styling below
         $dirNameUrlDecodeDirname = urldecode($dirName);
         $dirPathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $dirName));
-        $dirCountFiles = $e2gMod->countFiles($scanPath);
 
         #################### Template placeholders #####################
 
-        $dirAlias = '';
         $dirTag = '';
-        $dirTagLinks = '';
         $dirCheckBox = '';
-        $dirAttributes = '';
         $dirAttributeIcons = '';
         $dirHref = '';
         $dirIcon = '
@@ -158,10 +170,7 @@ if (FALSE !== $scanDirs) :
 
         if (isset($mdirs[$dirName])) {
             $dirId = $mdirs[$dirName]['cat_id'];
-            $dirAlias = $mdirs[$dirName]['cat_alias'];
             $dirTag = $mdirs[$dirName]['cat_tag'];
-            $dirTagLinks = $e2gMod->createTagLinks($dirTag);
-            $dirTime = $e2gMod->getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $scanPath);
 
             if (!isset($getRequests['getpath'])) {
                 // Checkbox
@@ -170,7 +179,6 @@ if (FALSE !== $scanDirs) :
                 ';
             }
             if ($mdirs[$dirName]['cat_visible'] == '1') {
-                $dirStyledName = '<b>' . $dirName . '</b>';
                 $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
                 $dirButtons = $e2gMod->actionIcon('hide_dir', array(
                             'act' => 'hide_dir'
@@ -178,8 +186,6 @@ if (FALSE !== $scanDirs) :
                             , 'pid' => $getRequests['pid']
                                 ), null, $index);
             } else {
-                $dirStyledName = '<i>' . $dirName . '</i>';
-                $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
                 $dirAttributeIcons = '
                 <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $dirId . '&amp;name=' . $dirName . '&amp;pid=' . $getRequests['pid'] . '">
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16"
@@ -224,10 +230,6 @@ if (FALSE !== $scanDirs) :
                         , 'dir_path' => $dirPathRawUrlEncoded
                         , 'pid' => $getRequests['pid']
                             ), null, $index);
-            $dirTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanPath));
-            clearstatcache();
-            $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';
-            $dirAttributes = '<i>(' . $lng['new'] . ')</i>';
             $dirHref = $index . '&amp;path=' . (!empty($getRequests['getpath']) ? $getRequests['getpath'] . '/' : '') . $dirName;
             $dirId = NULL;
             $dirIcon = '
@@ -255,15 +257,8 @@ if (FALSE !== $scanDirs) :
         $dirPhRow['thumb.id'] = $dirId;
         $dirPhRow['thumb.gid'] = empty($dirId) ? '' : '[id: ' . $dirId . ']';
         $dirPhRow['thumb.name'] = $dirName;
-        $dirPhRow['thumb.styledName'] = $dirStyledName;
-        $dirPhRow['thumb.path'] = $scanPath;
+        $dirPhRow['thumb.path'] = $getRequests['getpath'];
         $dirPhRow['thumb.pathRawUrlEncoded'] = $dirPathRawUrlEncoded;
-        $dirPhRow['thumb.alias'] = $dirAlias;
-        $dirPhRow['thumb.title'] = ( trim($dirAlias) != '' ? $dirAlias : $dirName);
-        $dirPhRow['thumb.tagLinks'] = $dirTagLinks;
-        $dirPhRow['thumb.time'] = $dirTime;
-        $dirPhRow['thumb.count'] = $dirCountFiles;
-        $dirPhRow['thumb.attributes'] = $dirAttributes;
         $dirPhRow['thumb.attributeIcons'] = $dirAttributeIcons;
         $dirPhRow['thumb.href'] = $dirHref;
         $dirPhRow['thumb.buttons'] = $dirButtons;
@@ -291,10 +286,10 @@ if (FALSE !== $scanDirs) :
                         . '&amp;text=' . $lng['empty']
                 ;
                 $dirPhRow['thumb.thumb'] = '
-            <a href="' . $dirPhRow['thumb.href'] . '">
+            <a href="' . $dirPhRow['thumb.href'] . '" title="' . $dirPhRow['thumb.name'] . '">
                 <img src="' . $imgPreview
                         . '" alt="' . $dirPhRow['thumb.path'] . $dirPhRow['thumb.name']
-                        . '" title="' . $dirPhRow['thumb.title']
+                        . '" title="' . $dirPhRow['thumb.name']
                         . '" width="' . $dirPhRow['thumb.mod_w']
                         . '" height="' . $dirPhRow['thumb.mod_h']
                         . '" />
@@ -329,7 +324,7 @@ if (FALSE !== $scanDirs) :
                             . '">
                 <img src="' . $imgPreview
                             . '" alt="' . $dirPhRow['thumb.path'] . $dirPhRow['thumb.name']
-                            . '" title="' . $dirPhRow['thumb.title']
+                            . '" title="' . $dirPhRow['thumb.name']
                             . '" width="' . $dirPhRow['thumb.mod_w']
                             . '" height="' . $dirPhRow['thumb.mod_h']
                             . '" />
@@ -349,7 +344,7 @@ if (FALSE !== $scanDirs) :
             <a href="' . $dirPhRow['thumb.href'] . '">
                 <img src="' . '../' . str_replace('../', '', $imgShaper)
                             . '" alt="' . $dirPhRow['thumb.name']
-                            . '" title="' . $dirPhRow['thumb.title']
+                            . '" title="' . $dirPhRow['thumb.name']
                             . '" width="' . $dirPhRow['thumb.mod_w']
                             . '" height="' . $dirPhRow['thumb.mod_h']
                             . '" class="thumb-dir" />
@@ -374,7 +369,7 @@ if (FALSE !== $scanDirs) :
             <a href="' . $dirPhRow['thumb.href'] . '">
                 <img src="' . $imgPreview
                     . '" alt="' . $dirPhRow['thumb.name']
-                    . '" title="' . $dirPhRow['thumb.title']
+                    . '" title="' . $dirPhRow['thumb.name']
                     . '" width="' . $dirPhRow['thumb.mod_w']
                     . '" height="' . $dirPhRow['thumb.mod_h']
                     . '" />
@@ -393,7 +388,7 @@ if (FALSE !== $scanDirs) :
         usleep(10);
 
         $rowNum++;
-    } // foreach ($dirs as $scanPath)
+    } // foreach ($scanDirs as $scanDir)
     ob_end_flush();
 
     /**
@@ -410,15 +405,7 @@ if (FALSE !== $scanDirs) :
             $dirPhRow['thumb.id'] = $v['cat_id'];
             $dirPhRow['thumb.gid'] = '[id: ' . $v['cat_id'] . ']';
             $dirPhRow['thumb.name'] = $v['cat_name'];
-            $dirPhRow['thumb.styledName'] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
             $dirPhRow['thumb.path'] = '';
-            $dirPhRow['thumb.alias'] = $v['cat_alias'];
-            $dirPhRow['thumb.title'] = ( trim($v['cat_alias']) != '' ? $v['cat_alias'] : $v['cat_name']);
-            $dirPhRow['thumb.tagLinks'] = $e2gMod->createTagLinks($v['cat_tag']);
-            $dirPhRow['thumb.time'] = $e2gMod->getTime($v['date_added'], $v['last_modified'], '');
-            $dirPhRow['thumb.count'] = intval("0");
-            $dirPhRow['thumb.link'] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
-            $dirPhRow['thumb.attributes'] = '<i>(' . $lng['deleted'] . ')</i>';
             $dirPhRow['thumb.attributeIcons'] = '';
 
             $dirPhRow['thumb.href'] = '';
@@ -464,7 +451,7 @@ if (FALSE !== $scanDirs) :
                 <img src="' . $imgPreview
                     . '" alt="' . $dirPhRow['thumb.path']
                     . $dirPhRow['thumb.name']
-                    . '" title="' . $dirPhRow['thumb.title']
+                    . '" title="' . $dirPhRow['thumb.name']
                     . '" width="' . $dirPhRow['thumb.mod_w']
                     . '" height="' . $dirPhRow['thumb.mod_h']
                     . '" />
@@ -501,31 +488,32 @@ if ($getRequests['path'] == $pidPath) {
     mysql_free_result($querySelectFiles);
 }
 
-$scanDirs = @glob('../../../../../' . $e2gMod->e2gDecode($gdir) . '*');
-if (FALSE !== $scanDirs) :
-    if (is_array($scanDirs))
-        natsort($scanDirs);
+$scanFiles = @glob($rootDir . $decodedPath . '/*');
+if (FALSE !== $scanFiles) :
+    if (is_array($scanFiles))
+        natsort($scanFiles);
 
-    foreach ($scanDirs as $scanPath) {
-        if ($e2gMod->validFolder($scanPath)
-                || !$e2gMod->validFile($scanPath)
+    foreach ($scanFiles as $scanFile) {
+        if ($e2gMod->validFolder($scanFile)
+                || !$e2gMod->validFile($scanFile)
         ) {
             continue;
         }
         ob_start();
-        // TODO: Clean up this UTF-8 mess when adding file
-        $filename = $e2gMod->basenameSafe($scanPath);
+        $realPathFile = realpath($scanFile);
+        if (!empty($realPathDir)) {
+            $filename = $e2gMod->basenameSafe($realPathFile);
+        } else {
+            $filename = basename($scanFile);
+        }
+        
         $filename = $e2gMod->e2gEncode($filename);
-        $fileStyledName = $filename; // will be overridden for styling below
         $fileNameUrlDecodeFilename = urldecode($filename);
         $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $filename));
         #################### Template placeholders #####################
 
-        $fileAlias = '';
         $fileTag = '';
-        $fileTagLinks = '';
         $fileCheckBox = '';
-        $fileAttributes = '';
         $fileAttributeIcons = '';
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
@@ -540,8 +528,6 @@ if (FALSE !== $scanDirs) :
 
         if (isset($mfiles[$filename])) {
             $fileId = $mfiles[$filename]['id'];
-            $fileAlias = $mfiles[$filename]['alias'];
-            $fileTagLinks = $e2gMod->createTagLinks($mfiles[$filename]['tag']);
             if (!isset($getRequests['getpath'])) {
                 // Checkbox
                 $fileCheckBox = '
@@ -549,10 +535,8 @@ if (FALSE !== $scanDirs) :
                 ';
             }
             $tag = $mfiles[$filename]['tag'];
-            $fileSize = round($mfiles[$filename]['size'] / 1024);
             $width = $mfiles[$filename]['width'];
             $height = $mfiles[$filename]['height'];
-            $fileTime = $e2gMod->getTime($mfiles[$filename]['date_added'], $mfiles[$filename]['last_modified'], $scanPath);
 
             if ($mfiles[$filename]['status'] == '1') {
                 $fileButtons = $e2gMod->actionIcon('hide_file', array(
@@ -561,8 +545,6 @@ if (FALSE !== $scanDirs) :
                             , 'pid' => $getRequests['pid']
                                 ), null, $index);
             } else {
-                $fileStyledName = '<i>' . $filename . '</i>';
-                $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
                 $fileAttributeIcons = $e2gMod->actionIcon('show_file', array(
                             'act' => 'show_file'
                             , 'file_id' => $fileId
@@ -597,15 +579,12 @@ if (FALSE !== $scanDirs) :
                 <input name="im[f' . $rowNum . ']" value="im[f' . $rowNum . ']" type="checkbox" style="border:0;padding:0" />
                 ';
             }
-            $fileTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanPath));
-            $fileStyledName = '<span style="color:gray"><b>' . $filename . '</b></span>';
-            $fileAttributes = '<i>(' . $lng['new'] . ')</i>';
             $fileId = NULL;
             $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_add.png" width="16" height="16" border="0" alt="" />
                 ';
             $fileAttributeIcons = '';
-            if (empty($path['string'])) {
+            if (empty($getRequests['getpath'])) {
                 // add file
                 $fileButtons .= $e2gMod->actionIcon('add_file', array(
                             'act' => 'add_file'
@@ -615,8 +594,7 @@ if (FALSE !== $scanDirs) :
             } else {
                 $fileButtons = '';
             }
-            $fileSize = round(filesize($scanPath) / 1024);
-            list($width, $height) = @getimagesize($scanPath);
+            list($width, $height) = @getimagesize($scanFile);
         }
 
         $fileButtons .= $e2gMod->actionIcon('delete_file', array(
@@ -633,19 +611,11 @@ if (FALSE !== $scanDirs) :
         $filePhRow['thumb.id'] = $fileId;
         $filePhRow['thumb.fid'] = empty($fileId) ? '' : '[id:' . $fileId . ']';
         $filePhRow['thumb.name'] = $filename;
-        $filePhRow['thumb.styledName'] = $fileStyledName;
-        $filePhRow['thumb.alias'] = $fileAlias;
-        $filePhRow['thumb.title'] = ( trim($fileAlias) != '' ? $fileAlias : $filename);
-        $filePhRow['thumb.tagLinks'] = $fileTagLinks;
-//                $filePhRow['thumb.path'] = '../' . $gdir;
         $filePhRow['thumb.path'] = $rootDir;
         $filePhRow['thumb.pathRawUrlEncoded'] = $filePathRawUrlEncoded;
-        $filePhRow['thumb.time'] = $fileTime;
-        $filePhRow['thumb.attributes'] = $fileAttributes;
         $filePhRow['thumb.attributeIcons'] = $fileAttributeIcons;
         $filePhRow['thumb.buttons'] = $fileButtons;
         $filePhRow['thumb.icon'] = $fileIcon;
-        $filePhRow['thumb.size'] = $fileSize;
         $filePhRow['thumb.w'] = $width;
         $filePhRow['thumb.h'] = $height;
         $filePhRow['thumb.mod_w'] = $e2g['mod_w'];
@@ -681,7 +651,7 @@ if (FALSE !== $scanDirs) :
                         . '">
                     <img src="' . $imgPreview
                         . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
-                        . '" title="' . $filePhRow['thumb.title']
+                        . '" title="' . $filePhRow['thumb.name']
                         . '" width="' . $filePhRow['thumb.mod_w']
                         . '" height="' . $filePhRow['thumb.mod_h']
                         . '" />
@@ -696,7 +666,7 @@ if (FALSE !== $scanDirs) :
                         . '">
                 <img src="' . '../' . str_replace('../', '', $imgShaper)
                         . '" alt="' . $filePhRow['thumb.pathRawUrlEncoded'] . $filePhRow['thumb.name']
-                        . '" title="' . $filePhRow['thumb.title']
+                        . '" title="' . $filePhRow['thumb.name']
                         . '" width="' . $filePhRow['thumb.mod_w']
                         . '" height="' . $filePhRow['thumb.mod_h']
                         . '" class="thumb-file" />
@@ -710,7 +680,7 @@ if (FALSE !== $scanDirs) :
                     . $filePhRow['thumb.pathRawUrlEncoded']
                     . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
                     . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
-                    . '&amp;text=' . __LINE__ . '-'
+                    . '&amp;text=' . __LINE__ . '-' . $lng['new']
             ;
             $filePhRow['thumb.thumb'] = '
             <a href="../' . $filePhRow['thumb.pathRawUrlEncoded']
@@ -719,7 +689,7 @@ if (FALSE !== $scanDirs) :
                     . '">
                 <img src="' . $imgPreview
                     . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
-                    . '" title="' . $filePhRow['thumb.title']
+                    . '" title="' . $filePhRow['thumb.name']
                     . '" width="' . $filePhRow['thumb.mod_w']
                     . '" height="' . $filePhRow['thumb.mod_h']
                     . '" />
@@ -738,7 +708,7 @@ if (FALSE !== $scanDirs) :
         usleep(10);
 
         $rowNum++;
-    } // foreach ($dirs as $scanPath)
+    } // foreach ($scanFiles as $scanFile)
     ob_end_flush();
 
     /**
@@ -755,14 +725,8 @@ if (FALSE !== $scanDirs) :
             $filePhRow['thumb.id'] = $v['id'];
             $filePhRow['thumb.fid'] = '[id:' . $v['id'] . ']';
             $filePhRow['thumb.name'] = $v['filename'];
-            $filePhRow['thumb.styledName'] = '<b style="color:red;"><u>' . $v['filename'] . '</u></b>';
-            $filePhRow['thumb.alias'] = $v['alias'];
-            $filePhRow['thumb.title'] = ( trim($v['alias']) != '' ? $v['alias'] : $v['filename']);
-            $filePhRow['thumb.tagLinks'] = $e2gMod->createTagLinks($v['tag']);
             $filePhRow['thumb.path'] = $gdir;
             $filePhRow['thumb.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $v['filename']));
-            $filePhRow['thumb.time'] = $e2gMod->getTime($v['date_added'], $v['last_modified'], '');
-            $filePhRow['thumb.attributes'] = '<i>(' . $lng['deleted'] . ')</i>';
             $filePhRow['thumb.attributeIcons'] = '';
 
             $filePhRow['thumb.buttons'] = $e2gMod->actionIcon('delete_file', array(
@@ -796,11 +760,11 @@ if (FALSE !== $scanDirs) :
             $filePhRow['thumb.thumb'] = '
             <a href="' . $imgSrc
                     . '" class="highslide" onclick="return hs.expand(this)"'
-                    . ' title="' . $filePhRow['thumb.title'] . ' ' . $filePhRow['thumb.fid']
+                    . ' title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid']
                     . '">
                 <img src="' . $imgPreview
                     . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
-                    . '" title="' . $filePhRow['thumb.title']
+                    . '" title="' . $filePhRow['thumb.name']
                     . '" width="' . $filePhRow['thumb.mod_w']
                     . '" height="' . $filePhRow['thumb.mod_h']
                     . '" />

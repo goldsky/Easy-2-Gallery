@@ -83,9 +83,19 @@ $index = $e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
+$rootDir = rtrim($rootDir, '/') . '/'; // just to make sure there is a slash at the end path
+$rootRealPath = realpath($rootDir);
+if (empty($rootRealPath)) {
+    echo __LINE__ . ' : Root Path is not real : ' . $rootDir . '<br />';
+    die();
+}
 $pidPath = $e2gMod->getPath($getRequests['pid']);
+$decodedPath = $e2gMod->e2gDecode($getRequests['path']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-
+/**
+ * $getRequests['path'] = synchronized folder's path!
+ * $getRequests['getpath'] = unsynchronized folder's path!
+ */
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -131,20 +141,26 @@ $rowNum = 0;
 //******************************************************************/
 //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
 //******************************************************************/
-$scanDirs = @glob('../../../../../' . $e2gMod->e2gDecode($gdir) . '*', GLOB_ONLYDIR);
+$scanDirs = @glob($rootDir . $decodedPath . '/*', GLOB_ONLYDIR);
 if (FALSE !== $scanDirs):
 
     if (is_array($scanDirs))
         natsort($scanDirs);
 
-    foreach ($scanDirs as $scanPath) {
+    foreach ($scanDirs as $scanDir) {
         ob_start();
-        if (!$e2gMod->validFolder($scanPath)) {
+        if (!$e2gMod->validFolder($scanDir)) {
             continue;
         }
-        $dirName = $e2gMod->basenameSafe($scanPath);
+
+        $realPathDir = realpath($scanDir);
+        if (!empty($realPathDir)) {
+            $dirName = $e2gMod->basenameSafe($realPathDir);
+        } else {
+            $dirName = basename($scanDir);
+        }
+        
         $dirName = $e2gMod->e2gEncode($dirName);
-        $dirName = urldecode($dirName);
         if ($dirName == '_thumbnails')
             continue;
 
@@ -153,10 +169,10 @@ if (FALSE !== $scanDirs):
         $dirPathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $dirName));
         switch ($e2g['mod_foldersize']) {
             case 'auto':
-                $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles($scanPath) . ' )';
+                $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles( $realPathDir) . ' )';
                 break;
             case 'ajax':
-                $dirPhRow['td.count'] = '( <span id="countfiles_' . $dirPathRawUrlEncoded . '"><span id="countfileslink_' . $dirPathRawUrlEncoded . '"><a href="javascript:;" onclick="countFiles(\'' . $scanPath . '\', \'' . $dirPathRawUrlEncoded . '\')">' . $lng['folder_size'] . '</a></span></span> )';
+                $dirPhRow['td.count'] = '( <span id="countfiles_' . $dirPathRawUrlEncoded . '"><span id="countfileslink_' . $dirPathRawUrlEncoded . '"><a href="javascript:;" onclick="countFiles(\'' . base64_encode($realPathDir) . '\', \'' . $dirPathRawUrlEncoded . '\')">' . $lng['folder_size'] . '</a></span></span> )';
                 break;
             default:
                 $dirPhRow['td.count'] = '';
@@ -188,8 +204,8 @@ if (FALSE !== $scanDirs):
             $dirId = $mdirs[$dirName]['cat_id'];
             $dirAlias = $mdirs[$dirName]['cat_alias'];
             $dirTag = $mdirs[$dirName]['cat_tag'];
-            $dirTagLinks = $e2gMod->createTagLinks($dirTag);
-            $dirTime = $e2gMod->getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $scanPath);
+            $dirTagLinks = $e2gMod->createTagLinks($dirTag, $index);
+            $dirTime = $e2gMod->getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $scanDir);
 
             if (!isset($getRequests['getpath'])) {
                 // Checkbox
@@ -252,7 +268,7 @@ if (FALSE !== $scanDirs):
                         , 'dir_path' => $dirPathRawUrlEncoded
                         , 'pid' => $getRequests['pid']
                             ), null, $index);
-            $dirTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanPath));
+            $dirTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanDir));
             clearstatcache();
             $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';
             $dirAttributes = '<i>(' . $lng['new'] . ')</i>';
@@ -284,7 +300,7 @@ if (FALSE !== $scanDirs):
         $dirPhRow['td.gid'] = empty($dirId) ? '' : '[id: ' . $dirId . ']';
         $dirPhRow['td.name'] = $dirName;
         $dirPhRow['td.styledName'] = $dirStyledName;
-        $dirPhRow['td.path'] = $scanPath;
+        $dirPhRow['td.path'] = $scanDir;
         $dirPhRow['td.pathRawUrlEncoded'] = $dirPathRawUrlEncoded;
         $dirPhRow['td.alias'] = $dirAlias;
         $dirPhRow['td.title'] = ( trim($dirAlias) != '' ? $dirAlias : $dirName);
@@ -318,7 +334,7 @@ if (FALSE !== $scanDirs):
          * sleeps for 10 ms
          */
         usleep(10);
-    } // foreach ($dirs as $scanPath)
+    } // foreach ($dirs as $scanDir)
     ob_end_flush();
 
     /**
@@ -339,7 +355,7 @@ if (FALSE !== $scanDirs):
             $dirPhRow['td.path'] = '';
             $dirPhRow['td.alias'] = $v['cat_alias'];
             $dirPhRow['td.title'] = ( trim($v['cat_alias']) != '' ? $v['cat_alias'] : $v['cat_name']);
-            $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($v['cat_tag']);
+            $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($v['cat_tag'], $index);
             $dirPhRow['td.time'] = $e2gMod->getTime($v['date_added'], $v['last_modified'], '');
             $dirPhRow['td.count'] = intval("0");
             $dirPhRow['td.link'] = '<b style="color:red;"><u>' . $v['cat_name'] . '</u></b>';
@@ -403,23 +419,28 @@ if ($getRequests['path'] == $pidPath) {
     mysql_free_result($querySelectFiles);
 }
 
-$scanFiles = @glob('../../../../../' . $e2gMod->e2gDecode($gdir) . '*');
+$scanFiles = @glob($rootDir . $decodedPath . '/*');
 if (FALSE !== $scanFiles):
 
     if (is_array($scanFiles))
         natsort($scanFiles);
 
-    foreach ($scanFiles as $scanPath) {
+    foreach ($scanFiles as $scanFile) {
 
-        if ($e2gMod->validFolder($scanPath)
-                || !$e2gMod->validFile($scanPath)
+        if ($e2gMod->validFolder($scanFile)
+                || !$e2gMod->validFile($scanFile)
         ) {
             continue;
         }
 
         ob_start();
-        // TODO: Clean up this UTF-8 mess when adding file
-        $filename = $e2gMod->basenameSafe($scanPath);
+        $realPathFile = realpath($scanFile);
+        if (!empty($realPathDir)) {
+            $filename = $e2gMod->basenameSafe($realPathFile);
+        } else {
+            $filename = basename($scanFile);
+        }
+        
         $filename = $e2gMod->e2gEncode($filename);
         $fileStyledName = $filename; // will be overridden for styling below
         $fileNameUrlDecodeFilename = urldecode($filename);
@@ -446,7 +467,7 @@ if (FALSE !== $scanFiles):
         if (isset($mfiles[$filename])) {
             $fileId = $mfiles[$filename]['id'];
             $fileAlias = $mfiles[$filename]['alias'];
-            $fileTagLinks = $e2gMod->createTagLinks($mfiles[$filename]['tag']);
+            $fileTagLinks = $e2gMod->createTagLinks($mfiles[$filename]['tag'], $index);
             if (!isset($getRequests['getpath'])) {
                 // Checkbox
                 $fileCheckBox = '
@@ -457,7 +478,7 @@ if (FALSE !== $scanFiles):
             $fileSize = round($mfiles[$filename]['size'] / 1024);
             $width = $mfiles[$filename]['width'];
             $height = $mfiles[$filename]['height'];
-            $fileTime = $e2gMod->getTime($mfiles[$filename]['date_added'], $mfiles[$filename]['last_modified'], $scanPath);
+            $fileTime = $e2gMod->getTime($mfiles[$filename]['date_added'], $mfiles[$filename]['last_modified'], $scanFile);
 
             if ($mfiles[$filename]['status'] == '1') {
                 $fileButtons = $e2gMod->actionIcon('hide_file', array(
@@ -502,7 +523,7 @@ if (FALSE !== $scanFiles):
                 <input name="im[f' . $rowNum . ']" value="im[f' . $rowNum . ']" type="checkbox" style="border:0;padding:0" />
                 ';
             }
-            $fileTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanPath));
+            $fileTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanFile));
             $fileStyledName = '<span style="color:gray"><b>' . $filename . '</b></span>';
             $fileAttributes = '<i>(' . $lng['new'] . ')</i>';
             $fileId = NULL;
@@ -510,7 +531,7 @@ if (FALSE !== $scanFiles):
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_add.png" width="16" height="16" border="0" alt="" />
                 ';
             $fileAttributeIcons = '';
-            if (empty($path['string'])) {
+            if (empty($getRequests['getpath'])) {
                 // add file
                 $fileButtons .= $e2gMod->actionIcon('add_file', array(
                             'act' => 'add_file'
@@ -520,8 +541,8 @@ if (FALSE !== $scanFiles):
             } else {
                 $fileButtons = '';
             }
-            $fileSize = round(filesize($scanPath) / 1024);
-            list($width, $height) = @getimagesize($scanPath);
+            $fileSize = round(filesize($scanFile) / 1024);
+            list($width, $height) = @getimagesize($scanFile);
         }
 
         $fileButtons .= $e2gMod->actionIcon('delete_file', array(
@@ -577,7 +598,7 @@ if (FALSE !== $scanFiles):
          * sleeps for 10 ms
          */
         usleep(10);
-    } // foreach ($dirs as $scanPath)
+    } // foreach ($dirs as $scanFile)
     ob_end_flush();
 
     /**
@@ -597,7 +618,7 @@ if (FALSE !== $scanFiles):
             $filePhRow['td.styledName'] = '<b style="color:red;"><u>' . $v['filename'] . '</u></b>';
             $filePhRow['td.alias'] = $v['alias'];
             $filePhRow['td.title'] = ( trim($v['alias']) != '' ? $v['alias'] : $v['filename']);
-            $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($v['tag']);
+            $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($v['tag'], $index);
             $filePhRow['td.path'] = $gdir;
             $filePhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $v['filename']));
             $filePhRow['td.time'] = $e2gMod->getTime($v['date_added'], $v['last_modified'], '');

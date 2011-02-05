@@ -464,7 +464,7 @@ class E2gMod extends E2gPub {
         }
 
         $fs = array();
-        $fs = glob($path . '/*');
+        $fs = glob($path . DIRECTORY_SEPARATOR . '*');
         if ($fs != FALSE) {
             foreach ($fs as $f) {
                 // using original file check, not _validFile($f), because it will delete not only images.
@@ -474,7 +474,7 @@ class E2gMod extends E2gPub {
                     else
                         $res['e'][] = __LINE__ . ' : ' . $this->lng['file_delete_err'] . ' : ' . $f;
                 } elseif (is_dir($f)) {
-                    $sres = $this->_deleteAll($f . '/');
+                    $sres = $this->_deleteAll($f);
 
                     $res['f'] += $sres['f'];
                     $res['d'] += $sres['d'];
@@ -496,22 +496,30 @@ class E2gMod extends E2gPub {
      * @return array Only returns result reports, for confirmation display
      */
     private function _moveAll($oldPath, $newPath) {
-        $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (!$this->validFolder($oldPath)) {
+        $oldRealPath = realpath($oldPath);
+        $dirNewPath = realpath(dirname($newPath));
+        $newRealPath = $dirNewPath . DIRECTORY_SEPARATOR . $this->basenameSafe($newPath);
+
+        if (empty($oldRealPath) || !$this->validFolder($oldRealPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $oldPath;
             return $res;
         }
+        if (empty($dirNewPath) || !$this->validFolder($dirNewPath)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $dirNewPath;
+            return $res;
+        }
+
+        $res = array('d' => 0, 'f' => 0, 'e' => array());
         $fs = array();
-        $fs = glob($oldPath . '/*');
+        $fs = glob($oldRealPath . DIRECTORY_SEPARATOR . '*');
         if ($fs != FALSE) {
             foreach ($fs as $f) {
                 if (is_file($f)) {
                     $res['file'][] = $f;
                     $res['f']++;
                 } elseif ($this->validFolder($f)) {
-                    $oldBasename = $this->basenameSafe($f);
-                    $fNewPath .= '/' . $oldBasename;
-                    $sres = $this->_moveAll($f, $newPath . $fNewPath);
+                    $fBaseName = $this->basenameSafe($f);
+                    $sres = $this->_moveAll($f, $newRealPath . DIRECTORY_SEPARATOR . $fBaseName);
 
                     $res['dir'][] = $f;
                     $res['d']++;
@@ -523,7 +531,8 @@ class E2gMod extends E2gPub {
                 }
             }
         }
-        if (@rename($oldPath, $newPath))
+
+        if (@rename($oldRealPath, $newRealPath))
             $res['d']++;
         else
             $res['e'][] = __LINE__ . ' : ' . $this->lng['dir_move_err'] . ' : ' . $oldPath;
@@ -533,13 +542,14 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * To add all files from the upload form
+     * To add all folders from the upload form
      * @param string $path  file's/folder's path
      * @param int    $pid   current parent ID
      * @param string $cfg   module's configuration
      * @param string $lng   language translation
      */
     private function _addAll($path, $pid) {
+        $path = realpath($path);
         if (empty($path) || !$this->validFolder($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $path;
             return FALSE;
@@ -556,17 +566,20 @@ class E2gMod extends E2gPub {
 
         if ($name != $nameAlias) {
             $basePath = dirname($path);
-            $newPath = $basePath . '/' . $this->e2gDecode($nameAlias);
-            $rename = rename(realpath($path), $newPath);
+            $newPath = $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias);
+            $newPath = $this->_checkFolderDuplication($nameAlias, $pid);
+
+            $rename = rename($path, $basePath . DIRECTORY_SEPARATOR . $newPath);
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . realpath($path) . ' => ' . $newPath;
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . realpath($path) . ' => ';
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $newPath;
                 return FALSE;
             }
-            $this->_changeModOwnGrp('dir', $basePath . '/' . $this->e2gDecode($nameAlias));
+            $this->_changeModOwnGrp('dir', $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias));
 
             // glue them back
-            $path = $basePath . '/' . $this->e2gDecode($nameAlias) . '/';
+            $path = $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias) . DIRECTORY_SEPARATOR;
             $name = $nameAlias;
         }
 
@@ -592,12 +605,8 @@ class E2gMod extends E2gPub {
         $this->_createIndexHtml($path, $this->lng['indexfile']);
 
         $fs = array();
-        $fs = @glob($path . '*');
+        $fs = @glob($path . DIRECTORY_SEPARATOR . '*');
         natsort($fs);
-
-        // goldsky -- alter the maximum execution time
-        if (function_exists('set_time_limit'))
-            @set_time_limit(0);
 
         if ($fs != FALSE)
             foreach ($fs as $filePath) {
@@ -606,7 +615,7 @@ class E2gMod extends E2gPub {
 
                 if ($this->validFolder($filePath)) {
                     // goldsky -- if the path is a dir, go deeper as $path==$filePath
-                    if (!$this->_addAll($filePath . '/', $id)) {
+                    if (!$this->_addAll($filePath . DIRECTORY_SEPARATOR, $id)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
@@ -627,15 +636,27 @@ class E2gMod extends E2gPub {
         return TRUE;
     }
 
+    /**
+     * Checking parent folder whether it exists in the database
+     * @param   string  $filePath       complete file path
+     * @param   int     $pid            parent's ID which is to be checked
+     * @return  bool    TRUE | FALSE : False if the parent's name does not
+     *  match with the specified parent's ID
+     */
     private function _checkFolders($filePath, $pid) {
-        if (!$this->validFile($filePath)) {
+        $basePath = realpath($filePath);
+        if (empty($filePath) || !$this->validFile($filePath)) {
             return FALSE;
         }
+        
         $basename = $this->basenameSafe($filePath);
         $basename = $this->e2gEncode($basename);
 
-        $basePath = realpath($this->e2gEncode($filePath));
         $rootPath = realpath(MODX_BASE_PATH . $this->e2gModCfg['dir']);
+        $dirName = dirname($filePath);
+        if ($rootPath == $dirName && $pid == '1') {
+            return TRUE;
+        }
         $basePath = str_replace($rootPath, '', $basePath);
         $basePath = trim($basePath, DIRECTORY_SEPARATOR);
 
@@ -657,13 +678,18 @@ class E2gMod extends E2gPub {
      * @param string $cfg module's configuration
      */
     private function _addFile($filePath, $pid) {
+        $filePath = realpath($filePath);
+        if (empty($filePath)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
+            return FALSE;
+        }
+
         $inf = @getimagesize($filePath);
         if ($inf[2] > 3 || !is_numeric($pid)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
             return FALSE;
         }
 
-        // if the folder also new, adding this file will recursively adding its parent folder(s), too
         if (!$this->_checkFolders($filePath, $pid))
             return FALSE;
 
@@ -674,15 +700,15 @@ class E2gMod extends E2gPub {
         $fileAlias = $this->modx->stripAlias($basename);
         if ($basename != $fileAlias) {
             $dirPath = dirname($filePath);
-            $rename = rename($filePath, $dirPath . '/' . $this->e2gDecode($fileAlias));
+            $rename = rename($filePath, $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
             if (!$rename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . '/' . $this->e2gDecode($fileAlias);
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
                 return FALSE;
             }
-            $this->_changeModOwnGrp('file', $dirPath . '/' . $this->e2gDecode($fileAlias));
+            $this->_changeModOwnGrp('file', $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
 
-            $filePath = $dirPath . '/' . $this->e2gDecode($fileAlias);
+            $filePath = $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
             $basename = $fileAlias;
         }
 
@@ -702,7 +728,7 @@ class E2gMod extends E2gPub {
         $height = $newInf[1];
         $time = $newInf['time'];
 
-        $insertFileQuery = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+        $insertFile = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                 . "SET dir_id ='$pid'"
                 . ", filename='$basename'"
                 . ", size='$size'"
@@ -713,11 +739,12 @@ class E2gMod extends E2gPub {
                 . ", last_modified='$time'"
                 . ", modified_by='" . $this->modx->getLoginUserID() . "'"
         ;
-        if (!mysql_query($insertFileQuery)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertFileQuery;
+        $queryInsertFile = mysql_query($insertFile);
+        if (!$queryInsertFile) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertFile;
             return FALSE;
         }
-        unset($insertFileQuery);
+        mysql_free_result($queryInsertFile);
 
         // invoke the plugin
         $this->plugin('OnE2GFileAdd', array(
@@ -919,7 +946,7 @@ class E2gMod extends E2gPub {
         $this->_createIndexHtml($path, $this->lng['indexfile']);
 
         $fs = array();
-        $fs = @glob($path . '/*');
+        $fs = @glob($path . DIRECTORY_SEPARATOR . '*');
         natsort($fs);
 
         /**
@@ -930,13 +957,20 @@ class E2gMod extends E2gPub {
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_start();
 
-                $name = $this->basenameSafe($filePath);
+                $realPath = realpath($filePath);
+                if (!empty($realPath)) {
+                    $name = $this->basenameSafe($realPath);
+                } else {
+                    $name = basename($filePath);
+                }
+
                 $name = $this->e2gEncode($name);
+
                 if ($this->validFolder($filePath)) { // as a folder/directory
                     if ($name == '_thumbnails')
                         continue;
                     if (isset($mdirs[$name])) {
-                        if (!$this->synchro($filePath . '/', $mdirs[$name]['id'])) {
+                        if (!$this->synchro($filePath , $mdirs[$name]['id'])) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
                             return FALSE;
                         }
@@ -945,7 +979,7 @@ class E2gMod extends E2gPub {
                         /**
                          * INSERT folder's and file's names into database
                          */
-                        if (!$this->_addAll($filePath . '/', $pid)) {
+                        if (!$this->_addAll($filePath , $pid)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
                             return FALSE;
                         }
@@ -1088,18 +1122,18 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * to check the existance of filename/folder in the file system.<br />
+     * to check the existance of the file in the file system.<br />
      * if exists, this will add numbering into the uploaded files.
      * @param string    $name   name
      * @param int       $pid    parent's ID
      * @return string   new name if duplicate exists
      */
-    private function _singleFile($name, $pid) {
+    private function _checkFileDuplication($name, $pid) {
         $selectCheck = 'SELECT filename FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE filename = \'' . $name . '\' AND dir_id = \'' . $pid . '\'';
         $queryCheck = @mysql_query($selectCheck);
-        while ($rowCheck = @mysql_fetch_array($queryCheck)) {
-            $fetchRow[$rowCheck['filename']] = $rowCheck['filename'];
+        while ($l = @mysql_fetch_array($queryCheck)) {
+            $fetchRow[$l['filename']] = $l['filename'];
         }
         mysql_free_result($queryCheck);
 
@@ -1125,12 +1159,12 @@ class E2gMod extends E2gPub {
         $recursiveCheckSelect = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE filename=\'' . $newFilename . '\' AND dir_id = \'' . $pid . '\'';
         $recursiveCheckQuery = @mysql_query($recursiveCheckSelect);
-        while ($recursiveCheckRow = @mysql_fetch_array($recursiveCheckQuery)) {
-            $recursiveFetchRow[$recursiveCheckRow['filename']] = $recursiveCheckRow['filename'];
+        while ($l = @mysql_fetch_array($recursiveCheckQuery)) {
+            $recursiveFetchRow[$l['filename']] = $l['filename'];
         }
         mysql_free_result($recursiveCheckQuery);
         if (isset($recursiveFetchRow[$newFilename])) {
-            $recursiveNewFilename = $this->_singleFile($newFilename, $pid);
+            $recursiveNewFilename = $this->_checkFileDuplication($newFilename, $pid);
             if (!$recursiveNewFilename) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $name . ' exists, but file could not be renamed to be ' . $newFilename;
             } else
@@ -1138,6 +1172,58 @@ class E2gMod extends E2gPub {
         }
 
         return $newFilename;
+    }
+
+    /**
+     * to check the existance of the folder in the file system.<br />
+     * if exists, this will add numbering into the synchronized folder.
+     * @param string    $name   name
+     * @param int       $pid    parent's ID
+     * @return string   new name if duplicate exists
+     */
+    private function _checkFolderDuplication($name, $pid) {
+        $selectCheck = 'SELECT cat_name FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE cat_name = \'' . $name . '\' AND parent_id = \'' . $pid . '\'';
+        $queryCheck = @mysql_query($selectCheck);
+        while ($l = @mysql_fetch_array($queryCheck)) {
+            $fetchRow[$l['cat_name']] = $l['cat_name'];
+        }
+        mysql_free_result($queryCheck);
+
+        if (isset($fetchRow[$name])) {
+            $copyName = $name;
+            $oldSuffix = end(@explode('_', $copyName));
+            $prefixDirName = substr($copyName, 0, -(strlen($oldSuffix)) - 1);
+            if (is_numeric($oldSuffix)) {
+                $notNumberSuffix = '';
+                $newNumberSuffix = (int) $oldSuffix + 1;
+            } else {
+                $notNumberSuffix = '_' . $oldSuffix;
+                $newNumberSuffix = 1;
+            }
+            $newDirName = ( $prefixDirName != '' ? $prefixDirName . $notNumberSuffix : $copyName ) . '_' . $newNumberSuffix . $ext;
+            $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $name . ' exists, folder was renamed to be ' . $newDirName;
+        }
+        else
+            return $name;
+
+        // recursive check
+        $recursiveCheckSelect = 'SELECT cat_name FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE cat_name=\'' . $newDirName . '\' AND parent_id = \'' . $pid . '\'';
+        $recursiveCheckQuery = @mysql_query($recursiveCheckSelect);
+        while ($l = @mysql_fetch_array($recursiveCheckQuery)) {
+            $recursiveFetchRow[$l['cat_name']] = $l['cat_name'];
+        }
+        mysql_free_result($recursiveCheckQuery);
+        if (isset($recursiveFetchRow[$newDirName])) {
+            $recursiveNewDirName = $this->_checkFolderDuplication($newDirName, $pid);
+            if (!$recursiveNewDirName) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $name . ' exists, but folder could not be renamed to be ' . $newDirName;
+            } else
+                $newDirName = $recursiveNewDirName;
+        }
+
+        return $newDirName;
     }
 
     /**
@@ -1563,7 +1649,7 @@ class E2gMod extends E2gPub {
                  * CHECK the existing filenames inside the system.
                  * If exists, amend the filename with number
                  */
-                $filteredName = $this->_singleFile($files['img']['name'][$i], $newParent);
+                $filteredName = $this->_checkFileDuplication($files['img']['name'][$i], $newParent);
 
                 $insertFile = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                         . 'SET dir_id=\'' . $newParent . '\''
@@ -2200,6 +2286,12 @@ class E2gMod extends E2gPub {
         );
 
         $newDir = $this->e2gModCfg['dir'] . $this->getPath($post['newparent']);
+        $newRealPathParent = realpath('../'.$newDir);
+
+        if (empty($newRealPathParent) || !$this->validFolder($newRealPathParent)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $newDir;
+            return FALSE;
+        }
 
         // MOVING DIRS
         if (!empty($post['dir'])) {
@@ -2210,20 +2302,29 @@ class E2gMod extends E2gPub {
 
                 //************* FILE SYSTEM UPDATE *************//
                 if (!empty($v)) {
+                    $vRealPath = realpath('../'.$v);
+
+                    if (empty($vRealPath) || !$this->validFolder($vRealPath)) {
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $v;
+                        return FALSE;
+                    }
+                    
+                    $vBaseName =  $this->basenameSafe($vRealPath);
+
                     $oldPath = array();
                     $newPath = array();
 
                     $oldPath['origin'] = str_replace('../', '', $v);
-                    $oldPath['basename'] = $this->basenameSafe($v);
-                    $oldPath['decoded'] = str_replace('../', '', $this->e2gDecode($v));
-                    $this->_changeModOwnGrp('dir', MODX_BASE_PATH . $oldPath['decoded']);
+                    $oldPath['basename'] = $vBaseName;
+                    $oldPath['decoded'] = $this->e2gDecode($vRealPath);
+                    $this->_changeModOwnGrp('dir', $oldPath['decoded']);
 
-                    $newPath['origin'] = $newDir . $this->basenameSafe($v);
-                    $newPath['basename'] = $this->basenameSafe($newPath['origin']);
-                    $newPath['decoded'] = $this->e2gDecode($newPath['origin']);
+                    $newPath['origin'] = $newDir . $vBaseName;
+                    $newPath['basename'] = $vBaseName;
+                    $newPath['decoded'] = $newRealPathParent . DIRECTORY_SEPARATOR . $vBaseName;
 
                     // initiate the variables inside _moveAll functions.
-                    $moveDir = $this->_moveAll(MODX_BASE_PATH . $oldPath['decoded'], MODX_BASE_PATH . $newPath['decoded']);
+                    $moveDir = $this->_moveAll($oldPath['decoded'], $newPath['decoded']);
                     //************* DATABASE UPDATE *************//
                     if (is_numeric($k)) {
                         $ids = $tree->replace((int) $k, (int) $post['newparent']);
@@ -2278,7 +2379,7 @@ class E2gMod extends E2gPub {
                                 }
                             }
                         }
-                        $this->_changeModOwnGrp('dir', MODX_BASE_PATH . $newPath['decoded']);
+                        $this->_changeModOwnGrp('dir', $newPath['decoded']);
                     }
                     //************** END OF FILE SYSTEM UPDATE **************//
                     $oldPath = $newPath = array();
@@ -2301,22 +2402,34 @@ class E2gMod extends E2gPub {
             foreach ($post['im'] as $k => $v) {
                 // move the file
                 if (!empty($v)) {
+                    $vRealPath = realpath('../'.$v);
+
+                    if (empty($vRealPath) || !$this->validFile($vRealPath)) {
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_file'] . ' : ' . $v;
+                        return FALSE;
+                    }
+
+                    $vBaseName =  $this->basenameSafe($vRealPath);
+
+                    $oldFile = array();
+                    $oldFile = array();
 
                     $oldFile['origin'] = str_replace('../', '', $v);
-                    $oldFile['basename'] = $this->basenameSafe($v);
-                    $oldFile['decoded'] = str_replace('../', '', $this->e2gDecode($v));
-                    $this->_changeModOwnGrp('file', MODX_BASE_PATH . $oldFile['decoded']);
+                    $oldFile['basename'] = $vBaseName;
+                    $oldFile['decoded'] = $this->e2gDecode($vRealPath);
 
-                    $newFile['origin'] = $newDir . $this->basenameSafe($v);
-                    $newFile['basename'] = $this->basenameSafe($newFile['origin']);
-                    $newFile['decoded'] = $this->e2gDecode($newFile['origin']);
+                    $this->_changeModOwnGrp('file', $oldFile['decoded']);
 
-                    if (is_file(realpath('../' . $newFile['decoded']))) {
+                    $newFile['origin'] = $newDir . $vBaseName;
+                    $newFile['basename'] = $vBaseName;
+                    $newFile['decoded'] = $newRealPathParent . DIRECTORY_SEPARATOR . $vBaseName;
+
+                    if (is_file($newFile['decoded'])) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_move_err']
                                 . ' <span style="color:red;">' . $this->basenameSafe($v) . '</span>, ' . $this->lng['file_exists'] . '.';
                         continue;
                     } else {
-                        $moveFile = @rename('../' . $oldFile['decoded'], '../' . $newFile['decoded']);
+                        $moveFile = @rename($oldFile['decoded'], $newFile['decoded']);
                         if ($moveFile) {
                             $res['file'][] = $newFile['decoded'];
 
@@ -2371,7 +2484,7 @@ class E2gMod extends E2gPub {
                             }
                             $res['ffp'][0]++;
 
-                            $this->_changeModOwnGrp('file', MODX_BASE_PATH . $newFile['decoded']);
+                            $this->_changeModOwnGrp('file', $newFile['decoded']);
                         } else {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_move_err'];
                             $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldFile['origin'];
@@ -2623,7 +2736,7 @@ class E2gMod extends E2gPub {
 
             // delete the config file, because this will always be checked as an upgrade option
             $oldConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php');
-            if (file_exists($oldConfigFile)) {
+            if (!empty($oldConfigFile) || file_exists($oldConfigFile)) {
                 $unlinkConfigFile = @unlink($oldConfigFile);
                 if (!$unlinkConfigFile) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_del_err'];
@@ -3993,6 +4106,11 @@ class E2gMod extends E2gPub {
      * @return bool     TRUE | FALSE
      */
     private function _changeModOwnGrp($type, $fullPath, $checkPreviousMode = TRUE, $changeGroup = TRUE) {
+        $fullPath = realpath($fullPath);
+        if (empty($fullPath)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
+            return FALSE;
+        }
         if ($checkPreviousMode) {
             $oldPermission = substr(sprintf('%o', fileperms($fullPath)), -4);
             clearstatcache();
@@ -4113,12 +4231,13 @@ class E2gMod extends E2gPub {
                 . '.jpg';
 
         if (!class_exists('E2gThumb')) {
-            if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php'))) {
-                echo __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';
-                $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';
+            $thumbClassFile = realpath(E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php');
+            if ( empty($thumbClassFile) || !file_exists($thumbClassFile)) {
+                echo __LINE__ . ' : File <b>' . $thumbClassFile .'</b> does not exist.';
+                $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . $thumbClassFile . '</b> does not exist.';
                 return FALSE;
             } else {
-                include_once E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php';
+                include_once $thumbClassFile;
             }
         }
 
@@ -4136,9 +4255,20 @@ class E2gMod extends E2gPub {
      * @return  int     file numbers
      */
     public function countFiles($path) {
+        // catches the object oriented source or javascript variable
+        $realPath = realpath($path);
+        $path = !empty($realPath) ? $realPath : base64_decode($path);
+        if (empty($path)) {
+            return FALSE;
+        }
+
+        if(empty($path)) {
+            return $this->lng['invalid_folder'];
+        }
+
         $cnt = 0;
         $fs = array();
-        $fs = glob($path . '/*.*');
+        $fs = glob($path . DIRECTORY_SEPARATOR . '*.*');
         if ($fs != FALSE) {
             foreach ($fs as $f) {
                 if ($this->validFile($f))
@@ -4148,7 +4278,7 @@ class E2gMod extends E2gPub {
             }
         }
         $sd = array();
-        $sd = glob($path . '/*');
+        $sd = glob($path . DIRECTORY_SEPARATOR . '*');
         if ($sd != FALSE)
             foreach ($sd as $d) {
                 $cnt += $this->countFiles($d);
@@ -4180,15 +4310,17 @@ class E2gMod extends E2gPub {
      * @param string    $tags   The tags
      * @return string   The tag's links
      */
-    public function createTagLinks($tags) {
+    public function createTagLinks($tags, $index=null) {
         if (empty($tags)) {
             return NULL;
         }
+        $index = !empty($index) ? $index : $this->e2gModCfg['index'];
+        
         $multipleTags = @explode(',', $tags);
         $countTags = count($multipleTags);
         $output = '';
         for ($c = 0; $c < $countTags; $c++) {
-            $output .= '<a href="' . $this->e2gPubCfg['index'] . '&amp;tag=' . trim($multipleTags[$c]) . '">' . trim($multipleTags[$c]) . '</a>';
+            $output .= '<a href="' . $index . '&amp;tag=' . trim($multipleTags[$c]) . '">' . trim($multipleTags[$c]) . '</a>';
             if ($c < ($countTags - 1))
                 $output .= ', ';
         }
@@ -4205,7 +4337,7 @@ class E2gMod extends E2gPub {
      * @return string   The button's hyperlink and image.
      */
     public function actionIcon($buttonName, $getParams=array(), $attributes=NULL, $index=NULL) {
-        $index = !empty($index) ? $index : $this->e2gPubCfg['index'];
+        $index = !empty($index) ? $index : $this->e2gModCfg['index'];
 
         if (!is_array($getParams) || empty($getParams)) {
             return FALSE;
@@ -4309,6 +4441,15 @@ class E2gMod extends E2gPub {
             }
             $sanitizedGets[$k] = $v;
         }
+        return $sanitizedGets;
+    }
+
+    private function _e2gStripAlias($string) {
+        $xplds = @explode('/', $string);
+        foreach ($xplds as $y => $x) {
+            $xplds[$y] = $this->modx->stripAlias($x);
+        }
+        $string = @implode('/', $xplds);
         return $sanitizedGets;
     }
 

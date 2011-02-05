@@ -85,7 +85,10 @@ $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 $rootDir = '../../../../../' . $e2g['dir'];
 $pidPath = $e2gMod->getPath($getRequests['pid']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-
+/**
+ * $getRequests['path'] = synchronized folder's path!
+ * $getRequests['getpath'] = unsynchronized folder's path!
+ */
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -434,23 +437,29 @@ foreach ($fetchFiles as $fetchFile) {
         // if there is an invalid content
         if ($imgShaper === FALSE) {
             $imgPreview = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
+                    . $filePhRow['thumb.pathRawUrlEncoded']
                     . '&amp;mod_w=' . $filePhRow['thumb.mod_w']
                     . '&amp;mod_h=' . $filePhRow['thumb.mod_h']
-                    . '&amp;text=' . __LINE__ . '-FALSE'
-            ;
+                    . '&amp;text=' . $lng['deleted'];
+            $imgSrc = E2G_MODULE_URL . 'preview.easy2gallery.php?path='
+                    . $filePhRow['thumb.pathRawUrlEncoded']
+                    . '&amp;mod_w=300'
+                    . '&amp;mod_h=100'
+                    . '&amp;text=' . $lng['deleted']
+                    . '&amp;th=5';
             $filePhRow['thumb.thumb'] = '
-                <a href="' . $imgPreview
+            <a href="' . $imgSrc
                     . '" class="highslide" onclick="return hs.expand(this)"'
-                    . ' title="' . $filePhRow['thumb.name'] . ' ' . $filePhRow['thumb.fid'] . ' ' . $filePhRow['thumb.attributes']
+                    . ' title="' . $filePhRow['thumb.title'] . ' ' . $filePhRow['thumb.fid']
                     . '">
-                    <img src="' . $imgPreview
+                <img src="' . $imgPreview
                     . '" alt="' . $filePhRow['thumb.path'] . $filePhRow['thumb.name']
                     . '" title="' . $filePhRow['thumb.title']
                     . '" width="' . $filePhRow['thumb.mod_w']
                     . '" height="' . $filePhRow['thumb.mod_h']
                     . '" />
-                </a>
-    ';
+            </a>
+';
         } else {
             $filePhRow['thumb.src'] = $imgShaper;
             $filePhRow['thumb.thumb'] = '

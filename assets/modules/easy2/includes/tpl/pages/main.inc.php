@@ -247,7 +247,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
                 url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
                 url += "<?php echo isset($_GET['path']) ? '&getpath=' . $_GET['path'] : ''; ?>";
-                url += "<?php echo isset($_GET['tag']) ? '&getpath=' . $_GET['tag'] : ''; ?>";
+                url += "<?php echo isset($_GET['tag']) ? '&tag=' . $_GET['tag'] : ''; ?>";
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {

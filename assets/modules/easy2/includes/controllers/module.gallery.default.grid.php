@@ -83,9 +83,14 @@ $index = $e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
+$rootPath = realpath($rootDir);
 $pidPath = $e2gMod->getPath($getRequests['pid']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-
+$gdirRealPath = realpath($rootDir . $getRequests['path']);
+/**
+ * $getRequests['path'] = synchronized folder's path!
+ * $getRequests['getpath'] = unsynchronized folder's path!
+ */
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -166,8 +171,8 @@ foreach ($fetchDirs as $fetchDir) {
     $dirPhRow['td.path'] = $gdir;
     $dirPhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchDir['cat_name']));
     $dirPhRow['td.title'] = ( trim($fetchDir['cat_alias']) != '' ? $fetchDir['cat_alias'] : $fetchDir['cat_name']);
-    $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag']);
-    $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], '../../../../../' . $gdir . $fetchDir['cat_name']);
+    $dirPhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchDir['cat_tag'], $index);
+    $dirPhRow['td.time'] = $e2gMod->getTime($fetchDir['date_added'], $fetchDir['last_modified'], $gdirRealPath . DIRECTORY_SEPARATOR . $fetchDir['cat_name']);
     $dirPhRow['td.rowNum'] = $rowNum;
     $dirPhRow['td.rowClass'] = $rowClass[$rowNum % 2];
     $dirPhRow['td.checkBox'] = '
@@ -202,12 +207,13 @@ foreach ($fetchDirs as $fetchDir) {
     }
     $dirButtons = '';
 
-    if (!$e2gMod->validFolder(realpath('../../../../../' . $gdir . $fetchDir['cat_name']))) {
+    if (!$e2gMod->validFolder($gdirRealPath . DIRECTORY_SEPARATOR . $fetchDir['cat_name'])) {
         $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png" width="16" height="16" border="0" alt="" />
                 ';
         $dirStyledName = '<b style="color:red;"><u>' . $fetchDir['cat_name'] . '</u></b>';
         $dirAttributes = '<i>(' . $lng['deleted'] . ')</i>';
+        $dirPhRow['td.count'] = ''; // override!
     } else {
         if ($fetchDir['cat_visible'] == '1') {
             $dirStyledName = '<b>' . $fetchDir['cat_name'] . '</b>';
@@ -306,7 +312,7 @@ foreach ($fetchFiles as $fetchFile) {
     $filePhRow['td.rowClass'] = $rowClass[$rowNum % 2];
     $filePhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
 
-    if (!file_exists(realpath('../../../../../' . $gdir . $fetchFile['filename']))) {
+    if (!file_exists($gdirRealPath . DIRECTORY_SEPARATOR . $fetchFile['filename'])) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -355,13 +361,13 @@ foreach ($fetchFiles as $fetchFile) {
                     ), 'onclick="return confirmDelete();"', $index);
 
     $filePhRow['td.checkBox'] = '
-                <input name="im[' . $fetchFile['id'] . ']" value="im[' . $fetchFile['id'] . ']" type="checkbox" style="border:0;padding:0" />
+                <input name="im[' . $fetchFile['id'] . ']" value="' . $gdir . $fetchFile['filename'] . '" type="checkbox" style="border:0;padding:0" />
                 ';
     $filePhRow['td.dirId'] = $fetchFile['dir_id'];
     $filePhRow['td.fid'] = '[id:' . $fetchFile['id'] . ']';
     $filePhRow['td.styledName'] = $fileStyledName;
     $filePhRow['td.title'] = ( trim($fetchFile['alias']) != '' ? $fetchFile['alias'] : $fetchFile['filename']);
-    $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag']);
+    $filePhRow['td.tagLinks'] = $e2gMod->createTagLinks($fetchFile['tag'], $index);
     $filePhRow['td.path'] = $gdir;
     $filePhRow['td.time'] = $e2gMod->getTime($fetchFile['date_added'], $fetchFile['last_modified'], '../../../../../' . $gdir . $fetchFile['filename']);
     $filePhRow['td.attributes'] = $fileAttributes;

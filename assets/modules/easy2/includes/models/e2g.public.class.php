@@ -44,19 +44,67 @@ class E2gPub { // public/public class
     }
 
     /**
+     * Only to load files
      * @author  Rin <http://forum.dklab.ru/profile.php?mode=viewprofile&u=3940>
      * @link    http://forum.dklab.ru/viewtopic.php?p=91015#91015
      * @return  bool    directly from the class.
      */
     public function loadUtfRin() {
-        /**
-         * using Unicode conversion class.
-         * @todo Need more work work on i18n stuff
-         */
         include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.1/UTF8.php';
         include_once MODX_BASE_PATH . 'assets/modules/easy2/includes/UTF8-2.1.1/ReflectionTypehint.php';
 
         return null;
+    }
+
+    /**
+     * Encoding using the class from
+     * @author  Rin <http://forum.dklab.ru/profile.php?mode=viewprofile&u=3940>
+     * @link    http://forum.dklab.ru/viewtopic.php?p=91015#91015
+     * @param   string  $text           text to be converted
+     * @param   string  $callback       call back function's name
+     * @param   array   $callbackParams call back parameters (in an array)
+     * @return  string  converted text
+     */
+    public function utfRinEncode($text, $callback = FALSE, $callbackParams = array()) {
+        $this->loadUtfRin();
+        $convertedText = FALSE;
+
+        if ($callback !== FALSE) {
+            $callbackParams = array_merge(array($text), $callbackParams);
+            $convertedText = call_user_func_array(array('UTF8', $callback), $callbackParams);
+        } else {
+            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+            $convertedText = UTF8::convert_to($text, mb_detect_encoding($text));
+        }
+
+        return $convertedText;
+    }
+
+    /**
+     * Decoding using the class from
+     * @author  Rin <http://forum.dklab.ru/profile.php?mode=viewprofile&u=3940>
+     * @link    http://forum.dklab.ru/viewtopic.php?p=91015#91015
+     * @param   string  $text           text to be converted
+     * @param   string  $callback       call back function's name
+     * @param   array   $callbackParams call back parameters (in an array)
+     * @return  string  converted text
+     */
+    public function utfRinDecode($text, $callback = FALSE, $callbackParams = array()) {
+        $this->loadUtfRin();
+        $convertedText = FALSE;
+
+        $mbDetectEncoding = mb_detect_encoding($text);
+        if ($callback !== FALSE) {
+            $callbackParams = array_merge(array($text), $callbackParams);
+            $convertedText = call_user_func_array(array('UTF8', $callback), $callbackParams);
+        } elseif (!$mbDetectEncoding || ($mbDetectEncoding != 'ASCII' && $mbDetectEncoding != 'UTF-8')) {
+            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
+            $convertedText = UTF8::convert_from($text, "ASCII");
+        } else {
+            $convertedText = UTF8::convert_from($text, $mbDetectEncoding);
+        }
+
+        return $convertedText;
     }
 
     /**
@@ -68,61 +116,36 @@ class E2gPub { // public/public class
      * @param  string $text the string to be encoded
      * @return string returns the encoding
      */
-    public function e2gEncode($text, $callback=FALSE) {
+    public function e2gEncode($text, $callback=FALSE, $callbackParams = array()) {
+        $convertedText = FALSE;
+
         if ($this->e2gPubCfg['e2g_encode'] == 'none') {
-            if ($callback == FALSE) {
+            if ($callback !== FALSE) {
+                $callbackParams = array_merge(array($text), $callbackParams);
+                $convertedText = call_user_func($callback, $callbackParams);
+            } else {
                 $convertedText = $text;
             }
-            if ($callback == 'ucfirst') {
-                $convertedText = ucfirst($text);
-            }
-
-            // if no matching criteria, just display plain text
-            if ($convertedText == FALSE)
-                $convertedText = $text;
-
-            return $convertedText;
         }
 
         if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8') {
-            if ($callback == FALSE) {
-                $convertedText = utf8_encode($text);
-            }
-            // http://bytes.com/topic/php/answers/444382-ucfirst-utf-8-setlocale#post1693669
-            if ($callback == 'ucfirst') {
+            if ($callback !== FALSE && $callback != 'ucfirst') {
+                $callbackParams = array_merge($text, $callbackParams);
+                $convertedText = call_user_func($callback, $callbackParams);
+            } elseif ($callback == 'ucfirst') {
+                // http://bytes.com/topic/php/answers/444382-ucfirst-utf-8-setlocale#post1693669
                 $fc = mb_strtoupper(mb_substr($text, 0, 1, 'UTF-8'), 'UTF-8');
                 $convertedText = $fc . mb_substr($text, 1, mb_strlen($text, 'UTF-8'), 'UTF-8');
+            } else {
+                $convertedText = utf8_encode($text);
             }
-
-            // if no matching criteria, just display plain text
-            if ($convertedText == FALSE)
-                $convertedText = $text;
-
-            return $convertedText;
         }
 
-        /**
-         * Using the class from <br />
-         * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-         */
         if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)') {
-
-            $this->loadUtfRin();
-
-            if ($callback == FALSE) {
-                // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-                $convertedText = UTF8::convert_to($text, mb_detect_encoding($text));
-            }
-            if ($callback == 'ucfirst') {
-                $convertedText = UTF8::ucfirst($text);
-            }
-
-            // if no matching criteria, just display plain text
-            if ($convertedText == FALSE)
-                $convertedText = $text;
-
-            return $convertedText;
+            $convertedText = $this->utfRinEncode($text, $callback, $callbackParams);
         }
+
+        return $convertedText;
     }
 
     /**
@@ -134,40 +157,32 @@ class E2gPub { // public/public class
      * @param string $text the string to be decoded
      * @return string returns the decoding
      */
-    public function e2gDecode($text, $callback=FALSE) {
+    public function e2gDecode($text, $callback=FALSE, $callbackParams = array()) {
+        $convertedText = FALSE;
+
         if ($this->e2gPubCfg['e2g_encode'] == 'none') {
-            return $text;
-        }
-        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8') {
-            return utf8_decode($text);
-        }
-        /**
-         * Using the class from <br />
-         * http://forum.dklab.ru/viewtopic.php?p=91015#91015
-         */
-        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)') {
-
-            $this->loadUtfRin();
-
-            $mbDetectEncoding = mb_detect_encoding($text);
-            // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
-            if ($mbDetectEncoding != 'ASCII' || $mbDetectEncoding != 'UTF-8') {
-                if (!$mbDetectEncoding) {
-                    $convertedText = UTF8::convert_from($text, "ASCII");
-                    if ($convertedText != FALSE)
-                        $text = $convertedText;
-                    return $text;
-                }
-                else {
-                    $convertedText = UTF8::convert_from($text, $mbDetectEncoding);
-                    if ($convertedText != FALSE)
-                        $text = $convertedText;
-                    return $text;
-                }
+            if ($callback !== FALSE) {
+                $callbackParams = array_merge(array($text), $callbackParams);
+                $convertedText = call_user_func($callback, $callbackParams);
+            } else {
+                $convertedText = $text;
             }
-            else
-                return $text;
-        } // if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)')
+        }
+
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8') {
+            if ($callback !== FALSE) {
+                $callbackParams = array_merge($text, $callbackParams);
+                $convertedText = call_user_func($callback, $callbackParams);
+            } else {
+                $convertedText = utf8_decode($text);
+            }
+        }
+
+        if ($this->e2gPubCfg['e2g_encode'] == 'UTF-8 (Rin)') {
+            $convertedText = $this->utfRinDecode($text, $callback, $callbackParams);
+        }
+
+        return $convertedText;
     }
 
     /**
@@ -267,17 +282,24 @@ class E2gPub { // public/public class
      * @param string $filename the filename
      */
     public function validFile($filename) {
-        $f = $this->basenameSafe($filename);
+        $fileRealPath = realpath($filename);
+        if (empty($fileRealPath)) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
+                echo __LINE__ . 'Filename is not real ' . $filename;
+            }
+            return FALSE;
+        }
+        $f = $this->basenameSafe($fileRealPath);
         $f = $this->e2gEncode($f);
-        if ($this->validFolder($filename)) {
+        if ($this->validFolder($fileRealPath)) {
             if ($this->e2gPubCfg['e2g_debug'] == 1) {
                 echo __LINE__ . ' : <b style="color:red;">' . $filename . '</b> is not a file, it\'s a valid folder.';
             }
             return FALSE;
-        } elseif ($f != '' && !$this->validFolder($filename)) {
-            if (file_exists(realpath($filename))) {
-                $size = getimagesize($filename);
-                $fp = fopen($filename, "rb");
+        } elseif ($f != '' && !$this->validFolder($fileRealPath)) {
+            if (file_exists($fileRealPath)) {
+                $size = getimagesize($fileRealPath);
+                $fp = fopen($fileRealPath, "rb");
                 $allowedExt = array(
                     'image/jpeg' => TRUE,
                     'image/gif' => TRUE,
@@ -318,7 +340,14 @@ class E2gPub { // public/public class
      * @param string $foldername the folder's name
      */
     public function validFolder($foldername) {
-        $openFolder = @opendir($foldername);
+        $folderRealPath = realpath($foldername);
+        if (empty($folderRealPath)) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
+                echo __LINE__ . '<b style="color:red;">' . $foldername . '</b> is NOT a valid folder.';
+            }
+            return FALSE;
+        }
+        $openFolder = @opendir($folderRealPath);
         if (!$openFolder) {
             if ($this->e2gPubCfg['e2g_debug'] == 1) {
                 echo __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.';
@@ -358,8 +387,8 @@ class E2gPub { // public/public class
      * @return string the path's basename
      */
     public function basenameSafe($path) {
-        $path = rtrim($path, '/');
-        $path = explode('/', $path);
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $path = explode(DIRECTORY_SEPARATOR, $path);
 
         // encoding
         $endPath = end($path);
@@ -534,7 +563,7 @@ class E2gPub { // public/public class
                     $file = $l;
                 }
                 mysql_free_result($queryThumbFile);
-                
+
                 return $file;
             }
         }
@@ -627,7 +656,7 @@ class E2gPub { // public/public class
         if (IN_MANAGER_MODE !== "false") {
             return FALSE;
         }
-        
+
         /**
          * Get all the restricted list ids
          */
