@@ -83,10 +83,16 @@ $index = $e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
-$rootPath = realpath($rootDir);
+$rootDir = rtrim($rootDir, '/') . '/'; // just to make sure there is a slash at the end path
+$rootRealPath = realpath($rootDir);
+if (empty($rootRealPath)) {
+    echo __LINE__ . ' : Root Path is not real : ' . $rootDir . '<br />';
+    die();
+}
 $pidPath = $e2gMod->getPath($getRequests['pid']);
+$decodedPath = $e2gMod->e2gDecode($getRequests['path']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-$gdirRealPath = realpath($rootDir . $getRequests['path']);
+$gdirRealPath = realpath($rootDir . $e2gMod->e2gDecode($getRequests['path']));
 /**
  * $getRequests['path'] = synchronized folder's path!
  * $getRequests['getpath'] = unsynchronized folder's path!
@@ -180,10 +186,10 @@ foreach ($fetchDirs as $fetchDir) {
                 ';
     switch ($e2g['mod_foldersize']) {
         case 'auto':
-            $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles('../../../../../' . $gdir . $fetchDir['cat_name']) . ' )';
+            $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles('../../../../../' . $e2gMod->e2gDecode($gdir . $fetchDir['cat_name'])) . ' )';
             break;
         case 'ajax':
-            $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'../../../../../' . $gdir . $fetchDir['cat_name'] . '\', \'' . $fetchDir['cat_id'] . '\')">' . $lng['folder_size'] . '</a></span></span> )';
+            $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'' . base64_encode('../../../../../' . $e2gMod->e2gDecode($gdir . $fetchDir['cat_name'])) . '\', \'' . $fetchDir['cat_id'] . '\')">' . $lng['folder_size'] . '</a></span></span> )';
             break;
         default:
             $dirPhRow['td.count'] = '';
@@ -207,7 +213,7 @@ foreach ($fetchDirs as $fetchDir) {
     }
     $dirButtons = '';
 
-    if (!$e2gMod->validFolder($gdirRealPath . DIRECTORY_SEPARATOR . $fetchDir['cat_name'])) {
+    if (!$e2gMod->validFolder($gdirRealPath . DIRECTORY_SEPARATOR . $e2gMod->e2gDecode($fetchDir['cat_name']))) {
         $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png" width="16" height="16" border="0" alt="" />
                 ';
@@ -312,7 +318,7 @@ foreach ($fetchFiles as $fetchFile) {
     $filePhRow['td.rowClass'] = $rowClass[$rowNum % 2];
     $filePhRow['td.pathRawUrlEncoded'] = str_replace('%2F', '/', rawurlencode($gdir . $fetchFile['filename']));
 
-    if (!file_exists($gdirRealPath . DIRECTORY_SEPARATOR . $fetchFile['filename'])) {
+    if (!$e2gMod->validFile($gdirRealPath . DIRECTORY_SEPARATOR . $e2gMod->e2gDecode($fetchFile['filename']))) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';

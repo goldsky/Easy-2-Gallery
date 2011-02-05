@@ -178,7 +178,7 @@ foreach ($fetchDirs as $fetchDir) {
             $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles('../../../../../' . $dirPath . $fetchDir['cat_name']) . ' )';
             break;
         case 'ajax':
-            $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'../../../../../' . $dirPath . $fetchDir['cat_name'] . '\', \'' . $fetchDir['cat_id'] . '\')">' . $lng['folder_size'] . '</a></span></span> )';
+            $dirPhRow['td.count'] = '( <span id="countfiles_' . $fetchDir['cat_id'] . '"><span id="countfileslink_' . $fetchDir['cat_id'] . '"><a href="javascript:;" onclick="countFiles(\'' . base64_encode('../../../../../' . $e2gMod->e2gDecode($dirPath . $fetchDir['cat_name'])) . '\', \'' . $fetchDir['cat_id'] . '\')">' . $lng['folder_size'] . '</a></span></span> )';
             break;
         default:
             $dirPhRow['td.count'] = '';
@@ -300,7 +300,7 @@ foreach ($fetchFiles as $fetchFile) {
     $fileNameUrlDecodeFilename = urldecode($fetchFile['filename']);
     $filePathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($filePath . $fetchFile['filename']));
 
-    if (!file_exists('../../../../../' . $filePath . $fetchFile['filename'])) {
+    if (!$e2gMod->validFile('../../../../../' . $e2gMod->e2gDecode($filePath . $fetchFile['filename']))) {
         $fileIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';
