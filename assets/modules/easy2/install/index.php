@@ -1347,5 +1347,5 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     </body>
 </html>
 <?php }
-
+$_SESSION['saveE2gSettings'] = true;
 return;
