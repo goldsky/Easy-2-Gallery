@@ -4300,8 +4300,8 @@ class E2gMod extends E2gPub {
     public function countFiles($path) {
         // catches the object oriented source or javascript variable
         $realPath = realpath($path);
-        $path = file_exists($realPath) ? $realPath : base64_decode($path);
-        if (empty($path)) {
+        $path = !empty($realPath) ? $realPath : base64_decode($path);
+        if ( !file_exists($path)) {
             return FALSE;
         }
 
