@@ -457,16 +457,16 @@ class E2gMod extends E2gPub {
      * @param string $path file's/folder's path
      */
     private function _deleteAll($path) {
-echo __LINE__ . ' : $path = ' . $path . '<br />';
+        echo __LINE__ . ' : $path = ' . $path . '<br />';
         $realPath = realpath($path);
-echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
+        echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
 //die();
 
         $res = array('d' => 0, 'f' => 0, 'e' => array());
         if (empty($realPath) || !$this->validFolder($realPath)) {
             return $res;
         }
-        
+
         $fs = array();
         $fs = glob($realPath . DIRECTORY_SEPARATOR . '*');
         if ($fs != FALSE) {
@@ -555,7 +555,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
     private function _addAll($path, $pid, $userId=null) {
         $realPath = realpath($path);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
-        
+
         if (empty($realPath) || !$this->validFolder($realPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $path;
             return FALSE;
@@ -660,7 +660,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
         if (empty($filePath) || !$this->validFile($filePath)) {
             return FALSE;
         }
-        
+
         $basename = $this->basenameSafe($filePath);
         $basename = $this->e2gEncode($basename);
 
@@ -693,7 +693,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
     private function _addFile($filePath, $pid, $userId=null) {
         $fileRealPath = realpath($filePath);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
-        
+
         if (empty($fileRealPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
             return FALSE;
@@ -911,7 +911,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
     public function getLoginUserID() {
         return $this->modx->getLoginUserID();
     }
-    
+
     /**
      * To synchronize between physical gallery contents and database
      * @param string    $path   path to file or folder
@@ -921,7 +921,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
     public function synchro($path, $pid, $userId=null) {
         $path = realpath($path);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
-        
+
         if (!$this->validFolder($path) || empty($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path;
             return __LINE__ . ' : ' . $path;
@@ -1007,7 +1007,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
                     if ($name == '_thumbnails')
                         continue;
                     if (isset($mdirs[$name])) {
-                        if (!$this->synchro($filePath , $mdirs[$name]['id'])) {
+                        if (!$this->synchro($filePath, $mdirs[$name]['id'])) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
                             return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
                             return FALSE;
@@ -1017,7 +1017,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
                         /**
                          * INSERT folder's and file's names into database
                          */
-                        if (!$this->_addAll($filePath , $pid, $userId)) {
+                        if (!$this->_addAll($filePath, $pid, $userId)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
                             return __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
                             return FALSE;
@@ -1065,7 +1065,6 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
                         /**
                          * INSERT filename into database
                          */
-
                         if (!$this->_addFile($filePath, $pid, $userId)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
                             return FALSE;
@@ -1516,7 +1515,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
 
         $zip = new ZipArchive;
         $zipOpen = $zip->open($file);
-        
+
         if ($zipOpen !== TRUE) {
             $_SESSION['easy2err'][] = __LINE__ . ' Error : ' . $this->lng['zip_open_err'] . ' <b>' . $file . '</b>';
             return FALSE;
@@ -2076,6 +2075,10 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
                 // the numeric keys are the member of the database
                 if (is_numeric($k)) {
                     $ids = $tree->delete(intval($k));
+                    if (empty($ids)) {
+                        $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $k . '<br />';
+                        return FALSE;
+                    }
                     $implodedDirIds = implode(',', $ids);
                     $selectFileIds = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                             . 'WHERE dir_id IN(' . $implodedDirIds . ')';
@@ -2326,7 +2329,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
         );
 
         $newDir = $this->e2gModCfg['dir'] . $this->getPath($post['newparent']);
-        $newRealPathParent = realpath('../'.$newDir);
+        $newRealPathParent = realpath('../' . $newDir);
 
         if (empty($newRealPathParent) || !$this->validFolder($newRealPathParent)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $newDir;
@@ -2342,14 +2345,14 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
 
                 //************* FILE SYSTEM UPDATE *************//
                 if (!empty($v)) {
-                    $vRealPath = realpath('../'.$v);
+                    $vRealPath = realpath('../' . $v);
 
                     if (empty($vRealPath) || !$this->validFolder($vRealPath)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_folder'] . ' : ' . $v;
                         return FALSE;
                     }
-                    
-                    $vBaseName =  $this->basenameSafe($vRealPath);
+
+                    $vBaseName = $this->basenameSafe($vRealPath);
 
                     $oldPath = array();
                     $newPath = array();
@@ -2442,14 +2445,14 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
             foreach ($post['im'] as $k => $v) {
                 // move the file
                 if (!empty($v)) {
-                    $vRealPath = realpath('../'.$v);
+                    $vRealPath = realpath('../' . $v);
 
                     if (empty($vRealPath) || !$this->validFile($vRealPath)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_file'] . ' : ' . $v;
                         return FALSE;
                     }
 
-                    $vBaseName =  $this->basenameSafe($vRealPath);
+                    $vBaseName = $this->basenameSafe($vRealPath);
 
                     $oldFile = array();
                     $oldFile = array();
@@ -4272,8 +4275,8 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
 
         if (!class_exists('E2gThumb')) {
             $thumbClassFile = realpath(E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php');
-            if ( empty($thumbClassFile) || !file_exists($thumbClassFile)) {
-                echo __LINE__ . ' : File <b>' . $thumbClassFile .'</b> does not exist.';
+            if (empty($thumbClassFile) || !file_exists($thumbClassFile)) {
+                echo __LINE__ . ' : File <b>' . $thumbClassFile . '</b> does not exist.';
                 $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . $thumbClassFile . '</b> does not exist.';
                 return FALSE;
             } else {
@@ -4302,7 +4305,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
             return FALSE;
         }
 
-        if(empty($path)) {
+        if (empty($path)) {
             return $this->lng['invalid_folder'];
         }
 
@@ -4355,7 +4358,7 @@ echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
             return NULL;
         }
         $index = !empty($index) ? $index : $this->e2gModCfg['index'];
-        
+
         $multipleTags = @explode(',', $tags);
         $countTags = count($multipleTags);
         $output = '';
