@@ -1188,6 +1188,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     $_SESSION['easy2suc']['success'] = '<br /><br /><br />' . $lngi['success']
             . '<br /><br /><input type="button" value="' . $lngi['del_inst_dir'] . '" onclick="document.location.href=\'' . $index . '&p=del_inst_dir\'">';
 
+    $_SESSION['saveE2gSettings'] = true;
     // SAVE DIR
     // TODO: switch to database checking
     unset($_SESSION['easy2dir']);
