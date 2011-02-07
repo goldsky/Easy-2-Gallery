@@ -1,7 +1,7 @@
 div.pane {
-/*    padding: 9px;*/
-/*    border-top: 1px solid #e3e3e3;*/
-/*    margin-top: -1px;*/
+    /*    padding: 9px;*/
+    /*    border-top: 1px solid #e3e3e3;*/
+    /*    margin-top: -1px;*/
 }
 
 h2 {
@@ -35,10 +35,10 @@ h3 {
 }
 
 .e2g_grayed a, .e2g_grayed a:link {
-	margin: 10px;
-	padding: 5px 10px;
-	color: #bbb;
-	border: 1px solid #e3e3e3;
+    margin: 10px;
+    padding: 5px 10px;
+    color: #bbb;
+    border: 1px solid #e3e3e3;
     text-decoration: none;
 }
 
@@ -48,8 +48,8 @@ h3 {
 }
 
 ul.actionButtons li {
-/*    padding-right: 1em;
-    border-right: 1px solid #cccccc;*/
+    /*    padding-right: 1em;
+        border-right: 1px solid #cccccc;*/
 }
 
 div.imPreview {
@@ -97,9 +97,9 @@ span.thumbPreview img {
     padding: 3px 5px;
     background-color: #f4f4f4;
     -moz-border-radius-topright: 15px;
-/*    -moz-border-radius-topleft: 15px;*/
+    /*    -moz-border-radius-topleft: 15px;*/
     -webkit-border-top-right-radius: 15px;
-/*    -webkit-border-top-left-radius: 15px;*/
+    /*    -webkit-border-top-left-radius: 15px;*/
     border: 1px solid #e4e4e4;
 }
 
@@ -241,7 +241,7 @@ div.dashboardButton a {
 }
 
 .e2g_button {
-/*    float: left;*/
+    /*    float: left;*/
     background-color: #F0F0F0;
     padding: 2px 15px;
     margin: 5px;
@@ -331,15 +331,13 @@ span.navigation span.navigationTitle {
 }
 
 span.navigation {
-/*    position: relative;*/
+    /*    position: relative;*/
     display: block;
     text-align: right;
 }
 
 span.navigation span.navigationTree {
     position: absolute;
-    right: 0;
-    top: 20px;
     display: none;
 }
 
@@ -362,6 +360,7 @@ span.navigation span.navigationBranch {
     background-color: #FFFFFF;
     font-size: 12px;
     font-weight: bold;
+    line-height: 2em;
 }
 
 span.navigation span.navigationBranch a,
@@ -370,17 +369,31 @@ span.navigation span.navigationBranch a:link {
     text-decoration: none;
 }
 
-span.navigation span.navigationBranch span {
-    display: block;
-    padding: 2px 6px;
-}
-
 span.navigation span.navigationBranch:hover {
     background-color: #EEEEEE;
 }
 
 span.navigation span.navigationBranch .active {
     background-color: #EEEEEE;
+}
+
+span.navigation span.navigationBranch span.navItem {
+    display: block;
+    clear: both;
+    white-space: nowrap;
+}
+
+span.navigation span.navigationBranch span.navItem span.navTitle {
+    margin: 2px 0 2px 6px;
+}
+
+span.navigation span.navigationBranch span.navItem span.navIcon {
+    border-left: 1px dotted gray;
+    padding-left: 5px;
+}
+
+span.navigation span.navigationBranch span.navItem span.navIcon img {
+    vertical-align: middle;
 }
 
 /* THUMBNAILS */
@@ -412,7 +425,7 @@ span.navigation span.navigationBranch .active {
 }
 
 .dir .boxcontent {
-/*    background: url('../icons/preloader-dir.gif') center no-repeat;*/
+    /*    background: url('../icons/preloader-dir.gif') center no-repeat;*/
 }
 
 .thumb .boxcontent {
@@ -473,4 +486,77 @@ span.navigation span.navigationBranch .active {
 .boxcontent {
     position: relative;
     padding: 5px;
+}
+
+/**
+* Action buttons
+* http://www.webdesignerwall.com/tutorials/css3-gradient-buttons/
+**/
+
+ul.modButtons {
+    display: block;
+    margin-left: -10px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+}
+
+ul.modButtons li {
+    float: left;
+    list-style: none;
+    line-height: 16px;
+}
+
+ul.modButtons li a,
+ul.modButtons li a:link {
+    text-decoration: none;
+    color: black;
+
+    /* button */
+    display: inline-block;
+    zoom: 1; /* zoom and *display = ie7 hack for display:inline-block */
+    *display: inline;
+    vertical-align: baseline;
+    margin: 0 1px;
+    outline: none;
+    cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    font: 14px/100% Arial, Helvetica, sans-serif;
+    padding: .5em 2em .55em;
+    text-shadow: 0 1px 1px rgba(0,0,0,.3);
+    -webkit-border-radius: .5em;
+    -moz-border-radius: .5em;
+    border-radius: .5em;
+    -webkit-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 1px 2px rgba(0,0,0,.2);
+    box-shadow: 0 1px 2px rgba(0,0,0,.2);
+
+    /* small */
+    font-size: 11px;
+    padding: .2em 1em .275em;
+
+    /* white */
+    color: #606060;
+    border: solid 1px #b7b7b7;
+    background: #fff;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#ededed));
+    background: -moz-linear-gradient(top,  #fff,  #ededed);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#ededed');
+}
+
+ul.modButtons li a:hover {
+    /* white */
+    background: #ededed;
+    background: -webkit-gradient(linear, left top, left bottom, from(#fff), to(#dcdcdc));
+    background: -moz-linear-gradient(top,  #fff,  #dcdcdc);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffff', endColorstr='#dcdcdc');
+}
+
+ul.modButtons li a:active {
+    /* white */
+    color: #999;
+    background: -webkit-gradient(linear, left top, left bottom, from(#ededed), to(#fff));
+    background: -moz-linear-gradient(top,  #ededed,  #fff);
+    filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#ffffff');
 }

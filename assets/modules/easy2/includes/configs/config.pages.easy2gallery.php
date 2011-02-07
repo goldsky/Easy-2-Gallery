@@ -13,6 +13,7 @@ $e2gPages = array(
         , 'lng' => $lng['dashboard']
         , 'file' => 'dashboard.inc.php'
         , 'access' => '100'
+        , 'icon' => '<img src="' . MODX_MANAGER_URL . 'media/style/MODxCarbon/images/icons/home.gif" width="16" height="16" border="0" alt="" />'
     )
     , 'files' => array(
         'e2gpg' => '2'
@@ -21,6 +22,7 @@ $e2gPages = array(
         , 'lng' => $lng['files']
         , 'file' => 'file.inc.php'
         , 'access' => '200'
+        , 'icon' => '<img src="' . MODX_MANAGER_URL . 'media/style/MODxCarbon/images/icons/page_white_copy.png" width="16" height="16" border="0" alt="" />'
     )
     , 'upload' => array(
         'e2gpg' => '3'
@@ -29,6 +31,7 @@ $e2gPages = array(
         , 'lng' => $lng['upload']
         , 'file' => 'upload.inc.php'
         , 'access' => '300'
+        , 'icon' => '<img src="' . MODX_MANAGER_URL . 'media/style/MODxCarbon/images/icons/add.png" width="16" height="16" border="0" alt="" />'
     )
     , 'comments' => array(
         'e2gpg' => '4'
@@ -37,6 +40,7 @@ $e2gPages = array(
         , 'lng' => $lng['comments']
         , 'file' => 'comment.inc.php'
         , 'access' => '400'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/comments.png" width="16" height="16" border="0" alt="" />'
     )
     , 'viewer' => array(
         'e2gpg' => '5'
@@ -45,6 +49,7 @@ $e2gPages = array(
         , 'lng' => $lng['viewer']
         , 'file' => 'viewer.inc.php'
         , 'access' => '500'
+        , 'icon' => '<img src="' . MODX_MANAGER_URL . 'media/style/MODxCarbon/images/icons/preview.png" width="16" height="16" border="0" alt="" />'
     )
     , 'slideshow' => array(
         'e2gpg' => '6'
@@ -53,6 +58,7 @@ $e2gPages = array(
         , 'lng' => $lng['slideshows']
         , 'file' => 'slideshow.inc.php'
         , 'access' => '600'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/slides.png" width="16" height="16" border="0" alt="" />'
     )
     , 'plugin' => array(
         'e2gpg' => '7'
@@ -61,6 +67,7 @@ $e2gPages = array(
         , 'lng' => $lng['plugins']
         , 'file' => 'plugin.inc.php'
         , 'access' => '700'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/plugin.png" width="16" height="16" border="0" alt="" />'
     )
     , 'user' => array(
         'e2gpg' => '8'
@@ -69,6 +76,7 @@ $e2gPages = array(
         , 'lng' => $lng['users']
         , 'file' => 'user.inc.php'
         , 'access' => '800'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/group.png" width="16" height="16" border="0" alt="" />'
     )
     , 'setting' => array(
         'e2gpg' => '9'
@@ -77,6 +85,7 @@ $e2gPages = array(
         , 'lng' => $lng['settings']
         , 'file' => 'setting.inc.php'
         , 'access' => '900'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/settings.png" width="16" height="16" border="0" alt="" />'
     )
 //    , 'option' => array(
 //        'e2gpg' => '10'
@@ -93,6 +102,7 @@ $e2gPages = array(
         , 'lng' => $lng['help']
         , 'file' => 'help.inc.php'
         , 'access' => '1100'
+        , 'icon' => '<img src="' . E2G_MODULE_URL . 'includes/tpl/icons/help.png" width="16" height="16" border="0" alt="" />'
     )
 );
 

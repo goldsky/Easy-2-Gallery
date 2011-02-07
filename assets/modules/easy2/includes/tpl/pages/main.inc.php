@@ -500,7 +500,10 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                         ?>
                                 <a href="<?php echo $v['link']; ?>">
                             <?php } ?>
-                            <span<?php echo (($this->e2gModCfg['e2gpg'] == $v['e2gpg']) ? ' class="active"' : ''); ?>> <?php echo $v['lng']; ?></span>
+                            <span class="navItem<?php echo (($this->e2gModCfg['e2gpg'] == $v['e2gpg']) ? ' active' : ''); ?>">
+                                <span class="navTitle"><?php echo $v['lng']; ?></span>
+                                <span class="navIcon"><?php echo $v['icon']; ?></span>
+                            </span>
                             <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
                             ?>
                             </a>
