@@ -457,13 +457,10 @@ class E2gMod extends E2gPub {
      * @param string $path file's/folder's path
      */
     private function _deleteAll($path) {
-        echo __LINE__ . ' : $path = ' . $path . '<br />';
         $realPath = realpath($path);
-        echo __LINE__ . ' : $realPath = ' . $realPath . '<br />';
-//die();
 
         $res = array('d' => 0, 'f' => 0, 'e' => array());
-        if (empty($realPath) || !$this->validFolder($realPath)) {
+        if (empty($realPath)) {
             return $res;
         }
 
