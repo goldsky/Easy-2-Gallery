@@ -925,17 +925,17 @@ class E2gMod extends E2gPub {
         if (!$this->validFolder($path) || empty($path)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path;
             return __LINE__ . ' : ' . $path;
-            return FALSE;
+//            return FALSE;
         }
         if (empty($pid)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
             return __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
-            return FALSE;
+//            return FALSE;
         }
         if (empty($userId)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
             return __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
-            return FALSE;
+//            return FALSE;
         }
 
         $timeStart = microtime(TRUE);
@@ -949,7 +949,7 @@ class E2gMod extends E2gPub {
         if (!$querySelectDirs) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
             return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-            return FALSE;
+//            return FALSE;
         }
 
         $mdirs = array();
@@ -966,7 +966,7 @@ class E2gMod extends E2gPub {
         if (!$querySelectFile) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
             return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-            return FALSE;
+//            return FALSE;
         }
 
         $mfiles = array();
@@ -1007,10 +1007,11 @@ class E2gMod extends E2gPub {
                     if ($name == '_thumbnails')
                         continue;
                     if (isset($mdirs[$name])) {
-                        if (!$this->synchro($filePath, $mdirs[$name]['id'])) {
+                        $sync = $this->synchro($filePath, $mdirs[$name]['id'], $userId);
+                        if ($sync!== TRUE) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
-                            return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
-                            return FALSE;
+                            return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $sync;
+//                            return FALSE;
                         }
                         unset($mdirs[$name]);
                     } else { // as ALL folder and file children of the current directory
@@ -1020,7 +1021,7 @@ class E2gMod extends E2gPub {
                         if (!$this->_addAll($filePath, $pid, $userId)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
                             return __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
-                            return FALSE;
+//                            return FALSE;
                         }
                     }
                 }
@@ -1056,7 +1057,8 @@ class E2gMod extends E2gPub {
                         $queryUpdateFile = mysql_query($updateFile);
                         if (!$queryUpdateFile) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFile;
-                            return FALSE;
+                            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFile;
+//                            return FALSE;
                         }
 
                         // goldsky -- if this already belongs to a file in the record, skip it!
@@ -1067,7 +1069,8 @@ class E2gMod extends E2gPub {
                          */
                         if (!$this->_addFile($filePath, $pid, $userId)) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
-                            return FALSE;
+                            return __LINE__ . ' : ' . $filePath;
+//                            return FALSE;
                         }
                     }
                 }
@@ -1099,7 +1102,8 @@ class E2gMod extends E2gPub {
                 $querySelectFiles = mysql_query($selectFiles);
                 if (!$querySelectFiles) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-                    return FALSE;
+                    return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+//                    return FALSE;
                 }
                 $fileIds = array();
                 while ($l = mysql_fetch_row($querySelectFiles)) {
@@ -1114,7 +1118,8 @@ class E2gMod extends E2gPub {
                     $queryDeleteFileComments = mysql_query($deleteFileComments);
                     if (!$queryDeleteFileComments) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-                        return FALSE;
+                        return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
+//                        return FALSE;
                     }
                 }
 
@@ -1123,7 +1128,8 @@ class E2gMod extends E2gPub {
                 $queryDeleteFiles = mysql_query($deleteFiles);
                 if (!$queryDeleteFiles) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-                    return FALSE;
+                    return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
+//                    return FALSE;
                 }
             }
         }
@@ -1141,7 +1147,8 @@ class E2gMod extends E2gPub {
             $queryDeleteFiles = mysql_query($deleteFiles);
             if (!$queryDeleteFiles) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-                return FALSE;
+                return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
+//                return FALSE;
             }
 
             $deleteFileComments = 'DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments '
@@ -1149,7 +1156,8 @@ class E2gMod extends E2gPub {
             $queryDeleteFileComments = mysql_query($deleteFileComments);
             if (!$queryDeleteFileComments) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-                return FALSE;
+                return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
+//                return FALSE;
             }
         }
 

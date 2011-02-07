@@ -89,8 +89,8 @@ $gdir = $e2g['dir'] . $getRequests['path'];
 $userId = $getRequests['uid'];
 
 $synchro = $e2gMod->synchro('../../../../../' . $getRequests['path'], $getRequests['pid'], $userId);
-if ($synchro === FALSE) {
-    echo '<div class="warning" style="padding-left: 10px;">' . __LINE__ . ' : ' . $lng['synchro_err'] . ' : ' . $synchro . '</div>';
+if ($synchro !== TRUE) {
+    echo $synchro;
 } else {
     echo '<div class="success" style="padding-left: 10px;">' . __LINE__ . ' : ' . $lng['synchro_suc'] . '</div>';
 }
