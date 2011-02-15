@@ -108,7 +108,7 @@ if (IN_MANAGER_MODE != 'true')
                                         <?php
                                             $e2gMgrGroupIds = $this->modx->db->getValue($this->modx->db->query(
                                                                     'SELECT permissions FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr '
-                                                                    . 'WHERE membergroup_id=\'' . $mgrGroup['id'] . '\''
+                                                                    . 'WHERE id=\'' . $mgrGroup['id'] . '\''
                                                     ));
                                             $e2gMgrGroupIdsArrays = array();
                                             $e2gMgrGroupIdsArrays = @explode(',', $e2gMgrGroupIds);

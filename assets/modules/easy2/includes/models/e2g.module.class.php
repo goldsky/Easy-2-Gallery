@@ -3977,7 +3977,7 @@ class E2gMod extends E2gPub {
 
         $updateMgrUser = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr '
                 . 'SET permissions=\'' . $mgrAccess . '\' '
-                . 'WHERE membergroup_id=\'' . $post['group_id'] . '\'';
+                . 'WHERE id=\'' . $post['group_id'] . '\'';
         $queryUpdateMgrUser = mysql_query($updateMgrUser);
         if (!$queryUpdateMgrUser) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['user_update_err'];
