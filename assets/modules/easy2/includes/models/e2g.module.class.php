@@ -3534,7 +3534,7 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['viewer_update_suc'];
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['viewer_update_suc'] . ' : ' . mysql_real_escape_string($post['name']);
         return TRUE;
     }
 

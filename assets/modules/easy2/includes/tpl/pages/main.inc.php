@@ -23,7 +23,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $this->lng['charset']; ?>" />
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $this->e2gModCfg['_t']; ?>/style.css" />
         <link rel="stylesheet" type="text/css" href="<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css" />
-        <link rel="stylesheet" type="text/css" href="<?php echo MODX_SITE_URL; ?>assets/libs/highslide/highslide.css" />
+        <link rel="stylesheet" type="text/css" href="<?php echo MODX_SITE_URL; ?>assets/libs/viewers/highslide/highslide.css" />
         <?php echo $this->plugin('OnE2GModHeadCSSScript'); ?>
 
         <script type="text/javascript" src="media/script/tabpane.js"></script>
@@ -440,9 +440,9 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 content_css : "<?php echo E2G_MODULE_URL; ?>includes/tpl/css/e2g_mod.css"
             });
         </script>
-        <script type="text/javascript" src="<?php echo MODX_SITE_URL; ?>assets/libs/highslide/highslide-full.js"></script>
+        <script type="text/javascript" src="<?php echo MODX_SITE_URL; ?>assets/libs/viewers/highslide/highslide-full.js"></script>
         <script type="text/javascript">
-            hs.graphicsDir = '<?php echo MODX_SITE_URL; ?>assets/libs/highslide/graphics/';
+            hs.graphicsDir = '<?php echo MODX_SITE_URL; ?>assets/libs/viewers/highslide/graphics/';
             hs.showCredits = false;
             hs.outlineType = "rounded-white";
             hs.allowSizeReduction = false;

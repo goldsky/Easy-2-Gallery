@@ -447,10 +447,14 @@ class E2gPub { // public/public class
      * Invoking the script with plugin, at any specified places.
      * @param string    $e2gEvtName         event trigger.
      * @param mixed     $e2gEvtParams       parameters array: depends on the event trigger.
+     * @param string    $e2gPluginName      plugin's name
      * @param bool      $respectDisabling   using the disabled option as query filter
      * @return mixed    if TRUE, will return the indexfile. Otherwise this will return FALSE.
      */
     public function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
+        // shorthand for the plugin index file
+        $modx = $this->modx;
+        
         if (!$e2gEvtName)
             return FALSE;
         if (!file_exists(realpath(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php')))
