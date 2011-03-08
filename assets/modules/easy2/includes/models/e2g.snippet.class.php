@@ -1092,7 +1092,7 @@ class E2gSnippet extends E2gPub {
         // HIDE COMMENTS from Ignored IP Addresses
         $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-        $checkIgnoredIp = $this->_checkIgnoredIp($ip);
+        $checkIgnoredIp = $this->checkIgnoredIp($ip);
 
         if ($this->e2gSnipCfg['ecm'] == 1 && (!$checkIgnoredIp)) {
             $row['com'] = 'e2gcom' . ($row['comments'] == 0 ? 0 : 1);
@@ -1625,7 +1625,7 @@ class E2gSnippet extends E2gPub {
             // HIDE COMMENTS from Ignored IP Addresses
             $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
 
-            $checkIgnoredIp = $this->_checkIgnoredIp($ip);
+            $checkIgnoredIp = $this->checkIgnoredIp($ip);
 
             if ($this->e2gSnipCfg['ecm'] == 1 && (!$checkIgnoredIp)) {
 
@@ -2460,29 +2460,6 @@ class E2gSnippet extends E2gPub {
             $string = preg_replace('~\<(.*?)' . $tag . '(.*?)\>~', '', $string);
         }
         return $string;
-    }
-
-    /**
-     * Check if the given IP is ignored
-     * @param string    $ip     IP Address
-     * @return bool     TRUE if it is ignored | FALSE if it is not.
-     */
-    private function _checkIgnoredIp($ip) {
-        $selectCountIgnIps = 'SELECT COUNT(ign_ip_address) '
-                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip '
-                . 'WHERE ign_ip_address=\'' . $ip . '\'';
-        $querySelectCountIgnIp = mysql_query($selectCountIgnIps);
-        if (!$querySelectCountIgnIp) {
-            echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectCountIgnIps . '<br />';
-            return FALSE;
-        }
-        $resultCountIgnIps = mysql_result($querySelectCountIgnIp, 0, 0);
-        mysql_free_result($querySelectCountIgnIp);
-
-        if ($resultCountIgnIps > 0) {
-            return TRUE;
-        }
-        return FALSE;
     }
 
     /**

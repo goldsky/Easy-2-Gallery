@@ -1184,13 +1184,13 @@ class E2gMod extends E2gPub {
         if (isset($fetchRow[$name])) {
             $ext = substr($name, strrpos($name, '.'));
             $filename = substr($name, 0, -(strlen($ext)));
-            $oldSuffix = end(@explode('_', $filename));
+            $oldSuffix = end(@explode('_e2g_', $filename));
             $prefixFilename = substr($filename, 0, -(strlen($oldSuffix)) - 1);
             if (is_numeric($oldSuffix)) {
                 $notNumberSuffix = '';
                 $newNumberSuffix = (int) $oldSuffix + 1;
             } else {
-                $notNumberSuffix = '_' . $oldSuffix;
+                $notNumberSuffix = '_e2g_' . $oldSuffix;
                 $newNumberSuffix = 1;
             }
             $newFilename = ( $prefixFilename != '' ? $prefixFilename . $notNumberSuffix : $filename ) . '_' . $newNumberSuffix . $ext;
