@@ -102,6 +102,13 @@ echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
                         <input name="cat_redirect_link" type="text" value="<?php echo $row['cat_redirect_link']; ?>" size="95" />
                     </td>
                 </tr>
+                <tr>
+                    <td valign="top"><b><?php echo $this->lng['dir_thumb']; ?></b></td>
+                    <td valign="top"><b>:</b></td>
+                    <td>
+                        <input name="thumb_id" type="text" value="<?php echo $row['cat_thumb_id']; ?>" size="5" /> <i><?php echo $this->lng['dir_thumb_desc']; ?></i>
+                    </td>
+                </tr>
             </table>
         </div>
     </div><?php echo $this->plugin('OnE2GFolderEditFormRender'); ?>

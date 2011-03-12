@@ -15,6 +15,9 @@ Fixes:
 + Bug on the first usergroup selection (http://code.google.com/p/easy2modx/issues/detail?id=27)
 + UTF-8 filenaming
 
+Removes:
+- Floatbox: download from http://randomous.com/floatbox/download
+
 ********** 1.4.0-Release Candidate 4 **********
 + Bug fixing on the chmod permissions
 + Bug fixing on the directory editing

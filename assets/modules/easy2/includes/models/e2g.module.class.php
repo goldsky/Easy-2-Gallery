@@ -1005,7 +1005,7 @@ class E2gMod extends E2gPub {
                         continue;
                     if (isset($mdirs[$name])) {
                         $sync = $this->synchro($filePath, $mdirs[$name]['id'], $userId);
-                        if ($sync!== TRUE) {
+                        if ($sync !== TRUE) {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
                             return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $sync;
 //                            return FALSE;
@@ -1313,30 +1313,30 @@ class E2gMod extends E2gPub {
      * 1. check the internal property first
      * 2. create it if it doesn't exist
      * This will lighten up the page when one page call the same method more than once.
-     * @param   int     $parentid   Parent's ID
+     * @param   int     $parentId   Parent's ID
      * @param   bool    $selected   turn on the selected="selected" if the current folder is the selected folder
      * @param   string  $jsActions  Javascript's action
      * @return  string  The multiple options
      */
-    private function _getDirDropDownOptions($parentid=0, $selected=0, $jsActions=NULL) {
-        if (!empty($this->_dirDropDownOptions[$parentid][$selected][$jsActions])) {
-            return $this->_dirDropDownOptions[$parentid][$selected][$jsActions];
+    private function _getDirDropDownOptions($parentId=0, $selected=0, $jsActions=NULL) {
+        if (!empty($this->_dirDropDownOptions[$parentId][$selected][$jsActions])) {
+            return $this->_dirDropDownOptions[$parentId][$selected][$jsActions];
         }
-        $this->_dirDropDownOptions[$parentid][$selected][$jsActions] = $this->_dirDropDownOptions($parentid, $selected, $jsActions);
-        return $this->_dirDropDownOptions[$parentid][$selected][$jsActions];
+        $this->_dirDropDownOptions[$parentId][$selected][$jsActions] = $this->_dirDropDownOptions($parentId, $selected, $jsActions);
+        return $this->_dirDropDownOptions[$parentId][$selected][$jsActions];
     }
 
     /**
      * create folders structure for select options.
-     * @param   int     $parentid   Parent's ID
+     * @param   int     $parentId   Parent's ID
      * @param   bool    $selected   turn on the selected="selected" if the current folder is the selected folder
      * @param   string  $jsActions  Javascript's action
      * @return  string  The multiple options
      */
-    private function _dirDropDownOptions($parentid=0, $selected=0, $jsActions=NULL) {
+    private function _dirDropDownOptions($parentId=0, $selected=0, $jsActions=NULL) {
         $selectDirs = 'SELECT parent_id, cat_id, cat_name, cat_level '
                 . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
-                . 'WHERE parent_id=' . $parentid;
+                . 'WHERE parent_id=' . $parentId;
 
         $querySelectDirs = mysql_query($selectDirs);
         if (!$querySelectDirs) {
@@ -3721,7 +3721,8 @@ class E2gMod extends E2gPub {
                 . ', modified_by=\'' . $this->modx->getLoginUserID() . '\' '
                 . ', last_modified=NOW() '
                 . ', cat_redirect_link = \'' . htmlspecialchars(trim($post['cat_redirect_link']), ENT_QUOTES) . '\''
-                . 'WHERE cat_id=' . $post['cat_id'];
+                . ', cat_thumb_id = \'' . $post['thumb_id'] . '\''
+                . ' WHERE cat_id=' . $post['cat_id'];
         $queryUpdateDir = mysql_query($updateDir);
         if (!$queryUpdateDir) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateDir;
@@ -4306,7 +4307,7 @@ class E2gMod extends E2gPub {
         // catches the object oriented source or javascript variable
         $realPath = realpath($path);
         $path = !empty($realPath) ? $realPath : base64_decode($path);
-        if ( !file_exists($path)) {
+        if (!file_exists($path)) {
             return FALSE;
         }
 
