@@ -4244,7 +4244,7 @@ class E2gMod extends E2gPub {
      * @param  int    $green            Green in RGB
      * @param  int    $blue             Blue in RGB
      * @param  bool   $createWaterMark  create water mark
-     * @return mixed  FALSE/the thumbail's path
+     * @return mixed  FALSE/the thumbnail's path
      */
     public function imgShaper(
     $gdir
@@ -4465,13 +4465,8 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
         foreach ($_GET as $k => $v) {
-            if ($k != 'root'
-                    && $k != 'getpath'
-                    && $k != 'path'
-                    && $k != 'pid'
-                    && $k != 'uid'
-                    && $k != 'tag'
-            ) {
+            $allowedKeys = array('root', 'getpath', 'path', 'pid', 'uid', 'tag', 'top', 'left', 'height', 'width');
+            if (!in_array($k, $allowedKeys)) {
                 unset($_GET[$k]);
                 continue;
             }

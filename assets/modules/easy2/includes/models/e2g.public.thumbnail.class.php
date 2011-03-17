@@ -47,7 +47,7 @@ class E2gThumb {
      * @param  bool   $createWaterMark  create water mark
      * @param  string $thumbPath        thumbnail's path for saving
      *
-     * @return mixed FALSE/the thumbail's path
+     * @return mixed FALSE/the thumbnail's path
      */
     public function imgShaper(
     $gdir

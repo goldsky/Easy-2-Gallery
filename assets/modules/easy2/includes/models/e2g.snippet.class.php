@@ -893,7 +893,7 @@ class E2gSnippet extends E2gPub {
      * @param  int    $green            Green in RGB
      * @param  int    $blue             Blue in RGB
      * @param  bool   $createWaterMark  create water mark
-     * @return mixed FALSE/the thumbail's path
+     * @return mixed FALSE/the thumbnail's path
      */
     private function _imgShaper($gdir, $path, $w, $h, $thq, $resizeType=NULL
     , $red=NULL, $green=NULL, $blue=NULL, $createWaterMark = 0) {
@@ -974,7 +974,7 @@ class E2gSnippet extends E2gPub {
 
         // GLOBAL e2g CSS styles
         if ($this->e2gSnipCfg['css'] !== '0' && file_exists(realpath($this->e2gSnipCfg['css']))) {
-            $this->modx->regClientCSS($this->modx->config['base_url'] . $this->e2gSnipCfg['css'], 'screen');
+            $this->modx->regClientCSS($this->e2gSnipCfg['css'], 'screen');
         }
 
         // JS Libraries
@@ -995,7 +995,7 @@ class E2gSnippet extends E2gPub {
             $this->modx->regClientStartupHTMLBlock($glibs[$this->e2gSnipCfg['glib']]['headers_html']);
         }
 
-        // GLOBAL e2g CSS styles
+        // GLOBAL e2g JS styles
         if ($this->e2gSnipCfg['js'] !== '0' && file_exists(realpath($this->e2gSnipCfg['js']))) {
             $this->modx->regClientStartupScript($this->e2gSnipCfg['js']);
         }

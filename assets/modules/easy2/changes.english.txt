@@ -5,18 +5,25 @@
 
 ********** 1.4.0-Public Release **********
 Improvement:
-+ Individual image scaling (http://code.google.com/p/easy2modx/issues/detail?id=23)
-+ Editable the values of the current, previous and next navigation (http://code.google.com/p/easy2modx/issues/detail?id=25)
-+ Folder sort order on Module side (http://code.google.com/p/easy2modx/issues/detail?id=26)
-+ Added &paths and &files parameters to be used instead of gallery's / image's ID
++ Editable the values of the current, previous and next navigation
 + Added the selective thumbnail to the directory
++ Updated the new library folders directive
++ Simplify the buttons and added some icons
++ Updated russian lang files
++ Added auto save config after installation.
++ Ajaxified some pages on the Module side
++ Added options to the siblings navigation
++ Updated the UTF-8 class by Rin
 
 Fixes:
-+ Bug on the first usergroup selection (http://code.google.com/p/easy2modx/issues/detail?id=27)
++ the first usergroup selection
++ the duplicate names issues
 + UTF-8 filenaming
++ the get_magic_quote checking 
 
 Removes:
 - Floatbox: download from http://randomous.com/floatbox/download
+  We do not support it anymore.
 
 ********** 1.4.0-Release Candidate 4 **********
 + Bug fixing on the chmod permissions
