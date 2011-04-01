@@ -63,9 +63,6 @@ class E2gThumb {
     , $thumbPath = NULL
     ) {
 
-        if (function_exists('set_time_limit'))
-            @set_time_limit(0);
-
         if (!file_exists(realpath($gdir . $path))) {
             return FALSE;
         }
@@ -74,8 +71,20 @@ class E2gThumb {
          * If there is no the image's thumbnail inside the thumbnail's path,
          * CREATE THE THUMBNAIL
          */
-        if (!file_exists(realpath($gdir . $thumbPath) && file_exists($gdir . $path))) {
-            // goldsky -- adds output buffer to avoid PHP's memory limit
+        if (!file_exists(realpath($gdir . $thumbPath))) {
+
+            // Apache's timeout: 300 secs
+            if (function_exists('ini_get') && !ini_get('safe_mode')) {
+                if (function_exists('set_time_limit')) {
+                    set_time_limit(300);
+                }
+                if (function_exists('ini_set')) {
+                    if (ini_get('max_execution_time') !== 300) {
+                        ini_set('max_execution_time', 300);
+                    }
+                }
+            }
+        
             ob_start();
 
             $imgSize = @getimagesize($gdir . $path);
