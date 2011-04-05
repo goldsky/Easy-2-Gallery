@@ -1385,7 +1385,7 @@ class E2gSnippet extends E2gPub {
                          * + WATERMARK-ing
                          */
                         $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename'], $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq'],
-                                        $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red'], $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], 1);
+                                        $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red'], $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], $this->e2gSnipCfg['ewm']);
                         if ($ssImg !== FALSE) {
                             $ssFiles['resizedimg'][] = $ssImg;
                         } else {
