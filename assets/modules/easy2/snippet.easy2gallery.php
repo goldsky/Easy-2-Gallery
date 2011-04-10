@@ -50,7 +50,7 @@ $modx->regClientStartupHTMLBlock('
                 document.getElementsByTagName("head")[0].appendChild(css);
             };
         </script>
-    ');
+');
 
 $jsDisabledTplFile = realpath($e2g['jsdisabled_tpl']);
 if (!empty($jsDisabledTplFile) && file_exists($jsDisabledTplFile))

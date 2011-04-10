@@ -3829,8 +3829,9 @@ class E2gMod extends E2gPub {
      */
     private function _getEventNum($e2gEvtName) {
         // include the event's names
-        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.events.easy2gallery.php'))) {
-            include E2G_MODULE_PATH . 'includes/configs/config.events.easy2gallery.php';
+        $eventConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.events.easy2gallery.php');
+        if (!empty($eventConfigFile) && file_exists($eventConfigFile)) {
+            include $eventConfigFile;
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
             return FALSE;
@@ -3907,7 +3908,12 @@ class E2gMod extends E2gPub {
      */
     private function _loadE2gMgrSessions() {
         // loading the hyperlinks ($e2gPages)
-        require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+        $pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
+        if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
+            return FALSE;
+        }
+        require $pageConfigFile;
 
         // loading the MODx's attributes
         $getUserInfo = $this->modx->getUserInfo($_SESSION['mgrInternalKey']);
@@ -4134,7 +4140,12 @@ class E2gMod extends E2gPub {
      */
     private function _checkConfigCompletion() {
         // loading the hyperlinks ($e2gPages)
-        require E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
+        $pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
+        if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
+            return FALSE;
+        }
+        require $pageConfigFile;
 
         // delete the config file, because this will always be checked as an upgrade option
         if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))

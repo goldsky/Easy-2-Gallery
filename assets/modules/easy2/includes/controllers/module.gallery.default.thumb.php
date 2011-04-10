@@ -45,31 +45,26 @@ define('E2G_MODULE_URL', MODX_SITE_URL . '../../');
 require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
 
 // initiate e2g's public module
-include ('../configs/params.module.easy2gallery.php');
-include ('../models/e2g.public.class.php'); //extending
-include ('../models/e2g.module.class.php');
+$modParamFile = realpath('../configs/params.module.easy2gallery.php');
+if (empty ($modParamFile) || !file_exists($modParamFile)) {
+    die(__FILE__ . ': Missing module\'s params file.');
+}
+include ($modParamFile);
+$pubClassFile = realpath('../models/e2g.public.class.php');
+if (empty ($pubClassFile) || !file_exists($pubClassFile)) {
+    die(__FILE__ . ': Missing public class file.');
+}
+include ($pubClassFile); //extending
+$modClassFile = realpath('../models/e2g.module.class.php');
+if (empty ($modClassFile) || !file_exists($modClassFile)) {
+    die(__FILE__ . ': Missing module class file.');
+}
+include ($modClassFile);
 
 // LANGUAGE
-if (file_exists(realpath('../langs/' . $modx->config['manager_language'] . '.inc.php'))) {
-    include '../langs/' . $modx->config['manager_language'] . '.inc.php';
-
-    // if there is a blank language parameter, english will fill it as the default.
-    foreach ($e2g_lang[$modx->config['manager_language']] as $olk => $olv) {
-        $oldLangKey[$olk] = $olk; // other languages
-        $oldLangVal[$olk] = $olv;
-    }
-
-    include '../langs/english.inc.php';
-    foreach ($e2g_lang['english'] as $enk => $env) {
-        if (!isset($oldLangKey[$enk])) {
-            $e2g_lang[$modx->config['manager_language']][$enk] = $env;
-        }
-    }
-
-    $lng = $e2g_lang[$modx->config['manager_language']];
-} else {
-    include '../langs/english.inc.php';
-    $lng = $e2g_lang['english'];
+$lng = E2gPub::languageSwitch();
+if (!is_array($lng)) {
+    die($lng); // FALSE returned.
 }
 
 $e2gMod = new E2gMod($modx, $e2gModCfg, $e2g, $lng);

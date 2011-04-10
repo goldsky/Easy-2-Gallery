@@ -17,7 +17,7 @@
 }
 .remooz-loading
 {
-	background-image:		url(spinner.gif);
+	background-image:		url(img/spinner.gif);
 }
 .remooz-body
 {
@@ -46,13 +46,13 @@
 	height:					30px;
 	text-decoration:		none;
 	border:					0;
-	background:				url(closebox.png) no-repeat center;
+	background:				url(img/closebox.png) no-repeat center;
 	visibility:				hidden;
 	cursor:					pointer;
 }
 .remooz-engine-trident4 .remooz-btn-close
 {
-	background-image:		url(closebox.gif);
+	background-image:		url(img/closebox.gif);
 }
 
 /**

@@ -33,7 +33,11 @@ else {
 }
 
 // initiate a new document parser
-include ('../../../../../manager/includes/document.parser.class.inc.php');
+$docParserClassFile = realpath('../../../../../manager/includes/document.parser.class.inc.php');
+if (empty($docParserClassFile) || !file_exists($docParserClassFile)) {
+    die(__FILE__ . ': Missing doc parser class file.');
+}
+include ($docParserClassFile);
 $modx = new DocumentParser;
 $modx->getSettings();
 
@@ -43,9 +47,27 @@ define('E2G_MODULE_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
 define('E2G_MODULE_URL', MODX_SITE_URL . '../../');
 
 // initiate e2g's public module
-include ('../configs/params.module.easy2gallery.php');
-include ('../models/e2g.public.class.php'); //extending
-include ('../models/e2g.module.class.php');
+$modParamFile = realpath('../configs/params.module.easy2gallery.php');
+if (empty ($modParamFile) || !file_exists($modParamFile)) {
+    die(__FILE__ . ': Missing module\'s params file.');
+}
+include ($modParamFile);
+$pubClassFile = realpath('../models/e2g.public.class.php');
+if (empty ($pubClassFile) || !file_exists($pubClassFile)) {
+    die(__FILE__ . ': Missing public class file.');
+}
+include ($pubClassFile); //extending
+$modClassFile = realpath('../models/e2g.module.class.php');
+if (empty ($modClassFile) || !file_exists($modClassFile)) {
+    die(__FILE__ . ': Missing module class file.');
+}
+include ($modClassFile);
+
+// LANGUAGE
+$lng = E2gPub::languageSwitch();
+if (!is_array($lng)) {
+    die($lng); // FALSE returned.
+}
 
 $e2gMod = new E2gMod($modx, $e2gModCfg, $e2g, $lng);
 

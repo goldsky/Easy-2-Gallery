@@ -15,7 +15,12 @@ if (empty($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
 
-require '../../../manager/includes/config.inc.php';
+$modxMgrConfigFile = realpath('../../../manager/includes/config.inc.php');
+if (empty($modxMgrConfigFile) || !file_exists($modxMgrConfigFile)) {
+    die(__FILE__ . ', ' . __LINE__ . ': missing config file');
+}
+require $modxMgrConfigFile;
+
 startCMSSession();
 
 mysql_connect($database_server, $database_user, $database_password)
@@ -28,8 +33,7 @@ $e2g_res = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_configs');
 if (!$e2g_res) {
     sh_err('MySQL query error for configs');
     die;
-}
-else {
+} else {
     while ($row = mysql_fetch_array($e2g_res)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
@@ -45,11 +49,12 @@ $res = mysql_query('SELECT * FROM ' . $table_prefix . "system_settings");
 while ($row = mysql_fetch_assoc($res))
     $settings[$row['setting_name']] = $row['setting_value'];
 
-if (file_exists(realpath('includes/langs/' . $settings['manager_language'] . '.comments.php'))) {
-    include 'includes/langs/' . $settings['manager_language'] . '.comments.php';
+$lngCommentFile = realpath('includes/langs/' . $settings['manager_language'] . '.comments.php');
+if (!empty($lngCommentFile) && file_exists($lngCommentFile)) {
+    include $lngCommentFile;
     $lng = $e2g_lang[$settings['manager_language']];
 } else {
-    include 'includes/langs/english.comments.php';
+    include realpath('includes/langs/english.comments.php');
     $lng = $e2g_lang['english'];
 }
 
@@ -140,9 +145,9 @@ if (file_exists(realpath($e2g['comments_row_tpl']))) {
 }
 
 $res = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_comments '
-        .'WHERE file_id = ' . $id . ' '
-        .'AND STATUS=1 ORDER BY id DESC '
-        .'LIMIT ' . ($cpn * $e2g['ecl']) . ', ' . $e2g['ecl']);
+                . 'WHERE file_id = ' . $id . ' '
+                . 'AND STATUS=1 ORDER BY id DESC '
+                . 'LIMIT ' . ($cpn * $e2g['ecl']) . ', ' . $e2g['ecl']);
 $i = 0;
 while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
 

@@ -1194,9 +1194,9 @@ if (!empty($snippetFile) && file_exists($snippetFile)) {
         $pluginCode = '
 $pluginFile = realpath(MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\');
 if (!empty($pluginFile) && file_exists($pluginFile)) {
-return include $pluginFile;
+    return include $pluginFile;
 } else {
-return \'\';
+    return \'\';
 }
 ';
     } else {

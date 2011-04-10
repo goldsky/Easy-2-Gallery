@@ -1,4 +1,4 @@
-hs.graphicsDir = "assets/libs/highslide/graphics/";
+hs.graphicsDir = "assets/libs/viewers/highslide/graphics/";
 hs.showCredits = false;
 hs.outlineType = "rounded-white";
 hs.allowSizeReduction = false;

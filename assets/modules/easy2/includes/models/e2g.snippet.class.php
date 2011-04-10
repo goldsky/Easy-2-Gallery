@@ -1928,7 +1928,7 @@ class E2gSnippet extends E2gPub {
                         return FALSE;
                     }
                     ob_start();
-                    include $pluginIndexFile;
+                    include realpath($pluginIndexFile);
                     $out = ob_get_contents();
                     ob_end_clean();
                     return $out;

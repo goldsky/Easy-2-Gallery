@@ -11,8 +11,8 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 // Easy 2 Gallery version
-if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.0 - PL') {
-    define('E2G_VERSION', '1.4.0 - PL');
+if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.1') {
+    define('E2G_VERSION', '1.4.1');
 }
 
 // Easy 2 Gallery module path
@@ -141,13 +141,15 @@ if (is_dir(E2G_MODULE_PATH . 'install')) {
     return require_once E2G_MODULE_PATH . 'install/index.php';
 }
 
-if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php'))) {
-    require_once E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php';
-    $e2gPages = $e2gModCfg['e2gPages'];
+$pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
+if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
+    return __LINE__ . ' : ' . $lng['config_file_err_missing'];
+    return FALSE;
 } else {
-    return 'Missing pages configuration';
+    require $pageConfigFile;
+    $e2gPages = $e2gModCfg['e2gPages'];
 }
-        
+
 /**
  * EXECUTE MODULE
  */

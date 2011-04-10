@@ -187,7 +187,11 @@ if (IN_MANAGER_MODE != 'true')
             else {
                 $numrow_plugins = mysql_num_rows($query_plugins);
                 // include the event's names
-                include E2G_MODULE_PATH . 'includes/configs/config.events.easy2gallery.php';
+                $eventConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.events.easy2gallery.php');
+                if (empty($eventConfigFile) || !file_exists($eventConfigFile)) {
+                    die(__FILE__ . ', ' . __LINE__ . ': missing config.events.easy2gallery.php file');
+                }
+                include $eventConfigFile;
                 while ($row = mysql_fetch_array($query_plugins)) {
             ?>
                     <li>

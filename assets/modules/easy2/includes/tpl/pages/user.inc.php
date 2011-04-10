@@ -101,7 +101,11 @@ if (IN_MANAGER_MODE != 'true')
 
                                         <?php
                                         if ($_GET['page'] == 'edit_mgrPerm' && $_GET['group_id'] == $mgrGroup['id']) {
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.mgr.perm_edit.inc.php';
+                                            $usrMgrPermEditFile = realpath(E2G_MODULE_PATH . 'includes/tpl/pages/user.mgr.perm_edit.inc.php');
+                                            if (empty($usrMgrPermEditFile) || !file_exists($usrMgrPermEditFile)) {
+                                                die(__FILE__ . ', ' . __LINE__ . ': missing user.mgr.perm_edit.inc.php file');
+                                            }
+                                            include $usrMgrPermEditFile;
                                         } else {
                                         ?>
                                             <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;page=edit_mgrPerm&amp;group_id=<?php echo $mgrGroup['id']; ?>"><?php echo $this->lng['edit']; ?></a><br />
@@ -203,7 +207,11 @@ if (IN_MANAGER_MODE != 'true')
                                         </script>
                                         <?php
                                         if ($_GET['page'] == 'edit_webPerm' && $_GET['group_id'] == $webGroup['id']) {
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_edit.inc.php';
+                                            $usrWebPermEditFile = realpath(E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_edit.inc.php');
+                                            if (empty($usrWebPermEditFile) || !file_exists($usrWebPermEditFile)) {
+                                                die(__FILE__ . ', ' . __LINE__ . ': missing user.web.perm_edit.inc.php file');
+                                            }
+                                            include $usrWebPermEditFile;
                                         ?>
                                             <p>
                                                 <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;page=edit_webFilesPerm&amp;group_id=<?php echo $webGroup['id']; ?>"><?php echo $this->lng['edit']; ?></a>
@@ -217,7 +225,11 @@ if (IN_MANAGER_MODE != 'true')
                                                 <b><?php echo $this->lng['folders']; ?></b>
                                             <p>
                                             <?php
-                                            include E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_editfile.inc.php';
+                                            $usrWebPermEditFormFile = realpath(E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_editfile.inc.php');
+                                            if (empty($usrWebPermEditFormFile) || !file_exists($usrWebPermEditFormFile)) {
+                                                die(__FILE__ . ', ' . __LINE__ . ': missing user.web.perm_editfile.inc.php file');
+                                            }
+                                            include $usrWebPermEditFormFile;
                                         } else {
                                             ?>
                                         <p>

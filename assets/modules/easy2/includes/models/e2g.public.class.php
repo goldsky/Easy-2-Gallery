@@ -454,14 +454,16 @@ class E2gPub { // public/public class
     public function plugin($e2gEvtName, $e2gEvtParams = array(), $e2gPluginName = NULL, $respectDisabling = TRUE) {
         // shorthand for the plugin index file
         $modx = $this->modx;
-        
+
         if (!$e2gEvtName)
             return FALSE;
-        if (!file_exists(realpath(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php')))
+
+        $eventConfigFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php');
+        if (empty($eventConfigFile) || !file_exists($eventConfigFile)) {
             return FALSE;
-        else {
+        } else {
             // include the event's names
-            include MODX_BASE_PATH . 'assets/modules/easy2/includes/configs/config.events.easy2gallery.php';
+            include $eventConfigFile;
             foreach ($e2gEvents as $k => $v) {
                 if ($v != $e2gEvtName)
                     continue;
@@ -494,8 +496,9 @@ class E2gPub { // public/public class
             if (!empty($indexFiles)) {
                 ob_start();
                 foreach ($indexFiles as $indexFile) {
-                    if (file_exists(realpath(MODX_BASE_PATH . $indexFile))) {
-                        include MODX_BASE_PATH . $indexFile;
+                    $realPathFile = realpath(MODX_BASE_PATH . $indexFile);
+                    if (!empty($realPathFile) && file_exists($realPathFile)) {
+                        include $realPathFile;
                     }
                 }
                 $out = ob_get_contents();
@@ -808,6 +811,43 @@ class E2gPub { // public/public class
             return TRUE;
         }
         return FALSE;
+    }
+
+    public function languageSwitch() {
+
+        $langFile = realpath('../langs/' . $modx->config['manager_language'] . '.inc.php');
+        if (!empty($langFile) && file_exists($langFile)) {
+            include $langFile; // loading $e2g_lang
+
+            // if there is a blank language parameter, english will fill it as the default.
+            $oldLangKey = $oldLangVal = array();
+            foreach ($e2g_lang[$modx->config['manager_language']] as $olk => $olv) {
+                $oldLangKey[$olk] = $olk; // other languages
+                $oldLangVal[$olk] = $olv;
+            }
+
+            $engLangFile = realpath('../langs/english.inc.php');
+            if (empty($engLangFile) || !file_exists($engLangFile)) {
+                return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
+            }
+            include $engLangFile; // loading $e2g_lang
+            foreach ($e2g_lang['english'] as $enk => $env) {
+                if (!isset($oldLangKey[$enk])) {
+                    $e2g_lang[$modx->config['manager_language']][$enk] = $env;
+                }
+            }
+
+            $lng = $e2g_lang[$modx->config['manager_language']];
+        } else {
+            $engLangFile = realpath('../langs/english.inc.php');
+            if (empty($engLangFile) || !file_exists($engLangFile)) {
+                return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
+            }
+            include $engLangFile;
+            $lng = $e2g_lang['english'];
+        }
+
+        return $lng;
     }
 
 }

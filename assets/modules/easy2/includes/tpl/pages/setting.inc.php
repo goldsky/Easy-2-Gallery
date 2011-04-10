@@ -28,7 +28,11 @@ if (IN_MANAGER_MODE != 'true')
                     <td>
                         <select name="e2g_encode">
                             <?php
-                            include (E2G_MODULE_PATH . 'includes/configs/config.encode.easy2gallery.php');
+                            $encodeConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.encode.easy2gallery.php');
+                            if (empty($encodeConfigFile) || !file_exists($encodeConfigFile)) {
+                                die(__FILE__ . ', ' . __LINE__ . ': missing config.encode.easy2gallery.php file');
+                            }
+                            include ($encodeConfigFile);
                             foreach ($e2gEncodes as $e2gEncode) {
                             ?>
                                 <option value="<?php echo $e2gEncode['value']; ?>"<?php echo ($this->e2g['e2g_encode'] == $e2gEncode['value'] ? ' selected="selected"' : ''); ?>><?php echo $e2gEncode['lng']; ?></option>
