@@ -11,6 +11,7 @@ Improvement:
 Fixes:
 + Bugfixed invalid path directives inside the js files of the moved library's folders
 + Bugfixed watermark option to the slideshow's image shaper
++ Bugfixed encoding on snippet's image url
 
 ********** 1.4.0-Public Release **********
 Improvement:

@@ -601,8 +601,8 @@ class E2gMod extends E2gPub {
                 . 'WHERE cat_id=' . $id
         );
 
-        $suc = str_replace('../', '', $this->e2gEncode(dirname($path))) . '/' . $name;
-        $suc = str_replace($_SERVER['DOCUMENT_ROOT'], '', $this->e2gEncode(dirname($path))) . '/' . $name;
+        $suc = realpath(dirname($path) . '/' . $this->e2gDecode($name));
+        $suc = $this->e2gEncode($suc);
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dir_added'] . ' : ' . $suc;
 
         // invoke the plugin

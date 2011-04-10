@@ -610,7 +610,7 @@ class E2gSnippet extends E2gPub {
             if (!$imgShaper) {
                 continue;
             } else {
-                $l['src'] = $imgShaper;
+                $l['src'] = $this->e2gEncode($imgShaper);
             }
 
             $l['title'] = ( $l['cat_alias'] != '' ? $l['cat_alias'] : $l['cat_name'] );
@@ -692,12 +692,13 @@ class E2gSnippet extends E2gPub {
 
         $fileThumbs = array();
         while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
-            $thumbPlacholders = $this->_loadThumbPlaceholders($l);
-            if ($thumbPlacholders === FALSE)
+            $thumbPlaceholders = $this->_loadThumbPlaceholders($l);
+            if ($thumbPlaceholders === FALSE) {
                 continue;
+            }
 
             // whether configuration setting is set with or without table, the template will adjust it
-            $fileThumbs[] = $this->filler($this->getTpl('thumb_tpl'), $thumbPlacholders);
+            $fileThumbs[] = $this->filler($this->getTpl('thumb_tpl'), $thumbPlaceholders);
         }
         mysql_free_result($querySelectFiles);
 
@@ -1010,7 +1011,8 @@ class E2gSnippet extends E2gPub {
      */
     private function _loadThumbPlaceholders($row) {
         // check the picture existance before continue
-        if (!file_exists(realpath($this->e2gSnipCfg['gdir'] . $this->getPath($row['dir_id']) . $row['filename']))) {
+        $fileRealPath = realpath($this->e2gDecode($this->e2gSnipCfg['gdir'] . $this->getPath($row['dir_id']) . $row['filename']));
+        if (!file_exists($fileRealPath)) {
             return FALSE;
         }
 
@@ -1041,7 +1043,7 @@ class E2gSnippet extends E2gPub {
         $path = $this->getPath($row['dir_id']);
         $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename'], $row['w'], $row['h'], $this->e2gSnipCfg['thq']);
         if ($imgShaper !== FALSE) {
-            $row['src'] = $imgShaper;
+            $row['src'] = $this->e2gEncode($imgShaper);
         } else {
             $row['src'] = 'assets/modules/easy2/show.easy2gallery.php?w=' . $row['w'] . '&amp;h=' . $row['h'] . '&amp;th=5';
         }
