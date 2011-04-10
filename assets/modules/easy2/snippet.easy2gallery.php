@@ -52,12 +52,14 @@ $modx->regClientStartupHTMLBlock('
         </script>
     ');
 
-if (file_exists(realpath($e2g['jsdisabled_tpl'])))
-    include $e2g['jsdisabled_tpl'];
+$jsDisabledTplFile = realpath($e2g['jsdisabled_tpl']);
+if (!empty($jsDisabledTplFile) && file_exists($jsDisabledTplFile))
+    include $jsDisabledTplFile;
 
 // Start retrieving snippet's parameters
-if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php'))) {
-    require E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php';
+$snipParamFile = realpath(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php');
+if (!empty($snipParamFile) && file_exists($snipParamFile)) {
+    require $snipParamFile;
 } else {
     return 'Snippet\'s parameters file is missing.';
 }
@@ -69,8 +71,9 @@ $output = '';
 
 // Load the core class file
 if (!class_exists('E2gPub')) {
-    if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.public.class.php'))) {
-        include E2G_SNIPPET_PATH . 'includes/models/e2g.public.class.php';
+    $publicClassFile = realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.public.class.php');
+    if (!empty($publicClassFile) && file_exists($publicClassFile)) {
+        include $publicClassFile;
     } else {
         echo "<h3>Missing Easy 2 Gallery core's class file.</h3>";
         return;
@@ -79,8 +82,8 @@ if (!class_exists('E2gPub')) {
 
 // Load the snippet's class file
 if (!class_exists('E2gSnippet')) {
-    $snippetClassFile = E2G_SNIPPET_PATH . 'includes/models/e2g.snippet.class.php';
-    if (file_exists(realpath($snippetClassFile))) {
+    $snippetClassFile = realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.snippet.class.php');
+    if (!empty($snippetClassFile) && file_exists($snippetClassFile)) {
         include $snippetClassFile;
     } else {
         echo "<h3>Missing Easy 2 Gallery snippet's class file.</h3>";

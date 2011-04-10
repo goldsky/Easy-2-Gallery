@@ -6,17 +6,20 @@ $_a = (int) $_GET['a'];                 // MODx's action ID
 $_i = (int) $_GET['id'];                // MODx's module ID
 $index = 'index.php?a=' . $_a . '&id=' . $_i . (!empty($e2g['mod_id']) ? '&amp;e2g_id=' . $e2g['mod_id'] : '');
 
-if (file_exists(realpath('../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php'))) {
-    include '../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php';
+$instLangFile = realpath('../assets/modules/easy2/includes/langs/' . $modx->config['manager_language'] . '.inst.inc.php');
+if (!empty($instLangFile) && file_exists($instLangFile)) {
+    include $instLangFile;
     $lngi = $e2g_lang[$modx->config['manager_language']];
 } else {
-    include '../assets/modules/easy2/includes/langs/english.inst.inc.php';
-    $lngi = $e2g_lang['english'];
+    $englishLangFile = realpath('../assets/modules/easy2/includes/langs/english.inst.inc.php');
+    if (!empty($englishLangFile) && file_exists($englishLangFile)) {
+        include $englishLangFile;
+        $lngi = $e2g_lang['english'];
+    } else {
+        $_SESSION['easy2err'][] = __LINE__ . ': missing english language file.';
+        return FALSE;
+    }
 }
-
-/**
- * Functions for this installer
- */
 
 /**
  * Redirector
@@ -28,22 +31,27 @@ function chref($href) {
     exit();
 }
 
-/* * *
- * function restore()
+/**
  * To restore file's and folder's name of previous version's installation
- * @param string $path path to file or folder
- * @param int $pid current parent ID
+ * @param   string  $path   path to file or folder
+ * @param   int     $pid    current parent ID
  */
-
 function restore($path, $pid) {
     global $modx;
     $_restore['d'] = 0;
     $_restore['f'] = 0;
 
-    if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
-        require E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
+    $oldConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php');
+    if (!empty($oldConfigFile) && file_exists($oldConfigFile)) {
+        require $oldConfigFile;
     } else {
-        require E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
+        $defConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php');
+        if (!empty($defConfigFile) && file_exists($defConfigFile)) {
+            require $defConfigFile;
+        } else {
+            $_SESSION['easy2err'][] = __LINE__ . ': missing default config file.';
+            return FALSE;
+        }
     }
 
     $timeStart = microtime(TRUE);
@@ -186,8 +194,12 @@ function restore($path, $pid) {
     return $_restore;
 }
 
+/**
+ * Delete all contents of the given path
+ * @param   string  $path   path
+ * @return  array   report
+ */
 function deleteAll($path) {
-
     $res = array('d' => 0, 'f' => 0, 'e' => array());
     if (!is_dir($path))
         return $res;
@@ -217,7 +229,6 @@ function deleteAll($path) {
 }
 
 /**
- *
  * To check the specified resource is a valid file.<br />
  * It will be checked against the folder validation first.
  * @author goldsky <goldsky@modx-id.com>
@@ -426,8 +437,8 @@ function restoreAll($path, $pid) {
     return $_restore;
 }
 
-/* * *
- *
+/**
+ * Checking table's field existence
  * @global mixed $modx
  * @param string $table the table name
  * @param string $field the field name
@@ -436,7 +447,6 @@ function restoreAll($path, $pid) {
  * If this check the datatype, it will return the datatype information.
  * @author goldsky
  */
-
 function checkField($table, $field, $data=null) {
     global $modx;
 
@@ -450,6 +460,13 @@ function checkField($table, $field, $data=null) {
         return FALSE;
 }
 
+/**
+ * Adding a field to the SQL table
+ * @param   string  $table      table name
+ * @param   string  $fieldName  field name
+ * @param   string  $fieldInfo  additional field infor
+ * @param   string  $position   field's position among the other existing fields
+ */
 function addField($table, $fieldName, $fieldInfo, $position=null) {
     if (checkField($GLOBALS['table_prefix'] . $table, $fieldName) === FALSE) {
         if (!mysql_query('ALTER TABLE ' . $GLOBALS['table_prefix'] . $table . ' ADD `' . $fieldName . '` ' . $fieldInfo . ' ' . $position))
@@ -459,6 +476,14 @@ function addField($table, $fieldName, $fieldInfo, $position=null) {
     }
 }
 
+/**
+ * Updating a field
+ * @param array     $lngi           installation language
+ * @param string    $table          table name
+ * @param string    $whereClause    SQL's WHERE statement
+ * @param string    $script         field's value
+ * @return void
+ */
 function updateTableContent($lngi, $table, $whereClause, $script) {
     $select = 'SELECT * FROM ' . $GLOBALS['table_prefix'] . $table . ' ' . $whereClause;
     $query = mysql_query($select);
@@ -1055,7 +1080,8 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         )
     );
 
-    for ($i = 0; $i < count($updateViewers); $i++) {
+    $countUpdateViewers = count($updateViewers);
+    for ($i = 0; $i < $countUpdateViewers; $i++) {
         updateTableContent($lngi, 'easy2_viewers', 'WHERE name=\'' . $updateViewers[$i]['name'] . '\'', $updateViewers[$i]['script']);
     }
 
@@ -1080,14 +1106,33 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // MODULE
 
     if (empty($e2g['mod_id']) || $e2g['mod_id'] == '') {
-        $mod = '$o = include_once MODX_BASE_PATH . \'assets/modules/easy2/index.php\';' . "\n";
-        $mod .= 'return $o;' . "\n";
-        $res = mysql_query('UPDATE ' . $GLOBALS['table_prefix'] . 'site_modules SET modulecode = \'' . mysql_escape_string($mod) . '\' WHERE id =\'' . $_GET['id'] . '\'');
-        if ($res) {
-            $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['mod_updated'];
+
+        $moduleFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/index.php');
+        if (!empty($moduleFile) && file_exists($moduleFile)) {
+            $moduleCode = '
+$moduleFile = realpath(MODX_BASE_PATH . \'assets/modules/easy2/index.php\');
+if (!empty($moduleFile) && file_exists($moduleFile)) {
+    return include $moduleFile;
+} else {
+    return \'\';
+}
+';
         } else {
-            $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['mod_update_err'] . '<br />' . mysql_error();
-            chref($index);
+            return FALSE;
+        }
+
+        $select = mysql_query('SELECT modulecode FROM ' . $GLOBALS['table_prefix'] . 'site_modules WHERE id =\'' . $_GET['id'] . '\'');
+        $result = mysql_result($select, 0, 0);
+        if ($result != $moduleCode) {
+            $res = 'UPDATE ' . $GLOBALS['table_prefix'] . 'site_modules '
+                    . 'SET modulecode = \'' . mysql_escape_string($moduleCode)
+                    . '\' WHERE id =\'' . $_GET['id'] . '\'';
+            if (mysql_query($res)) {
+                $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['mod_updated'];
+            } else {
+                $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['mod_update_err'] . '<br />' . mysql_error();
+                chref($index);
+            }
         }
     }
     else
@@ -1096,13 +1141,26 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     // SNIPPET
 
     if (empty($snippetId) || $snippetId == '') {
+
+        $snippetFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/snippet.easy2gallery.php');
+        if (!empty($snippetFile) && file_exists($snippetFile)) {
+            $snippetCode = '
+$snippetFile = realpath(MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\');
+if (!empty($snippetFile) && file_exists($snippetFile)) {
+    return include $snippetFile;
+} else {
+    return \'\';
+}
+';
+        } else {
+            return FALSE;
+        }
+
         $res = mysql_query('SELECT id FROM ' . $GLOBALS['table_prefix'] . 'site_snippets WHERE name =\'easy2\'');
-        $snippet = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/snippet.easy2gallery.php\';' . "\n";
-        $snippet .= 'return $o;' . "\n";
         if (mysql_num_rows($res) == 0) {
             $sql = "INSERT INTO " . $GLOBALS['table_prefix'] . "site_snippets "
                     . "(name, description, snippet, moduleguid, locked, properties, category) "
-                    . "VALUES('easy2', 'Easy 2 Gallery', '" . mysql_escape_string($snippet) . "', '', '1','', '0')";
+                    . "VALUES('easy2', 'Easy 2 Gallery', '" . mysql_escape_string($snippetCode) . "', '', '1','', '0')";
 
             if (mysql_query($sql)) {
                 $snippetId = mysql_insert_id();
@@ -1114,8 +1172,10 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         } else {
             $select = mysql_query('SELECT snippet FROM ' . $GLOBALS['table_prefix'] . 'site_snippets WHERE name =\'easy2\'');
             $result = mysql_result($select, 0, 0);
-            if ($result != $snippet) {
-                $sql = 'UPDATE ' . $GLOBALS['table_prefix'] . 'site_snippets SET snippet=\'' . mysql_escape_string($snippet) . '\' WHERE name =\'easy2\' LIMIT 1';
+            if ($result != $snippetCode) {
+                $sql = 'UPDATE ' . $GLOBALS['table_prefix'] . 'site_snippets '
+                        . 'SET snippet=\'' . mysql_escape_string($snippetCode)
+                        . '\' WHERE name =\'easy2\'';
                 if (mysql_query($sql)) {
                     $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['snippet_updated'];
                 } else {
@@ -1129,15 +1189,28 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         $snippetId = $e2g['snippet_id'];
 
     // PLUGIN
+    $pluginFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/plugin.easy2gallery.php');
+    if (!empty($pluginFile) && file_exists($pluginFile)) {
+        $pluginCode = '
+$pluginFile = realpath(MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\');
+if (!empty($pluginFile) && file_exists($pluginFile)) {
+return include $pluginFile;
+} else {
+return \'\';
+}
+';
+    } else {
+        $_SESSION['easy2err'][] = __LINE__ . ': missing plugin file.';
+        return FALSE;
+    }
+
     if (empty($pluginId) || $pluginId == '') {
         $select = 'SELECT id FROM ' . $GLOBALS['table_prefix'] . 'site_plugins WHERE name=\'easy2\'';
         $query = mysql_query($select);
         if (mysql_num_rows($query) == 0) {
-            $plugin = '$o = include MODX_BASE_PATH . \'assets/modules/easy2/plugin.easy2gallery.php\';' . "\n";
-            $plugin .= 'return $o;' . "\n";
             $insert = 'INSERT INTO ' . $GLOBALS['table_prefix'] . 'site_plugins '
                     . '(name,description,plugincode) '
-                    . "VALUES ('easy2', 'Easy 2 Gallery plugin','" . mysql_escape_string($plugin) . "')"
+                    . "VALUES ('easy2', 'Easy 2 Gallery plugin','" . mysql_escape_string($pluginCode) . "')"
             ;
             if (mysql_query($insert)) {
                 $pluginId = mysql_insert_id();
@@ -1146,12 +1219,12 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                 $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['plugin_add_err'];
                 chref($index);
             }
-        }
-        else
+        } else {
             $pluginId = mysql_result($query, 0, 0);
-    }
-    else
+        }
+    } else {
         $pluginId = $e2g['plugin_id'];
+    }
 
     // PLUGIN EVENTS
     if (!empty($pluginId)) {
@@ -1164,8 +1237,23 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         . "VALUES ('$pluginId','$nEvtId','0')"
                 );
             }
-        } else
+        } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . __LINE__ . ' Error: ' . mysql_error();
+        }
+
+        $select = mysql_query('SELECT plugincode FROM ' . $GLOBALS['table_prefix'] . 'site_plugins WHERE id =\'' . $pluginId . '\'');
+        $result = mysql_result($select, 0, 0);
+        if ($result != $pluginCode) {
+            $res = 'UPDATE ' . $GLOBALS['table_prefix'] . 'site_plugins '
+                    . 'SET plugincode = \'' . mysql_escape_string($pluginCode)
+                    . '\' WHERE id =\'' . $pluginId . '\'';
+            if (mysql_query($res)) {
+                $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['plugin_updated'];
+            } else {
+                $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['plugin_update_err'] . '<br />' . mysql_error();
+                chref($index);
+            }
+        }
     }
 
     /**
@@ -1196,9 +1284,9 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         if (mysql_num_rows($select) > 0)
             $snippetId = mysql_result($select, 0, 0);
         mysql_free_result($select);
-    }
-    else
+    } else {
         $snippetId = $e2g['snippet_id'];
+    }
 
     // PLUGIN
     if (empty($e2g['plugin_id']) || $e2g['plugin_id'] == '') {
@@ -1206,9 +1294,9 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
         if (mysql_num_rows($select) > 0)
             $pluginId = mysql_result($select, 0, 0);
         mysql_free_result($select);
-    }
-    else
+    } else {
         $pluginId = $e2g['plugin_id'];
+    }
 ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
         "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -1220,6 +1308,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
             <script type="text/javascript" src="media/script/tabpane.js"></script>
         </head>
         <body>
+            <p>&nbsp;</p>
             <div class="sectionHeader">Easy 2 Gallery <?php echo E2G_VERSION; ?> Installation</div>
             <div class="sectionBody">
                 <div class="tab-pane" id="easy2Pane"><script type="text/javascript">
@@ -1248,18 +1337,19 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         <form method="post" action="">
                             <table cellspacing="0" cellpadding="0">
                                 <tr>
-                                    <td><b><?php echo $lngi['path']; ?>:</b></td>
-                                    <td><input name="path" type="text" style="width: 100%"
-                                               value="<?php echo $e2g['dir']; ?>" /> <input type="hidden"
-                                               name="mod_id"
+                                    <td><b><?php echo $lngi['path']; ?> :</b>&nbsp;</td>
+                                    <td><input name="path" type="text" style="width: 100%" size="50" value="<?php echo $e2g['dir']; ?>" />
+                                        <input type="hidden" name="mod_id"
                                                value="<?php echo (!empty($e2g['mod_id']) ? $e2g['mod_id'] : $_GET['id']); ?>" />
-                                        <input type="hidden" name="plugin_id"
-                                               value="<?php echo $pluginId; ?>" /> <input type="hidden"
-                                               name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
+                                        <input type="hidden" name="plugin_id" value="<?php echo $pluginId; ?>" />
+                                        <input type="hidden" name="snippet_id" value="<?php echo $snippetId; ?>" /></td>
                                 </tr>
                             </table>
                             <div><?php echo htmlspecialchars_decode($lngi['comment1'], ENT_QUOTES); ?></div>
-                            <div><?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?></div>
+                            <div style="border: 1px solid #ccc; padding: 10px; background-color: #EFEFEF;">
+                                <img src="<?php echo MODX_BASE_URL; ?>manager/media/style/MODxCarbon/images/icons/error.png" alt="" style="float: left; margin-right: 10px;" />
+                                <?php echo htmlspecialchars_decode($lngi['comment'], ENT_QUOTES); ?>
+                            </div>
                             <div style="color: green; font-weight: bold; font-size: 1.5em;"><?php echo htmlspecialchars_decode($lngi['system_check']); ?> :</div>
 
                         <?php
