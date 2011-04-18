@@ -925,6 +925,16 @@ class E2gSnippet extends E2gPub {
                 . '_' . $w . 'x' . $h
                 . '.jpg';
 
+        // create cover file
+        $thumbDirs = explode('/', dirname($thumbPath));
+        $count = count($thumbDirs);
+        $xpath = $gdir;
+        $lng = parent::languageSwitch(E2G_SNIPPET_PATH . 'includes/');
+        for ($c = 0; $c < $count; $c++) {
+            $xpath .= $thumbDirs[$c] . '/';
+            $this->createIndexHtml($xpath, $lng['indexfile']);
+        }
+
         if (!class_exists('E2gThumb')) {
             if (!file_exists(realpath(E2G_SNIPPET_PATH . 'includes/models/e2g.public.thumbnail.class.php'))) {
                 echo __LINE__ . ' : File <b>' . E2G_SNIPPET_PATH . 'includes/models/e2g.public.thumbnail.class.php</b> does not exist.';

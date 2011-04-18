@@ -18,7 +18,7 @@ if (IN_MANAGER_MODE != 'true')
             <table cellspacing="0" cellpadding="2" width="100%">
                 <tr class="gridAltItem">
                     <td width="140"><b><?php echo $this->lng['path']; ?>:</b></td>
-                    <td><input name="dir" type="text" value="<?php echo $this->e2g['dir']; ?>" /></td>
+                    <td><input name="dir" type="text" value="<?php echo $this->e2g['dir']; ?>" size="50" /></td>
                 </tr>
                 <tr>
                     <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['dir_cfg_desc']); ?></td>
@@ -117,6 +117,39 @@ if (IN_MANAGER_MODE != 'true')
                 </tr>
                 <tr>
                     <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['strip_html_tags_cfg_desc']); ?></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $this->lng['chmod_options']; ?></b></td>
+                </tr>
+                <tr class="gridAltItem">
+                    <td width="180"><b><?php echo $this->lng['enable']; ?>:</b></td>
+                    <td>
+                        <input name="chmod_enabled" type="radio" value="0"<?php echo ($this->e2g['chmod_enabled'] == 0 ? ' checked="checked"' : ''); ?> style="border:0" />
+                        <b><?php echo $this->lng['off']; ?></b>
+                        <input name="chmod_enabled" type="radio" value="1"<?php echo ($this->e2g['chmod_enabled'] == 1 ? ' checked="checked"' : ''); ?> style="border:0" />
+                        <b><?php echo $this->lng['on']; ?></b>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['chmod_enabled_cfg']); ?></td>
+                </tr>
+                <tr class="gridAltItem">
+                    <td><b><?php echo $this->lng['chmod_folder_cfg']; ?>:</b></td>
+                    <td>
+                        <input name="chmod_folder" size="4" type="text" value="<?php echo $this->e2g['chmod_folder']; ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['chmod_folder_cfg_desc']); ?></td>
+                </tr>
+                <tr class="gridAltItem">
+                    <td><b><?php echo $this->lng['chmod_file_cfg']; ?>:</b></td>
+                    <td>
+                        <input name="chmod_file" size="4" type="text" value="<?php echo $this->e2g['chmod_file']; ?>" />
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['chmod_file_cfg_desc']); ?></td>
                 </tr>
             </table>
         </div>

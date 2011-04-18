@@ -190,7 +190,8 @@ class E2gThumb {
              */
             $dirs = explode('/', $path);
             $npath = $gdir . '_thumbnails';
-            for ($c = 0; $c < count($dirs) - 1; $c++) {
+            $count = count($dirs) - 1;
+            for ($c = 0; $c < $count; $c++) {
                 $npath .= '/' . $dirs[$c];
                 if (is_dir($npath))
                     continue;

@@ -583,7 +583,7 @@ class E2gMod extends E2gPub {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . str_replace('../', '', $this->e2gEncode(dirname($path))) . '/' . $nameAlias;
                 return FALSE;
             }
-            $this->_changeModOwnGrp('dir', $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias));
+            $this->changeModOwnGrp('dir', $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias));
 
             // glue them back
             $realPath = $basePath . DIRECTORY_SEPARATOR . $this->e2gDecode($nameAlias) . DIRECTORY_SEPARATOR;
@@ -611,7 +611,7 @@ class E2gMod extends E2gPub {
         /**
          * goldsky -- if there is no index.html inside folders, this will create it.
          */
-        $this->_createIndexHtml($realPath, $this->lng['indexfile']);
+        $this->createIndexHtml($realPath, $this->lng['indexfile']);
 
         $fs = array();
         $fs = @glob($realPath . DIRECTORY_SEPARATOR . '*');
@@ -722,7 +722,7 @@ class E2gMod extends E2gPub {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
                 return FALSE;
             }
-            $this->_changeModOwnGrp('file', $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
+            $this->changeModOwnGrp('file', $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
 
             $fileRealPath = $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
             $basename = $fileAlias;
@@ -896,7 +896,7 @@ class E2gMod extends E2gPub {
             clearstatcache();
         } // if ( $w + $h !== 0 )
 
-        $this->_changeModOwnGrp('file', $filename);
+        $this->changeModOwnGrp('file', $filename);
 
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
@@ -977,7 +977,7 @@ class E2gMod extends E2gPub {
         /**
          * goldsky -- if there is no index.html inside folders, this will create it.
          */
-        $this->_createIndexHtml($path, $this->lng['indexfile']);
+        $this->createIndexHtml($path, $this->lng['indexfile']);
 
         $fs = array();
         $fs = @glob($path . DIRECTORY_SEPARATOR . '*');
@@ -1598,7 +1598,7 @@ class E2gMod extends E2gPub {
                     if ($fd) {
                         fwrite($fd, $zipContent);
                         fclose($fd);
-                        $this->_changeModOwnGrp('file', $path . $implodedFile);
+                        $this->changeModOwnGrp('file', $path . $implodedFile);
 
                         $fileCount++;
                         if ($this->e2gModCfg['e2g_debug'] == '1')
@@ -1617,26 +1617,6 @@ class E2gMod extends E2gPub {
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $fileCount . ' ' . $this->lng['files_uploaded'] . '.';
 
         return TRUE;
-    }
-
-    /**
-     * To make an Unauthorized page to avoid direct access to the folder
-     * @param   string  $dir    path
-     * @param   string  $text   language string
-     * @return  mixed file creation
-     */
-    private function _createIndexHtml($dir, $text) {
-        $indexHtml = realpath($dir) . DIRECTORY_SEPARATOR . 'index.html';
-        if (!file_exists($indexHtml)) {
-            $fh = fopen($indexHtml, 'w');
-            if (!$fh)
-                $_SESSION['easy2err'][] = __LINE__ . " : Could not open file " . $indexHtml;
-            else {
-                fwrite($fh, htmlspecialchars_decode($text));
-                fclose($fh);
-                $this->_changeModOwnGrp('file', $indexHtml);
-            }
-        }
     }
 
     /**
@@ -1715,7 +1695,7 @@ class E2gMod extends E2gPub {
                 if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->e2gDecode($newParentPath . $filteredName))) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['upload_err'] . ' : ' . '../' . $this->e2gDecode($newParentPath . $filteredName);
                 }
-                $this->_changeModOwnGrp('file', '../' . $this->e2gDecode($newParentPath . $filteredName), FALSE);
+                $this->changeModOwnGrp('file', '../' . $this->e2gDecode($newParentPath . $filteredName), FALSE);
 
                 // invoke the plugin
                 $this->plugin('OnE2GFileUpload', array(
@@ -2365,7 +2345,7 @@ class E2gMod extends E2gPub {
                     $oldPath['origin'] = str_replace('../', '', $v);
                     $oldPath['basename'] = $vBaseName;
                     $oldPath['decoded'] = $this->e2gDecode($vRealPath);
-                    $this->_changeModOwnGrp('dir', $oldPath['decoded']);
+                    $this->changeModOwnGrp('dir', $oldPath['decoded']);
 
                     $newPath['origin'] = $newDir . $vBaseName;
                     $newPath['basename'] = $vBaseName;
@@ -2427,7 +2407,7 @@ class E2gMod extends E2gPub {
                                 }
                             }
                         }
-                        $this->_changeModOwnGrp('dir', $newPath['decoded']);
+                        $this->changeModOwnGrp('dir', $newPath['decoded']);
                     }
                     //************** END OF FILE SYSTEM UPDATE **************//
                     $oldPath = $newPath = array();
@@ -2466,7 +2446,7 @@ class E2gMod extends E2gPub {
                     $oldFile['basename'] = $vBaseName;
                     $oldFile['decoded'] = $this->e2gDecode($vRealPath);
 
-                    $this->_changeModOwnGrp('file', $oldFile['decoded']);
+                    $this->changeModOwnGrp('file', $oldFile['decoded']);
 
                     $newFile['origin'] = $newDir . $vBaseName;
                     $newFile['basename'] = $vBaseName;
@@ -2532,7 +2512,7 @@ class E2gMod extends E2gPub {
                             }
                             $res['ffp'][0]++;
 
-                            $this->_changeModOwnGrp('file', $newFile['decoded']);
+                            $this->changeModOwnGrp('file', $newFile['decoded']);
                         } else {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_move_err'];
                             $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldFile['origin'];
@@ -2718,17 +2698,17 @@ class E2gMod extends E2gPub {
     /**
      * Save configs/settings into database or create the default file.
      * @param   array   $entries        Configuration values
-     * @param   bool    $build_default  Build default config file
+     * @param   bool    $buildDefault   Build default config file
      * @return  NULL
      */
-    public function saveE2gSettings($entries, $build_default=FALSE) {
+    public function saveE2gSettings($entries, $buildDefault=FALSE) {
         // overriding empty values
         $entries['maxh'] = !empty($entries['maxh']) ? $entries['maxh'] : '0';
         $entries['maxw'] = !empty($entries['maxw']) ? $entries['maxw'] : '0';
         $entries['w'] = !empty($entries['w']) ? $entries['w'] : '140';
         $entries['h'] = !empty($entries['h']) ? $entries['h'] : '140';
 
-        if ($build_default) {
+        if ($buildDefault) {
             if (!function_exists('fopen')
                     || !function_exists('fwrite')
                     || !function_exists('fclose')
@@ -2745,7 +2725,7 @@ class E2gMod extends E2gPub {
                     continue;
 
                 if (mkdir($npath)) {
-                    $this->_changeModOwnGrp('dir', $npath);
+                    $this->changeModOwnGrp('dir', $npath);
                 } else {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_create_err'] . ' "' . $npath . "'";
                 }
@@ -3633,8 +3613,8 @@ class E2gMod extends E2gPub {
 
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dir_created'] . ' : ' . $gdir . $dirName;
 
-        $this->_changeModOwnGrp('dir', '../' . $this->e2gDecode($gdir . $dirName));
-        $this->_createIndexHtml(MODX_BASE_PATH . $this->e2gDecode($gdir . $dirName) . '/', $this->lng['indexfile']);
+        $this->changeModOwnGrp('dir', '../' . $this->e2gDecode($gdir . $dirName));
+        $this->createIndexHtml(MODX_BASE_PATH . $this->e2gDecode($gdir . $dirName), $this->lng['indexfile']);
 
         require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
         $tree = new TTree();
@@ -3705,7 +3685,7 @@ class E2gMod extends E2gPub {
             }
             $renameDirConfirm = TRUE;
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['dir_rename_suc'];
-            $this->_changeModOwnGrp('dir', '../' . $newDirPath);
+            $this->changeModOwnGrp('dir', '../' . $newDirPath);
         }
 
         $updateDir = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs SET ';
@@ -3769,9 +3749,9 @@ class E2gMod extends E2gPub {
 
         if ($newFilename != $filename) {
             // check the CHMOD permission first
-            $this->_changeModOwnGrp('file', '../' . $oldFilePath);
+            $this->changeModOwnGrp('file', '../' . $oldFilePath);
             $renameFile = rename('../' . $oldFilePath, '../' . $newFilePath);
-            $this->_changeModOwnGrp('file', '../' . $newFilePath);
+            $this->changeModOwnGrp('file', '../' . $newFilePath);
 
             if (!$renameFile) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['update_err'];
@@ -4158,90 +4138,6 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * Change chmod and chown
-     * @param string    $type           dir/file
-     * @param string    $fullPath       dir/file path
-     * @param bool      $changeMode     TRUE | FALSE to initiate chmod
-     * @param bool      $changeGroup    TRUE | FALSE to initiate chown
-     * @return bool     TRUE | FALSE
-     */
-    private function _changeModOwnGrp($type, $fullPath, $checkPreviousMode = TRUE, $changeGroup = TRUE) {
-        $fullRealPath = realpath($fullPath);
-        if (empty($fullRealPath)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
-            return FALSE;
-        }
-        if ($checkPreviousMode) {
-            $oldPermission = substr(sprintf('%o', fileperms($fullRealPath)), -4);
-            clearstatcache();
-        }
-
-        if ($type == 'dir' && $oldPermission != '0755') {
-            $newPermission = @chmod($fullRealPath, 0755);
-            clearstatcache();
-            if (!$newPermission && $this->e2gModCfg['e2g_debug'] == '1') {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
-                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
-                return FALSE;
-            }
-        }
-
-        if ($type == 'file') {
-            $newPermission = @chmod($fullRealPath, 0644);
-            clearstatcache();
-            if ($checkPreviousMode === TRUE && $oldPermission != '0644') {
-                if (!$newPermission && $this->e2gModCfg['e2g_debug'] == '1') {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
-                    $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
-                    return FALSE;
-                }
-            }
-        }
-
-        if ($changeGroup === TRUE) {
-            if (file_exists(realpath("index.php"))) {
-                $modxPath = "index.php";
-            } elseif (file_exists(realpath("../../../../../manager/index.php"))) {
-                $modxPath = "../../../../../manager/index.php";
-            } else {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' manager/index.php was not detected';
-                return FALSE;
-            }
-            $modxStat = stat($modxPath);
-            clearstatcache();
-            $ownerCore = $modxStat['uid'];
-            $groupCore = $modxStat['gid'];
-            $oldFullPath = $fullRealPath;
-            $oldStat = stat($oldFullPath);
-            if (!$oldStat) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' stat error:' . $oldStat;
-                return FALSE;
-            }
-            clearstatcache();
-            $ownerOld = $oldStat['uid'];
-            $groupOld = $oldStat['gid'];
-
-            if (!function_exists('chown')) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' ' . $this->lng['chown_err_disabled'];
-                return FALSE;
-            }
-
-            if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
-                // Set the user
-                $newOwner = @chown($fullRealPath, $ownerCore);
-                clearstatcache();
-                if (!$newOwner && $this->e2gModCfg['e2g_debug'] == '1') {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' fullPath = ' . $fullPath;
-                    $_SESSION['easy2err'][] = __LINE__ . ' : old Owner/Group = ' . $ownerOld . '/' . $groupOld;
-                    return FALSE;
-                }
-            }
-        }
-
-        return TRUE;
-    }
-
-    /**
      * To get and create thumbnails
      * @param  int    $gdir             from $_GET['gid']
      * @param  string $path             directory path of each of thumbnail
@@ -4290,10 +4186,18 @@ class E2gMod extends E2gPub {
                 . '_' . $w . 'x' . $h
                 . '.jpg';
 
+        // create cover file
+        $thumbDirs = explode('/', dirname($thumbPath));
+        $count = count($thumbDirs);
+        $xpath = $gdir;
+        for ($c = 0; $c < $count; $c++) {
+            $xpath .= $thumbDirs[$c] . '/';
+            $this->createIndexHtml($xpath, $this->lng['indexfile']);
+        }
+
         if (!class_exists('E2gThumb')) {
             $thumbClassFile = realpath(E2G_MODULE_PATH . 'includes/models/e2g.public.thumbnail.class.php');
             if (empty($thumbClassFile) || !file_exists($thumbClassFile)) {
-                echo __LINE__ . ' : File <b>' . $thumbClassFile . '</b> does not exist.';
                 $_SESSION['easy2err'][] = __LINE__ . ' : File <b>' . $thumbClassFile . '</b> does not exist.';
                 return FALSE;
             } else {

@@ -11,8 +11,8 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 // Easy 2 Gallery version
-if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.1') {
-    define('E2G_VERSION', '1.4.1');
+if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.2') {
+    define('E2G_VERSION', '1.4.2');
 }
 
 // Easy 2 Gallery module path

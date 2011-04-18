@@ -813,9 +813,13 @@ class E2gPub { // public/public class
         return FALSE;
     }
 
-    public function languageSwitch() {
-
-        $langFile = realpath('../langs/' . $modx->config['manager_language'] . '.inc.php');
+    /**
+     * Loading language file with the default text switcher if the specifed value is empty
+     * @param   string  $modPath    module's path. The default is '../' for ajax controller files.
+     * @return  array   the lexicon strings
+     */
+    public function languageSwitch($modPath = '../') {
+        $langFile = realpath($modPath . 'langs/' . $modx->config['manager_language'] . '.inc.php');
         if (!empty($langFile) && file_exists($langFile)) {
             include $langFile; // loading $e2g_lang
 
@@ -826,7 +830,7 @@ class E2gPub { // public/public class
                 $oldLangVal[$olk] = $olv;
             }
 
-            $engLangFile = realpath('../langs/english.inc.php');
+            $engLangFile = realpath($modPath . 'langs/english.inc.php');
             if (empty($engLangFile) || !file_exists($engLangFile)) {
                 return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
             }
@@ -839,7 +843,7 @@ class E2gPub { // public/public class
 
             $lng = $e2g_lang[$modx->config['manager_language']];
         } else {
-            $engLangFile = realpath('../langs/english.inc.php');
+            $engLangFile = realpath($modPath . 'langs/english.inc.php');
             if (empty($engLangFile) || !file_exists($engLangFile)) {
                 return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
             }
@@ -848,6 +852,116 @@ class E2gPub { // public/public class
         }
 
         return $lng;
+    }
+
+    /**
+     * To make an Unauthorized page to avoid direct access to the folder
+     * @param   string  $dir    path
+     * @param   string  $text   language string
+     * @return  mixed file creation
+     */
+    public function createIndexHtml($dir, $text = '') {
+        $indexHtml = realpath($dir) . DIRECTORY_SEPARATOR . 'index.html';
+        if (is_dir($dir) && !file_exists($indexHtml)) {
+            $fh = fopen($indexHtml, 'w');
+            if (!$fh)
+                $_SESSION['easy2err'][] = __LINE__ . " : Could not open file " . $indexHtml;
+            else {
+                fwrite($fh, htmlspecialchars_decode($text));
+                fclose($fh);
+                $this->changeModOwnGrp('file', $indexHtml);
+            }
+        }
+    }
+
+    /**
+     * Change chmod and chown
+     * @param string    $type           dir/file
+     * @param string    $fullPath       dir/file path
+     * @param bool      $changeMode     TRUE | FALSE to initiate chmod
+     * @param bool      $changeGroup    TRUE | FALSE to initiate chown
+     * @return bool     TRUE | FALSE
+     */
+    public function changeModOwnGrp($type, $fullPath, $checkPreviousMode = TRUE, $changeGroup = TRUE) {
+        if (!$this->e2gPubCfg['chmod_enabled']) {
+            return FALSE;
+        }
+        
+        $fullRealPath = realpath($fullPath);
+        if (empty($fullRealPath)) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
+            return FALSE;
+        }
+        if ($checkPreviousMode) {
+            $oldPermission = substr(sprintf('%o', fileperms($fullRealPath)), -4);
+            clearstatcache();
+        }
+
+        if ($type == 'dir' && $oldPermission != sprintf("%04o", $this->e2gPubCfg['chmod_folder'])) {
+            $newPermission = @chmod($fullRealPath, $this->e2gPubCfg['chmod_folder']);
+            clearstatcache();
+            if (!$newPermission && $this->e2gPubCfg['e2g_debug'] == '1') {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
+                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+                return FALSE;
+            }
+        }
+
+        if ($type == 'file') {
+            $newPermission = @chmod($fullRealPath, $this->e2gPubCfg['chmod_file']);
+            clearstatcache();
+            if ($checkPreviousMode === TRUE
+                    && $oldPermission != sprintf("%04o", $this->e2gPubCfg['chmod_file'])
+                    && !$newPermission 
+                    && $this->e2gPubCfg['e2g_debug'] == '1'
+            ) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
+                $_SESSION['easy2err'][] = __LINE__ . ' : oldPermission = ' . $oldPermission;
+                return FALSE;
+            }
+        }
+
+        if ($changeGroup === TRUE) {
+            if (file_exists(realpath("index.php"))) {
+                $modxPath = "index.php";
+            } elseif (file_exists(realpath("../../../../../manager/index.php"))) {
+                $modxPath = realpath("../../../../../manager/index.php");
+            } else {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' manager/index.php was not detected';
+                return FALSE;
+            }
+            $modxStat = stat($modxPath);
+            clearstatcache();
+            $ownerCore = $modxStat['uid'];
+            $groupCore = $modxStat['gid'];
+            $oldFullPath = $fullRealPath;
+            $oldStat = stat($oldFullPath);
+            if (!$oldStat) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' stat error:' . $oldStat;
+                return FALSE;
+            }
+            clearstatcache();
+            $ownerOld = $oldStat['uid'];
+            $groupOld = $oldStat['gid'];
+
+            if (!function_exists('chown')) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' ' . $this->lng['chown_err_disabled'];
+                return FALSE;
+            }
+
+            if ($ownerOld != $ownerCore || $groupOld != $groupCore) {
+                // Set the user
+                $newOwner = @chown($fullRealPath, $ownerCore);
+                clearstatcache();
+                if (!$newOwner && $this->e2gPubCfg['e2g_debug'] == '1') {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chown_err'] . ' fullPath = ' . $fullPath;
+                    $_SESSION['easy2err'][] = __LINE__ . ' : old Owner/Group = ' . $ownerOld . '/' . $groupOld;
+                    return FALSE;
+                }
+            }
+        }
+
+        return TRUE;
     }
 
 }
