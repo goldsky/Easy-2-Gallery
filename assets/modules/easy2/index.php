@@ -10,11 +10,6 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-// Easy 2 Gallery version
-if (!defined('E2G_VERSION') || 'E2G_VERSION' !== '1.4.2') {
-    define('E2G_VERSION', '1.4.2');
-}
-
 // Easy 2 Gallery module path
 if (!defined('E2G_MODULE_PATH')) {
     define('E2G_MODULE_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
@@ -22,6 +17,12 @@ if (!defined('E2G_MODULE_PATH')) {
 // Easy 2 Gallery module URL
 if (!defined('E2G_MODULE_URL')) {
     define('E2G_MODULE_URL', MODX_SITE_URL . 'assets/modules/easy2/');
+}
+
+$version = file_get_contents(E2G_MODULE_PATH . '.version');
+// Easy 2 Gallery version
+if (!defined('E2G_VERSION') || 'E2G_VERSION' !== $version) {
+    define('E2G_VERSION', $version);
 }
 
 require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
