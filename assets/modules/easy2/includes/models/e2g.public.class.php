@@ -225,7 +225,7 @@ class E2gPub { // public/public class
                 . 'WHERE cat_id=' . $dirId . ' ';
 
         if (!($res = mysql_query($q)))
-            return ('Wrong field.');
+            return (__LINE__ . ' Wrong field: ' . $field);
         while ($l = mysql_fetch_array($res)) {
             $dirInfo[$field] = $l[$field];
         }
@@ -248,7 +248,7 @@ class E2gPub { // public/public class
                 . 'WHERE id=' . $fileId . ' ';
 
         if (!($res = mysql_query($q)))
-            return ('Wrong field.');
+            return (__LINE__ . ' Wrong field: ' . $field);
         while ($l = mysql_fetch_array($res)) {
             $fileInfo[$field] = $l[$field];
         }

@@ -499,6 +499,31 @@ function updateTableContent($lngi, $table, $whereClause, $script) {
     }
 }
 
+/**
+ * Get the database character set and collation
+ * @param type $databaseCollation
+ * @param type $variable
+ * @return type 
+ */
+function databaseCharSet($databaseCollation, $variable) {
+    global $modx;
+    // get collation
+    $getCol = mysql_query("SHOW COLLATION");
+    $showVars = $modx->db->makeArray($modx->db->query("SHOW VARIABLES"));
+    foreach ($showVars as $v) {
+        $mysqlVars[$v['Variable_name']] = $v['Value'];
+    }
+    $databaseCollation = $mysqlVars['collation_database'];
+
+    $cola = array();
+    if (@mysql_num_rows($getCol) > 0) {
+        while ($row = mysql_fetch_assoc($getCol)) {
+            $cola[$row['Collation']] = $row;
+        }
+    }
+    return $cola[$databaseCollation][$variable];
+}
+
 #################################################################################
 #################################################################################
 #################################################################################
@@ -582,7 +607,11 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `cat_thumb_id` INT(50) UNSIGNED NULL DEFAULT NULL,
                         PRIMARY KEY (`cat_id`),
                         INDEX `cat_left` (`cat_left`)
-                        ) TYPE=MyISAM';
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        
         $queryCreateDirTable = mysql_query($createDirTable);
         if (!$queryCreateDirTable) {
             $_SESSION['easy2err'][] = __LINE__ . ': '
@@ -736,7 +765,10 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `edited_by` TINYINT(10) UNSIGNED NULL DEFAULT NULL,
                         PRIMARY KEY (`id`),
                         KEY file_id (file_id)
-                        ) TYPE=MyISAM';
+                        ) 
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
         if (!mysql_query($createCommentTable)) {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' '
                     . $GLOBALS['table_prefix'] . 'easy2_comments '
@@ -810,7 +842,10 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `status` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'1\',
                         `redirect_link` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM';
+                        ) 
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
         if (!mysql_query($createFileTable)) {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_files ' . $lngi['create_err']
                     . '<br />' . mysql_error()
@@ -876,14 +911,18 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding ignore IP table for 1.4.0 Beta4
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_ignoredip'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_ignoredip (
+        $createIgnoreIpTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_ignoredip (
                         id int(10) unsigned NOT NULL auto_increment,
                         ign_date datetime NOT NULL,
                         ign_ip_address char(16) NOT NULL,
                         ign_username varchar(64) NOT NULL,
                         ign_email varchar(64) default NULL,
                         PRIMARY KEY (id)
-                        ) TYPE=MyISAM')) {
+                        ) 
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createIgnoreIpTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_ignoredip ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_ignoredip ' . $lngi['create_err']
@@ -897,11 +936,15 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     #**************************************
     // adding easy2_configs table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_configs'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_configs (
+        $createConfigTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_configs (
                         `cfg_key` VARCHAR(50) NOT NULL DEFAULT \'\',
                         `cfg_val` VARCHAR(255) NULL DEFAULT NULL,
                         UNIQUE INDEX `cfg_key` (`cfg_key`)
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createConfigTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_configs ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_configs ' . $lngi['create_err']
@@ -911,7 +954,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
     }
     // adding easy2_plugins table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_plugins'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_plugins (
+        $createPluginTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_plugins (
                         `id` INT(10) NOT NULL AUTO_INCREMENT,
                         `name` VARCHAR(255) NULL DEFAULT NULL,
                         `description` VARCHAR(255) NULL DEFAULT NULL,
@@ -919,7 +962,11 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `indexfile` VARCHAR(255) NULL DEFAULT NULL,
                         `events` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createPluginTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_plugins ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_plugins ' . $lngi['create_err']
@@ -930,11 +977,15 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding easy2_plugins table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_plugin_events'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_plugin_events (
+        $createPluginEventTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_plugin_events (
                         `pluginid` INT(10) NOT NULL,
                         `evtid` INT(10) NOT NULL,
                         `priority` INT(10) NOT NULL
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createPluginEventTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_plugin_events ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_plugin_events ' . $lngi['create_err']
@@ -945,13 +996,17 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding easy2_slideshows table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_slideshows'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_slideshows (
+        $createSlideshowTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_slideshows (
                         `id` INT(10) NOT NULL AUTO_INCREMENT,
                         `name` VARCHAR(255) NULL DEFAULT NULL,
                         `description` VARCHAR(255) NULL DEFAULT NULL,
                         `indexfile` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createSlideshowTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_slideshows ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_slideshows ' . $lngi['create_err']
@@ -989,12 +1044,16 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding easy2_users_mgr table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_users_mgr'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_users_mgr (
+        $createUserMgrTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_users_mgr (
                         `id` INT(10) NOT NULL AUTO_INCREMENT,
                         `membergroup_id` INT(10) NULL DEFAULT NULL COMMENT \'modx groups id\',
                         `permissions` VARCHAR(255) NULL DEFAULT NULL COMMENT \'e2g_access\',
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createUserMgrTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_users_mgr ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_users_mgr ' . $lngi['create_err']
@@ -1005,7 +1064,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding easy2_viewers table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_viewers'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_viewers (
+        $createViewerTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_viewers (
                         `id` INT(10) NOT NULL AUTO_INCREMENT,
                         `name` VARCHAR(50) NULL DEFAULT NULL,
                         `alias` VARCHAR(50) NULL DEFAULT NULL,
@@ -1020,7 +1079,11 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `glibact` VARCHAR(255) NULL DEFAULT NULL COMMENT \'javascript action on images link\',
                         `clibact` VARCHAR(255) NULL DEFAULT NULL COMMENT \'javascript action on comment link\',
                         PRIMARY KEY (`id`)
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createViewerTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_viewers ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_viewers ' . $lngi['create_err']
@@ -1087,11 +1150,15 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 
     // adding easy2_webgroup_access table for 1.4.0 RC2
     if (!isset($tab[$GLOBALS['table_prefix'] . 'easy2_webgroup_access'])) {
-        if (mysql_query('CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_webgroup_access (
+        $createWebAccessTable = 'CREATE TABLE IF NOT EXISTS ' . $GLOBALS['table_prefix'] . 'easy2_webgroup_access (
                         `webgroup_id` INT(10) NOT NULL,
                         `type` VARCHAR(10) NULL DEFAULT NULL COMMENT \'dir/file type\',
                         `id` INT(10) NULL DEFAULT NULL COMMENT \'dir/file id\'
-                        ) TYPE=MyISAM')) {
+                        )
+                        ENGINE=MyISAM
+                        CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
+                        COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
+        if (mysql_query($createWebAccessTable)) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_webgroup_access ' . $lngi['created'];
         } else {
             $_SESSION['easy2err'][] = __LINE__ . ': ' . $lngi['table'] . ' ' . $GLOBALS['table_prefix'] . 'easy2_webgroup_access ' . $lngi['create_err']
@@ -1357,6 +1424,34 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                         $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
                         $disabled = '';
                         echo '<ul>';
+                        
+                        echo '<li>';
+                        
+                        $getChr = mysql_query("SHOW CHARACTER SETS");
+                        // get collation
+                        $getCol = mysql_query("SHOW COLLATION");
+                        $showVars = $modx->db->makeArray($modx->db->query("SHOW VARIABLES"));
+                        foreach ($showVars as $v) {
+                            $mysqlVars[$v['Variable_name']] = $v['Value'];
+                        }
+                        $databaseCollation = $mysqlVars['collation_database'];
+
+                        if (@mysql_num_rows($getCol) > 0) {
+                            $output = "\n" . 'Database collation <select id="database_collation" name="database_collation">' . "\n";
+                            while ($row = mysql_fetch_assoc($getCol)) {
+                                $cola[$row['Collation']] = $row;
+                            }
+                            asort($cola);
+                            foreach ($cola as $k => $v) {
+                                $collation = htmlentities($k);
+                                $selected = ( $collation == $databaseCollation ? ' selected' : '' );
+                                $output .= '<option value="' . $collation . '"' . $selected . '>' . $collation . '</option>' . "\n";
+                            }
+                            $output .= '</select>' . "\n";
+                        }
+                        echo $output;
+                        echo '</li>';
+
                         // PHP version
                         if (version_compare(PHP_VERSION, '5.2.0', '<')) {
                             $disabled = 'disabled="disabled"';

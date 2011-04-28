@@ -1382,51 +1382,13 @@ class E2gSnippet extends E2gPub {
                 return FALSE;
             }
 
-            while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->getPath($row['dir_id']);
-
-                $thumbImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                                , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
-                                , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
-                                , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
-                // thumbnail first...
-                if ($thumbImg !== FALSE) {
-                    // ... then the slideshow's images
-                    if ($this->e2gSnipCfg['ss_img_src'] == 'generated') {
-                        /**
-                         * + WATERMARK-ing
-                         */
-                        $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename'], $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq'],
-                                        $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red'], $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], $this->e2gSnipCfg['ewm']);
-                        if ($ssImg !== FALSE) {
-                            $ssFiles['resizedimg'][] = $ssImg;
-                        } else {
-//                            $ssFiles['resizedimg'][] = $errorImg;
-                            continue;
-                        }
-                        unset($ssImg);
-                    } elseif ($this->e2gSnipCfg['ss_img_src'] == 'original') {
-                        $ssFiles['resizedimg'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                    }
-
-                    // if the slideshow's images were created successfully
-                    $ssFiles['thumbsrc'][] = $thumbImg;
-                } else {
-//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+            while ($row = mysql_fetch_assoc($querySelectFiles)) {
+                $ssRows = $this->_processSlideshowFiles($row);
+                if ($ssRows === FALSE)
                     continue;
+                foreach ($ssRows as $k => $v) {
+                    $ssFiles[$k][] = $v;
                 }
-                unset($thumbImg);
-
-                $ssFiles['id'][] = $row['id'];
-                $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                $ssFiles['filename'][] = $row['filename'];
-                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
-                $ssFiles['alias'][] = $row['alias'];
-                $ssFiles['name'][] = $row['alias'];
-                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
-                $ssFiles['tag'][] = $row['tag'];
-                $ssFiles['summary'][] = $row['summary'];
             }
             mysql_free_result($querySelectFiles);
         }
@@ -1441,52 +1403,15 @@ class E2gSnippet extends E2gPub {
                 return FALSE;
             }
 
-            while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->getPath($row['dir_id']);
-
-                $thumbImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                                , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
-                                , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
-                                , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
-                // thumbnail first...
-                if ($thumbImg !== FALSE) {
-                    // ... then the slideshow's images
-                    if ($this->e2gSnipCfg['ss_img_src'] == 'generated') {
-                        /**
-                         * + WATERMARK-ing
-                         */
-                        $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename'], $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq'],
-                                        $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red'], $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], 1);
-                        if ($ssImg !== FALSE) {
-                            $ssFiles['resizedimg'][] = $ssImg;
-                        } else {
-//                            $ssFiles['resizedimg'][] = $errorImg;
-                            continue;
-                        }
-                        unset($ssImg);
-                    } elseif ($this->e2gSnipCfg['ss_img_src'] == 'original') {
-                        $ssFiles['resizedimg'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                    }
-
-                    // if the slideshow's images were created successfully
-                    $ssFiles['thumbsrc'][] = $thumbImg;
-                } else {
-//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+            while ($row = mysql_fetch_assoc($querySelectFiles)) {
+                $ssRows = $this->_processSlideshowFiles($row);
+                if ($ssRows === FALSE)
                     continue;
+                foreach ($ssRows as $k => $v) {
+                    $ssFiles[$k][] = $v;
                 }
-                unset($thumbImg);
-
-                $ssFiles['id'][] = $row['id'];
-                $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                $ssFiles['filename'][] = $row['filename'];
-                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
-                $ssFiles['alias'][] = $row['alias'];
-                $ssFiles['name'][] = $row['alias'];
-                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
-                $ssFiles['tag'][] = $row['tag'];
-                $ssFiles['summary'][] = $row['summary'];
             }
+            mysql_free_result($querySelectFiles);
         }
 
         if (!empty($this->e2gSnipCfg['rgid'])) {
@@ -1500,53 +1425,13 @@ class E2gSnippet extends E2gPub {
                 echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectFiles . '<br />';
                 return FALSE;
             }
-            while ($row = mysql_fetch_array($querySelectFiles)) {
-                $path = $this->getPath($row['dir_id']);
-
-                $thumbImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                                , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
-                                , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
-                                , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
-                // thumbnail first...
-                if ($thumbImg !== FALSE) {
-                    // ... then the slideshow's images
-                    if ($this->e2gSnipCfg['ss_img_src'] == 'generated') {
-                        /**
-                         * + WATERMARK-ing
-                         */
-                        $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                                        , $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq']
-                                        , $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red']
-                                        , $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], 1);
-                        if ($ssImg !== FALSE) {
-                            $ssFiles['resizedimg'][] = $ssImg;
-                        } else {
-//                            $ssFiles['resizedimg'][] = $errorImg;
-                            continue;
-                        }
-                        unset($ssImg);
-                    } elseif ($this->e2gSnipCfg['ss_img_src'] == 'original') {
-                        $ssFiles['resizedimg'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                    }
-
-                    // if the slideshow's images were created successfully
-                    $ssFiles['thumbsrc'][] = $thumbImg;
-                } else {
-//                    $ssFiles['thumbsrc'][] = $errorThumb . '&amp;text=' . __LINE__;
+            while ($row = mysql_fetch_assoc($querySelectFiles)) {
+                $ssRows = $this->_processSlideshowFiles($row);
+                if ($ssRows === FALSE)
                     continue;
+                foreach ($ssRows as $k => $v) {
+                    $ssFiles[$k][] = $v;
                 }
-                unset($thumbImg);
-
-                $ssFiles['id'][] = $row['id'];
-                $ssFiles['dirid'][] = $row['dir_id'];
-                $ssFiles['src'][] = $this->e2gDecode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
-                $ssFiles['filename'][] = $row['filename'];
-                $ssFiles['title'][] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
-                $ssFiles['alias'][] = $row['alias'];
-                $ssFiles['name'][] = $row['alias'];
-                $ssFiles['description'][] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
-                $ssFiles['tag'][] = $row['tag'];
-                $ssFiles['summary'][] = $row['summary'];
             }
             mysql_free_result($querySelectFiles);
         }
@@ -1558,6 +1443,58 @@ class E2gSnippet extends E2gPub {
         $ssFiles['count'] = count($ssFiles['src']);
 
         return $ssFiles;
+    }
+
+    /**
+     * Process the default slideshow file outputs of all gallery/file/random selections
+     * @param   array   $row    the fetch assoc
+     * @return  array   the processed outputs
+     */
+    private function _processSlideshowFiles($row) {
+        $path = $this->getPath($row['dir_id']);
+
+        $thumbImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
+                        , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
+                        , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
+                        , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
+        // thumbnail first...
+        if ($thumbImg !== FALSE) {
+            // ... then the slideshow's images
+            if ($this->e2gSnipCfg['ss_img_src'] == 'generated') {
+                /**
+                 * + WATERMARK-ing
+                 */
+                $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
+                                , $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq']
+                                , $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red']
+                                , $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], $this->e2gSnipCfg['ewm']);
+                if ($ssImg !== FALSE) {
+                    $ssFile['resizedimg'] = $this->e2gEncode($ssImg);
+                } else {
+                    return FALSE;
+                }
+                unset($ssImg);
+            } elseif ($this->e2gSnipCfg['ss_img_src'] == 'original') {
+                $ssFile['resizedimg'] = $this->e2gSnipCfg['gdir'] . $path . $row['filename'];
+            }
+
+            // if the slideshow's images were created successfully
+            $ssFile['thumbsrc'] = $this->e2gEncode($thumbImg);
+        } else {
+            return FALSE;
+        }
+
+        foreach ($row as $k => $v) {
+            $ssFile[$k] = $v;
+        }
+        // process the outputs of some specified placeholders
+        $ssFile['dirid'] = $row['dir_id']; // fallback for the previous versions
+        $ssFile['src'] = $this->e2gEncode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
+        $ssFile['title'] = ($row['alias'] != '' ? $row['alias'] : $row['filename']);
+        $ssFile['name'] = $row['alias'];
+        $ssFile['description'] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
+
+        return $ssFile;
     }
 
     /**
@@ -1610,10 +1547,9 @@ class E2gSnippet extends E2gPub {
                     $imgSize = array();
                     unset($imgSize);
                 }
-                $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $fetch['filename'], $this->e2gSnipCfg['lp_w'], $this->e2gSnipCfg['lp_h'], $this->e2gSnipCfg['lp_thq'], $this->e2gSnipCfg['lp_resize_type'],
-                                $this->e2gSnipCfg['lp_red'], $this->e2gSnipCfg['lp_green'], $this->e2gSnipCfg['lp_blue'], 1);
+                $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $fetch['filename'], $this->e2gSnipCfg['lp_w'], $this->e2gSnipCfg['lp_h'], $this->e2gSnipCfg['lp_thq'], $this->e2gSnipCfg['lp_resize_type'], $this->e2gSnipCfg['lp_red'], $this->e2gSnipCfg['lp_green'], $this->e2gSnipCfg['lp_blue'], 1);
                 if ($imgShaper !== FALSE) {
-                    $filePath = $imgShaper;
+                    $filePath = $this->e2gEncode($imgShaper);
                 } else {
                     $filePath = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['lp_w'] . '&amp;h=' . $this->e2gSnipCfg['lp_h'] . '&amp;th=5';
                 }
@@ -1727,10 +1663,7 @@ class E2gSnippet extends E2gPub {
 
                 # was there a reCAPTCHA response?
                 if ($_POST["recaptcha_response_field"]) {
-                    $resp = recaptcha_check_answer($this->e2gSnipCfg['recaptcha_key_private'],
-                                    $_SERVER["REMOTE_ADDR"],
-                                    $_POST["recaptcha_challenge_field"],
-                                    $_POST["recaptcha_response_field"]);
+                    $resp = recaptcha_check_answer($this->e2gSnipCfg['recaptcha_key_private'], $_SERVER["REMOTE_ADDR"], $_POST["recaptcha_challenge_field"], $_POST["recaptcha_response_field"]);
 
                     if (!$resp->is_valid) {
                         # set the error code so that we can display it
@@ -1998,7 +1931,7 @@ class E2gSnippet extends E2gPub {
         if ($staticId == '*')
             return TRUE;
 
-        $parentIds = @implode (',', $parentIds);
+        $parentIds = @implode(',', $parentIds);
         $selectFiles = 'SELECT f.id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files AS f '
                 . 'WHERE dir_id IN (' . $parentIds . ') '
         ;
@@ -2701,7 +2634,7 @@ class E2gSnippet extends E2gPub {
                 }
             } else {
                 // start splitting
-                if ($pages['currentPage'] < ($this->e2gSnipCfg['pagination_adjacents'] + floor($this->e2gSnipCfg['pagination_spread'] / 2) + 1)) {
+                if ($pages['currentPage'] < ($this->e2gSnipCfg['pagination_adjacents'] + floor($this->e2gSnipCfg['pagination_spread'] / 2) + 2)) {
                     for ($i = 1; $i < ($this->e2gSnipCfg['pagination_adjacents'] + $this->e2gSnipCfg['pagination_spread'] + 1); $i++) {
                         if ($i == $pages['currentPage']) {
                             $pagination.= '<b>' . $i . '</b>';

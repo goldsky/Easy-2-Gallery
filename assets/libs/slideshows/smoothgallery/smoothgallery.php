@@ -343,28 +343,13 @@ if ($ssParams['ss_config'] == 'galleryset') {
                 if ($countImg[$k] == 0)
                     unset($galleries[$k]);
 
-                while ($fetch = mysql_fetch_array($query)) {
-                    $path = $this->getPath($fetch['dir_id']);
-                    $ssFiles['id'][$k][] = $fetch['id'];
-                    $ssFiles['dirid'][$k][] = $fetch['dir_id'];
-                    $ssFiles['src'][$k][] = $ssParams['gdir'] . $path . $fetch['filename'];
-                    $ssFiles['filename'][$k][] = $fetch['filename'];
-                    $ssFiles['title'][$k][] = $fetch['alias'];
-                    $ssFiles['description'][$k][] = $fetch['description'];
-                    $thumbImg = $this->_imgShaper($ssParams['gdir'], $path . $fetch['filename'], $ssParams['w'], $ssParams['h'], $ssParams['thq']);
-                    if ($thumbImg !== FALSE) {
-                        $ssFiles['thumbsrc'][$k][] = $thumbImg;
-                    } else {
+                while ($fetch = mysql_fetch_assoc($query)) {
+                    $ssRows = $this->_processSlideshowFiles($fetch);
+                    if ($ssRows === FALSE)
                         continue;
+                    foreach ($ssRows as $key => $val) {
+                        $ssFiles[$key][$k][] = $val;
                     }
-                    unset($thumbImg);
-                    $resizedImg = $this->_imgShaper($ssParams['gdir'], $path . $fetch['filename'], $ssParams['ss_w'], $ssParams['ss_h'], $ssParams['ss_thq']);
-                    if ($resizedImg !== FALSE) {
-                        $ssFiles['resizedimg'][$k][] = $resizedImg;
-                    } else {
-                        continue;
-                    }
-                    unset($resizedImg);
                 }
             }
         }
@@ -434,7 +419,7 @@ if ($ssParams['ss_config'] == 'zoom') {
         $output .= '
     <div class="imageElement">
         <h3>' . $ssFiles['title'][$i] . '</h3>
-        <p>' . $ssFiles['description'][$i] . '</p>
+        <p>' . strip_tags($ssFiles['description'][$i], '<a>') . '</p>
         <a href="' . str_replace('%2F', '/', rawurlencode($this->e2gDecode($ssFiles['src'][$i]))) . '" title="open image" class="open"></a>
         <img src="' . $ssFiles['resizedimg'][$i] . '" class="full" alt="" '
                 . ( ( ($ssParams['ss_w'] / $ssParams['ss_h']) < $imageRatio[$i] ) ? 'height="' . $ssParams['ss_h'] . 'px" ' : 'width="' . $ssParams['ss_w'] . 'px" ' )

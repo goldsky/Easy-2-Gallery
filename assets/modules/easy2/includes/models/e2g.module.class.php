@@ -681,7 +681,7 @@ class E2gMod extends E2gPub {
     }
 
     /**
-     * To add file from the upload form or add file button into the database
+     * To add file from the FTP or add file button into the database
      * @param  string   $f      filename
      * @param  int      $pid    current parent ID
      * @param  string   $userId logged in user's ID, for database signature
@@ -731,14 +731,6 @@ class E2gMod extends E2gPub {
         $newInf = array();
         // RESIZE
         $newInf = $this->_resizeImg($fileRealPath, $inf, $this->e2g['maxw'], $this->e2g['maxh'], $this->e2g['maxthq']);
-
-        if ($newInf === FALSE) {
-            clearstatcache();
-            $newInf = $inf;
-            $newInf['size'] = filesize($fileRealPath);
-            $newInf['time'] = filemtime($fileRealPath);
-        }
-
         $size = $newInf['size'];
         $width = $newInf[0];
         $height = $newInf[1];
@@ -783,6 +775,13 @@ class E2gMod extends E2gPub {
      * @param int    $thq       thumbnail quality
      */
     private function _resizeImg($filename, $inf, $w, $h, $thq) {
+        // initial declaration
+        $this->changeModOwnGrp('file', $filename);
+
+        $newInf = @getimagesize($filename);
+        $newInf['size'] = filesize($filename);
+        $newInf['time'] = filemtime($filename);
+        
         // if both configs are not zeros
         if ($w + $h !== 0) {
 
@@ -820,7 +819,8 @@ class E2gMod extends E2gPub {
 
                 // the source image is the same or smaller than the destination on width AND height
                 if ($inf[1] <= $w && $inf[0] <= $h) {
-                    return FALSE;
+                    return $newInf;
+//                    return FALSE;
                 }
 
                 if ($srcRatio < 1 && $dstRatio > 1           // source is portrait, destination is landscape
@@ -841,7 +841,8 @@ class E2gMod extends E2gPub {
 
                 // the source image is smaller than the destination on width AND height
                 if ($inf[0] <= $w && $inf[1] <= $h) {
-                    return FALSE;
+                    return $newInf;
+//                    return FALSE;
                 }
 
                 // source is portrait, destination is landscape
@@ -856,7 +857,8 @@ class E2gMod extends E2gPub {
 
                     // if the source as same as the destination, do nothing and return back
                     if ($inf[1] == $h) {
-                        return FALSE;
+                    return $newInf;
+//                    return FALSE;
                     }
                 } // if ( $srcRatio < 1 && $dstRatio > 1 )
                 // source is landscape, destination is portrait
@@ -873,7 +875,8 @@ class E2gMod extends E2gPub {
                 $im = imagecreatefrompng($filename);
             else {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_create_err'] . ' ' . $filename;
-                return FALSE;
+                return $newInf;
+//                return FALSE;
             }
 
             // CREATE NEW IMG
@@ -896,13 +899,13 @@ class E2gMod extends E2gPub {
             clearstatcache();
         } // if ( $w + $h !== 0 )
 
+        // override the initial process
         $this->changeModOwnGrp('file', $filename);
 
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
         $newInf['time'] = filemtime($filename);
         return $newInf;
-//        return TRUE;
     }
 
     public function getLoginUserID() {
@@ -1029,7 +1032,7 @@ class E2gMod extends E2gPub {
                         $inf = @getimagesize($filePath);
                         $newInf = $this->_resizeImg($filePath, $inf, $this->e2g['maxw'], $this->e2g['maxh'], $this->e2g['maxthq']);
                         // RESIZE
-                        if ($this->e2g['resize_old_img'] == '1' && $newInf !== FALSE) {
+                        if ($this->e2g['resize_old_img'] == '1') {
                             $size = $newInf['size'];
                             $width = $newInf[0];
                             $height = $newInf[1];
@@ -1674,7 +1677,7 @@ class E2gMod extends E2gPub {
                  * If exists, amend the filename with number
                  */
                 $filteredName = $this->_checkFileDuplication($files['img']['name'][$i], $newParent);
-
+                $filePath = '../' . $this->e2gDecode($newParentPath . $filteredName);
                 $insertFile = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                         . 'SET dir_id=\'' . $newParent . '\''
                         . ', filename=\'' . mysql_real_escape_string($filteredName) . '\''
@@ -1692,10 +1695,10 @@ class E2gMod extends E2gPub {
                     continue;
                 }
 
-                if (!move_uploaded_file($files['img']['tmp_name'][$i], '../' . $this->e2gDecode($newParentPath . $filteredName))) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['upload_err'] . ' : ' . '../' . $this->e2gDecode($newParentPath . $filteredName);
+                if (!move_uploaded_file($files['img']['tmp_name'][$i], $filePath)) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['upload_err'] . ' : ' . $filePath;
                 }
-                $this->changeModOwnGrp('file', '../' . $this->e2gDecode($newParentPath . $filteredName), FALSE);
+                $this->changeModOwnGrp('file', $filePath, FALSE);
 
                 // invoke the plugin
                 $this->plugin('OnE2GFileUpload', array(
