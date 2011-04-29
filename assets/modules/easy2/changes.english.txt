@@ -3,6 +3,17 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.3 ******************
+Improvement:
++ Added the character set selection on installation
++ Optimized the image's variables on slideshow
++ Optimized the gallery set of the smoothgallery's slideshow
+
+Fixes:
++ Bugfixed the blank image info from the upload form
+
+***************** 1.4.2 ******************
++ Added the file permission mode options
 
 ***************** 1.4.1 ******************
 Improvement:
