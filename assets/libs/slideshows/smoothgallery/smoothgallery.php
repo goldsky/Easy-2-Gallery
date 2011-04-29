@@ -18,7 +18,7 @@ $ssFiles = $this->_getSlideShowFiles();
  * @link http://smoothgallery.jondesign.net/
  */
 // just to avoid direct call to this file. it's recommended to always use this.
-if (!defined(E2G_SNIPPET_URL) && $slideshow != 'smoothgallery') {
+if (!defined('E2G_SNIPPET_URL') && $slideshow != 'smoothgallery') {
     return;
 }
 
@@ -268,11 +268,12 @@ if ($ssParams['ss_config'] == 'fullgallery'
         || $ssParams['ss_config'] == 'horcontinuous'
         || $ssParams['ss_config'] == 'vercontinuous'
 ) {
-    // result with no images
+
+// this slideshow heavily dependent on any image existence, returns with no images
     if ($ssFiles['count'] == 0) {
-        $output = 'No image inside the gallery id ' . $ssParams['gid'];
-        // this slideshow heavily dependent on any image existence.
-        return FALSE;
+        return 'No image inside the specified id(s),'
+        . (!empty($ssParams['gid']) ? ' gid:' . $ssParams['gid'] : '')
+        . (!empty($ssParams['fid']) ? ' fid:' . $ssParams['fid'] : '');
     }
 
     // ------------- open slideshow wrapper ------------- //
@@ -288,9 +289,9 @@ if ($ssParams['ss_config'] == 'fullgallery'
         <a href="'
                 // making flexible FURL or not
                 . $modx->makeUrl(
-                        $modx->documentIdentifier,
-                        $modx->aliases,
-                        'sid=' . $ssParams['sid']
+                        $modx->documentIdentifier
+                        , $modx->aliases
+                        , 'sid=' . $ssParams['sid']
                         . '&fid=' . $ssFiles['id'][$i]
                 )
                 . '#' . $ssParams['sid'] . '_' . $ssFiles['id'][$i] . '"'
@@ -359,8 +360,8 @@ if ($ssParams['ss_config'] == 'galleryset') {
 <div id="myGallerySet">';
     // ------------- start the images looping ------------- //
     if (!is_array($galleries)) { // something wrong! escape!
-        $output = 'There is no gallery inside ID:' . $ssParams['gid'];
-        return;
+        return 'There is no gallery inside ID:' . $ssParams['gid'];
+        
     }
     foreach ($galleries as $gk => $gv) {
         $output .= '
@@ -398,13 +399,13 @@ if ($ssParams['ss_config'] == 'galleryset') {
 //**************************************************/
 
 if ($ssParams['ss_config'] == 'zoom') {
-
-    // result with no images
+    // this slideshow heavily dependent on any image existence, returns with no images
     if ($ssFiles['count'] == 0) {
-        $output = 'No image inside the gallery';
-        // this slideshow heavily dependent on any image existence.
-        return FALSE;
+        return 'No image inside the specified id(s),'
+        . (!empty($ssParams['gid']) ? ' gid:' . $ssParams['gid'] : '')
+        . (!empty($ssParams['fid']) ? ' fid:' . $ssParams['fid'] : '');
     }
+
     // ------------- open slideshow wrapper ------------- //
     $output .= '
 <div id="myGallery">';
@@ -433,4 +434,4 @@ if ($ssParams['ss_config'] == 'zoom') {
 </div>';
 } // if ($ssParams['ss_config'] == 'zoom')
 
-echo $output;
+return $output;

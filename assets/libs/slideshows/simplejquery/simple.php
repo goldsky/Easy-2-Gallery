@@ -19,14 +19,15 @@ $ssFiles = $this->_getSlideShowFiles();
  * @link http://jonraasch.com/blog/a-simple-jquery-slideshow
  */
 // just to avoid direct call to this file. it's recommended to always use this.
-if (!defined(E2G_SNIPPET_URL) && $slideshow != 'simple') {
+if (!defined('E2G_SNIPPET_URL') || $slideshow != 'simple') {
     return;
 }
-// result with no images
-elseif ($ssFiles['count'] == 0) {
-    $output = 'No image inside the gallery id ' . $ssParams['gid'];
-    // this slideshow heavily dependent on any image existence.
-    return;
+
+// this slideshow heavily dependent on any image existence, returns with no images
+if ($ssFiles['count'] == 0) {
+    return 'No image inside the specified id(s),'
+    . (!empty($ssParams['gid']) ? ' gid:' . $ssParams['gid'] : '')
+    . (!empty($ssParams['fid']) ? ' fid:' . $ssParams['fid'] : '');
 }
 
 if (!empty($ssParams['ss_css'])) {
@@ -74,4 +75,4 @@ for ($i = 0; $i < $ssFiles['count']; $i++) {
 }
 // end the slideshow box
 $output .= '</div></div>';
-echo $output;
+return $output;

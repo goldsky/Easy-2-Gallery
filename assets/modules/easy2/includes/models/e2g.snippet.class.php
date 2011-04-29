@@ -6,7 +6,6 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.4.0
  */
 class E2gSnippet extends E2gPub {
 
@@ -1216,10 +1215,7 @@ class E2gSnippet extends E2gPub {
             // use custom index file if it's been set inside snippet call.
             if (isset($this->e2gSnipCfg['ss_indexfile'])) {
                 if (file_exists(realpath($this->e2gSnipCfg['ss_indexfile']))) {
-                    ob_start();
-                    include($this->e2gSnipCfg['ss_indexfile']);
-                    $ssDisplay = ob_get_contents();
-                    ob_end_clean();
+                    $ssDisplay = include($this->e2gSnipCfg['ss_indexfile']);
                 } else {
                     $ssDisplay = 'slideshow index file <b>' . $this->e2gSnipCfg['ss_indexfile'] . '</b> is not found.';
                 }
@@ -1233,17 +1229,13 @@ class E2gSnippet extends E2gPub {
                     echo __LINE__ . ' : ' . mysql_error() . '<br />' . $selectIndexFile . '<br />';
                     return FALSE;
                 }
-//                $dbIndexFile = mysql_result($queryIndexFile, 0, 0);
                 $row = mysql_fetch_row($queryIndexFile);
                 $dbIndexFile = $row[0];
                 if ($dbIndexFile == '') {
                     echo __LINE__ . ' : Empty index file in database.';
                     return FALSE;
                 } elseif (file_exists(realpath($dbIndexFile))) {
-                    ob_start();
-                    include($dbIndexFile);
-                    $ssDisplay = ob_get_contents();
-                    ob_end_clean();
+                    $ssDisplay = include($dbIndexFile);
                 } else {
                     echo __LINE__ . ' : Slideshow index file <b>' . $dbIndexFile . '</b> is not found.<br />';
                     return FALSE;
@@ -1369,7 +1361,7 @@ class E2gSnippet extends E2gPub {
         $ssFiles = array();
         $errorThumb = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['w'] . '&amp;h=' . $this->e2gSnipCfg['h'] . '&amp;th=2';
         $errorImg = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['ss_w'] . '&amp;h=' . $this->e2gSnipCfg['ss_h'] . '&amp;th=5';
-
+        $ssCheckDuplicate = array();
         if (!empty($this->e2gSnipCfg['gid']) && $this->modx->documentIdentifier != $this->e2gSnipCfg['landingpage']) {
 
             $selectFiles = $this->_fileSqlStatement('*', $this->e2gSnipCfg['ss_allowedratio']);
@@ -1388,6 +1380,7 @@ class E2gSnippet extends E2gPub {
                     continue;
                 foreach ($ssRows as $k => $v) {
                     $ssFiles[$k][] = $v;
+                    $ssCheckDuplicate[$v['src']] = $v['src'];
                 }
             }
             mysql_free_result($querySelectFiles);
@@ -1408,7 +1401,11 @@ class E2gSnippet extends E2gPub {
                 if ($ssRows === FALSE)
                     continue;
                 foreach ($ssRows as $k => $v) {
+                    if (isset($ssCheckDuplicate[$v['src']])) {
+                        continue;
+                    }
                     $ssFiles[$k][] = $v;
+                    $ssCheckDuplicate[$v['src']] = $v['src'];
                 }
             }
             mysql_free_result($querySelectFiles);
@@ -1430,6 +1427,9 @@ class E2gSnippet extends E2gPub {
                 if ($ssRows === FALSE)
                     continue;
                 foreach ($ssRows as $k => $v) {
+                    if (isset($ssCheckDuplicate[$v['src']])) {
+                        continue;
+                    }
                     $ssFiles[$k][] = $v;
                 }
             }
@@ -2505,7 +2505,9 @@ class E2gSnippet extends E2gPub {
 
     /**
      * Centralized the SQL statements for files fetching
-     * @param string    $select     SELECT statement
+     * @param string    $select         SELECT statement
+     * @param string    $allowedRatio   allowed ratio range
+     * @param int       $dirId          gallery ID
      * @return string   The complete SQL's statement with additional parameters
      */
     private function _fileSqlStatement($select, $allowedRatio = NULL, $dirId=NULL) {

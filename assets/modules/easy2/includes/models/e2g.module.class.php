@@ -6,7 +6,6 @@
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
  * @author goldsky <goldsky@modx-id.com>
- * @version 1.4.0
  */
 class E2gMod extends E2gPub {
 

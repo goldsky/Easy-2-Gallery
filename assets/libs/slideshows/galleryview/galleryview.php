@@ -19,15 +19,15 @@ $ssFiles = $this->_getSlideShowFiles();
  * @link http://spaceforaname.com/galleryview
  */
 // just to avoid direct call to this file. it's recommended to always use this.
-if (!defined(E2G_SNIPPET_URL) && $slideshow != 'galleryview') {
+if (!defined('E2G_SNIPPET_URL') && $slideshow != 'galleryview') {
     return FALSE;
 }
 
-// result with no images
+// this slideshow heavily dependent on any image existence, returns with no images
 if ($ssFiles['count'] == 0) {
-    $output = 'No image inside the gallery id ' . $ssParams['gid'];
-    // this slideshow heavily dependent on any image existence.
-    return FALSE;
+    return 'No image inside the specified id(s),'
+    . (!empty($ssParams['gid']) ? ' gid:' . $ssParams['gid'] : '')
+    . (!empty($ssParams['fid']) ? ' fid:' . $ssParams['fid'] : '');
 }
 
 // just making a default selection
@@ -350,4 +350,4 @@ if ($ssParams['ss_config'] == 'panel') {
     ';
 }
 
-echo $output;
+return $output;
