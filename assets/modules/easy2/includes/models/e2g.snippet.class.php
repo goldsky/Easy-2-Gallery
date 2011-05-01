@@ -1357,7 +1357,8 @@ class E2gSnippet extends E2gPub {
             $ssMaxRatio = @explode('.', $ssMaxRatio);
             $ssMaxRatio = @implode('.', array(intval($ssMaxRatio[0]), intval($ssMaxRatio[1])));
         }
-
+        
+        ob_start();
         $ssFiles = array();
         $errorThumb = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['w'] . '&amp;h=' . $this->e2gSnipCfg['h'] . '&amp;th=2';
         $errorImg = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['ss_w'] . '&amp;h=' . $this->e2gSnipCfg['ss_h'] . '&amp;th=5';
@@ -1441,7 +1442,8 @@ class E2gSnippet extends E2gPub {
          * the slideshow types, while for some slideshows this doesn't really matter.
          */
         $ssFiles['count'] = count($ssFiles['src']);
-
+        ob_end_clean();
+        
         return $ssFiles;
     }
 

@@ -229,7 +229,7 @@ if ($ssParams['ss_config'] == 'gallerylight'
     // ------------- start the images looping ------------- //
     for ($i = 0; $i < $ssFiles['count']; $i++) {
         $output .= '
-            <li><img src="' . $ssFiles['thumbsrc'][$i] . '" alt="' . $ssFiles['title'][$i] . '" title="' . $ssFiles['title'][$i] . '" /></li>
+            <li style="list-style-type: none;"><img src="' . $ssFiles['thumbsrc'][$i] . '" alt="' . $ssFiles['title'][$i] . '" title="' . $ssFiles['title'][$i] . '" /></li>
             ';
     }
     // ------------- end the images looping ------------- //
