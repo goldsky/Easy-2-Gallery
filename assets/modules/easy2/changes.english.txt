@@ -3,6 +3,15 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.5 ******************
+Improvement:
++ Added output buffer to the watermarking
++ Changed the blank output of the wild parameter's title and description
+
+Fixes:
++ Bugfixed the wild parameter's joint gid+fid SQL statement
++ Bugfixed the image directive of the galleriffic's example-5
+
 ***************** 1.4.4 ******************
 Improvement:
 + Reworked how the slideshow's file being included
