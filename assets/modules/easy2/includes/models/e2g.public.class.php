@@ -223,8 +223,13 @@ class E2gPub { // public/public class
         $q = 'SELECT ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'WHERE cat_id=' . $dirId . ' ';
 
-        if (!($res = mysql_query($q)))
-            return (__LINE__ . ' Wrong field: ' . $field);
+        if (!($res = mysql_query($q))) {
+            if ($this->e2gPubCfg['e2g_debug'] == 1) {
+                return (__LINE__ . ' Wrong field: ' . $field);
+            } else {
+                return;
+            }
+        }
         while ($l = mysql_fetch_array($res)) {
             $dirInfo[$field] = $l[$field];
         }

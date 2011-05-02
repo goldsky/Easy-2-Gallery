@@ -239,6 +239,18 @@ class E2gThumb {
      * @return mixed image output
      */
     public function watermark($fp) {
+        // Apache's timeout: 300 secs
+        if (function_exists('ini_get') && !ini_get('safe_mode')) {
+            if (function_exists('set_time_limit')) {
+                set_time_limit(300);
+            }
+            if (function_exists('ini_set')) {
+                if (ini_get('max_execution_time') !== 300) {
+                    ini_set('max_execution_time', 300);
+                }
+            }
+        }
+        
         $inf = @getimagesize($fp);
 
         if ($inf[2] == 1)

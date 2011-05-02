@@ -2573,7 +2573,8 @@ class E2gSnippet extends E2gPub {
                 ) {
                     $fileSqlStatement .= 'id IN (' . $this->e2gSnipCfg['fid'] . ') ';
                 }
-                if (!empty($this->e2gSnipCfg['fid']) && !empty($gid) && empty($_GET['gid'])) {
+                if (!empty($this->e2gSnipCfg['fid']) && !empty($gid)) {
+//                if (!empty($this->e2gSnipCfg['fid']) && !empty($gid) && empty($_GET['gid'])) {
                     $fileSqlStatement .= 'OR ';
                 }
                 if (!empty($gid)) {
