@@ -56,10 +56,12 @@ window.onload = function() {
                 eDeleteActions.style.display = 'none';
             }
             // if ZipArchive is unavailable, this becomes null!
-            if(eSelect.value === "download" && eDownloadActions !== null) {
-                eDownloadActions.style.display = 'block';
-            } else {
-                eDownloadActions.style.display = 'none';
+            if (eDownloadActions !== null) {
+                if(eSelect.value === "download") {
+                    eDownloadActions.style.display = 'block';
+                } else {
+                    eDownloadActions.style.display = 'none';
+                }
             }
             if(eSelect.value === "tag") {
                 eTagActions.style.display = 'block';
