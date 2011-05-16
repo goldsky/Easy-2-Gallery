@@ -3,6 +3,10 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  / 
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.6 ******************
+Fixes:
++ Bugfixed the module's javascript on handling bottom menu when the ZipArchive is unavailable
+
 ***************** 1.4.5 ******************
 Improvement:
 + Added output buffer to the watermarking
