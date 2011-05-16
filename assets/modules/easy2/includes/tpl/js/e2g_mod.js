@@ -55,7 +55,8 @@ window.onload = function() {
             } else {
                 eDeleteActions.style.display = 'none';
             }
-            if(eSelect.value === "download") {
+            // if ZipArchive is unavailable, this becomes null!
+            if(eSelect.value === "download" && eDownloadActions !== null) {
                 eDownloadActions.style.display = 'block';
             } else {
                 eDownloadActions.style.display = 'none';
