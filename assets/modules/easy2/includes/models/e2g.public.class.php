@@ -100,7 +100,8 @@ class E2gPub { // public/public class
             // fixedmachine -- http://modxcms.com/forums/index.php/topic,49266.msg292206.html#msg292206
             $convertedText = UTF8::convert_from($text, "ASCII");
         } else {
-            $convertedText = UTF8::convert_from($text, $mbDetectEncoding);
+//            $convertedText = UTF8::convert_from($text, $mbDetectEncoding);
+            $convertedText = utf8_decode($text);
         }
 
         return $convertedText;
@@ -112,8 +113,10 @@ class E2gPub { // public/public class
      * The value is set from the module's config page.
      *
      * @link http://a4esl.org/c/charset.html
-     * @param  string $text the string to be encoded
-     * @return string returns the encoding
+     * @param   string  $text           the string to be encoded
+     * @param   string  $callback       call back function
+     * @param   string  $callbackParams call back parameters
+     * @return  string  returns the encoding
      */
     public function e2gEncode($text, $callback=FALSE, $callbackParams = array()) {
         $convertedText = FALSE;
@@ -153,8 +156,10 @@ class E2gPub { // public/public class
      * The value is set from the module's config page.
      *
      * @link http://a4esl.org/c/charset.html
-     * @param string $text the string to be decoded
-     * @return string returns the decoding
+     * @param   string  $text           the string to be decoded
+     * @param   string  $callback       call back function
+     * @param   string  $callbackParams call back parameters
+     * @return  string  returns the decoding
      */
     public function e2gDecode($text, $callback=FALSE, $callbackParams = array()) {
         $convertedText = FALSE;

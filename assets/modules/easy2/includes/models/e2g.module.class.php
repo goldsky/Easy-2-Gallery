@@ -2766,7 +2766,7 @@ class E2gMod extends E2gPub {
 
             // delete the config file, because this will always be checked as an upgrade option
             $oldConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php');
-            if (!empty($oldConfigFile) || file_exists($oldConfigFile)) {
+            if (!empty($oldConfigFile) && file_exists($oldConfigFile)) {
                 $unlinkConfigFile = @unlink($oldConfigFile);
                 if (!$unlinkConfigFile) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_del_err'];

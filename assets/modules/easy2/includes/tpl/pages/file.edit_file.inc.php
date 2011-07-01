@@ -18,7 +18,7 @@ $filename = substr($row['filename'], 0, -(strlen($ext)));
     </li>
     <li>
         <span class="h2title"><?php echo $this->lng['editing']; ?></span>
-        <?php echo $this->lng['files']; ?> <b><?php echo $row['filename']; ?> </b> (<?php echo $row['comments'] . ' ' . strtolower($this->lng['comments']); ?>)
+        <?php echo $this->lng['files']; ?> <b><?php echo $row['filename']; ?> </b> (<?php echo $row['comments'] . ' ' .  mb_strtolower($this->lng['comments']); ?>)
     </li>
 </ul>
 <?php echo $this->plugin('OnE2GFileEditFormPrerender'); ?>

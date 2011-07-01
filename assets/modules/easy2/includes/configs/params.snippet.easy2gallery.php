@@ -300,7 +300,7 @@ $e2gSnipCfg['ss_order'] = preg_replace('/[^a-z]/i', '', $ss_order);
  * more images mean longer page loading!
  * @options : int | 'none'
  */
-$e2gSnipCfg['ss_limit'] = isset($ss_limit) ? $ss_limit : $e2g['ss_limit'];
+$e2gSnipCfg['ss_limit'] = !empty($ss_limit) ? (trim($ss_limit) == 'none' ? trim($ss_limit) : (int) $ss_limit) : $e2g['ss_limit'];
 
 /**
  * set the slideshow's or thumbnail's landing page.
