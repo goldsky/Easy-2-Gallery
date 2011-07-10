@@ -1357,7 +1357,7 @@ class E2gSnippet extends E2gPub {
             $ssMaxRatio = @explode('.', $ssMaxRatio);
             $ssMaxRatio = @implode('.', array(intval($ssMaxRatio[0]), intval($ssMaxRatio[1])));
         }
-        
+
         ob_start();
         $ssFiles = array();
         $errorThumb = 'assets/modules/easy2/show.easy2gallery.php?w=' . $this->e2gSnipCfg['w'] . '&amp;h=' . $this->e2gSnipCfg['h'] . '&amp;th=2';
@@ -1443,7 +1443,7 @@ class E2gSnippet extends E2gPub {
          */
         $ssFiles['count'] = count($ssFiles['src']);
         ob_end_clean();
-        
+
         return $ssFiles;
     }
 
@@ -2283,7 +2283,8 @@ class E2gSnippet extends E2gPub {
             $siblings['cat_id'][] = $row['cat_id'];
             $siblings['cat_tag'][] = $row['cat_tag'];
             $siblings['cat_name'][] = $row['cat_name'];
-            $siblings[$field][] = $row[$field];
+            if ($field !== 'cat_id' && $field !== 'cat_tag' && $field !== 'cat_name')
+                $siblings[$field][] = $row[$field];
         }
 
         $countSiblings = count($siblings['cat_id']);
@@ -2302,13 +2303,15 @@ class E2gSnippet extends E2gPub {
                     $thesibling['cat_id'] = $siblings['cat_id'][$j];
                     $thesibling['cat_tag'] = $siblings['cat_tag'][$j];
                     $thesibling['cat_name'] = $siblings['cat_name'][$j];
-                    $thesibling[$field] = $siblings[$field][$j];
+                    if ($field !== 'cat_id' && $field !== 'cat_tag' && $field !== 'cat_name')
+                        $thesibling[$field] = $siblings[$field][$j];
                 }
             } else {
                 if ($siblings['cat_id'][$i] == $dynamicId) {
                     $thesibling['cat_id'] = $siblings['cat_id'][$j];
                     $thesibling['cat_name'] = $siblings['cat_name'][$j];
-                    $thesibling[$field] = $siblings[$field][$j];
+                    if ($field !== 'cat_id' && $field !== 'cat_tag' && $field !== 'cat_name')
+                        $thesibling[$field] = $siblings[$field][$j];
                 }
             }
         }
