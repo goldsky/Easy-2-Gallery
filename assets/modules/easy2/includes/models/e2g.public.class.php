@@ -804,7 +804,20 @@ class E2gPub { // public/public class
      * @param string    $ip     IP Address
      * @return bool     TRUE if it is ignored | FALSE if it is not.
      */
-    public function checkIgnoredIp($ip) {
+    public function checkIgnoredIp() {
+        // getting the real ip address
+        $ip = empty($_SERVER['HTTP_CLIENT_IP']) ?
+                (empty($_SERVER['HTTP_X_FORWARDED_FOR']) ?
+                        $_SERVER['REMOTE_ADDR'] :
+                        $_SERVER['HTTP_X_FORWARDED_FOR']) :
+                $_SERVER['HTTP_CLIENT_IP'];
+
+        $ip = $this->sanitizedString($ip);
+
+        if (empty($ip)) {
+            return FALSE;
+        }
+
         $selectCountIgnIps = 'SELECT COUNT(ign_ip_address) '
                 . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip '
                 . 'WHERE ign_ip_address=\'' . $ip . '\'';
@@ -831,7 +844,6 @@ class E2gPub { // public/public class
         $langFile = realpath($modPath . 'langs/' . $modx->config['manager_language'] . '.inc.php');
         if (!empty($langFile) && file_exists($langFile)) {
             include $langFile; // loading $e2g_lang
-
             // if there is a blank language parameter, english will fill it as the default.
             $oldLangKey = $oldLangVal = array();
             foreach ($e2g_lang[$modx->config['manager_language']] as $olk => $olv) {
@@ -895,7 +907,7 @@ class E2gPub { // public/public class
         if (!$this->e2gPubCfg['chmod_enabled']) {
             return FALSE;
         }
-        
+
         $fullRealPath = realpath($fullPath);
         if (empty($fullRealPath)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
@@ -921,7 +933,7 @@ class E2gPub { // public/public class
             clearstatcache();
             if ($checkPreviousMode === TRUE
                     && $oldPermission != sprintf("%04o", $this->e2gPubCfg['chmod_file'])
-                    && !$newPermission 
+                    && !$newPermission
                     && $this->e2gPubCfg['e2g_debug'] == '1'
             ) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;

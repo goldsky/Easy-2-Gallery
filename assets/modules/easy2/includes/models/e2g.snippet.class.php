@@ -1101,9 +1101,7 @@ class E2gSnippet extends E2gPub {
          * Comments on the thumbnails
          */
         // HIDE COMMENTS from Ignored IP Addresses
-        $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-
-        $checkIgnoredIp = $this->checkIgnoredIp($ip);
+        $checkIgnoredIp = $this->checkIgnoredIp();
 
         if ($this->e2gSnipCfg['ecm'] == 1 && (!$checkIgnoredIp)) {
             $row['com'] = 'e2gcom' . ($row['comments'] == 0 ? 0 : 1);
@@ -1573,9 +1571,7 @@ class E2gSnippet extends E2gPub {
              * Comments on the landing page
              */
             // HIDE COMMENTS from Ignored IP Addresses
-            $ip = isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
-
-            $checkIgnoredIp = $this->checkIgnoredIp($ip);
+            $checkIgnoredIp = $this->checkIgnoredIp();
 
             if ($this->e2gSnipCfg['ecm'] == 1 && (!$checkIgnoredIp)) {
 
@@ -1620,7 +1616,11 @@ class E2gSnippet extends E2gPub {
         $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
 
         // Get a key from https://www.google.com/recaptcha/admin/create
-        require_once(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
+        $recaptchalib = realpath(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
+        if (!file_exists($recaptchalib)) {
+            return FALSE;
+        }
+        require_once($recaptchalib);
 
         if (file_exists(realpath(E2G_SNIPPET_PATH . 'includes/langs/' . $this->modx->config['manager_language'] . '.comments.php'))) {
             include_once E2G_SNIPPET_PATH . 'includes/langs/' . $this->modx->config['manager_language'] . '.comments.php';

@@ -3,6 +3,10 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  /
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.8 ******************
+Fix:
++ #5301 $_SERVER['HTTP_X_FORWARDED_FOR'] faking by modifiying the headers
+
 ***************** 1.4.7 ******************
 Fixes:
 + Bugfixed the sibling infos for prev up next navigation
