@@ -96,8 +96,7 @@ if (class_exists('E2gPub') && class_exists('E2gSnippet')) {
     $e2gSnippet = new E2gSnippet($modx, $e2gSnipCfg);
     $e2gSnippet->e2gpub_cfg = $e2gSnipCfg;
     $output = $e2gSnippet->display();
-}
-else {
+} else {
     $output = "<b>Error: Easy 2 Gallery's snippet class not found</b>";
 }
 

@@ -601,9 +601,12 @@ class E2gSnippet extends E2gPub {
             // path to subdir's thumbnail
             $getPath = $this->getPath($folderImgInfos['dir_id']);
 
-            $l['w'] = $this->e2gSnipCfg['w'];
-            $l['h'] = $this->e2gSnipCfg['h'];
-            $thq = $this->e2gSnipCfg['thq'];
+            $l['w'] = $this->e2gSnipCfg['folder_w'];
+            $l['h'] = $this->e2gSnipCfg['folder_h'];
+            $thq = $this->e2gSnipCfg['folder_thq'];
+            // only for preparation if someone needs the placeholders
+            $l['folder_w'] = $this->e2gSnipCfg['folder_w'];
+            $l['folder_w'] = $this->e2gSnipCfg['folder_h'];
 
             $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir'], $getPath . $folderImgInfos['filename'], $l['w'], $l['h'], $thq);
             if (!$imgShaper) {

@@ -58,6 +58,15 @@ $e2gSnipCfg['h'] = (isset($h) && is_numeric($h)) ? (int) $h : $e2g['h'];
 // JPEG QUALITY
 $e2gSnipCfg['thq'] = (isset($thq) && $thq <= 100 && $thq >= 0) ? (int) $thq : $e2g['thq'];
 
+// Folder thumbnail dimension will be the same as the image dimension above,
+// if the parameter is not set in the snippet call.
+// Folder thumbnail WIDTH
+$e2gSnipCfg['folder_w'] = (isset($folder_w) && is_numeric($folder_w)) ? (int) $folder_w : $e2gSnipCfg['w'];
+// Folder thumbnail HEIGHT
+$e2gSnipCfg['folder_h'] = (isset($folder_h) && is_numeric($folder_h)) ? (int) $folder_h : $e2gSnipCfg['h'];
+// Folder thumbnail JPEG QUALITY
+$e2gSnipCfg['folder_thq'] = (isset($folder_thq) && $folder_thq <= 100 && $folder_thq >= 0) ? (int) $folder_thq : $e2gSnipCfg['thq'];
+
 /**
  * GRID structure
  * @options : css | table

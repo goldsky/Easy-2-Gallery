@@ -349,17 +349,18 @@ class E2gPub { // public/public class
      * @param string $foldername the folder's name
      */
     public function validFolder($foldername) {
+        $foldername = str_replace('//', '/', $foldername);
         $folderRealPath = realpath($foldername);
         if (empty($folderRealPath)) {
             if ($this->e2gPubCfg['e2g_debug'] == 1) {
-                echo __LINE__ . '<b style="color:red;">' . $foldername . '</b> is NOT a valid folder.';
+                echo __LINE__ . '<b style="color:red;">' . $foldername . '</b> is NOT a valid folder.<br />';
             }
             return FALSE;
         }
         $openFolder = @opendir($folderRealPath);
         if (!$openFolder) {
             if ($this->e2gPubCfg['e2g_debug'] == 1) {
-                echo __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.';
+                echo __LINE__ . ' : <b style="color:red;">' . $foldername . '</b> is NOT a valid folder, probably a file.<br />';
             }
             return FALSE;
         } else {
@@ -369,7 +370,7 @@ class E2gPub { // public/public class
                 $file = array();
                 while (( FALSE !== ( $file = readdir($openFolder) ))) {
                     if ($file != "." && $file != "..") {
-                        if (filetype($file) == 'dir') {
+                        if (@filetype($file) == 'dir') {
                             echo '<li>dir: <b style="color:green;">' . $file . '</b></li>';
                         }
                         else
@@ -382,8 +383,7 @@ class E2gPub { // public/public class
             closedir($openFolder);
         }
         if ($this->e2gPubCfg['e2g_debug'] == 1) {
-            echo __LINE__ . ' : <br /><b style="color:red;">' . $foldername . '</b> is a valid folder.';
-            return FALSE;
+            echo __LINE__ . ' : <br /><b style="color:red;">' . $foldername . '</b> is a valid folder.<br />';
         }
 
         return TRUE;

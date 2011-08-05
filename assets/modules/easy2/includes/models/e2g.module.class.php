@@ -780,7 +780,7 @@ class E2gMod extends E2gPub {
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
         $newInf['time'] = filemtime($filename);
-        
+
         // if both configs are not zeros
         if ($w + $h !== 0) {
 
@@ -1095,7 +1095,11 @@ class E2gMod extends E2gPub {
             $tree = new TTree();
             $tree->table = $this->modx->db->config['table_prefix'] . 'easy2_dirs';
             foreach ($mdirs as $key => $value) {
-                $ids = $tree->delete($value['id']);
+                $ids = $tree->delete((int) $value['id']);
+                if (empty($ids)) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $key . '<br />';
+                    return FALSE;
+                }
                 $implodedDirIds = implode(',', $ids);
                 $selectFiles = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE dir_id IN(' . $implodedDirIds . ')';
                 $querySelectFiles = mysql_query($selectFiles);
@@ -2058,10 +2062,11 @@ class E2gMod extends E2gPub {
             require_once E2G_MODULE_PATH . 'includes/models/TTree.class.php';
             $tree = new TTree();
             $tree->table = $this->modx->db->config['table_prefix'] . 'easy2_dirs';
+
             foreach ($post['dir'] as $k => $v) {
                 // the numeric keys are the member of the database
                 if (is_numeric($k)) {
-                    $ids = $tree->delete(intval($k));
+                    $ids = $tree->delete((int)$k);
                     if (empty($ids)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $k . '<br />';
                         return FALSE;
@@ -2563,6 +2568,11 @@ class E2gMod extends E2gPub {
             $tree = new TTree();
             $tree->table = $this->modx->db->config['table_prefix'] . 'easy2_dirs';
             $ids = $tree->delete((int) $get['dir_id']);
+
+            if (empty($ids)) {
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $get['dir_id'] . '<br />';
+            }
+
             $fileIds = array();
             $res = mysql_query(
                             'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
@@ -2587,7 +2597,7 @@ class E2gMod extends E2gPub {
             $res = $this->_deleteAll('../' . $dirPath);
         }
 
-        if ($ids !== FALSE && count($res['e']) === 0) {
+        if ((!empty($ids) && $ids !== FALSE) && count($res['e']) === 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $this->lng['dir_deleted'] : $this->lng['dirs_deleted']);
         } elseif (count($ids) > 0) {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $res['d'] . ' ' . ($res['d'] == 1 ? $this->lng['dir_delete_fdb'] : $this->lng['dirs_delete_fdb']);
@@ -2598,6 +2608,7 @@ class E2gMod extends E2gPub {
                 $_SESSION['easy2err'] = $res['e'];
             if (!empty($tree->error))
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $tree->error;
+
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dir_delete_err'];
         }
 

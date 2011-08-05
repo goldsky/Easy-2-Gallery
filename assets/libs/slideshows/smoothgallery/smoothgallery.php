@@ -361,7 +361,7 @@ if ($ssParams['ss_config'] == 'galleryset') {
     // ------------- start the images looping ------------- //
     if (!is_array($galleries)) { // something wrong! escape!
         return 'There is no gallery inside ID:' . $ssParams['gid'];
-        
+
     }
     foreach ($galleries as $gk => $gv) {
         $output .= '
