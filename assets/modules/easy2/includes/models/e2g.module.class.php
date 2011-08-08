@@ -39,8 +39,20 @@ class E2gMod extends E2gPub {
         parent::__construct($modx, $e2gModCfg, $e2g, $lng);
         $this->modx = & $modx;
         $this->e2gModCfg = $e2gModCfg;
-        $this->e2g = $e2g;
+        $this->e2g = $this->_htmlspecialcharsArray($e2g);
         $this->lng = $lng;
+    }
+
+    private function _htmlspecialcharsArray(array $array) {
+        if (empty($array))
+            return $array;
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = $this->_htmlspecialcharsArray($value);
+            }
+            $o[$key] = htmlspecialchars($value, ENT_QUOTES);
+        }
+        return $o;
     }
 
     /**
@@ -2767,7 +2779,7 @@ class E2gMod extends E2gPub {
             // else
             foreach ($entries as $k => $v) {
                 $insertConfigs = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
-                        . 'SET `cfg_key`=\'' . $k . '\', `cfg_val`=\'' . $v . '\'';
+                        . 'SET `cfg_key`=\'' . $k . '\', `cfg_val`=\'' . mysql_real_escape_string($v) . '\'';
                 $queryInsertConfigs = mysql_query($insertConfigs);
                 if (!$queryInsertConfigs) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertConfigs;
