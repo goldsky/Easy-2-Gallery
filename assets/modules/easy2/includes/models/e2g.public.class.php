@@ -643,7 +643,6 @@ class E2gPub { // public/public class
          * system or not, and stops at which ever returns TRUE.
          */
         $folderImgInfos = array();
-        $folderImgInfos['count'] = $countFiles;
         foreach ($files as $file) {
             // search image for subdir
             $getPath = $this->getPath($file['dir_id']);
@@ -655,6 +654,7 @@ class E2gPub { // public/public class
                 break;
             }
         }
+        $folderImgInfos['count'] = $countFiles;
 
         /**
          * returned as folder's thumbnail's info array
