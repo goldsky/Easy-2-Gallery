@@ -503,7 +503,7 @@ function updateTableContent($lngi, $table, $whereClause, $script) {
  * Get the database character set and collation
  * @param type $databaseCollation
  * @param type $variable
- * @return type 
+ * @return type
  */
 function databaseCharSet($databaseCollation, $variable) {
     global $modx;
@@ -611,7 +611,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         ENGINE=MyISAM
                         CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
                         COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
-        
+
         $queryCreateDirTable = mysql_query($createDirTable);
         if (!$queryCreateDirTable) {
             $_SESSION['easy2err'][] = __LINE__ . ': '
@@ -765,7 +765,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `edited_by` TINYINT(10) UNSIGNED NULL DEFAULT NULL,
                         PRIMARY KEY (`id`),
                         KEY file_id (file_id)
-                        ) 
+                        )
                         ENGINE=MyISAM
                         CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
                         COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
@@ -842,7 +842,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         `status` TINYINT(1) UNSIGNED NOT NULL DEFAULT \'1\',
                         `redirect_link` VARCHAR(255) NULL DEFAULT NULL,
                         PRIMARY KEY (`id`)
-                        ) 
+                        )
                         ENGINE=MyISAM
                         CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
                         COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
@@ -918,7 +918,7 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
                         ign_username varchar(64) NOT NULL,
                         ign_email varchar(64) default NULL,
                         PRIMARY KEY (id)
-                        ) 
+                        )
                         ENGINE=MyISAM
                         CHARACTER SET ' . databaseCharSet($_POST['database_collation'], 'Charset') . '
                         COLLATE ' . databaseCharSet($_POST['database_collation'], 'Collation');
@@ -1424,9 +1424,9 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                         $iconBad = '<img src="' . MODX_BASE_URL . 'assets/modules/easy2/includes/tpl/icons/action_delete.png" alt="" /> ';
                         $disabled = '';
                         echo '<ul>';
-                        
+
                         echo '<li>';
-                        
+
                         $getChr = mysql_query("SHOW CHARACTER SETS");
                         // get collation
                         $getCol = mysql_query("SHOW COLLATION");
@@ -1465,7 +1465,6 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                         }
 
                         if (get_magic_quotes_gpc()) {
-//        $disabled = 'disabled="disabled"';
                             echo '<li>';
                             echo $iconBad . 'PHP magic_quotes_gpc()=ON. Try to disable it from .htaccess or php.ini';
                             echo '</li>';
@@ -1493,7 +1492,6 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                             echo $iconOk . 'PHP ZipArchive';
                             echo '</li>';
                         } else {
-//        $disabled = 'disabled="disabled"';
                             echo '<li>';
                             echo $iconBad . 'PHP ZipArchive';
                             echo '</li>';

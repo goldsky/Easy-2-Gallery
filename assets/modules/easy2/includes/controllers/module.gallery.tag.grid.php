@@ -42,32 +42,23 @@ define('E2G_MODULE_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
 // Easy 2 Gallery module URL
 define('E2G_MODULE_URL', MODX_SITE_URL . '../../');
 
-require_once E2G_MODULE_PATH . 'includes/utf8/utf8.php';
-
-// initiate e2g's public module
-$modParamFile = realpath('../configs/params.module.easy2gallery.php');
-if (empty ($modParamFile) || !file_exists($modParamFile)) {
-    die(__FILE__ . ': Missing module\'s params file.');
-}
-include ($modParamFile);
-$pubClassFile = realpath('../models/e2g.public.class.php');
-if (empty ($pubClassFile) || !file_exists($pubClassFile)) {
-    die(__FILE__ . ': Missing public class file.');
-}
-include ($pubClassFile); //extending
 $modClassFile = realpath('../models/e2g.module.class.php');
 if (empty ($modClassFile) || !file_exists($modClassFile)) {
     die(__FILE__ . ': Missing module class file.');
 }
 include ($modClassFile);
 
+$e2gMod = new E2gMod($modx);
+
 // LANGUAGE
-$lng = E2gPub::languageSwitch();
+$lng = E2gPub::languageSwitch($modx->config['manager_language'],E2G_MODULE_PATH);
 if (!is_array($lng)) {
     die($lng); // FALSE returned.
 }
 
-$e2gMod = new E2gMod($modx, $e2gModCfg, $e2g, $lng);
+foreach ($lng as $k => $v) {
+    $lng[$k] = $e2gMod->e2gEncode($v);
+}
 
 $getRequests = $e2gMod->sanitizedGets($_GET);
 if (empty($getRequests)) {

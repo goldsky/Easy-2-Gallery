@@ -272,7 +272,7 @@ $e2g_lang['english'] = array (
 &lt;ul&gt;
 &lt;li&gt;[field][,comma][operator][,comma][value]&lt;/li&gt;
 &lt;li&gt;They can have multiple clauses by using &#039;AND&#039; and/or &#039;OR&#039;&lt;/li&gt;
-&lt;li&gt;The Operator have to be a string, as following:                  
+&lt;li&gt;The Operator have to be a string, as following:
 &lt;ul&gt;
 &lt;li&gt;&quot;NULL safe equal&quot; =&amp;gt; &#039;&amp;lt;=&amp;gt;&#039;&lt;/li&gt;
 &lt;li&gt;&quot;equal&quot; =&amp;gt; &#039;=&#039;&lt;/li&gt;
@@ -399,7 +399,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic                                     
+&lt;li&gt;galleriffic
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -407,7 +407,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery                                     
+&lt;li&gt;smoothgallery
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -421,7 +421,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview                                     
+&lt;li&gt;galleryview
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -431,7 +431,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow                                     
+&lt;li&gt;contentflow
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -574,12 +574,8 @@ $e2g_lang['english'] = array (
     'mod_foldersize' => 'Display folder size',
     'mod_foldersize_desc' => 'Display folder size on list view above',
     'mod_options' => 'Module&#039;s Options',
-    'mod_tpl_table' => 'Table template',
-    'mod_tpl_table_row_dir' => 'Table row template for dirs',
-    'mod_tpl_table_row_file' => 'Table row template for files',
     'mod_view' => 'Module views',
     'mod_view_cfg_desc' => 'Default view for file&#039;s page',
-    'modified' => 'Modified',
     'move' => 'Move',
     'movetofolder' => 'Move to folder',
     'multibyte_string' => 'Multibyte String',
@@ -756,9 +752,6 @@ $e2g_lang['english'] = array (
     'upload_max' => 'Max Upload Size',
     'use' => 'Use',
     'user_access' => 'Access',
-    'user_e2g_mgr_access' => 'Easy 2 Gallery&#039;s Manager Access',
-    'user_e2g_mgr_roles' => 'Easy 2 Gallery Manager User&#039;s Roles',
-    'user_e2g_mgr_roles_desc' => '&lt;p&gt;Manager User&#039;s Rights on doing things inside this module (action)&lt;/p&gt;',
     'user_groups' => 'User Groups',
     'user_member_groups' => 'Member Groups',
     'user_members' => 'Members',

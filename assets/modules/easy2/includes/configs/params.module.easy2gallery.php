@@ -29,9 +29,9 @@ $e2gModCfg['e2gpg'] = isset($_GET['e2gpg']) ? (int) $_GET['e2gpg'] : '1';
 $_SESSION['mod_view'] = isset($_GET['view']) ? $_GET['view'] : (isset($_SESSION['mod_view']) ? $_SESSION['mod_view'] : $e2g['mod_view']);
 
 $pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
-if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
-    return __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
-}
+//if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
+//    return __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
+//}
 require $pageConfigFile;
 
 // Module's pages

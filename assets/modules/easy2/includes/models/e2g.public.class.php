@@ -837,37 +837,37 @@ class E2gPub { // public/public class
 
     /**
      * Loading language file with the default text switcher if the specifed value is empty
-     * @param   string  $modPath    module's path. The default is '../' for ajax controller files.
+     * @param   string  $modPath            module's path. The default is '../' for ajax controller files.
+     * @param   string  $managerLanguage    the manager's language
      * @return  array   the lexicon strings
      */
-    public function languageSwitch($modPath = '../') {
-        $langFile = realpath($modPath . 'langs/' . $modx->config['manager_language'] . '.inc.php');
+    public function languageSwitch($managerLanguage, $modPath = null) {
+        $modPath = !empty($modPath) ? $modPath : '../';
+
+        $langFile = realpath($modPath . 'includes/langs/' . $managerLanguage . '.inc.php');
+        $engLangFile = realpath($modPath . 'includes/langs/english.inc.php');
+
+        if (empty($engLangFile) || !file_exists($engLangFile)) {
+            return __FILE__ . ', ' . __LINE__ . ': missing english language file: ' . $modPath . 'includes/langs/english.inc.php';
+        }
         if (!empty($langFile) && file_exists($langFile)) {
             include $langFile; // loading $e2g_lang
             // if there is a blank language parameter, english will fill it as the default.
             $oldLangKey = $oldLangVal = array();
-            foreach ($e2g_lang[$modx->config['manager_language']] as $olk => $olv) {
+            foreach ($e2g_lang[$managerLanguage] as $olk => $olv) {
                 $oldLangKey[$olk] = $olk; // other languages
                 $oldLangVal[$olk] = $olv;
             }
 
-            $engLangFile = realpath($modPath . 'langs/english.inc.php');
-            if (empty($engLangFile) || !file_exists($engLangFile)) {
-                return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
-            }
             include $engLangFile; // loading $e2g_lang
             foreach ($e2g_lang['english'] as $enk => $env) {
                 if (!isset($oldLangKey[$enk])) {
-                    $e2g_lang[$modx->config['manager_language']][$enk] = $env;
+                    $e2g_lang[$managerLanguage][$enk] = $env;
                 }
             }
 
-            $lng = $e2g_lang[$modx->config['manager_language']];
+            $lng = $e2g_lang[$managerLanguage];
         } else {
-            $engLangFile = realpath($modPath . 'langs/english.inc.php');
-            if (empty($engLangFile) || !file_exists($engLangFile)) {
-                return __FILE__ . ', ' . __LINE__ . ': missing english language file.';
-            }
             include $engLangFile;
             $lng = $e2g_lang['english'];
         }

@@ -7,6 +7,13 @@
  * @author Temus <temus3@gmail.com>
  * @author goldsky <goldsky@modx-id.com>
  */
+$e2gPubClassFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'e2g.public.class.php';
+if (!class_exists('E2gPub') && file_exists(realpath($e2gPubClassFile))) {
+    include $e2gPubClassFile;
+} else {
+    return 'Missing $e2gPubClassFile';
+}
+
 class E2gMod extends E2gPub {
 
     /**
@@ -14,45 +21,41 @@ class E2gMod extends E2gPub {
      * @var mixed modx's API
      */
     public $modx;
+
     /**
      * The module's configurations in an array
      * @var mixed all the module's settings
      */
     private $e2gModCfg;
+
     /**
      * The default configuration from the config fils
      * @var mixed default configuration
      */
     public $e2g;
+
     /**
      * The translation variables based on the manager's language setting
      * @var string language translation
      */
     public $lng;
+
     /**
      * Folders as the Drop down option
      * @var string drop down option
      */
     private $_dirDropDownOptions = array();
 
-    public function __construct($modx, $e2gModCfg, $e2g, $lng) {
-        parent::__construct($modx, $e2gModCfg, $e2g, $lng);
+    public function __construct($modx) {
         $this->modx = & $modx;
-        $this->e2gModCfg = $e2gModCfg;
-        $this->e2g = $this->_htmlspecialcharsArray($e2g);
-        $this->lng = $lng;
-    }
-
-    private function _htmlspecialcharsArray(array $array) {
-        if (empty($array))
-            return $array;
-        foreach ($array as $key => $value) {
-            if (is_array($value)) {
-                $value = $this->_htmlspecialcharsArray($value);
-            }
-            $o[$key] = htmlspecialchars($value, ENT_QUOTES);
+        $this->lng = $this->languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
+        if (!is_array($this->lng)) {
+            die($this->lng); // FALSE returned.
         }
-        return $o;
+        $this->e2g = $this->loadSettings();
+        $this->e2gModCfg = $this->loadE2gModCfg();
+
+        parent::__construct($modx, $this->e2gModCfg);
     }
 
     /**
@@ -114,7 +117,7 @@ class E2gMod extends E2gPub {
                                         . '&amp;id=' . $this->e2gModCfg['_i']
                                         . '&amp;e2gpg=2'
                                         . '&amp;pid=' . $_POST['newparent']
-                        ));
+                                ));
                     } else {
                         header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     }
@@ -190,7 +193,7 @@ class E2gMod extends E2gPub {
                                     . '&amp;id=' . $this->e2gModCfg['_i']
                                     . '&amp;e2gpg=2'
                                     . '&amp;pid=' . $parentId
-                    ));
+                            ));
                 } else {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 }
@@ -868,7 +871,7 @@ class E2gMod extends E2gPub {
 
                     // if the source as same as the destination, do nothing and return back
                     if ($inf[1] == $h) {
-                    return $newInf;
+                        return $newInf;
 //                    return FALSE;
                     }
                 } // if ( $srcRatio < 1 && $dstRatio > 1 )
@@ -909,7 +912,6 @@ class E2gMod extends E2gPub {
 
             clearstatcache();
         } // if ( $w + $h !== 0 )
-
         // override the initial process
         $this->changeModOwnGrp('file', $filename);
 
@@ -2078,7 +2080,7 @@ class E2gMod extends E2gPub {
             foreach ($post['dir'] as $k => $v) {
                 // the numeric keys are the member of the database
                 if (is_numeric($k)) {
-                    $ids = $tree->delete((int)$k);
+                    $ids = $tree->delete((int) $k);
                     if (empty($ids)) {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $k . '<br />';
                         return FALSE;
@@ -2484,9 +2486,9 @@ class E2gMod extends E2gPub {
                             if (is_numeric($k)) {
                                 $files = array();
                                 $filesRes = mysql_query(
-                                                'SELECT id, dir_id '
-                                                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
-                                                . 'WHERE id=' . (int) $k
+                                        'SELECT id, dir_id '
+                                        . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+                                        . 'WHERE id=' . (int) $k
                                 );
                                 while ($l = mysql_fetch_array($filesRes)) {
                                     $files[$l['id']]['dir_id'] = $l['dir_id'];
@@ -2587,8 +2589,8 @@ class E2gMod extends E2gPub {
 
             $fileIds = array();
             $res = mysql_query(
-                            'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
-                            . 'WHERE dir_id IN(' . @implode(',', $ids) . ')'
+                    'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+                    . 'WHERE dir_id IN(' . @implode(',', $ids) . ')'
             );
             while ($l = mysql_fetch_row($res)) {
                 $fileIds[] = $l[0];
@@ -3858,7 +3860,7 @@ class E2gMod extends E2gPub {
          * Synchronizing the Manager Users
          */
         $e2gMgrGroupsArray = $this->modx->db->makeArray($this->modx->db->query(
-                                'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr '));
+                        'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr '));
         $e2gMgrGroupIds = array();
         $countE2gMgrGroups = count($e2gMgrGroupsArray);
         for ($i = 0; $i < $countE2gMgrGroups; $i++) {
@@ -3866,7 +3868,7 @@ class E2gMod extends E2gPub {
         }
 
         $modxMemberGroups = $this->modx->db->makeArray($this->modx->db->query(
-                                'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'membergroup_names '));
+                        'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'membergroup_names '));
         $countModxMemberGroups = count($modxMemberGroups);
 
         // adding non-exist modx groups into e2g groups
@@ -3912,7 +3914,7 @@ class E2gMod extends E2gPub {
      * @return  bool    TRUE | FALSE
      */
     private function _loadE2gMgrSessions() {
-        // loading the hyperlinks ($e2gPages)
+        // loading the hyperlinks ($this->e2gModCfg['e2gPages'])
         $pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
         if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
@@ -3924,19 +3926,19 @@ class E2gMod extends E2gPub {
         $getUserInfo = $this->modx->getUserInfo($_SESSION['mgrInternalKey']);
         $userId = $getUserInfo['id'];
         $userPermissions = $this->modx->db->getValue(
-                        'SELECT e.permissions FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr e '
-                        . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'membergroup_names m '
-                        . 'ON e.membergroup_id = m.id '
-                        . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'member_groups g '
-                        . 'ON g.user_group=m.id '
-                        . 'WHERE g.member=\'' . $userId . '\''
+                'SELECT e.permissions FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr e '
+                . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'membergroup_names m '
+                . 'ON e.membergroup_id = m.id '
+                . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'member_groups g '
+                . 'ON g.user_group=m.id '
+                . 'WHERE g.member=\'' . $userId . '\''
         );
 
         $_SESSION['e2gMgr']['permissions'] = $userPermissions;
 
         $userRole = $this->modx->db->getValue(
-                        'SELECT role FROM ' . $this->modx->db->config['table_prefix'] . 'user_attributes '
-                        . 'WHERE internalKey=\'' . $userId . '\''
+                'SELECT role FROM ' . $this->modx->db->config['table_prefix'] . 'user_attributes '
+                . 'WHERE internalKey=\'' . $userId . '\''
         );
 
         $_SESSION['e2gMgr']['role'] = $userRole;
@@ -4070,8 +4072,8 @@ class E2gMod extends E2gPub {
      */
     private function _dirWebGroupIds($webGroupId) {
         $dirWebGroups = $this->modx->db->makeArray($this->modx->db->query(
-                                'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
-                                . 'WHERE type=\'dir\' AND webgroup_id=\'' . $webGroupId . '\''
+                        'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
+                        . 'WHERE type=\'dir\' AND webgroup_id=\'' . $webGroupId . '\''
                 ));
         foreach ($dirWebGroups as $k => $v) {
             $dirWebGroups[$k] = $v['id'];
@@ -4115,9 +4117,9 @@ class E2gMod extends E2gPub {
      */
     private function _fileWebGroupIds($webGroupId) {
         $fileWebGroups = $this->modx->db->makeArray($this->modx->db->query(
-                                'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
-                                . 'WHERE type=\'file\' '
-                                . 'AND webgroup_id=\'' . $webGroupId . '\''
+                        'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
+                        . 'WHERE type=\'file\' '
+                        . 'AND webgroup_id=\'' . $webGroupId . '\''
                 ));
         foreach ($fileWebGroups as $k => $v) {
             $fileWebGroups[$k] = $v['id'];
@@ -4144,7 +4146,7 @@ class E2gMod extends E2gPub {
      * @return mixed    redirect to the config page to do the saving action, or nothing for TRUE
      */
     private function _checkConfigCompletion() {
-        // loading the hyperlinks ($e2gPages)
+        // loading the hyperlinks ($this->e2gModCfg['e2gPages'])
         $pageConfigFile = realpath(E2G_MODULE_PATH . 'includes/configs/config.pages.easy2gallery.php');
         if (empty($pageConfigFile) || !file_exists($pageConfigFile)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_file_err_missing'];
@@ -4154,10 +4156,10 @@ class E2gMod extends E2gPub {
 
         // delete the config file, because this will always be checked as an upgrade option
         if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))
-                && $_GET['e2gpg'] != $e2gPages['config']['e2gpg']
+                && $_GET['e2gpg'] != $this->e2gModCfg['e2gPages']['config']['e2gpg']
         ) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_save_warning'];
-            header('Location: ' . html_entity_decode($this->e2gModCfg['blank_index'] . '&amp;e2gpg=' . $e2gPages['config']['e2gpg']));
+            header('Location: ' . html_entity_decode($this->e2gModCfg['blank_index'] . '&amp;e2gpg=' . $this->e2gModCfg['e2gPages']['config']['e2gpg']));
         } else
             return TRUE;
     }
@@ -4429,13 +4431,122 @@ class E2gMod extends E2gPub {
         return $sanitizedGets;
     }
 
-    private function _e2gStripAlias($string) {
-        $xplds = @explode('/', $string);
-        foreach ($xplds as $y => $x) {
-            $xplds[$y] = $this->modx->stripAlias($x);
+    /**
+     * Load properties
+     * @return void
+     */
+    public function loadSettings() {
+        $countConfigs = array();
+        /**
+         * Create a smooth conversion between file based config to database base
+         */
+        // CONFIGURATIONS from the previous version installation
+        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
+            require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
+            foreach ($e2g as $ck => $cv) {
+                $configsKey[$ck] = $ck;
+                $configsVal[$ck] = $cv;
+            }
+            $countConfigs['oldConfigFile'] = count($e2g);
         }
-        $string = @implode('/', $xplds);
-        return $sanitizedGets;
+
+        // CONFIGURATIONS
+        if (!isset($e2g)) {
+            $upgradeCheck = 'SHOW TABLES LIKE \'' . $this->modx->db->config['table_prefix'] . 'easy2_configs\' ';
+            $upgradeCheckValue = $this->modx->db->getValue($this->modx->db->query($upgradeCheck));
+            if (!empty($upgradeCheckValue)) {
+                $configsQuery = $this->modx->db->select('*', $this->modx->db->config['table_prefix'] . 'easy2_configs');
+                if ($configsQuery) {
+                    while ($row = mysql_fetch_array($configsQuery)) {
+                        $configsKey[$row['cfg_key']] = $row['cfg_key'];
+                        $e2g[$row['cfg_key']] = $row['cfg_val'];
+                    }
+                }
+            }
+            $countConfigs['oldConfigDb'] = count($e2g);
+        }
+
+        // the default config will replace any blank value of config's.
+        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php'))) {
+            require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
+            foreach ($e2gDefault as $dk => $dv) {
+                if (!isset($configsKey[$dk])) {
+                    $e2g[$dk] = $dv;
+                }
+            }
+            $countConfigs['defaultConfigs'] = count($e2gDefault);
+            $e2gDefault = array();
+            unset($e2gDefault);
+        }
+
+        if (isset($countConfigs['oldConfigFile']) && $countConfigs['oldConfigFile'] < $countConfigs['defaultConfigs']
+                || isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']
+                || !isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])
+        ) {
+            $this->saveE2gSettings($e2g);
+        }
+
+        // CHECKING THE root and _thumbnails FOLDERs
+        if (!is_dir(MODX_BASE_PATH . $e2g['dir'])) {
+            // INSTALL
+            if (is_dir(E2G_MODULE_PATH . 'install')) {
+                require_once E2G_MODULE_PATH . 'install/index.php';
+                exit();
+            } else {
+                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['dir'] . ' &quot;' . $e2g['dir'] . '&quot; ' . $this->lng['empty'] . '</b>';
+//                exit;
+            }
+        } elseif (!is_dir(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails')) {
+            if (mkdir(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails')) {
+                @chmod(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails', 0755);
+            } else {
+                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['_thumb_err'] . '</b>';
+                exit;
+            }
+        }
+        if (is_dir(E2G_MODULE_PATH . 'install')) {
+            $modx = $this->modx;
+            $lng = $this->lng;
+            require_once E2G_MODULE_PATH . 'install/index.php';
+            exit();
+        }
+
+        // Easy 2 Gallery module path
+        if (!defined('E2G_GALLERY_PATH')) {
+            define('E2G_GALLERY_PATH', MODX_BASE_PATH . $e2g['dir']);
+        }
+        // Easy 2 Gallery module URL
+        if (!defined('E2G_GALLERY_URL')) {
+            define('E2G_GALLERY_URL', MODX_SITE_URL . $e2g['dir']);
+        }
+
+        return $this->_htmlspecialcharsArray($e2g);
+    }
+
+    private function loadE2gModCfg() {
+        $modx = $this->modx; // for below pages
+        $e2g = $this->e2g; // for below pages
+        $lng = $this->lng; // for below pages
+        include E2G_MODULE_PATH . 'includes/configs/params.module.easy2gallery.php';
+
+        return $e2gModCfg;
+    }
+
+    /**
+     * htmlspecialchars the input in an array form
+     * @param   $array  subjects
+     * @return  string  the processed subjects
+     */
+    private function _htmlspecialcharsArray(array $array) {
+        if (empty($array))
+            return $array;
+        foreach ($array as $key => $value) {
+            if (is_array($value)) {
+                $value = $this->_htmlspecialcharsArray($value);
+            }
+            $o[$key] = htmlspecialchars($value, ENT_QUOTES);
+        }
+        return $o;
     }
 
 }

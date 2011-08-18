@@ -72,7 +72,7 @@ if (!isset($_GET['tag']) && !isset($_GET['path'])) {
                 <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;view=list<?php
             echo isset($_GET['pid']) ? '&amp;pid=' . $parentId : '';
             echo isset($_GET['path']) ? '&amp;path=' . $_GET['path'] : '';
-?>" title="list">
+?>" title="<?php echo $this->lng['list'];?>">
                     <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/table.png" alt="" />
                 </a>
             </li>
@@ -80,7 +80,7 @@ if (!isset($_GET['tag']) && !isset($_GET['path'])) {
                 <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;view=thumbnails<?php
                    echo isset($_GET['pid']) ? '&amp;pid=' . $parentId : '';
                    echo isset($_GET['path']) ? '&amp;path=' . $_GET['path'] : '';
-?>" title="thumbnails">
+?>" title="<?php echo $this->lng['thumbnails'];?>">
                        <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/slides.png" alt="" />
                 </a>
             </li>
