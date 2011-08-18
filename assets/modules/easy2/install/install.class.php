@@ -550,7 +550,6 @@ class install {
         // CHECK/CREATE DIRS
         if (is_dir(MODX_BASE_PATH . $post['path'])) {
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $this->lngi['dir_exists'] . ': ' . $post['path'];
-            $_SESSION['easy2dir'] = $post['path'];
         } else {
             $npath = '..';
             foreach ($dirs as $dir) {
@@ -563,7 +562,6 @@ class install {
                     $this->chref($index);
                 }
             }
-            $_SESSION['easy2dir'] = substr($npath, 3) . DIRECTORY_SEPARATOR;
             $_SESSION['easy2suc'][] = __LINE__ . ': ' . $this->lngi['dir_created'] . ': ' . $post['path'];
         }
 
@@ -958,6 +956,27 @@ class install {
                 $this->chref($index);
             }
         }
+
+        // check and update the parent directory
+        $sqlConfigDir = 'SELECT cfg_val FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                . 'WHERE `cfg_key`=\'dir\'';
+        $resultConfigDir = $this->modx->db->getValue($this->modx->db->query($sqlConfigDir));
+
+        if (empty($resultConfigDir)) {
+            $this->modx->db->query(
+                    'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                    . 'SET '
+                    . 'cfg_key=\'dir\','
+                    . 'cfg_val=\'' . $post['path'] . '\''
+                    );
+        } elseif($resultConfigDir !== $post['path']) {
+            $this->modx->db->query(
+                    'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                    . 'SET cfg_val=\'' . $post['path'] . '\''
+                    . 'WHERE cfg_key=\'dir\''
+                    );
+        }
+
         // adding easy2_plugins table for 1.4.0 RC2
         if (!isset($tab[$this->modx->db->config['table_prefix'] . 'easy2_plugins'])) {
             $createPluginTable = 'CREATE TABLE IF NOT EXISTS ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins (
@@ -1342,11 +1361,6 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
 
         $_SESSION['easy2suc']['success'] = '<br /><br /><br />' . $this->lngi['success']
                 . '<br /><br /><input type="button" value="' . $this->lngi['del_inst_dir'] . '" onclick="document.location.href=\'' . $index . '&p=del_inst_dir\'">';
-
-        $_SESSION['saveE2gSettings'] = true;
-        // SAVE DIR
-        // TODO: switch to database checking
-        unset($_SESSION['easy2dir']);
 
         $this->chref($index);
     }
