@@ -42,7 +42,7 @@ if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
 $e2gModule = new E2gMod($modx);
 
 if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'install')) {
-    $e2g = $e2gModule->loadSettings();
+    $e2g = $e2gModule->e2g;
     return require_once E2G_MODULE_PATH . 'install/index.php';
 }
 

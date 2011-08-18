@@ -1204,7 +1204,7 @@ if (!empty($moduleFile) && file_exists($moduleFile)) {
 
         // SNIPPET
 
-        if (empty($snippetId) || $snippetId == '') {
+        if (empty($post['snippet_id']) || $post['snippet_id'] == '') {
 
             $snippetFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/snippet.easy2gallery.php');
             if (!empty($snippetFile) && file_exists($snippetFile)) {
@@ -1227,7 +1227,7 @@ if (!empty($snippetFile) && file_exists($snippetFile)) {
                         . "VALUES('easy2', 'Easy 2 Gallery', '" . mysql_escape_string($snippetCode) . "', '', '1','', '0')";
 
                 if (mysql_query($sql)) {
-                    $snippetId = mysql_insert_id();
+                    $post['snippet_id'] = mysql_insert_id();
                     $_SESSION['easy2suc'][] = __LINE__ . ': ' . $this->lngi['snippet_added'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__ . ': ' . $this->lngi['snippet_add_err'];
@@ -1250,7 +1250,7 @@ if (!empty($snippetFile) && file_exists($snippetFile)) {
             }
         }
         else
-            $snippetId = $this->e2g['snippet_id'];
+            $post['snippet_id'] = $this->e2g['snippet_id'];
 
         // PLUGIN
         $pluginFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/plugin.easy2gallery.php');
@@ -1268,7 +1268,7 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
             return FALSE;
         }
 
-        if (empty($pluginId) || $pluginId == '') {
+        if (empty($post['plugin_id']) || $post['plugin_id'] == '') {
             $select = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugins WHERE name=\'easy2\'';
             $query = mysql_query($select);
             if (mysql_num_rows($query) == 0) {
@@ -1277,40 +1277,40 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                         . "VALUES ('easy2', 'Easy 2 Gallery plugin','" . mysql_escape_string($pluginCode) . "')"
                 ;
                 if (mysql_query($insert)) {
-                    $pluginId = mysql_insert_id();
+                    $post['plugin_id'] = mysql_insert_id();
                     $_SESSION['easy2suc'][] = __LINE__ . ': ' . $this->lngi['plugin_added'];
                 } else {
                     $_SESSION['easy2err'][] = __LINE__ . ': ' . $this->lngi['plugin_add_err'];
                     $this->chref($index);
                 }
             } else {
-                $pluginId = mysql_result($query, 0, 0);
+                $post['plugin_id'] = mysql_result($query, 0, 0);
             }
         } else {
-            $pluginId = $this->e2g['plugin_id'];
+            $post['plugin_id'] = $this->e2g['plugin_id'];
         }
 
         // PLUGIN EVENTS
-        if (!empty($pluginId)) {
+        if (!empty($post['plugin_id'])) {
             $nEvtIds = array('90', '94'); // Plugin event's IDs. Will be added more later.
-            $delete = mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugin_events WHERE pluginid=\'' . $pluginId . '\'');
+            $delete = mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugin_events WHERE pluginid=\'' . $post['plugin_id'] . '\'');
             if ($delete) {
                 foreach ($nEvtIds as $nEvtId) {
                     mysql_query('INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'site_plugin_events '
                             . '(pluginid, evtid, priority) '
-                            . "VALUES ('$pluginId','$nEvtId','0')"
+                            . "VALUES ('" . $post['plugin_id'] . "','$nEvtId','0')"
                     );
                 }
             } else {
                 $_SESSION['easy2err'][] = __LINE__ . ': ' . __LINE__ . ' Error: ' . mysql_error();
             }
 
-            $select = mysql_query('SELECT plugincode FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugins WHERE id =\'' . $pluginId . '\'');
+            $select = mysql_query('SELECT plugincode FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugins WHERE id =\'' . $post['plugin_id'] . '\'');
             $result = mysql_result($select, 0, 0);
             if ($result != $pluginCode) {
                 $res = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'site_plugins '
                         . 'SET plugincode = \'' . mysql_escape_string($pluginCode)
-                        . '\' WHERE id =\'' . $pluginId . '\'';
+                        . '\' WHERE id =\'' . $post['plugin_id'] . '\'';
                 if (mysql_query($res)) {
                     $_SESSION['easy2suc'][] = __LINE__ . ': ' . $this->lngi['plugin_updated'];
                 } else {

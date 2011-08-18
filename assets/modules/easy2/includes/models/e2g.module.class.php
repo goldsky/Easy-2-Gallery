@@ -2764,7 +2764,7 @@ class E2gMod extends E2gPub {
             foreach ($entries as $k => $v) {
                 $c .= "        '$k' => " . (is_numeric($v) ? $v : "'" . addslashes($v) . "'") . ",\r\n";
             }
-            $c .= ");\r\n?>";
+            $c .= ");\r\n";
             $f = fopen(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php', 'w+');
             fwrite($f, $c);
             fclose($f);
@@ -4437,13 +4437,13 @@ class E2gMod extends E2gPub {
      * @return void
      */
     public function loadSettings() {
-
+        $e2g = array();
         $countConfigs = array();
         /**
          * Create a smooth conversion between file based config to database base
          */
         // CONFIGURATIONS from the previous version installation
-        $configFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'configs/config.easy2gallery.php';;
+        $configFile = dirname(dirname(__FILE__)) . '/configs/config.easy2gallery.php';
         if (file_exists(realpath($configFile))) {
             require_once realpath($configFile);
             foreach ($e2g as $ck => $cv) {
@@ -4454,33 +4454,31 @@ class E2gMod extends E2gPub {
         }
 
         // CONFIGURATIONS
-        if (!isset($e2g)) {
-            $upgradeCheck = 'SHOW TABLES LIKE \'' . $this->modx->db->config['table_prefix'] . 'easy2_configs\' ';
-            $upgradeCheckValue = $this->modx->db->getValue($this->modx->db->query($upgradeCheck));
-            if (!empty($upgradeCheckValue)) {
-                $configsQuery = $this->modx->db->select('*', $this->modx->db->config['table_prefix'] . 'easy2_configs');
-                if ($configsQuery) {
-                    while ($row = mysql_fetch_array($configsQuery)) {
-                        $configsKey[$row['cfg_key']] = $row['cfg_key'];
-                        $e2g[$row['cfg_key']] = $row['cfg_val'];
-                    }
+        $configTables = 'SHOW TABLES LIKE \'' . $this->modx->db->config['table_prefix'] . 'easy2_configs\' ';
+        $configTablesValues = $this->modx->db->getValue($this->modx->db->query($configTables));
+        if (!empty($configTablesValues)) {
+            $configsQuery = $this->modx->db->select('*', $this->modx->db->config['table_prefix'] . 'easy2_configs');
+            if ($configsQuery) {
+                while ($row = mysql_fetch_array($configsQuery)) {
+                    $configsKey[$row['cfg_key']] = $row['cfg_key'];
+                    $e2g[$row['cfg_key']] = $row['cfg_val'];
                 }
             }
             $countConfigs['oldConfigDb'] = count($e2g);
         }
 
         // the default config will replace any blank value of config's.
-        $defaultConfigFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'configs/default.config.easy2gallery.php';
+        $defaultConfigFile = dirname(dirname(__FILE__)) . '/configs/default.config.easy2gallery.php';
         if (file_exists(realpath($defaultConfigFile))) {
             require_once realpath($defaultConfigFile);
             if (!empty($e2gDefault)) {
-            foreach ($e2gDefault as $dk => $dv) {
-                if (!isset($configsKey[$dk])) {
-                    $e2g[$dk] = $dv;
+                foreach ($e2gDefault as $dk => $dv) {
+                    if (!isset($configsKey[$dk])) {
+                        $e2g[$dk] = $dv;
+                    }
                 }
             }
-            }
-//            $countConfigs['defaultConfigs'] = count($e2gDefault);
+            $countConfigs['defaultConfigs'] = count($e2gDefault);
         }
 
         // Easy 2 Gallery module path
@@ -4492,10 +4490,17 @@ class E2gMod extends E2gPub {
             define('E2G_GALLERY_URL', MODX_SITE_URL . $e2g['dir']);
         }
 
-        if (isset($countConfigs['oldConfigFile']) && $countConfigs['oldConfigFile'] < $countConfigs['defaultConfigs']
-                || isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']
-                || !isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])
-        ) {
+        $saveE2gSettings = FALSE;
+        if (isset($countConfigs['oldConfigFile'])) {
+            $saveE2gSettings = TRUE;
+        }
+        if (isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']) {
+            $saveE2gSettings = TRUE;
+        }
+        if (!isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])) {
+            $saveE2gSettings = TRUE;
+        }
+        if ($saveE2gSettings) {
             $this->saveE2gSettings($e2g);
         }
 
@@ -4542,7 +4547,7 @@ class E2gMod extends E2gPub {
      * @param   $array  subjects
      * @return  string  the processed subjects
      */
-    private function _htmlspecialcharsArray(array $array) {
+    private function _htmlspecialcharsArray($array) {
         if (empty($array))
             return $array;
         foreach ($array as $key => $value) {

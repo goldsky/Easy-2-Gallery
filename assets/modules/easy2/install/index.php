@@ -24,7 +24,6 @@ if (isset($_GET['p']) && $_GET['p'] == 'del_inst_dir') {
 } elseif (!empty($_POST)) {
     $install->initInstall($_POST, $index);
 } else {
-
     // SNIPPET
     if (empty($e2g['snippet_id']) || $e2g['snippet_id'] == '') {
         $select = mysql_query('SELECT id FROM ' . $modx->db->config['table_prefix'] . 'site_snippets WHERE name =\'easy2\'');
