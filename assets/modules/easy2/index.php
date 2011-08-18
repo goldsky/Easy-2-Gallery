@@ -31,6 +31,7 @@ if (!isset($_SESSION['easy2err']))
 if (!isset($_SESSION['easy2suc']))
     $_SESSION['easy2suc'] = array();
 
+$output = '';
 $e2gModClassFile = E2G_MODULE_PATH . 'includes/models/e2g.module.class.php';
 if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
     include $e2gModClassFile;
@@ -38,10 +39,14 @@ if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
     $output = 'Missing $e2gModClassFile';
 }
 
-if (class_exists('E2gPub') && class_exists('E2gMod')) {
-    $e2gModule = new E2gMod($modx);
+$e2gModule = new E2gMod($modx);
 
-    $output = $e2gModule->explore();
+if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'install')) {
+    $e2g = $e2gModule->loadSettings();
+    return require_once E2G_MODULE_PATH . 'install/index.php';
 }
+
+$e2gModule->checkFolders();
+$output = $e2gModule->explore();
 
 return $output;

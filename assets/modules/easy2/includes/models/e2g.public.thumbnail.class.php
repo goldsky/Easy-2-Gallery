@@ -72,7 +72,6 @@ class E2gThumb {
          * CREATE THE THUMBNAIL
          */
         if (!file_exists(realpath($gdir . $thumbPath))) {
-
             // Apache's timeout: 300 secs
             if (function_exists('ini_get') && !ini_get('safe_mode')) {
                 if (function_exists('set_time_limit')) {
@@ -84,21 +83,22 @@ class E2gThumb {
                     }
                 }
             }
-        
+
             ob_start();
 
             $imgSize = @getimagesize($gdir . $path);
-            if (!$imgSize)
+            if (!$imgSize) {
                 return FALSE;
-
+            }
             if ($imgSize[2] == 1)
                 $im = imagecreatefromgif($gdir . $path);
             elseif ($imgSize[2] == 2)
                 $im = imagecreatefromjpeg($gdir . $path);
             elseif ($imgSize[2] == 3)
                 $im = imagecreatefrompng($gdir . $path);
-            else
+            else {
                 return FALSE;
+            }
 
             if ($imgSize[0] / $w > 2.00 || $imgSize[1] / $h > 2.00) {
                 $tmp_w = $w * 2.00;
@@ -193,10 +193,11 @@ class E2gThumb {
             $count = count($dirs) - 1;
             for ($c = 0; $c < $count; $c++) {
                 $npath .= '/' . $dirs[$c];
-                if (is_dir($npath))
+                if (is_dir($npath)) {
                     continue;
-                elseif (!@mkdir($npath))
+                } elseif (!@mkdir($npath)) {
                     return FALSE;
+                }
                 @chmod($npath, 0755);
             }
 
@@ -250,7 +251,7 @@ class E2gThumb {
                 }
             }
         }
-        
+
         $inf = @getimagesize($fp);
 
         if ($inf[2] == 1)

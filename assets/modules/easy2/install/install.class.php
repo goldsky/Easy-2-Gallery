@@ -1,13 +1,5 @@
 <?php
 
-//$e2gModClassFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'e2g.module.class.php';
-//if (!class_exists('E2gPub') && file_exists(realpath($e2gModClassFile))) {
-//    include $e2gModClassFile;
-//} else {
-//    return 'Missing $e2gModClassFile';
-//}
-//class install extends E2gMod{
-
 class install {
 
     public $modx;
@@ -957,26 +949,6 @@ class install {
             }
         }
 
-        // check and update the parent directory
-        $sqlConfigDir = 'SELECT cfg_val FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
-                . 'WHERE `cfg_key`=\'dir\'';
-        $resultConfigDir = $this->modx->db->getValue($this->modx->db->query($sqlConfigDir));
-
-        if (empty($resultConfigDir)) {
-            $this->modx->db->query(
-                    'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
-                    . 'SET '
-                    . 'cfg_key=\'dir\','
-                    . 'cfg_val=\'' . $post['path'] . '\''
-                    );
-        } elseif($resultConfigDir !== $post['path']) {
-            $this->modx->db->query(
-                    'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
-                    . 'SET cfg_val=\'' . $post['path'] . '\''
-                    . 'WHERE cfg_key=\'dir\''
-                    );
-        }
-
         // adding easy2_plugins table for 1.4.0 RC2
         if (!isset($tab[$this->modx->db->config['table_prefix'] . 'easy2_plugins'])) {
             $createPluginTable = 'CREATE TABLE IF NOT EXISTS ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins (
@@ -1362,7 +1334,34 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
         $_SESSION['easy2suc']['success'] = '<br /><br /><br />' . $this->lngi['success']
                 . '<br /><br /><input type="button" value="' . $this->lngi['del_inst_dir'] . '" onclick="document.location.href=\'' . $index . '&p=del_inst_dir\'">';
 
+        $this->_saveInstallConfig('dir', $post['path']);
+        $this->_saveInstallConfig('plugin_id', $post['plugin_id']);
+        $this->_saveInstallConfig('snippet_id', $post['snippet_id']);
+        $this->_saveInstallConfig('mod_id', $post['mod_id']);
+
         $this->chref($index);
+    }
+
+    private function _saveInstallConfig($cfgKey, $cfgVal) {
+        // check and update the parent directory
+        $sqlConfigDir = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                . 'WHERE cfg_key=\'' . $cfgKey . '\'';
+        $query = mysql_query($sqlConfigDir);
+        while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
+            $resultConfigDir[$row['cfg_key']] = $row['cfg_val'];
+        }
+
+        if (!$resultConfigDir) {
+            $this->modx->db->query(
+                    'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                    . 'SET cfg_key=\'' . $cfgKey . '\', cfg_val=\'' . $cfgVal . '\''
+            );
+        } elseif ($resultConfigDir[$cfgKey] !== $cfgVal) {
+            $this->modx->db->query(
+                    'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
+                    . 'SET cfg_val=\'' . $cfgVal . '\' WHERE cfg_key=\'' . $cfgKey . '\''
+            );
+        }
     }
 
 }

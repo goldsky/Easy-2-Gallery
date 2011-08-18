@@ -65,7 +65,7 @@ if (empty($getRequests)) {
     die('Request is empty');
 }
 
-$index = $e2gModCfg['index'];
+$index = $e2gMod->e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
@@ -610,7 +610,6 @@ if (FALSE !== $scanFiles) :
 
         ####################################################################
         $filePhRow['thumb.link'] = '';
-
         $filePhRow['thumb.src'] = '';
         $filePhRow['thumb.thumb'] = '';
         if (!empty($filePhRow['thumb.id'])) {

@@ -20,6 +20,7 @@ $e2g_lang['english'] = array (
     'dir_exists' => 'Folder exists',
     'empty_dir' => 'folder is not set',
     'field' => 'Field',
+    'install' => 'Installation',
     'mod_update_err' => 'Couldn&#039;t update module',
     'mod_updated' => 'Module is updated',
     'ok' => 'Install',

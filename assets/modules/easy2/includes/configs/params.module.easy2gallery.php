@@ -1,5 +1,9 @@
 <?php
 
+if (!defined('E2G_MODULE_PATH')) {
+    die();
+}
+
 // ENCODING
 $e2gModCfg['e2g_encode'] = $e2g['e2g_encode'];
 

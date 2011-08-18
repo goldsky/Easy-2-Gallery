@@ -26,7 +26,7 @@ class E2gMod extends E2gPub {
      * The module's configurations in an array
      * @var mixed all the module's settings
      */
-    private $e2gModCfg;
+    public $e2gModCfg;
 
     /**
      * The default configuration from the config fils
@@ -53,8 +53,9 @@ class E2gMod extends E2gPub {
             die($this->lng); // FALSE returned.
         }
         $this->e2g = $this->loadSettings();
-        $this->e2gModCfg = $this->loadE2gModCfg();
+        $this->e2gModCfg = $this->_loadE2gModCfg();
 
+        $cfg = array_merge($this->e2g, $this->e2gModCfg);
         parent::__construct($modx, $this->e2gModCfg);
     }
 
@@ -4436,13 +4437,15 @@ class E2gMod extends E2gPub {
      * @return void
      */
     public function loadSettings() {
+
         $countConfigs = array();
         /**
          * Create a smooth conversion between file based config to database base
          */
         // CONFIGURATIONS from the previous version installation
-        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))) {
-            require_once E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php';
+        $configFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'configs/config.easy2gallery.php';;
+        if (file_exists(realpath($configFile))) {
+            require_once realpath($configFile);
             foreach ($e2g as $ck => $cv) {
                 $configsKey[$ck] = $ck;
                 $configsVal[$ck] = $cv;
@@ -4467,48 +4470,17 @@ class E2gMod extends E2gPub {
         }
 
         // the default config will replace any blank value of config's.
-        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php'))) {
-            require_once E2G_MODULE_PATH . 'includes/configs/default.config.easy2gallery.php';
+        $defaultConfigFile = dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . 'configs/default.config.easy2gallery.php';
+        if (file_exists(realpath($defaultConfigFile))) {
+            require_once realpath($defaultConfigFile);
+            if (!empty($e2gDefault)) {
             foreach ($e2gDefault as $dk => $dv) {
                 if (!isset($configsKey[$dk])) {
                     $e2g[$dk] = $dv;
                 }
             }
-            $countConfigs['defaultConfigs'] = count($e2gDefault);
-            $e2gDefault = array();
-            unset($e2gDefault);
-        }
-
-        if (isset($countConfigs['oldConfigFile']) && $countConfigs['oldConfigFile'] < $countConfigs['defaultConfigs']
-                || isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']
-                || !isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])
-        ) {
-            $this->saveE2gSettings($e2g);
-        }
-
-        // CHECKING THE root and _thumbnails FOLDERs
-        if (!is_dir(MODX_BASE_PATH . $e2g['dir'])) {
-            // INSTALL
-            if (is_dir(E2G_MODULE_PATH . 'install')) {
-                require_once E2G_MODULE_PATH . 'install/index.php';
-                exit();
-            } else {
-                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['dir'] . ' &quot;' . $e2g['dir'] . '&quot; ' . $this->lng['empty'] . '</b>';
-//                exit;
             }
-        } elseif (!is_dir(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails')) {
-            if (mkdir(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails')) {
-                @chmod(MODX_BASE_PATH . $e2g['dir'] . '_thumbnails', 0755);
-            } else {
-                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['_thumb_err'] . '</b>';
-                exit;
-            }
-        }
-        if (is_dir(E2G_MODULE_PATH . 'install')) {
-            $modx = $this->modx;
-            $lng = $this->lng;
-            require_once E2G_MODULE_PATH . 'install/index.php';
-            exit();
+//            $countConfigs['defaultConfigs'] = count($e2gDefault);
         }
 
         // Easy 2 Gallery module path
@@ -4520,14 +4492,47 @@ class E2gMod extends E2gPub {
             define('E2G_GALLERY_URL', MODX_SITE_URL . $e2g['dir']);
         }
 
+        if (isset($countConfigs['oldConfigFile']) && $countConfigs['oldConfigFile'] < $countConfigs['defaultConfigs']
+                || isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']
+                || !isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])
+        ) {
+            $this->saveE2gSettings($e2g);
+        }
+
         return $this->_htmlspecialcharsArray($e2g);
     }
 
-    private function loadE2gModCfg() {
-        $modx = $this->modx; // for below pages
-        $e2g = $this->e2g; // for below pages
-        $lng = $this->lng; // for below pages
-        include E2G_MODULE_PATH . 'includes/configs/params.module.easy2gallery.php';
+    public function installE2g($modx, $e2g) {
+        include E2G_MODULE_PATH . 'install/index.php';
+        exit();
+    }
+
+    public function checkFolders() {
+        // CHECKING THE root and _thumbnails FOLDERs
+        if (!is_dir(MODX_BASE_PATH . $this->e2g['dir'])) {
+            // INSTALL
+            if (is_dir(E2G_MODULE_PATH . 'install')) {
+                return $this->installE2g($this->modx, $this->e2g);
+            } else {
+                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['dir'] . ' &quot;'
+                        . $this->e2g['dir'] . '&quot; ' . $this->lng['empty'] . '</b>';
+//                exit;
+            }
+        } elseif (!is_dir(MODX_BASE_PATH . $this->e2g['dir'] . '_thumbnails')) {
+            if (mkdir(MODX_BASE_PATH . $this->e2g['dir'] . '_thumbnails')) {
+                @chmod(MODX_BASE_PATH . $this->e2g['dir'] . '_thumbnails', 0755);
+            } else {
+                $_SESSION['easy2err'][] = '<b style="color:red">' . $this->lng['_thumb_err'] . '</b>';
+                exit;
+            }
+        }
+    }
+
+    private function _loadE2gModCfg() {
+        $modx = $this->modx; // for below page
+        $e2g = $this->e2g; // for below page
+        $lng = $this->lng; // for below page
+        include dirname(dirname(__FILE__)) . '/configs/params.module.easy2gallery.php';
 
         return $e2gModCfg;
     }

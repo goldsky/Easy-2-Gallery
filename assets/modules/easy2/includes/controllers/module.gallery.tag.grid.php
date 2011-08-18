@@ -65,7 +65,7 @@ if (empty($getRequests)) {
     die('Request is empty');
 }
 
-$index = $e2gModCfg['index'];
+$index = $e2gMod->e2gModCfg['index'];
 $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 
 $rootDir = '../../../../../' . $e2g['dir'];
