@@ -39,6 +39,8 @@ if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
     $output = 'Missing $e2gModClassFile';
 }
 
+$_SESSION['installE2g'] = FALSE;
+
 $e2gModule = new E2gMod($modx);
 
 if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'install')) {

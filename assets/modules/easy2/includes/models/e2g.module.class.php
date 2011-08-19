@@ -4497,7 +4497,7 @@ class E2gMod extends E2gPub {
         if (isset($countConfigs['oldConfigDb']) && $countConfigs['oldConfigDb'] < $countConfigs['defaultConfigs']) {
             $saveE2gSettings = TRUE;
         }
-        if (!isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb'])) {
+        if (!isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb']) && !$_SESSION['installE2g']) {
             $saveE2gSettings = TRUE;
         }
         if ($saveE2gSettings) {

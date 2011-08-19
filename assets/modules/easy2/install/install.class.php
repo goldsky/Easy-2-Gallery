@@ -1169,7 +1169,7 @@ class install {
         #*************************************
         // MODULE
 
-        if (empty($this->e2g['mod_id']) || $this->e2g['mod_id'] == '') {
+        if (empty($this->e2g['mod_id'])) {
 
             $moduleFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/index.php');
             if (!empty($moduleFile) && file_exists($moduleFile)) {
@@ -1200,11 +1200,11 @@ if (!empty($moduleFile) && file_exists($moduleFile)) {
             }
         }
         else
-            $mod_id = $this->e2g['mod_id'];
+            $post['mod_id'] = !empty($post['mod_id']) ? $post['mod_id'] : $this->e2g['mod_id'];
 
         // SNIPPET
 
-        if (empty($post['snippet_id']) || $post['snippet_id'] == '') {
+        if (empty($post['snippet_id'])) {
 
             $snippetFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/snippet.easy2gallery.php');
             if (!empty($snippetFile) && file_exists($snippetFile)) {
@@ -1250,7 +1250,7 @@ if (!empty($snippetFile) && file_exists($snippetFile)) {
             }
         }
         else
-            $post['snippet_id'] = $this->e2g['snippet_id'];
+            $post['snippet_id'] = !empty($post['snippet_id']) ? $post['snippet_id'] : $this->e2g['snippet_id'];
 
         // PLUGIN
         $pluginFile = realpath(MODX_BASE_PATH . 'assets/modules/easy2/plugin.easy2gallery.php');
@@ -1268,10 +1268,10 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
             return FALSE;
         }
 
-        if (empty($post['plugin_id']) || $post['plugin_id'] == '') {
+        if (empty($post['plugin_id'])) {
             $select = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'site_plugins WHERE name=\'easy2\'';
             $query = mysql_query($select);
-            if (mysql_num_rows($query) == 0) {
+            if (mysql_num_rows($query) === 0) {
                 $insert = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'site_plugins '
                         . '(name,description,plugincode) '
                         . "VALUES ('easy2', 'Easy 2 Gallery plugin','" . mysql_escape_string($pluginCode) . "')"
@@ -1287,7 +1287,7 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                 $post['plugin_id'] = mysql_result($query, 0, 0);
             }
         } else {
-            $post['plugin_id'] = $this->e2g['plugin_id'];
+            $post['plugin_id'] = !empty($post['plugin_id']) ? $post['plugin_id'] : $this->e2g['plugin_id'];
         }
 
         // PLUGIN EVENTS
@@ -1338,6 +1338,9 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
         $this->_saveInstallConfig('plugin_id', $post['plugin_id']);
         $this->_saveInstallConfig('snippet_id', $post['snippet_id']);
         $this->_saveInstallConfig('mod_id', $post['mod_id']);
+
+        $_SESSION['installE2g'] = FALSE;
+        unset($_SESSION['installE2g']);
 
         $this->chref($index);
     }
