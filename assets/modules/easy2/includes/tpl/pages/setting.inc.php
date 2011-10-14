@@ -3,9 +3,9 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_config" method="post">
-    <input type="hidden" value="<?php $this->e2g['mod_id'];?>" name="mod_id" />
-    <input type="hidden" value="<?php $this->e2g['plugin_id'];?>" name="plugin_id" />
-    <input type="hidden" value="<?php $this->e2g['snippet_id'];?>" name="snippet_id" />
+    <input type="hidden" value="<?php echo $this->e2g['mod_id'];?>" name="mod_id" />
+    <input type="hidden" value="<?php echo $this->e2g['plugin_id'];?>" name="plugin_id" />
+    <input type="hidden" value="<?php echo $this->e2g['snippet_id'];?>" name="snippet_id" />
     <input type="submit" value="<?php echo $this->lng['save']; ?>" /> &nbsp; &nbsp; &nbsp;
     <input name="clean_cache" type="checkbox" value="1" style="border:0" /> <?php echo $this->lng['clean_cache']; ?>
     <br /><br />
