@@ -18,6 +18,7 @@ $e2g_lang['english'] = array (
     'author' => 'Author',
     'auto' => 'Auto',
     'back' => 'Back',
+    'back_tpl' => 'Back navigation template',
     'blackglass' => 'Blackglass',
     'bottom' => 'bottom',
     'btn_field_add' => 'Upload more',
@@ -77,8 +78,8 @@ $e2g_lang['english'] = array (
     'copy' => 'Copy',
     'credit_lang_file' => 'Language file credit',
     'credit_lang_file_author' => 'Cx2, Temus, goldsky',
-    'credit_lang_file_date' => 'April 18, 2011',
-    'credit_lang_file_version' => '2.5',
+    'credit_lang_file_date' => 'September 17, 2011',
+    'credit_lang_file_version' => '2.6',
     'crumbs_separator_cfg' => 'Separator between the crumbs',
     'crumbs_separator_cfg_desc' => 'Pick any character, including the [space]',
     'crumbs_showAsLinks_cfg' => 'Crumb as a link',
@@ -161,7 +162,6 @@ $e2g_lang['english'] = array (
     'editing' => 'Editing info',
     'email' => 'Email',
     'empty' => 'empty',
-    'empty_name_comment' => 'You must enter name and comment',
     'enable' => 'Enable',
     'enabled' => 'Enabled',
     'enter_dirname' => 'Enter new folder name',
@@ -439,7 +439,7 @@ $e2g_lang['english'] = array (
 &lt;/ul&gt;
 &lt;p&gt;The typical snippet call of using one of these slideshows is&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;[!easy2?slideshow=`smoothgallery` &amp;amp;ss_config=`fullgallery`!]&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from &lt;strong&gt;assets/modules/easy2/slideshows/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;/&#039;. &lt;em&gt;&amp;amp;slideshow&lt;/em&gt; .&#039;.php&lt;/strong&gt;&lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;&amp;amp;ss_indexfile&lt;/strong&gt;&lt;br /&gt; Easy 2 Gallery 1.4.0 calls the slideshow file from the path that is saved on the Slideshows&#039;s menu. &lt;br /&gt; You can create that file elsewhere, and use this parameter to go to that file instead.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_css&lt;/strong&gt; - set the slideshow&#039;s CSS path.&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_js&lt;/strong&gt; - set the slideshow&#039;s JS path.&lt;/p&gt;
 &lt;h3&gt;Thumbnail settings for the slideshows&lt;/h3&gt;
@@ -484,11 +484,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple`!]&lt;/strong&gt;&lt;br /&gt;Will show slideshow with all images under root folder.&lt;/p&gt;
 &lt;p&gt;Example call: &lt;strong&gt;[!easy2? &amp;amp;slideshow=`simple` &amp;amp;gid=`2,4` &amp;amp;ss_w=`600` &amp;amp;ss_h=`200` &amp;amp;ss_allowedratio=`1.0-2.0`!]&lt;/strong&gt;&lt;br /&gt; Will show slideshow with all images under folder ID 2 and 4, with box dimension 600px x 200px, with image ratio allowance (width/height) is between 1.0 to 2.0 (get the limited landscape images).&lt;/p&gt;
 &lt;p&gt;Images height will be adjusted automatically.&lt;/p&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;hr /&gt;
-&lt;p&gt;&amp;nbsp;&lt;/p&gt;
-&lt;h2&gt;Create New Slideshow&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&quot; target=&quot;_blank&quot;&gt;http://modxcms.com/forums/index.php/topic,49266.msg290825.html#msg290825&lt;/a&gt;&lt;/p&gt;',
+&lt;p&gt;&amp;nbsp;&lt;/p&gt;',
     'help_slideshow_title' => 'Slideshows',
     'help_tpl_content' => '&lt;h2&gt;Prepare the global path&lt;/h2&gt;
 &lt;p&gt;If the site pages use &quot;alias path&quot;, it is better to have &amp;lt;base href=&quot;[(site_url)]&quot; /&amp;gt; inside the MODx&#039;s template in the &amp;lt;head&amp;gt; part.&lt;/p&gt;
@@ -556,6 +552,7 @@ $e2g_lang['english'] = array (
     'js_unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
     'kilobytes' => 'kB',
     'langfile_updated' => 'Language file is updated.',
+    'landingpage' => 'Landingpage',
     'last_modified' => 'editing date',
     'left' => 'left',
     'limit' => 'Pictures per page',
@@ -565,6 +562,7 @@ $e2g_lang['english'] = array (
     'magic_quote_disabling' => 'Try to disable it from .htaccess or php.ini',
     'megabytes' => 'MB',
     'memory_usage' => 'memory usage',
+    'miscellaneous' => 'Miscellaneous',
     'mgr_comments' => 'Comments Manager',
     'mgr_files' => 'Files Manager',
     'mgr_plugins' => 'Plugins Manager',
@@ -586,6 +584,7 @@ $e2g_lang['english'] = array (
     'nav_nextSymbol_cfg_desc' => 'Text or html image tag link for next navigation symbol',
     'nav_prevSymbol_cfg' => 'Text or image tag',
     'nav_prevSymbol_cfg_desc' => 'Text or html image tag link for previous navigation symbol',
+    'nav_prevUpNext_tpl' => 'Prev-Up-Next Template',
     'nav_prevUpNextTitle_cfg' => 'Title for navigation',
     'nav_prevUpNextTitle_cfg_desc' => '&lt;p&gt;Title selection for the navigation. If Alias is selected but the database empty, it&#039;ll reverted back as the folder&#039;s name&lt;/p&gt;',
     'nav_upSymbol_cfg' => 'Text or image tag',
@@ -659,6 +658,7 @@ $e2g_lang['english'] = array (
     'settings_pagination' => 'Pagination',
     'settings_recaptcha' => 'reCaptcha Settings',
     'settings_slideshow' => 'Slideshow',
+    'settings_template_files' => 'Template Files',
     'settings_thumb' => 'Thumbnails',
     'show' => 'Show',
     'shrink' => 'shrink',
@@ -672,8 +672,6 @@ $e2g_lang['english'] = array (
     'spam' => 'Spam',
     'ss_allowedratio_cfg' => 'Allowed image&#039;s ratio',
     'ss_allowedratio_cfg_desc' => '&lt;p&gt;Allowed images with the range ( minimum-maximum, in float number ) of the specified width/height dimension ratio to be selected (e.g.: 0.75-1.25). This is useful for filtering landscape/portrait images. Input &lt;strong&gt;&#039;all&#039;&lt;/strong&gt; to allow all.&lt;/p&gt;',
-    'ss_bg_cfg' => 'Background color in text/hex',
-    'ss_bg_cfg_desc' => '&lt;p&gt;It&#039;s only the resized generated image that contains margin gap to the slideshow box. To use RGB below, input &lt;strong&gt;&#039;rgb&#039;&lt;/strong&gt;.&lt;/p&gt;',
     'ss_h_cfg' => 'Slideshow box height',
     'ss_h_cfg_desc' => 'For the div&#039;s class parameter',
     'ss_img_src_cfg' => 'Image source',

@@ -137,12 +137,20 @@ $e2gSnipCfg['gal_desc_continuous'] = (isset($gal_desc_continuous)) ? $gal_desc_c
  */
 // GALLERY TEMPLATE
 $e2gSnipCfg['tpl'] = (isset($tpl)) ? str_replace('../', '', $tpl) : $e2g['tpl'];
+// Description TEMPLATE
+$e2gSnipCfg['desc_tpl'] = (isset($desc_tpl)) ? str_replace('../', '', $desc_tpl) : $e2g['desc_tpl'];
 // DIR TEMPLATE
 $e2gSnipCfg['dir_tpl'] = (isset($dir_tpl)) ? str_replace('../', '', $dir_tpl) : $e2g['dir_tpl'];
 // THUMB TEMPLATE
 $e2gSnipCfg['thumb_tpl'] = (isset($thumb_tpl)) ? str_replace('../', '', $thumb_tpl) : $e2g['thumb_tpl'];
 // THUMB RAND TEMPLATE
 $e2gSnipCfg['rand_tpl'] = (isset($rand_tpl)) ? str_replace('../', '', $rand_tpl) : $e2g['rand_tpl'];
+// BACK NAVIGATION TEMPLATE
+$e2gSnipCfg['back_tpl'] = (isset($back_tpl)) ? str_replace('../', '', $back_tpl) : $e2g['back_tpl'];
+// Prev-Up-Next NAVIGATION TEMPLATE
+$e2gSnipCfg['prevUpNext_tpl'] = (isset($prevUpNext_tpl)) ? str_replace('../', '', $prevUpNext_tpl) : $e2g['prevUpNext_tpl'];
+// Pagination TEMPLATE
+$e2gSnipCfg['pagination_tpl'] = (isset($pagination_tpl)) ? str_replace('../', '', $pagination_tpl) : $e2g['pagination_tpl'];
 // LANDING PAGE TEMPLATE
 $e2gSnipCfg['page_tpl'] = (isset($page_tpl)) ? str_replace('../', '', $page_tpl) : $e2g['page_tpl'];
 // LANDING PAGE CSS
@@ -224,6 +232,8 @@ $e2gSnipCfg['wmt'] = isset($ewmt) ? $ewmt : $e2g['wmt'];
 $e2gSnipCfg['wmpos1'] = (isset($ewmpos1) && is_numeric($ewmpos1)) ? $ewmpos1 : $e2g['wmpos1'];
 // vertical : 1=top | 2=center | 3=bottom
 $e2gSnipCfg['wmpos2'] = (isset($ewmpos2) && is_numeric($ewmpos2)) ? $ewmpos2 : $e2g['wmpos2'];
+// xy coordinate
+$e2gSnipCfg['wmposxy'] = !empty($ewmposxy) ? $ewmposxy : NULL;
 
 /**
  * COMMENTS
@@ -285,8 +295,6 @@ $e2gSnipCfg['ss_thq'] = (isset($ss_thq) && $ss_thq <= 100 && $ss_thq >= 0) ? (in
  */
 $e2gSnipCfg['ss_resize_type'] = isset($ss_resize_type) ? $ss_resize_type : $e2g['ss_resize_type'];
 // image's BACKGROUND COLOR
-$e2gSnipCfg['ss_bg'] = isset($ss_bg) ? $ss_bg : $e2g['ss_bg']; // image's background color
-// OR, if &ss_bg=`rgb` , use below:
 $e2gSnipCfg['ss_red'] = isset($ss_red) ? $ss_red : $e2g['ss_red'];
 $e2gSnipCfg['ss_green'] = isset($ss_green) ? $ss_green : $e2g['ss_green'];
 $e2gSnipCfg['ss_blue'] = isset($ss_blue) ? $ss_blue : $e2g['ss_blue'];
@@ -328,8 +336,6 @@ $e2gSnipCfg['lp_thq'] = (isset($lp_thq) && $lp_thq <= 100 && $lp_thq >= 0) ? (in
  */
 $e2gSnipCfg['lp_resize_type'] = isset($lp_resize_type) ? $lp_resize_type : 'inner';
 // image's BACKGROUND COLOR
-$e2gSnipCfg['lp_bg'] = isset($lp_bg) ? $lp_bg : 'white'; // image's background color
-// OR, if &lp_bg=`rgb` , use below:
 $e2gSnipCfg['lp_red'] = isset($lp_red) ? $lp_red : $e2g['thbg_red'];
 $e2gSnipCfg['lp_green'] = isset($lp_green) ? $lp_green : $e2g['thbg_green'];
 $e2gSnipCfg['lp_blue'] = isset($lp_blue) ? $lp_blue : $e2g['thbg_blue'];

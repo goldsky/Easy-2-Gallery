@@ -3,6 +3,9 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_config" method="post">
+    <input type="hidden" value="<?php $this->e2g['mod_id'];?>" name="mod_id" />
+    <input type="hidden" value="<?php $this->e2g['plugin_id'];?>" name="plugin_id" />
+    <input type="hidden" value="<?php $this->e2g['snippet_id'];?>" name="snippet_id" />
     <input type="submit" value="<?php echo $this->lng['save']; ?>" /> &nbsp; &nbsp; &nbsp;
     <input name="clean_cache" type="checkbox" value="1" style="border:0" /> <?php echo $this->lng['clean_cache']; ?>
     <br /><br />
@@ -34,7 +37,7 @@ if (IN_MANAGER_MODE != 'true')
                             }
                             include ($encodeConfigFile);
                             foreach ($e2gEncodes as $e2gEncode) {
-                            ?>
+                                ?>
                                 <option value="<?php echo $e2gEncode['value']; ?>"<?php echo ($this->e2g['e2g_encode'] == $e2gEncode['value'] ? ' selected="selected"' : ''); ?>><?php echo $e2gEncode['lng']; ?></option>
                             <?php } ?>
                         </select>
@@ -603,10 +606,10 @@ if (IN_MANAGER_MODE != 'true')
                             <td width="180"><b><?php echo $this->lng['nav_prevUpNextTitle_cfg']; ?>:</b></td>
                             <td>
                                 <span style="color:green;">&amp;nav_prevUpNextTitle= cat_name | alias</span>
-                                    <select name="nav_prevUpNextTitle">
-                                        <option value="cat_name"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_name' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['dir_name']; ?></option>
-                                        <option value="cat_alias"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_alias' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['alias']; ?></option>
-                                    </select>
+                                <select name="nav_prevUpNextTitle">
+                                    <option value="cat_name"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_name' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['dir_name']; ?></option>
+                                    <option value="cat_alias"<?php echo ($this->e2g['nav_prevUpNextTitle'] == 'cat_alias' ? ' selected="selected"' : ''); ?>><?php echo $this->lng['alias']; ?></option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
@@ -795,14 +798,6 @@ if (IN_MANAGER_MODE != 'true')
                     <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['ss_resize_type_cfg_desc']); ?></td>
                 </tr>
                 <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['ss_bg_cfg']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;ss_bg=</span> <input name="ss_bg" type="text" value="<?php echo $this->e2g['ss_bg']; ?>" size="10" />
-                    </td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['ss_bg_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
                     <td><b><?php echo $this->lng['ss_rgb_cfg']; ?>:</b></td>
                     <td>
                         R: <span style="color:green;">&amp;ss_red=</span> <input name="ss_red" type="text" value="<?php echo $this->e2g['ss_red']; ?>" size="3" />
@@ -828,115 +823,186 @@ if (IN_MANAGER_MODE != 'true')
             <script type="text/javascript">
                 tpConfig.addTabPage( document.getElementById( 'tabTemplatesSettings') );
             </script>
-            <table cellspacing="0" cellpadding="2" width="100%"><tr class="gridAltItem">
-                    <td width="180"><b><?php echo $this->lng['gallery']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;tpl=</span> <input name="tpl" type="text" value="<?php echo $this->e2g['tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['dir']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;dir_tpl=</span> <input name="dir_tpl" type="text" value="<?php echo $this->e2g['dir_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['thumb']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;thumb_tpl=</span> <input name="thumb_tpl" type="text" value="<?php echo $this->e2g['thumb_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['thumb']; ?> RAND:</b></td>
-                    <td><span style="color:green;">&amp;rand_tpl=</span> <input name="rand_tpl" type="text" value="<?php echo $this->e2g['rand_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['comments']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;comments_tpl=</span> <input name="comments_tpl" type="text" value="<?php echo $this->e2g['comments_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_comments_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['comments_row']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;comments_row_tpl=</span> <input name="comments_row_tpl" type="text" value="<?php echo $this->e2g['comments_row_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_comments_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_lp']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;page_tpl=</span> <input name="page_tpl" type="text" value="<?php echo $this->e2g['page_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_lp_cmt']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;page_comments_tpl=</span> <input name="page_comments_tpl" type="text" value="<?php echo $this->e2g['page_comments_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_lp_cmt_row']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;page_comments_row_tpl=</span> <input name="page_comments_row_tpl" type="text" value="<?php echo $this->e2g['page_comments_row_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_slideshow']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;slideshow_tpl=</span> <input name="ss_tpl" type="text" value="<?php echo $this->e2g['ss_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_jsdisabled']; ?>:</b></td>
-                    <td><input name="jsdisabled_tpl" type="text" value="<?php echo $this->e2g['jsdisabled_tpl']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><br /><b class="success" style="font-size:120%"><?php echo $this->lng['css']; ?></b></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td width="180"><b><?php echo $this->lng['css']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $this->e2g['css']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_css_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['tpl_lp_css']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $this->e2g['page_tpl_css']; ?>" size="70" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_css_path_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['grid_class']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;grid_class=</span> <input name="grid_class" type="text" value="<?php echo $this->e2g['grid_class']; ?>" size="20" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['grid_class_cfg_desc']); ?></td>
-                </tr>
-                <tr class="gridAltItem">
-                    <td><b><?php echo $this->lng['cfg_crumbs_classCurrent']; ?>:</b></td>
-                    <td><span style="color:green;">&amp;crumbs_classCurrent=</span> <input name="crumbs_classCurrent" type="text" value="<?php echo $this->e2g['crumbs_classCurrent']; ?>" size="20" /></td>
-                </tr>
-                <tr>
-                    <td colspan="2"><?php echo $this->lng['classname']; ?></td>
-                </tr>
-            </table>
+
+            <div class="tab-pane" id="tabTemplateConfigPane">
+                <script type="text/javascript">
+                    tpTemplateConfig = new WebFXTabPane(document.getElementById('tabTemplateConfigPane'));
+                </script>
+                <div class="tab-page" id="tabTemplateFiles">
+                    <h2 class="tab"><?php echo $this->lng['settings_template_files']; ?></h2>
+                    <script type="text/javascript">
+                        tpTemplateConfig.addTabPage( document.getElementById( 'tabTemplateFiles') );
+                    </script>
+                    <table cellspacing="0" cellpadding="2" width="100%">
+                        <!-- thumbnails -->
+                        <tr>
+                            <td colspan="2"><b class="success" style="font-size:120%"><?php echo $this->lng['thumbnails']; ?></b></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['gallery']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;tpl=</span> <input name="tpl" type="text" value="<?php echo $this->e2g['tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['description']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;desc_tpl=</span> <input name="desc_tpl" type="text" value="<?php echo $this->e2g['desc_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['dir']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;dir_tpl=</span> <input name="dir_tpl" type="text" value="<?php echo $this->e2g['dir_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['thumb']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;thumb_tpl=</span> <input name="thumb_tpl" type="text" value="<?php echo $this->e2g['thumb_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['thumb']; ?> RAND:</b></td>
+                            <td><span style="color:green;">&amp;rand_tpl=</span> <input name="rand_tpl" type="text" value="<?php echo $this->e2g['rand_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['back_tpl']; ?></b></td>
+                            <td><span style="color:green;">&amp;back_tpl=</span> <input name="back_tpl" type="text" value="<?php echo $this->e2g['back_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['nav_prevUpNext_tpl']; ?></b></td>
+                            <td><span style="color:green;">&amp;prevUpNext_tpl=</span> <input name="prevUpNext_tpl" type="text" value="<?php echo $this->e2g['prevUpNext_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['settings_pagination']; ?></b></td>
+                            <td><span style="color:green;">&amp;pagination_tpl=</span> <input name="pagination_tpl" type="text" value="<?php echo $this->e2g['pagination_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+
+
+                        <!-- comments -->
+                        <tr>
+                            <td colspan="2"><b class="success" style="font-size:120%"><?php echo $this->lng['comments']; ?></b></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['comments']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;comments_tpl=</span> <input name="comments_tpl" type="text" value="<?php echo $this->e2g['comments_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_comments_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['comments_row']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;comments_row_tpl=</span> <input name="comments_row_tpl" type="text" value="<?php echo $this->e2g['comments_row_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_comments_cfg_desc']); ?></td>
+                        </tr>
+
+                        <!-- landingpage -->
+                        <tr>
+                            <td colspan="2"><b class="success" style="font-size:120%"><?php echo $this->lng['landingpage']; ?></b></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_lp']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;page_tpl=</span> <input name="page_tpl" type="text" value="<?php echo $this->e2g['page_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_lp_cmt']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;page_comments_tpl=</span> <input name="page_comments_tpl" type="text" value="<?php echo $this->e2g['page_comments_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_lp_cmt_row']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;page_comments_row_tpl=</span> <input name="page_comments_row_tpl" type="text" value="<?php echo $this->e2g['page_comments_row_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_lp_cmt_path_cfg_desc']); ?></td>
+                        </tr>
+
+                        <!-- slideshow -->
+                        <tr>
+                            <td colspan="2"><b class="success" style="font-size:120%"><?php echo $this->lng['settings_slideshow']; ?></b></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_slideshow']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;slideshow_tpl=</span> <input name="ss_tpl" type="text" value="<?php echo $this->e2g['ss_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+
+                        <!-- miscellaneous -->
+                        <tr>
+                            <td colspan="2"><b class="success" style="font-size:120%"><?php echo $this->lng['miscellaneous']; ?></b></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_jsdisabled']; ?>:</b></td>
+                            <td><input name="jsdisabled_tpl" type="text" value="<?php echo $this->e2g['jsdisabled_tpl']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_path_cfg_desc']); ?></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="tab-page" id="tabTemplateCss">
+                    <h2 class="tab"><?php echo $this->lng['css']; ?></h2>
+                    <script type="text/javascript">
+                        tpTemplateConfig.addTabPage( document.getElementById( 'tabTemplateCss') );
+                    </script>
+                    <table>
+                        <tr class="gridAltItem">
+                            <td width="180"><b><?php echo $this->lng['css']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;css=</span> <input name="css" type="text" value="<?php echo $this->e2g['css']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_css_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['tpl_lp_css']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;page_tpl_css=</span> <input name="page_tpl_css" type="text" value="<?php echo $this->e2g['page_tpl_css']; ?>" size="70" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['tpl_css_path_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['grid_class']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;grid_class=</span> <input name="grid_class" type="text" value="<?php echo $this->e2g['grid_class']; ?>" size="20" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo htmlspecialchars_decode($this->lng['grid_class_cfg_desc']); ?></td>
+                        </tr>
+                        <tr class="gridAltItem">
+                            <td><b><?php echo $this->lng['cfg_crumbs_classCurrent']; ?>:</b></td>
+                            <td><span style="color:green;">&amp;crumbs_classCurrent=</span> <input name="crumbs_classCurrent" type="text" value="<?php echo $this->e2g['crumbs_classCurrent']; ?>" size="20" /></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><?php echo $this->lng['classname']; ?></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
         </div>
         <div class="tab-page" id="tabWatermarks">
             <h2 class="tab"><?php echo $this->lng['watermarks']; ?></h2>

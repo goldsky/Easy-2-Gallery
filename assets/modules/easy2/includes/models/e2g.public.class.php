@@ -24,6 +24,16 @@ class E2gPub { // public/public class
      * @var mixed all the processing variables
      */
     private $_e2g = array();
+    /**
+     * Directorie information
+     * @var array
+     */
+    private $_dirInfo = array();
+    /**
+     * File information
+     * @var array
+     */
+    private $_fileInfo = array();
 
     public function __construct($modx, $e2gPubCfg) {
         // Apache's timeout: 300 secs
@@ -223,6 +233,10 @@ class E2gPub { // public/public class
      * @return  string  the directory's data
      */
     public function getDirInfo($dirId, $field) {
+        if (!empty($this->_dirInfo[$dirId][$field])) {
+            return $this->_dirInfo[$dirId][$field];
+        }
+
         $dirInfo = array();
 
         $q = 'SELECT ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
@@ -239,9 +253,13 @@ class E2gPub { // public/public class
             $dirInfo[$field] = $l[$field];
         }
         mysql_free_result($res);
-        if (empty($dirInfo[$field]))
-            return NULL;
-        return htmlspecialchars_decode($dirInfo[$field], ENT_QUOTES);
+        if (empty($dirInfo[$field])) {
+            return;
+        }
+
+        $this->_dirInfo[$dirId][$field] = htmlspecialchars_decode($dirInfo[$field], ENT_QUOTES);
+
+        return $this->_dirInfo[$dirId][$field];
     }
 
     /**
@@ -251,6 +269,10 @@ class E2gPub { // public/public class
      * @return  string  the file's data
      */
     public function getFileInfo($fileId, $field) {
+        if (!empty($this->_fileInfo[$fileId][$field])) {
+            return $this->_fileInfo[$fileId][$field];
+        }
+
         $fileInfo = array();
 
         $q = 'SELECT ' . $field . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
@@ -263,8 +285,11 @@ class E2gPub { // public/public class
         }
         mysql_free_result($res);
         if (empty($fileInfo[$field]))
-            return NULL;
-        return htmlspecialchars_decode($fileInfo[$field], ENT_QUOTES);
+            return;
+
+        $this->_fileInfo[$fileId][$field] = htmlspecialchars_decode($fileInfo[$field], ENT_QUOTES);
+
+        return $this->_fileInfo[$fileId][$field];
     }
 
     /**
@@ -428,6 +453,9 @@ class E2gPub { // public/public class
      * @return string templated data
      */
     public function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
+        if (empty($data) || !is_array($data)) {
+            return FALSE;
+        }
         foreach ($data as $k => $v) {
             $tpl = str_replace($prefix . (string) $k . $suffix, (string) $v, $tpl);
         }
@@ -440,8 +468,8 @@ class E2gPub { // public/public class
      * @return string   Template's content
      */
     public function getTpl($tpl) {
-        if (file_exists(realpath($this->e2gPubCfg[$tpl]))) {
-            $tplContent = file_get_contents($this->e2gPubCfg[$tpl]);
+        if (!empty($this->e2gPubCfg[$tpl]) && file_exists(realpath($this->e2gPubCfg[$tpl]))) {
+            $tplContent = file_get_contents(realpath($this->e2gPubCfg[$tpl]));
             return $tplContent;
         } elseif (!empty($this->modx->chunkCache[$this->e2gPubCfg[$tpl]])) {
             $tplContent = $this->modx->chunkCache[$this->e2gPubCfg[$tpl]];
