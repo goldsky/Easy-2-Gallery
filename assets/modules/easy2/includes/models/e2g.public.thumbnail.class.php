@@ -15,6 +15,7 @@ class E2gThumb {
      * @var mixed modx's API
      */
     public $modx;
+
     /**
      * The configurations in an array
      * @var mixed all the module's settings
@@ -264,22 +265,29 @@ class E2gThumb {
             return 'Imagecreate error';
 
         if ($this->e2gThumbCfg['wmtype'] == 'text') {
-            // X
-            $len = strlen($this->e2gThumbCfg['wmt']);
-            if ($this->e2gThumbCfg['wmpos1'] == 3)
-                $x = $inf[0] - 10 - ($len * 6);
-            elseif ($this->e2gThumbCfg['wmpos1'] == 2)
-                $x = ($inf[0] - ($len * 6)) / 2;
-            else
-                $x = 10;
+            if (!empty($this->e2gThumbCfg['wmposxy'])) {
+                $xy = @explode(',', $this->e2gThumbCfg['wmposxy']);
+                $x = intval(trim($xy[0]));
+                $y = intval(trim($xy[1]));
+            } else {
+                // X
+                $len = strlen($this->e2gThumbCfg['wmt']);
+                if ($this->e2gThumbCfg['wmpos1'] == 3)
+                    $x = $inf[0] - 10 - ($len * 6);
+                elseif ($this->e2gThumbCfg['wmpos1'] == 2)
+                    $x = ($inf[0] - ($len * 6)) / 2;
+                else
+                    $x = 10;
 
-            // Y
-            if ($this->e2gThumbCfg['wmpos2'] == 3)
-                $y = $inf[1] - 20;
-            elseif ($this->e2gThumbCfg['wmpos2'] == 2)
-                $y = ($inf[1] / 2) - 5;
-            else
-                $y = 10;
+                // Y
+                if ($this->e2gThumbCfg['wmpos2'] == 3)
+                    $y = $inf[1] - 20;
+                elseif ($this->e2gThumbCfg['wmpos2'] == 2)
+                    $y = ($inf[1] / 2) - 5;
+                else
+                    $y = 10;
+            }
+
 
             $text_color = imagecolorallocate($im, 0, 0, 0);
             imagestring($im, 2, $x - 1, $y, $this->e2gThumbCfg['wmt'], $text_color);
@@ -291,9 +299,7 @@ class E2gThumb {
 
             $text_color = imagecolorallocate($im, 255, 255, 255);
             imagestring($im, 2, $x, $y, $this->e2gThumbCfg['wmt'], $text_color);
-        }
-        elseif ($this->e2gThumbCfg['wmtype'] == 'image') {
-
+        } elseif ($this->e2gThumbCfg['wmtype'] == 'image') {
             $wmfp = str_replace('../', '', $this->e2gThumbCfg['wmt']);
             if (!file_exists(realpath($wmfp))) {
                 return 'Water Mark file not found';
@@ -315,23 +321,28 @@ class E2gThumb {
             $wm_w = imageSX($wmi);
             $wm_h = imageSY($wmi);
 
-            // X
-            $len = strlen($this->e2gThumbCfg['wmt']);
-            if ($this->e2gThumbCfg['wmpos1'] == 3)
-                $x = $inf[0] - 10 - $wm_w;
-            elseif ($this->e2gThumbCfg['wmpos1'] == 2)
-                $x = ($inf[0] - $wm_w) / 2;
-            else
-                $x = 10;
+            if (!empty($this->e2gThumbCfg['wmposxy'])) {
+                $xy = @explode(',', $this->e2gThumbCfg['wmposxy']);
+                $x = intval(trim($xy[0]));
+                $y = intval(trim($xy[1]));
+            } else {
+                // X
+                $len = strlen($this->e2gThumbCfg['wmt']);
+                if ($this->e2gThumbCfg['wmpos1'] == 3)
+                    $x = $inf[0] - 10 - $wm_w;
+                elseif ($this->e2gThumbCfg['wmpos1'] == 2)
+                    $x = ($inf[0] - $wm_w) / 2;
+                else
+                    $x = 10;
 
-            // Y
-            if ($this->e2gThumbCfg['wmpos2'] == 3)
-                $y = $inf[1] - 10 - $wm_h;
-            elseif ($this->e2gThumbCfg['wmpos2'] == 2)
-                $y = ($inf[1] / 2) - $wm_h;
-            else
-                $y = 10;
-
+                // Y
+                if ($this->e2gThumbCfg['wmpos2'] == 3)
+                    $y = $inf[1] - 10 - $wm_h;
+                elseif ($this->e2gThumbCfg['wmpos2'] == 2)
+                    $y = ($inf[1] / 2) - $wm_h;
+                else
+                    $y = 10;
+            }
 
             imagecopy($im, $wmi, $x, $y, 0, 0, $wm_w, $wm_h);
             imagedestroy($wmi);
