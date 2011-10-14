@@ -18,7 +18,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
-    <head>        
+    <head>
         <title>Easy 2 Gallery <?php echo E2G_VERSION; ?> | <?php echo $e2gPage[$this->e2gModCfg['e2gpg']]['lng']; ?></title>
         <meta http-equiv="Content-Type" content="text/html; charset=<?php echo $this->lng['charset']; ?>" />
         <link rel="stylesheet" type="text/css" href="media/style/<?php echo $this->e2gModCfg['_t']; ?>/style.css" />
@@ -72,7 +72,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 pl.appendChild(di);
                 return true;
             }
-            
+
             // for download preview
             function uimPreview (imSrc) {
                 if (!document.images) return FALSE;
@@ -414,7 +414,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     pElt.innerHTML = "<a href=\"<?php echo MODX_SITE_URL; ?>"+imPath+"\" class=\"highslide\" onclick=\"return hs.expand(this)\"><img src='<?php echo E2G_MODULE_URL; ?>preview.easy2gallery.php?path="+imPath+"' alt=\"\"><\/a>";
                 }
             }
-            
+
             // tag page preview
             function imPreview6 (imPath, i) {
                 var pElt = this.document.getElementById("rowPreview6_"+i);

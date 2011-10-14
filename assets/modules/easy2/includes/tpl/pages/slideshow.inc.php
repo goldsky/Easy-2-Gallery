@@ -78,7 +78,14 @@ if (IN_MANAGER_MODE != 'true')
                     $numrow_slideshows = mysql_num_rows($query_slideshows);
                     while ($row = mysql_fetch_array($query_slideshows)) {
                 ?>
-                    <li><a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=edit_slideshow&amp;ssid=' . $row['id']; ?>"title="edit">
+                    <li>
+                        <a href="<?php echo $this->e2gModCfg['index'] . '&amp;act=delete_slideshow&amp;ssid=' . $row['id'];?>"
+                           onclick="confirm('<?php echo $this->lng['js_delete_slideshow_confirm']; ?>')"
+                           title="<?php echo $this->lng['delete']; ?>">
+                            <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/delete.gif"
+                                 width="16" height="16" border="0" alt="" />
+                        </a>
+                        <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=edit_slideshow&amp;ssid=' . $row['id']; ?>"title="edit">
                             <b><?php echo $row['name']; ?></b>
                         </a> (<?php echo $row['id']; ?>) -
                 <?php echo htmlspecialchars_decode($row['description']); ?>

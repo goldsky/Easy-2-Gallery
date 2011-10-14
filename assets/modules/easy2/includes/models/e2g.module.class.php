@@ -215,6 +215,12 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
+            case 'delete_plugin':
+                $this->_deletePlugin($_GET);
+                header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+                break;
+
             case 'clean_cache':
                 $this->_cleanCache();
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -258,6 +264,13 @@ class E2gMod extends E2gPub {
             // Add slideshow
             case 'save_slideshow':
                 $this->_saveSlideshow($_POST);
+                header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
+                exit();
+                break;
+
+            // Delete slideshow
+            case 'delete_slideshow':
+                $this->_deleteSlideshow($_GET);
                 header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
                 exit();
                 break;
@@ -3410,6 +3423,17 @@ class E2gMod extends E2gPub {
         return TRUE;
     }
 
+    private function _deletePlugin($get) {
+        $delete = mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins '
+                . 'WHERE id="' . $get['plugin_id'] . '"'
+        );
+        if ($delete) {
+            mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugin_events '
+                    . 'WHERE pluginid="' . $get['plugin_id'] . '"'
+            );
+        }
+    }
+
     /**
      * Update changes onplugin editing
      * @param string    $post   values from the input form
@@ -3576,6 +3600,12 @@ class E2gMod extends E2gPub {
 
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['slideshow_add_suc'];
         return TRUE;
+    }
+
+    private function _deleteSlideshow($get) {
+        mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows '
+                . 'WHERE id="' . $get['ssid'] . '"'
+        );
     }
 
     /**
