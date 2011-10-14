@@ -215,12 +215,6 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
-            case 'delete_plugin':
-                $this->_deletePlugin($_GET);
-                header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                exit();
-                break;
-
             case 'clean_cache':
                 $this->_cleanCache();
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -294,6 +288,12 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
+            case 'delete_plugin':
+                $this->_deletePlugin($_GET);
+                header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                exit();
+                break;
+
             // Add thumbnail viewer
             case 'save_viewer':
                 if (!$this->_saveViewer($_POST)) {
@@ -311,6 +311,12 @@ class E2gMod extends E2gPub {
                 } else {
                     header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
                 }
+                exit();
+                break;
+
+            case 'delete_viewer':
+                $this->_deleteViewer($_GET);
+                header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
@@ -3568,6 +3574,12 @@ class E2gMod extends E2gPub {
 
         $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['viewer_update_suc'] . ' : ' . mysql_real_escape_string($post['name']);
         return TRUE;
+    }
+
+    private function _deleteViewer($get) {
+        mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers '
+                . 'WHERE id="' . $get['viewer_id'] . '"'
+        );
     }
 
     /**

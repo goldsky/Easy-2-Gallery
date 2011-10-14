@@ -19,7 +19,7 @@ if (IN_MANAGER_MODE != 'true')
             </script>
             <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=update_viewer" method="post">
             <?php
-            $select_viewers = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers WHERE id=' . $_GET['ssid'];
+            $select_viewers = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers WHERE id=' . $_GET['viewer_id'];
             $query_viewers = mysql_query($select_viewers);
             if (!$query_viewers)
                 die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_viewers);
@@ -164,8 +164,14 @@ if (IN_MANAGER_MODE != 'true')
             <?php while ($row = mysql_fetch_array($query_viewers)) {
             ?>
                     <li>
+                            <a href="<?php echo $this->e2gModCfg['index'] . '&amp;act=delete_viewer&amp;viewer_id=' . $row['id'];?>"
+                               onclick="confirm('<?php echo $this->lng['js_delete_viewer_confirm']; ?>')"
+                               title="<?php echo $this->lng['delete']; ?>">
+                                <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/delete.gif"
+                                     width="16" height="16" border="0" alt="" />
+                            </a>
                 <?php echo ($row['disabled'] == 1 ? '<span class="disabled">' : ''); ?>
-                    <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=edit_viewer&amp;ssid=' . $row['id']; ?>"title="edit"><b><?php echo $row['name']; ?></b></a>
+                    <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=edit_viewer&amp;viewer_id=' . $row['id']; ?>" title="edit"><b><?php echo $row['name']; ?></b></a>
                 <?php echo ($row['disabled'] == 1 ? '</span>' : ''); ?>
                     (<?php echo $row['id']; ?>) - <?php echo htmlspecialchars_decode($row['description']); ?>
                 </li>

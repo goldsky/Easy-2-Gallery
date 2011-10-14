@@ -272,7 +272,7 @@ $e2g_lang['english'] = array (
 &lt;ul&gt;
 &lt;li&gt;[field][,comma][operator][,comma][value]&lt;/li&gt;
 &lt;li&gt;They can have multiple clauses by using &#039;AND&#039; and/or &#039;OR&#039;&lt;/li&gt;
-&lt;li&gt;The Operator have to be a string, as following:
+&lt;li&gt;The Operator have to be a string, as following: 
 &lt;ul&gt;
 &lt;li&gt;&quot;NULL safe equal&quot; =&amp;gt; &#039;&amp;lt;=&amp;gt;&#039;&lt;/li&gt;
 &lt;li&gt;&quot;equal&quot; =&amp;gt; &#039;=&#039;&lt;/li&gt;
@@ -399,7 +399,7 @@ $e2g_lang['english'] = array (
 &lt;p&gt;&lt;strong&gt;&amp;amp;ss_config&lt;/strong&gt; - custom configuration/options for each of slideshow types.&lt;br /&gt; The implementation is up to the developer to use it inside the slideshow&#039;s index file.&lt;/p&gt;
 &lt;p&gt;Default options:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;galleriffic
+&lt;li&gt;galleriffic 
 &lt;ul&gt;
 &lt;li&gt;example-1 &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;example-2&lt;/li&gt;
@@ -407,7 +407,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;example-5&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;smoothgallery
+&lt;li&gt;smoothgallery 
 &lt;ul&gt;
 &lt;li&gt;fullgallery &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;li&gt;galleryset&lt;/li&gt;
@@ -421,7 +421,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;zoom&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;galleryview
+&lt;li&gt;galleryview 
 &lt;ul&gt;
 &lt;li&gt;gallerylight &lt;em&gt;(default)&lt;/em&gt;&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerylight` &amp;amp;w=`100` &amp;amp;h=`100` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400` !]&lt;/li&gt;
 &lt;li&gt;gallerydark&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`         &amp;amp;ss_config=`gallerydark` &amp;amp;w=`30` &amp;amp;h=`30` &amp;amp;ss_w=`600`     &amp;amp;ss_h=`400`!]&lt;/li&gt;
@@ -431,7 +431,7 @@ $e2g_lang['english'] = array (
 &lt;li&gt;panel&lt;br /&gt;[!easy2? &amp;amp;slideshow=`galleryview`     &amp;amp;ss_config=`panel` &amp;amp;ss_w=`600` &amp;amp;ss_h=`300`!]&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;contentflow
+&lt;li&gt;contentflow 
 &lt;ul&gt;
 &lt;li&gt;default &lt;em&gt;(default)&lt;/em&gt;&lt;/li&gt;
 &lt;/ul&gt;
@@ -547,14 +547,15 @@ $e2g_lang['english'] = array (
     'ip_ignored_title' => 'Ignored IP Address',
     'ip_unignored_suc' => 'This IP is now unignored.',
     'js_delete_confirm' => 'Are you sure you want to delete this file?\n\nClick ok to confirm.',
+    'js_delete_folder_confirm' => 'Are you sure you want to delete this folder?\nAll child files and folders will be removed as well.\n\nClick ok to confirm.',
     'js_delete_plugin_confirm' => 'Are you sure you want to delete this plugin?\n\nClick ok to confirm.',
     'js_delete_slideshow_confirm' => 'Are you sure you want to delete this slideshow?\n\nClick ok to confirm.',
-    'js_delete_folder_confirm' => 'Are you sure you want to delete this folder?\nAll child files and folders will be removed as well.\n\nClick ok to confirm.',
+    'js_delete_viewer_confirm' => 'Are you sure you want to delete this viewer?\n\nClick ok to confirm.',
     'js_ignore_ip_address_confirm' => 'Are you sure want to ignore this IP Address?\nAll comments from this IP address will be hidden as well.\n\nClick ok to confirm.',
     'js_unignore_ip_address_confirm' => 'Are you sure want to unignore this IP Address?\nAll comments from this IP address will be shown as well.\n\nClick ok to confirm.',
     'kilobytes' => 'kB',
-    'langfile_updated' => 'Language file is updated.',
     'landingpage' => 'Landingpage',
+    'langfile_updated' => 'Language file is updated.',
     'last_modified' => 'editing date',
     'left' => 'left',
     'limit' => 'Pictures per page',
@@ -564,11 +565,11 @@ $e2g_lang['english'] = array (
     'magic_quote_disabling' => 'Try to disable it from .htaccess or php.ini',
     'megabytes' => 'MB',
     'memory_usage' => 'memory usage',
-    'miscellaneous' => 'Miscellaneous',
     'mgr_comments' => 'Comments Manager',
     'mgr_files' => 'Files Manager',
     'mgr_plugins' => 'Plugins Manager',
     'mgr_users' => 'Users Manager',
+    'miscellaneous' => 'Miscellaneous',
     'mod_date_format' => 'Date Format',
     'mod_date_format_cfg_desc' => 'PHP date format',
     'mod_foldersize' => 'Display folder size',
@@ -586,9 +587,9 @@ $e2g_lang['english'] = array (
     'nav_nextSymbol_cfg_desc' => 'Text or html image tag link for next navigation symbol',
     'nav_prevSymbol_cfg' => 'Text or image tag',
     'nav_prevSymbol_cfg_desc' => 'Text or html image tag link for previous navigation symbol',
-    'nav_prevUpNext_tpl' => 'Prev-Up-Next Template',
     'nav_prevUpNextTitle_cfg' => 'Title for navigation',
     'nav_prevUpNextTitle_cfg_desc' => '&lt;p&gt;Title selection for the navigation. If Alias is selected but the database empty, it&#039;ll reverted back as the folder&#039;s name&lt;/p&gt;',
+    'nav_prevUpNext_tpl' => 'Prev-Up-Next Template',
     'nav_upSymbol_cfg' => 'Text or image tag',
     'nav_upSymbol_cfg_desc' => 'Text or html image tag link for upper navigation symbol',
     'new' => 'New',
