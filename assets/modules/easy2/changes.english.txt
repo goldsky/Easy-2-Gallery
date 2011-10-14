@@ -8,6 +8,9 @@ Fix:
 + Debug returned the valid folders as false
 
 Improvement:
++ deleted old template files
++ refactored the snippet's class
++ added &wmposxy for specified x,y watermark's position
 + added &folder_w, &folder_h and &folder_thq parameters
   to provide different dimensions to the folder's thumbnail on the runtime
   (snippet call only)
