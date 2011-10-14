@@ -14,11 +14,13 @@ class E2gSnippet extends E2gPub {
      * @var mixed modx's API
      */
     public $modx;
+
     /**
      * The snippet's configurations in an array
      * @var mixed all the snippet's parameters
      */
     public $e2gSnipCfg = array();
+
     /**
      * The internal variables of this class
      * @var mixed all the processing variables
@@ -125,22 +127,22 @@ class E2gSnippet extends E2gPub {
          * invoke plugin for the MAIN gallery
          */
         $phs['gallerypluginprerender'] = $this->_plugin('OnE2GWebGalleryPrerender', array(
-                    'pages' => $phs['pages']
-                    , 'parent_id' => $phs['parent_id']
-                    , 'desc_class' => $phs['desc_class']
-                    , 'cat_name' => $phs['cat_name']
-                    , 'permalink' => $phs['permalink']
-                    , 'wrapper' => $phs['wrapper']
-                    , 'sid' => $phs['sid']
+            'pages' => $phs['pages']
+            , 'parent_id' => $phs['parent_id']
+            , 'desc_class' => $phs['desc_class']
+            , 'cat_name' => $phs['cat_name']
+            , 'permalink' => $phs['permalink']
+            , 'wrapper' => $phs['wrapper']
+            , 'sid' => $phs['sid']
                 ));
         $phs['gallerypluginrender'] = $this->_plugin('OnE2GWebGalleryRender', array(
-                    'pages' => $phs['pages']
-                    , 'parent_id' => $phs['parent_id']
-                    , 'desc_class' => $phs['desc_class']
-                    , 'cat_name' => $phs['cat_name']
-                    , 'permalink' => $phs['permalink']
-                    , 'wrapper' => $phs['wrapper']
-                    , 'sid' => $phs['sid']
+            'pages' => $phs['pages']
+            , 'parent_id' => $phs['parent_id']
+            , 'desc_class' => $phs['desc_class']
+            , 'cat_name' => $phs['cat_name']
+            , 'permalink' => $phs['permalink']
+            , 'wrapper' => $phs['wrapper']
+            , 'sid' => $phs['sid']
                 ));
 
         return $this->filler($this->getTpl('tpl'), $phs);
@@ -154,14 +156,11 @@ class E2gSnippet extends E2gPub {
         $imageThumbs = !empty($imageThumbs) ? $imageThumbs : array();
         $galThumbs = array_merge($dirThumbs, $imageThumbs);
 
-        // Starts the grid
-        $content = $this->e2gSnipCfg['grid'] === 'css' ?
-                        '<div class="' . $this->e2gSnipCfg['grid_class'] . '">' :
-                        '<table class="' . $this->e2gSnipCfg['grid_class'] . '">';
-
-        if ($this->e2gSnipCfg['grid'] === 'table') {
+        $content = '';
+        if (strtolower($this->e2gSnipCfg['grid']) === 'table') {
             $countThumbs = count($galThumbs);
             $i = 0;
+            $content .= '<table class="' . $this->e2gSnipCfg['grid_class'] . '">';
             foreach ($galThumbs as $v) {
                 if (0 === $i % $this->e2gSnipCfg['colls']) {
                     $content .= '<tr>';
@@ -174,14 +173,18 @@ class E2gSnippet extends E2gPub {
                 }
                 $i++;
             }
-        } else {
+            $content .= '</table>';
+        } elseif (strtolower($this->e2gSnipCfg['grid']) === 'div') {
+            $content .= '<div class="' . $this->e2gSnipCfg['grid_class'] . '">';
+            foreach ($galThumbs as $v) {
+                $content .= $v;
+            }
+            $content .= '</div>';
+        } elseif (strtolower($this->e2gSnipCfg['grid']) === 'nowrapper') {
             foreach ($galThumbs as $v) {
                 $content .= $v;
             }
         }
-
-        // Ends the grid
-        $content .= ( ($this->e2gSnipCfg['grid'] === 'css') ? '</div>' : '</table>');
 
         return $content;
     }
@@ -214,7 +217,6 @@ class E2gSnippet extends E2gPub {
             ) {
                 $galleryId = $this->e2gSnipCfg['static_gid'];
             } else {
-                // FIXME: $singleGid ???
                 $galleryId = $this->e2gSnipCfg['gid'];
             }
 
@@ -862,7 +864,7 @@ class E2gSnippet extends E2gPub {
 
         $imgShaper = new E2gThumb($this->modx, $this->e2gSnipCfg);
         $urlEncoding = $imgShaper->imgShaper($gdir, $path, $w, $h, $thq, $resizeType
-                        , $red, $green, $blue, $createWaterMark, $thumbPath);
+                , $red, $green, $blue, $createWaterMark, $thumbPath);
         if ($urlEncoding !== FALSE) {
             return $urlEncoding;
         } else {
@@ -1370,9 +1372,9 @@ class E2gSnippet extends E2gPub {
         $path = $this->getPath($row['dir_id']);
 
         $thumbImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                        , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
-                        , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
-                        , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
+                , $this->e2gSnipCfg['w'], $this->e2gSnipCfg['h'], $this->e2gSnipCfg['thq']
+                , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
+                , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
         // thumbnail first...
         if ($thumbImg !== FALSE) {
             // ... then the slideshow's images
@@ -1381,9 +1383,9 @@ class E2gSnippet extends E2gPub {
                  * + WATERMARK-ing
                  */
                 $ssImg = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $row['filename']
-                                , $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq']
-                                , $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red']
-                                , $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], $this->e2gSnipCfg['ewm']);
+                        , $this->e2gSnipCfg['ss_w'], $this->e2gSnipCfg['ss_h'], $this->e2gSnipCfg['ss_thq']
+                        , $this->e2gSnipCfg['ss_resize_type'], $this->e2gSnipCfg['ss_red']
+                        , $this->e2gSnipCfg['ss_green'], $this->e2gSnipCfg['ss_blue'], $this->e2gSnipCfg['ewm']);
                 if ($ssImg !== FALSE) {
                     $ssFile['resizedimg'] = $this->e2gEncode($ssImg);
                 } else {
@@ -1460,10 +1462,16 @@ class E2gSnippet extends E2gPub {
                     $imgSize = array();
                     unset($imgSize);
                 }
-                $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir'], $path . $fetch['filename'],
-                        $this->e2gSnipCfg['lp_w'], $this->e2gSnipCfg['lp_h'], $this->e2gSnipCfg['lp_thq'],
-                        $this->e2gSnipCfg['lp_resize_type'],
-                        $this->e2gSnipCfg['lp_red'], $this->e2gSnipCfg['lp_green'], $this->e2gSnipCfg['lp_blue'], 1);
+                $imgShaper = $this->_imgShaper($this->e2gSnipCfg['gdir']
+                        , $path . $fetch['filename']
+                        , $this->e2gSnipCfg['lp_w']
+                        , $this->e2gSnipCfg['lp_h']
+                        , $this->e2gSnipCfg['lp_thq']
+                        , $this->e2gSnipCfg['lp_resize_type']
+                        , $this->e2gSnipCfg['lp_red']
+                        , $this->e2gSnipCfg['lp_green']
+                        , $this->e2gSnipCfg['lp_blue']
+                        , 1);
                 if ($imgShaper !== FALSE) {
                     $filePath = $this->e2gEncode($imgShaper);
                 } else {
@@ -2018,12 +2026,12 @@ class E2gSnippet extends E2gPub {
             var RecaptchaOptions = {
             theme : \'' . $this->e2gSnipCfg['recaptcha_theme'] . '\'
                 ' . ($this->e2gSnipCfg['recaptcha_theme'] === 'custom' ? ',custom_theme_widget: \''
-                . $this->e2gSnipCfg['recaptcha_theme_custom'] . '\'' : '') . '};
+                        . $this->e2gSnipCfg['recaptcha_theme_custom'] . '\'' : '') . '};
             </script>
             <script type="text/javascript" src="' . $server . '/challenge?k=' . $pubkey . $errorpart . '"></script>
             <noscript>
                 <iframe src="' . $server . '/noscript?k=' . $pubkey . $errorpart
-        . '" height="300" width="500" frameborder="0"></iframe><br/>
+                . '" height="300" width="500" frameborder="0"></iframe><br/>
                 <textarea name="recaptcha_challenge_field" rows="3" cols="40"></textarea>
                 <input type="hidden" name="recaptcha_response_field" value="manual_challenge"/>
             </noscript>';
@@ -2043,7 +2051,6 @@ class E2gSnippet extends E2gPub {
             'prev_cat_symbol' => '',
             'prev_cat_permalink' => '',
             'prev_link' => '',
-
             'up_cat_link' => '',
             'up_cat_name' => '',
             'up_cat_alias' => '',
@@ -2051,7 +2058,6 @@ class E2gSnippet extends E2gPub {
             'up_cat_symbol' => '',
             'up_cat_permalink' => '',
             'up_link' => '',
-
             'next_cat_link' => '',
             'next_cat_name' => '',
             'next_cat_alias' => '',
@@ -2155,7 +2161,6 @@ class E2gSnippet extends E2gPub {
             $phs['up_link'] = '<a href="' . $phs['up_cat_link'] . $phs['up_cat_permalink'] . '">'
                     . $phs['up_cat_symbol'] . ' ' . $phs['up_title']
                     . '</a>';
-
         }
 
         // Next
@@ -2196,7 +2201,6 @@ class E2gSnippet extends E2gPub {
             $phs['next_link'] = '<a href="' . $phs['next_cat_link'] . $phs['next_cat_permalink'] . '">'
                     . $phs['next_title'] . ' ' . $phs['next_cat_symbol']
                     . '</a>';
-
         }
 
         if ($check)

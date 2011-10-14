@@ -74,12 +74,16 @@ $e2gSnipCfg['folder_thq'] = (isset($folder_thq) && $folder_thq <= 100 && $folder
 // COLLS
 $e2gSnipCfg['colls'] = (isset($colls) && is_numeric($colls)) ? (int) $colls : $e2g['colls'];
 // for compatibility of version upgrading
-if (isset($notables) && $notables == 1)
-    $grid = 'css';
-elseif (isset($notables) && $notables == 0)
+if (isset($notables) && $notables === '1') {
+    $grid = 'div';
+} elseif (isset($notables) && $notables === '0') {
     $grid = 'table';
+}
 // GRID -- previously using NO TABLES
 $e2gSnipCfg['grid'] = isset($grid) ? $grid : $e2g['grid'];
+// switch 'css' to 'div' since 1.4.9-pl
+$e2gSnipCfg['grid'] = $e2gSnipCfg['grid'] === 'css' ? 'div' : $e2gSnipCfg['grid'];
+
 // NO TABLES -- DEPRECATED after 1.4.0 Beta 4!
 //$e2gSnipCfg['notables'] = $fid ? 1 : (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);
 //$e2gSnipCfg['notables'] = (isset($notables) && is_numeric($notables)) ? $notables : (isset($e2g['notables']) ? $e2g['notables'] : 0);

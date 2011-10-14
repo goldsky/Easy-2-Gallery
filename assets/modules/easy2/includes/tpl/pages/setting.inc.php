@@ -359,8 +359,12 @@ if (IN_MANAGER_MODE != 'true')
                         </tr>
                         <tr class="gridAltItem">
                             <td><b><?php echo $this->lng['grid']; ?>:</b></td>
-                            <td><span style="color:green;">&amp;grid=</span> <input type="radio" name="grid" value="css" <?php echo ($this->e2g['grid'] == 'css' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['css']; ?>
-                                <input type="radio" name="grid" value="table" <?php echo ($this->e2g['grid'] == 'table' ? 'checked="checked"' : ''); ?> /> <?php echo $this->lng['table']; ?> <br />
+                            <td><span style="color:green;">&amp;grid=</span>
+                                <select name="grid">
+                                    <option value="div" <?php echo ($this->e2g['grid'] == 'div' ? ' selected="selected"' : ''); ?>> div</option>
+                                    <option value="table" <?php echo ($this->e2g['grid'] == 'table' ? ' selected="selected"' : ''); ?>> table</option>
+                                    <option value="nowrapper" <?php echo ($this->e2g['grid'] == 'nowrapper' ? ' selected="selected"' : ''); ?>> nowrapper</option>
+                                </select>
                             </td>
                         </tr>
                         <tr>
