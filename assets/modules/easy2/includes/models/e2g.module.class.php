@@ -4542,7 +4542,9 @@ class E2gMod extends E2gPub {
         if (!isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb']) && !$_SESSION['installE2g']) {
             $saveE2gSettings = TRUE;
         }
-        if ($saveE2gSettings) {
+        if ($saveE2gSettings
+                && $_SESSION['installE2g'] === FALSE // exclude new installation
+        ) {
             $this->saveE2gSettings($e2g);
         }
 
