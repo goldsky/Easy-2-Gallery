@@ -2,7 +2,7 @@
 <div class="thumb">
     <div class="boxcontent">
         [+easy2:thumbpluginprerender+]
-        <a href="[+easy2:link+]" title="[+easy2:title+] [+easy2:summary+]" [+easy2:glibact+]>
+        <a href="[+easy2:link+]" title="[+easy2:title+]" [+easy2:glibact+] caption="[+easy2:summary+]">
            <img src="[+easy2:src+]" alt="[+easy2:title+]" width="[+easy2:w+]" height="[+easy2:h+]" />
         </a>
         <div class="thumbinfo">
