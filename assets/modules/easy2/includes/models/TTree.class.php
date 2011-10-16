@@ -5,7 +5,7 @@
  *               1.1 (19/05/2010)
  * Автор Андрей Яковлев <inteldesign@mail.ru>
  * @author Andrew Jakovlev
- * @author goldsky <goldsky@modx-id.com>
+ * @author goldsky <goldsky@fastmail.fm>
  * PHP Класс для работы с траверсными деревьями
  * PHP Class for traversal trees
  *

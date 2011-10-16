@@ -5,7 +5,7 @@
  * Gallery Snippet Class for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
+ * @author goldsky <goldsky@fastmail.fm>
  */
 class E2gSnippet extends E2gPub {
 
@@ -46,6 +46,14 @@ class E2gSnippet extends E2gPub {
 
         $this->_fixMultiCallPagination();
 
+        if ($this->e2gSnipCfg['orderby'] === 'random') {
+            $this->e2gSnipCfg['orderby'] = 'rand()';
+            $this->e2gSnipCfg['order'] = '';
+        }
+        if ($this->e2gSnipCfg['cat_orderby'] === 'random') {
+            $this->e2gSnipCfg['cat_orderby'] = 'rand()';
+            $this->e2gSnipCfg['cat_order'] = '';
+        }
     }
 
     private function _fixMultiCallPagination() {
@@ -96,54 +104,10 @@ class E2gSnippet extends E2gPub {
     }
 
     /**
-     * The main function.
-     * @return mixed the function calls
+     * Thumbnail gallery
+     * @return  string  complete rendered gallery
      */
-    public function display() {
-
-        if ($this->e2gSnipCfg['orderby'] === 'random') {
-            $this->e2gSnipCfg['orderby'] = 'rand()';
-            $this->e2gSnipCfg['order'] = '';
-        }
-        if ($this->e2gSnipCfg['cat_orderby'] === 'random') {
-            $this->e2gSnipCfg['cat_orderby'] = 'rand()';
-            $this->e2gSnipCfg['cat_order'] = '';
-        }
-
-        /**
-         * 1. '&gid' : full gallery directory (directory - &gid - default)
-         * 2. '&fid' : one file only (file - $this->e2gSnipCfg['fid'])
-         * 3. '&rgid' : random file in a directory (random - $this->e2gSnipCfg['rgid'])
-         * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
-         */
-        // to avoid gallery's thumbnails display on the landingpage's page
-        if ($this->modx->documentIdentifier != $this->e2gSnipCfg['landingpage']) {
-            if (empty($this->e2gSnipCfg['gid'])
-                    && !empty($this->e2gSnipCfg['fid'])
-                    && empty($this->e2gSnipCfg['slideshow'])
-            ) {
-                return $this->_imgFile();
-            }
-            if (!empty($this->e2gSnipCfg['rgid'])
-                    && empty($this->e2gSnipCfg['slideshow'])
-            ) {
-                return $this->_imgRandom();
-            }
-            if (empty($this->e2gSnipCfg['rgid'])
-                    && empty($this->e2gSnipCfg['slideshow'])
-            ) {
-                return $this->_thumbsGallery(); // default
-            }
-        }
-        if (!empty($this->e2gSnipCfg['slideshow'])) {
-            return $this->_slideshow($this->e2gSnipCfg['slideshow']);
-        }
-        if (!empty($this->e2gSnipCfg['landingpage']) && !empty($_GET['fid'])) {
-            return $this->_landingPage($_GET['fid']);
-        }
-    }
-
-    private function _thumbsGallery() {
+    public function thumbsGallery() {
         // Execute the Javascript library's headers
         $jsLibs = $this->_loadHeaders();
         if ($jsLibs === FALSE) {
@@ -468,7 +432,7 @@ class E2gSnippet extends E2gPub {
 
         if ($this->e2gSnipCfg['crumbs'] !== '1'
                 || strstr(',', $this->e2gSnipCfg['gid']) // it must be a single gid
-                || (isset($this->e2gSnipCfg['static_tag']) && !$this->_checkTaggedDirIds($this->e2gSnipCfg['static_tag'], $this->e2gSnipCfg['gid']))
+                || isset($this->e2gSnipCfg['static_tag'])
         ) {
             return '';
         }
@@ -607,7 +571,9 @@ class E2gSnippet extends E2gPub {
                                 $this->modx->documentIdentifier
                                 , $this->modx->aliases
                                 , 'sid=' . $this->e2gSnipCfg['e2g_static_instances'])
-                        . '&amp;gid=' . $l['cat_id'] . (isset($this->e2gSnipCfg['static_tag']) ? '&amp;tag=' . $this->e2gSnipCfg['static_tag'] : '') . '#' . $permalink
+                        . '&amp;gid=' . $l['cat_id']
+                        . (isset($this->e2gSnipCfg['static_tag']) ? '&amp;tag=' . $this->e2gSnipCfg['static_tag'] : '')
+                        . '#' . $permalink
                 ;
             }
 
@@ -716,7 +682,7 @@ class E2gSnippet extends E2gPub {
      * Gallery for &fid parameter
      * @return mixed the image's thumbail delivered in template
      */
-    private function _imgFile() {
+    public function imgFile() {
         $selectFiles = $this->_fileSqlStatement('*');
         $querySelectFiles = mysql_query($selectFiles);
         if (!$querySelectFiles) {
@@ -800,7 +766,7 @@ class E2gSnippet extends E2gPub {
      * To create a random image usng the &rgid parameter
      * @return mixed the image's thumbail delivered in template
      */
-    private function _imgRandom() {
+    public function imgRandom() {
         $selectFiles = $this->_fileSqlStatement('*', null, $this->e2gSnipCfg['rgid']);
         $selectFiles .= 'ORDER BY RAND() LIMIT 1';
 
@@ -1176,7 +1142,7 @@ class E2gSnippet extends E2gPub {
      * Slideshow's controller
      * @return string the slideshow's images
      */
-    private function _slideshow($slideshow) {
+    public function slideshow($slideshow) {
         // gives the index file the shorthand to the modx's API
         $modx = $this->modx;
         /**
@@ -1203,7 +1169,7 @@ class E2gSnippet extends E2gPub {
             if (!empty($this->e2gSnipCfg['js'])) {
                 $this->modx->regClientStartupScript($this->e2gSnipCfg['js']);
             }
-            return $this->_landingPage($_GET['fid']);
+            return $this->landingPage($_GET['fid']);
         } else {
             /**
              * The DEFAULT display
@@ -1499,7 +1465,7 @@ class E2gSnippet extends E2gPub {
      * @param  int   $fileId file's ID
      * @return mixed scripts, images, and FALSE return
      */
-    private function _landingPage($fileId) {
+    public function landingPage($fileId) {
         if (!empty($this->e2gSnipCfg['css'])) {
             $this->modx->regClientCSS($this->e2gSnipCfg['css'], 'screen');
         }
@@ -2121,6 +2087,15 @@ class E2gSnippet extends E2gPub {
      * @return  string  Parsed prev-up-next navigation in the prevUpNext_tpl format
      */
     private function _prevUpNext() {
+        if ($this->e2gSnipCfg['nav_prevUpNext'] !== '1'
+                || $this->e2gSnipCfg['orderby'] === 'rand()'
+                || $this->e2gSnipCfg['cat_orderby'] === 'rand()'
+                || strstr(',', $this->e2gSnipCfg['gid']) // it must be a single gid
+                || isset($this->e2gSnipCfg['static_tag'])
+        ) {
+            return '';
+        }
+
         // initiate placeholders
         $phs = array(
             'prev_cat_link' => '',
@@ -2145,15 +2120,6 @@ class E2gSnippet extends E2gPub {
             'next_cat_permalink' => '',
             'next_link' => '',
         );
-
-        if ($this->e2gSnipCfg['nav_prevUpNext'] !== '1'
-                || $this->e2gSnipCfg['orderby'] === 'rand()'
-                || $this->e2gSnipCfg['cat_orderby'] === 'rand()'
-                || strstr(',', $this->e2gSnipCfg['gid']) // it must be a single gid
-                || (isset($this->e2gSnipCfg['static_tag']) && !$this->_checkTaggedDirIds($this->e2gSnipCfg['static_tag'], $this->e2gSnipCfg['gid']))
-        ) {
-            return '';
-        }
 
         $dynamicKey = !empty($this->e2gSnipCfg['static_tag']) ? $this->e2gSnipCfg['tag'] : $this->e2gSnipCfg['gid'];
         $field = $this->e2gSnipCfg['nav_prevUpNextTitle'] === 'cat_alias' ? 'cat_alias' : 'cat_name';

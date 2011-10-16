@@ -3,11 +3,57 @@
 /**
  * EASY 2 GALLERY
  * Tag cloud snippet for Easy 2 Gallery Module for MODx Evolution
- * @author goldsky <goldsky@modx-id.com>
- * since
- * @version 1.4.9
+ * @author goldsky <goldsky@fastmail.fm>
+ * @package     easy 2 gallery
+ * @subpackage  easy 2 tagcloud
  */
 require_once MODX_BASE_PATH . 'assets/modules/easy2/includes/utf8/utf8.php';
+
+// Easy 2 Gallery snippet path
+if (!defined('E2G_SNIPPET_PATH')) {
+    define('E2G_SNIPPET_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
+}
+// Easy 2 Gallery snippet URL
+if (!defined('E2G_SNIPPET_URL')) {
+    define('E2G_SNIPPET_URL', MODX_BASE_URL . 'assets/modules/easy2/');
+}
+// Loading the E2G's configurations
+if (!isset($e2g)) {
+    $query_configs = $modx->db->select('*', $modx->db->config['table_prefix'] . 'easy2_configs');
+    if (!$query_configs)
+        return FALSE;
+    while ($row = mysql_fetch_array($query_configs)) {
+        $e2g[$row['cfg_key']] = $row['cfg_val'];
+    }
+}
+
+/**
+ * Before continue, check the browser's Javascript availability
+ * Appending Style Nodes with Javascript
+ * @author Jon Raasch
+ * @link http://jonraasch.com/blog/javascript-style-node
+ */
+$modx->regClientStartupHTMLBlock('
+        <style type="text/css">
+            div.' . $e2g['e2g_wrapper'] . ' {visibility:hidden}
+        </style>
+        <script type="text/javascript">
+            window.onload = function() {
+                var css = document.createElement(\'style\');
+                css.type = \'text/css\';
+                var styles = \'div.' . $e2g['e2g_wrapper'] . ' {visibility:visible}\';
+
+                if (css.styleSheet) css.styleSheet.cssText = styles;
+                else css.appendChild(document.createTextNode(styles));
+
+                document.getElementsByTagName("head")[0].appendChild(css);
+            };
+        </script>
+');
+
+$jsDisabledTplFile = realpath($e2g['jsdisabled_tpl']);
+if (!empty($jsDisabledTplFile) && file_exists($jsDisabledTplFile))
+    include $jsDisabledTplFile;
 
 // PARAMETERS
 /**
@@ -107,6 +153,14 @@ if (!empty($css)) {
 ');
 }
 
+// Start retrieving snippet's parameters
+$snipParamFile = realpath(E2G_SNIPPET_PATH . 'includes/configs/params.snippet.easy2gallery.php');
+if (file_exists($snipParamFile)) {
+    require $snipParamFile;
+} else {
+    return 'Snippet\'s parameters file is missing.';
+}
+
 $output = '';
 
 if ($position == 'above') {
@@ -115,7 +169,7 @@ if ($position == 'above') {
 $output .= '<div class="' . $class . '"><ul>';
 foreach ($tagArray as $tagItem) {
     $output .= '<li><a href="'
-            . $modx->makeUrl($modx->documentIdentifier, null, 'tag=' . $tagItem)
+            . $modx->makeUrl($modx->documentIdentifier, null, 'tag=' . $tagItem . '#' . $e2gSnipCfg['e2g_instances'] . '_' . $tagItem)
             . '">' . $tagItem . '</a></li>';
 }
 

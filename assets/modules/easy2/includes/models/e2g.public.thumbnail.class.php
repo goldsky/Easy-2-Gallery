@@ -5,8 +5,7 @@
  * Gallery Image Creator Class for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
- * @version 1.4.0
+ * @author goldsky <goldsky@fastmail.fm>
  */
 class E2gThumb {
 

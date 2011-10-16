@@ -5,7 +5,7 @@
  * Gallery Snippet Class for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
+ * @author goldsky <goldsky@fastmail.fm>
  */
 class E2gPub { // public/public class
     /**
@@ -294,9 +294,9 @@ class E2gPub { // public/public class
 
     /**
      * To check the specified resource has a valid file extenstion.
-     * @author goldsky <goldsky@modx-id.com>
      * @todo need a rework to make it more extendable
-     * @param string $filename the filename
+     * @param   string  $filename the filename
+     * @return  boolean valid extension
      */
     public function validExt($filename) {
         $ext = strtolower(end(@explode('.', $filename)));
@@ -312,8 +312,8 @@ class E2gPub { // public/public class
     /**
      * To check the specified resource is a valid file.<br />
      * It will be checked against the folder validation first.
-     * @author goldsky <goldsky@modx-id.com>
-     * @param string $filename the filename
+     * @param type $filename
+     * @return  mixed   boolean | fileinfo's array
      */
     public function validFile($filename) {
         $fileRealPath = realpath($filename);
@@ -364,14 +364,12 @@ class E2gPub { // public/public class
             else
                 return TRUE;
         }
-        else
-            continue;
     }
 
     /**
      * To check the specified resource is a valid folder, although it has a DOT in it.
-     * @author goldsky <goldsky@modx-id.com>
-     * @param string $foldername the folder's name
+     * @param   string  $foldername the folder's name
+     * @return  boolean valid or not
      */
     public function validFolder($foldername) {
         $foldername = str_replace('//', '/', $foldername);

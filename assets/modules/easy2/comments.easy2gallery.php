@@ -5,7 +5,7 @@
  * Gallery Snippet Comments for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
+ * @author goldsky <goldsky@fastmail.fm>
  * @version 1.4.0
  */
 error_reporting(0);

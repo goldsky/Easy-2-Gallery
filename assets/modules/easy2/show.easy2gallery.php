@@ -8,9 +8,7 @@ require_once('../../../manager/includes/protect.inc.php');
  * @uses file to show the image for Easy 2 Gallery Module
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
- * @version 1.4.0
- *
+ * @author goldsky <goldsky@fastmail.fm>
  */
 error_reporting(0);
 

@@ -5,7 +5,7 @@
  * Gallery Module Class for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
+ * @author goldsky <goldsky@fastmail.fm>
  */
 $e2gPubClassFile = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'e2g.public.class.php';
 if (!class_exists('E2gPub') && file_exists(realpath($e2gPubClassFile))) {
@@ -1531,7 +1531,6 @@ class E2gMod extends E2gPub {
      * @param   string  $file   filename
      * @param   string  $path   starting path
      * @return  bool    true/FALSE
-     * @author  goldsky <goldsky@modx-id.com>
      * @todo    unziping the non-latin file
      */
     private function _unzip($file, $path) {

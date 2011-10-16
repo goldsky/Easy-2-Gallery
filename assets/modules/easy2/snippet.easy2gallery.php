@@ -5,8 +5,7 @@
  * Gallery Snippet for Easy 2 Gallery Module for MODx Evolution
  * @author Cx2 <inteldesign@mail.ru>
  * @author Temus <temus3@gmail.com>
- * @author goldsky <goldsky@modx-id.com>
- * @version 1.4.0
+ * @author goldsky <goldsky@fastmail.fm>
  */
 require_once MODX_BASE_PATH . 'assets/modules/easy2/includes/utf8/utf8.php';
 
@@ -92,13 +91,38 @@ if (!class_exists('E2gSnippet')) {
 }
 
 // run the snippet
-if (class_exists('E2gPub') && class_exists('E2gSnippet')) {
-    $e2gSnippet = new E2gSnippet($modx, $e2gSnipCfg);
-    $e2gSnippet->e2gpub_cfg = $e2gSnipCfg;
-    $output = $e2gSnippet->display();
-} else {
-    $output = "<b>Error: Easy 2 Gallery's snippet class not found</b>";
+$e2gSnippet = new E2gSnippet($modx, $e2gSnipCfg);
+
+/**
+ * 1. '&gid' : full gallery directory (directory - &gid - default)
+ * 2. '&fid' : one file only (file - $e2gSnipCfg['fid'])
+ * 3. '&rgid' : random file in a directory (random - $e2gSnipCfg['rgid'])
+ * 4. '&slideshow' : slideshow by fid-s or rgid-s or gid-s
+ */
+// to avoid gallery's thumbnails display on the landingpage's page
+if ($modx->documentIdentifier != $e2gSnipCfg['landingpage']) {
+    if (empty($e2gSnipCfg['gid'])
+            && !empty($e2gSnipCfg['fid'])
+            && empty($e2gSnipCfg['slideshow'])
+    ) {
+        return $e2gSnippet->imgFile();
+    }
+    if (!empty($e2gSnipCfg['rgid'])
+            && empty($e2gSnipCfg['slideshow'])
+    ) {
+        return $e2gSnippet->imgRandom();
+    }
+    if (empty($e2gSnipCfg['rgid'])
+            && empty($e2gSnipCfg['slideshow'])
+    ) {
+        return $e2gSnippet->thumbsGallery(); // default
+    }
+}
+if (!empty($e2gSnipCfg['slideshow'])) {
+    return $e2gSnippet->slideshow($e2gSnipCfg['slideshow']);
+}
+if (!empty($e2gSnipCfg['landingpage']) && !empty($_GET['fid'])) {
+    return $e2gSnippet->landingPage($_GET['fid']);
 }
 
-// Using a web access may result an empty output.
-return $output;
+return '';
