@@ -1304,12 +1304,12 @@ if (IN_MANAGER_MODE != 'true')
 \$updateViewers = array(
 ";
             foreach ($viewerRow as $k => $v) {
-                $c .= "\t'$k' => array(\r\n";
+                $c .= "\t\"$k\" => array(\r\n";
                 foreach ($v as $x => $y) {
                     if ($x === 'id' || $x === 'name') {
                         continue;
                     }
-                    $c .= "\t\t'$x' => '" . mysql_real_escape_string($y) . "',\r\n";
+                    $c .= "\t\t\"$x\" => \"" . mysql_real_escape_string($y) . "\",\r\n";
                 }
                 $c .= "\t),\r\n";
             }
@@ -1384,12 +1384,12 @@ if (IN_MANAGER_MODE != 'true')
 \$updateSlideShows = array(
 ";
             foreach ($slideshowRow as $k => $v) {
-                $c .= "\t'$k' => array(\r\n";
+                $c .= "\t\"$k\" => array(\r\n";
                 foreach ($v as $x => $y) {
                     if ($x === 'id' || $x === 'name') {
                         continue;
                     }
-                    $c .= "\t\t'$x' => '" . mysql_real_escape_string($y) . "',\r\n";
+                    $c .= "\t\t\"$x\" => \"" . mysql_real_escape_string($y) . "\",\r\n";
                 }
                 $c .= "\t),\r\n";
             }
