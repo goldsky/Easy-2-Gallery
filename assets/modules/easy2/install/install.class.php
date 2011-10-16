@@ -1360,7 +1360,7 @@ if (IN_MANAGER_MODE != 'true')
         }
 
         // for development and easy package updates
-        $buildDefault = true;
+        $buildDefault = FALSE;
         if ($buildDefault) {
             if (empty($slideshowRow))
                 return;
