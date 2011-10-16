@@ -478,28 +478,6 @@ class install {
     }
 
     /**
-     * Updating a field
-     * @param   string  $table          table name
-     * @param   string  $whereClause    SQL's WHERE statement
-     * @param   string  $script         field's value
-     * @return void
-     */
-    public function updateTableContent($table, $whereClause, $script) {
-        $select = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . $table . ' ' . $whereClause;
-        $query = mysql_query($select);
-        $queryNumRows = mysql_num_rows($query);
-        if ($queryNumRows == 0) {
-            if (mysql_query($script)) {
-                $_SESSION['easy2suc'][] = __LINE__ . ': ' . $table . $this->lngi['data_updated_suc'];
-            } else {
-                $_SESSION['easy2err'][] = __LINE__ . ': ' . $table . $this->lngi['data_updated_err']
-                        . '<br />' . mysql_error()
-                        . '<br />' . $script;
-            }
-        }
-    }
-
-    /**
      * Get the database character set and collation
      * @param   string  $databaseCollation  collation from the field selection
      * @param   string  $variable           charset
@@ -1011,33 +989,8 @@ class install {
                 $this->chref($index);
             }
         }
-        // update easy2_slideshows content for 1.4.0 RC2
-        $updateSlideShows = array(
-            array(
-                'name' => 'simple'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_slideshows` (`name`, `description`, `indexfile`) VALUES ('simple', 'A Simple jQuery slideshow by &lt;a href=&quot;http://jonraasch.com/blog/a-simple-jquery-slideshow&quot; target=&quot;_blank&quot;&gt;Jon Raasch&lt;/a&gt;', 'assets/libs/slideshows/simplejquery/simple.php')"
-            )
-            , array(
-                'name' => 'galleryview'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_slideshows` (`name`, `description`, `indexfile`) VALUES ('galleryview', '&lt;a href=&quot;http://spaceforaname.com/galleryview&quot; target=&quot;_blank&quot;&gt;http://spaceforaname.com/galleryview&lt;/a&gt;', 'assets/libs/slideshows/galleryview/galleryview.php')"
-            )
-            , array(
-                'name' => 'galleriffic'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_slideshows` (`name`, `description`, `indexfile`) VALUES ('galleriffic', '&lt;a href=&quot;http://www.twospy.com/galleriffic/&quot; target=&quot;_blank&quot;&gt;http://www.twospy.com/galleriffic/&lt;/a&gt;', 'assets/libs/slideshows/galleriffic/galleriffic.php')"
-            )
-            , array(
-                'name' => 'smoothgallery'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_slideshows` (`name`, `description`, `indexfile`) VALUES ('smoothgallery', '&lt;a href=&quot;http://smoothgallery.jondesign.net/&quot; target=&quot;_blank&quot;&gt;http://smoothgallery.jondesign.net/&lt;/a&gt;', 'assets/libs/slideshows/smoothgallery/smoothgallery.php')"
-            )
-            , array(
-                'name' => 'contentflow'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_slideshows` (`name`, `description`, `indexfile`) VALUES ('contentflow', '&lt;a href=&quot;http://www.jacksasylum.eu/ContentFlow/index.php&quot; target=&quot;_blank&quot;&gt;http://www.jacksasylum.eu/ContentFlow/index.php&lt;/a&gt;', 'assets/libs/slideshows/contentflow/contentflow.php')"
-            )
-        );
 
-        for ($i = 0; $i < count($updateSlideShows); $i++) {
-            $this->updateTableContent('easy2_slideshows', 'WHERE name=\'' . $updateSlideShows[$i]['name'] . '\'', $updateSlideShows[$i]['script']);
-        }
+        $this->_installSlideshows();
 
         // adding easy2_users_mgr table for 1.4.0 RC2
         if (!isset($tab[$this->modx->db->config['table_prefix'] . 'easy2_users_mgr'])) {
@@ -1088,62 +1041,8 @@ class install {
                 $this->chref($index);
             }
         }
-        // update easy2_viewers content for 1.4.0 RC2
-        $updateViewers = array(
-            array(
-                'name' => 'highslide'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('highslide', 'highslide 4.1.8', '&lt;a href=&quot;http://highslide.com/&quot; target=&quot;_blank&quot;&gt;http://highslide.com/&lt;/a&gt;', 0, 'assets/libs/viewers/highslide/highslide.css', 1, 'assets/libs/viewers/highslide/highslide-full.js\r\n| assets/libs/viewers/highslide/e2g.highslide.js', 1, '&lt;script type=&quot;text/javascript&quot;&gt;\r\n    hs.addSlideshow({\r\n        slideshowGroup: \'[+easy2:show_group+]\',\r\n        interval: 5000,\r\n        repeat: false,\r\n        useControls: true,\r\n        fixedControls: \'fit\',\r\n        overlayOptions: {\r\n            opacity: .6,\r\n            position: \'bottom center\'\r\n        }\r\n    });\r\n&lt;/script&gt;', 1, 'class=&quot;highslide&quot; onclick=&quot;return hs.expand(this, {slideshowGroup: \'[+easy2:show_group+]\'})&quot;', 'onclick=&quot;return hs.htmlExpand(this, { objectType: \'iframe\' } )&quot;')"
-            )
-            , array(
-                'name' => 'lightbox2'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('lightbox2', 'lightbox2', '&lt;a href=&quot;http://www.huddletogether.com/projects/lightbox2/&quot; target=&quot;_blank&quot;&gt;http://www.huddletogether.com/projects/lightbox2/&lt;/a&gt;', 0, 'assets/libs/viewers/lightbox2.04/css/lightbox.css\r\n| assets/libs/viewers/highslide/highslide.css', 1, 'assets/libs/viewers/lightbox2.04/js/prototype.js\r\n| assets/libs/viewers/lightbox2.04/js/scriptaculous.js?load=effects,builder\r\n| assets/libs/viewers/lightbox2.04/js/lightbox.js\r\n| assets/libs/viewers/highslide/highslide-iframe.js', 1, '', 0, 'class=&quot;[+easy2:show_group+]&quot; rel=&quot;lightbox[[+easy2:show_group+]]&quot;', 'onclick=&quot;return hs.htmlExpand(this, { objectType: \'iframe\'} )&quot;')"
-            )
-            , array(
-                'name' => 'colorbox'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('colorbox', 'colorbox 1.3.8 (jq)', '&lt;a href=&quot;http://colorpowered.com/colorbox/&quot; target=&quot;_blank&quot;&gt;http://colorpowered.com/colorbox/&lt;/a&gt;', 0, 'assets/libs/viewers/colorbox/colorbox.css', 1, 'assets/libs/jquery/jquery-1.4.2.min.js\r\n| assets/libs/viewers/colorbox/jquery.colorbox-min.js\r\n| assets/libs/viewers/colorbox/e2g.colorbox.js', 1, '', 0, 'class=&quot;cboxElement&quot; rel=&quot;group[[+easy2:show_group+]]&quot;', 'class=&quot;iframe&quot;')"
-            )
-            , array(
-                'name' => 'fancybox'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('fancybox', 'fancybox 1.3.1 (jq)', '&lt;a href=&quot;http://fancybox.net/&quot; target=&quot;_blank&quot;&gt;http://fancybox.net/&lt;/a&gt;', 0, 'assets/libs/viewers/fancybox/jquery.fancybox-1.3.1.css', 1, 'http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js\r\n| assets/libs/viewers/fancybox/jquery.fancybox-1.3.1.pack.js\r\n| assets/libs/viewers/fancybox/jquery.easing-1.3.pack.js\r\n| assets/libs/viewers/fancybox/jquery.mousewheel-3.0.2.pack.js\r\n| assets/libs/viewers/fancybox/e2g.fancybox.js', 1, '&lt;script type=&quot;text/javascript&quot;&gt;\r\n  $(document).ready(function() {\r\n    $(&quot;a.[+easy2:show_group+]&quot;).fancybox({\r\n        \'padding\'         : 10,\r\n        \'margin\'          : 0,\r\n        \'transitionIn\'    : \'elastic\',\r\n        \'transitionOut\'   : \'elastic\',\r\n        \'titlePosition\'   : \'over\',\r\n        \'type\'            : \'image\',\r\n        \'titleFormat\'     : function(title, currentArray, currentIndex, currentOpts) {\r\n            return \'&lt;span id=&quot;fancybox-title-over&quot;&gt;Image \' + (currentIndex + 1) + \' / \' + currentArray.length + (title.length ? \' &amp;nbsp; \' + title : \'\') + \'&lt;/span&gt;\';\r\n        }\r\n    });\r\n  });\r\n&lt;/script&gt;', 1, 'class=&quot;[+easy2:show_group+]&quot; rel=&quot;[+easy2:show_group+]&quot;', 'class=&quot;comment&quot;')"
-            )
-            , array(
-                'name' => 'lightwindow'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('lightwindow', 'lightwindow 2.0 (pt)', '&lt;a href=&quot;http://www.p51labs.com/lightwindow/&quot; target=&quot;_blank&quot;&gt;http://www.p51labs.com/lightwindow/&lt;/a&gt;', 0, 'assets/libs/viewers/lightwindow/css/lightwindow.css', 1, 'assets/libs/viewers/lightwindow/js/prototype.js\r\n| assets/libs/viewers/lightwindow/js/scriptaculous.js?load=effects\r\n| assets/libs/viewers/lightwindow/js/lightwindow.src.js', 1, '', 0, 'class=&quot;lightwindow&quot; rel=&quot;Gallery[[+easy2:show_group+]]&quot; params=&quot;lightwindow_type=image&quot;', 'class=&quot;lightwindow&quot; params=&quot;lightwindow_type=external,lightwindow_width=400,lightwindow_height=250&quot;')"
-            )
-            , array(
-                'name' => 'shadowbox'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('shadowbox', 'shadowbox 3.0.3 (base)', '&lt;a href=&quot;http://www.shadowbox-js.com/&quot; target=&quot;_blank&quot;&gt;http://www.shadowbox-js.com/&lt;/a&gt;', 0, 'assets/libs/viewers/shadowbox/shadowbox.css', 1, 'assets/libs/viewers/shadowbox/shadowbox.js\r\n| assets/libs/viewers/shadowbox/e2g.shadowbox.js', 1, '', 0, 'rel=&quot;shadowbox[[+easy2:show_group+]];player=img&quot;', 'rel=&quot;shadowbox;width=400;height=250;player=iframe&quot;')"
-            )
-            , array(
-                'name' => 'slimbox'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('slimbox', 'slimbox 1.71 (mt)', '&lt;a href=&quot;http://www.digitalia.be/software/slimbox&quot; target=&quot;_blank&quot;&gt;http://www.digitalia.be/software/slimbox&lt;/a&gt;', 0, 'assets/libs/viewers/slimbox-1.71/css/slimbox.css\r\n| assets/libs/viewers/highslide/highslide.css', 1, 'assets/libs/viewers/slimbox-1.71/js/mootools.js\r\n| assets/libs/viewers/slimbox-1.71/js/slimbox.js\r\n| assets/libs/viewers/highslide/highslide-iframe.js', 1, '', 0, 'rel=&quot;lightbox[[+easy2:show_group+]]&quot;', 'onclick=&quot;return hs.htmlExpand(this, { objectType: \'iframe\'} )&quot;')"
-            )
-            , array(
-                'name' => 'slimbox2'
-                , 'script' => "INSERT INTO `" . $this->modx->db->config['table_prefix'] . "easy2_viewers` "
-                . "(`name`, `alias`, `description`, `disabled`, `headers_css`, `autoload_css`, `headers_js`, `autoload_js`, `headers_html`, `autoload_html`, `glibact`, `clibact`) "
-                . "VALUES ('slimbox2', 'slimbox2 2.04 (jq)', '&lt;a href=&quot;http://www.digitalia.be/software/slimbox2&quot; target=&quot;_blank&quot;&gt;http://www.digitalia.be/software/slimbox2&lt;/a&gt;', 0, 'assets/libs/viewers/slimbox-2.04/css/slimbox2.css\r\n| assets/libs/viewers/highslide/highslide.css', 1, 'assets/libs/jquery/jquery-1.4.2.min.js\r\n| assets/libs/viewers/slimbox-2.04/js/slimbox2.js\r\n| assets/libs/viewers/highslide/highslide-iframe.js', 1, '', 0, 'rel=&quot;lightbox[[+easy2:show_group+]]&quot;', 'onclick=&quot;return hs.htmlExpand(this, { objectType: \'iframe\'} )&quot;')"
-            )
-        );
 
-        $countUpdateViewers = count($updateViewers);
-        for ($i = 0; $i < $countUpdateViewers; $i++) {
-            $this->updateTableContent('easy2_viewers', 'WHERE name=\'' . $updateViewers[$i]['name'] . '\'', $updateViewers[$i]['script']);
-        }
+        $this->_installViewers();
 
         // adding easy2_webgroup_access table for 1.4.0 RC2
         if (!isset($tab[$this->modx->db->config['table_prefix'] . 'easy2_webgroup_access'])) {
@@ -1365,6 +1264,166 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
                     . 'SET cfg_val=\'' . $cfgVal . '\' WHERE cfg_key=\'' . $cfgKey . '\''
             );
         }
+    }
+
+    /**
+     * Install distributed viewers
+     * @return void
+     */
+    private function _installViewers() {
+        $viewers = include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'viewers.php';
+        $select = 'SELECT * FROM `' . $this->modx->db->config['table_prefix'] . "easy2_viewers` ";
+        $result = mysql_query($select);
+
+        while ($l = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            $viewerRow[$l['name']] = $l;
+        }
+
+        // for development and easy package updates
+        $buildDefault = FALSE;
+        if ($buildDefault) {
+            if (empty($viewerRow))
+                return;
+
+            if (!function_exists('fopen')
+                    || !function_exists('fwrite')
+                    || !function_exists('fclose')
+            ) {
+                return FALSE;
+            }
+
+            $c = "<?php\r\n
+/**
+ * Distributed viewers for Easy 2 Gallery
+ * @package Easy 2 Gallery
+ * @subpackage install
+ */
+if (IN_MANAGER_MODE != 'true')
+    die('<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.');
+
+\$updateViewers = array(
+";
+            foreach ($viewerRow as $k => $v) {
+                $c .= "\t'$k' => array(\r\n";
+                foreach ($v as $x => $y) {
+                    if ($x === 'id' || $x === 'name') {
+                        continue;
+                    }
+                    $c .= "\t\t'$x' => '" . mysql_real_escape_string($y) . "',\r\n";
+                }
+                $c .= "\t),\r\n";
+            }
+            $c .= ");\r\n\r\nreturn \$updateViewers;";
+
+            $f = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'viewers.php', 'w+');
+            fwrite($f, $c);
+            fclose($f);
+        } else {
+            if (empty($viewers))
+                return;
+
+            foreach ($viewers as $name => $v) {
+                if (!isset($viewerRow[$name])) {
+                    $countFields = count($v);
+                    $i = 0;
+                    $query = 'INSERT INTO `' . $this->modx->db->config['table_prefix'] . 'easy2_viewers` SET ';
+                    $query .= '`name` = \'' . mysql_real_escape_string($name) . '\',';
+                    foreach ($v as $field => $value) {
+                        $i++;
+                        $query .= '`' . $field . '` = \'' . mysql_real_escape_string($value) . '\'';
+                        if ($i < $countFields) {
+                            $query .= ',';
+                        }
+                    }
+                    if (!mysql_query($query)) {
+                        $_SESSION['easy2err'][] = __LINE__ . ': ' . 'MySQL ERROR: ' . mysql_error();
+                        $_SESSION['easy2err'][] = $query;
+                    }
+                }
+            }
+        }
+
+        return TRUE;
+    }
+
+    /**
+     * Install distributed slideshows
+     * @return void
+     */
+    private function _installSlideshows() {
+        $slideshows = include_once dirname(__FILE__) . DIRECTORY_SEPARATOR . 'slideshows.php';
+        $select = 'SELECT * FROM `' . $this->modx->db->config['table_prefix'] . "easy2_slideshows` ";
+        $result = mysql_query($select);
+
+        while ($l = mysql_fetch_array($result, MYSQL_ASSOC)) {
+            $slideshowRow[$l['name']] = $l;
+        }
+
+        // for development and easy package updates
+        $buildDefault = true;
+        if ($buildDefault) {
+            if (empty($slideshowRow))
+                return;
+
+            if (!function_exists('fopen')
+                    || !function_exists('fwrite')
+                    || !function_exists('fclose')
+            ) {
+                return FALSE;
+            }
+
+            $c = "<?php\r\n
+/**
+ * Distributed slideshows for Easy 2 Gallery
+ * @package Easy 2 Gallery
+ * @subpackage install
+ */
+if (IN_MANAGER_MODE != 'true')
+    die('<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.');
+
+\$updateSlideShows = array(
+";
+            foreach ($slideshowRow as $k => $v) {
+                $c .= "\t'$k' => array(\r\n";
+                foreach ($v as $x => $y) {
+                    if ($x === 'id' || $x === 'name') {
+                        continue;
+                    }
+                    $c .= "\t\t'$x' => '" . mysql_real_escape_string($y) . "',\r\n";
+                }
+                $c .= "\t),\r\n";
+            }
+            $c .= ");\r\n\r\nreturn \$updateSlideShows;";
+
+            $f = fopen(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'slideshows.php', 'w+');
+            fwrite($f, $c);
+            fclose($f);
+        } else {
+            if (empty($slideshows))
+                return;
+
+            foreach ($slideshows as $name => $v) {
+                if (!isset($slideshowRow[$name])) {
+                    $countFields = count($v);
+                    $i = 0;
+                    $query = 'INSERT INTO `' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows` SET ';
+                    $query .= '`name` = \'' . mysql_real_escape_string($name) . '\',';
+                    foreach ($v as $field => $value) {
+                        $i++;
+                        $query .= '`' . $field . '` = \'' . mysql_real_escape_string($value) . '\'';
+                        if ($i < $countFields) {
+                            $query .= ',';
+                        }
+                    }
+                    if (!mysql_query($query)) {
+                        $_SESSION['easy2err'][] = __LINE__ . ': ' . 'MySQL ERROR: ' . mysql_error();
+                        $_SESSION['easy2err'][] = $query;
+                    }
+                }
+            }
+        }
+
+        return TRUE;
     }
 
 }

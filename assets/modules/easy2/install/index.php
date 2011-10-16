@@ -1,4 +1,8 @@
 <?php
+
+if (empty($_SESSION['installE2g']))
+    $_SESSION['installE2g'] = TRUE;
+
 // SYSTEM VARS
 $debug = 0;                             // MODx's debug variable
 $_t = $modx->config['manager_theme'];   // MODx's manager theme
@@ -11,7 +15,7 @@ require_once $installClassFile;
 
 $install = new install($modx, $e2g);
 $lngi = $install->loadLanguage();
-$_SESSION['installE2g'] = TRUE;
+
 #################################################################################
 #################################################################################
 #################################################################################

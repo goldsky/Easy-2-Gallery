@@ -41,11 +41,16 @@ if (!class_exists('E2gMod') && file_exists(realpath($e2gModClassFile))) {
 
 $_SESSION['installE2g'] = FALSE;
 
+$installFolder = dirname(__FILE__) . DIRECTORY_SEPARATOR . 'install';
+if (is_dir($installFolder)) {
+    $_SESSION['installE2g'] = TRUE;
+}
+
 $e2gModule = new E2gMod($modx);
 
-if (is_dir(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'install')) {
+if ($_SESSION['installE2g'] === TRUE) {
     $e2g = $e2gModule->e2g;
-    return require_once E2G_MODULE_PATH . 'install/index.php';
+    return require_once $installFolder . DIRECTORY_SEPARATOR . 'index.php';
 }
 
 $e2gModule->checkFolders();
