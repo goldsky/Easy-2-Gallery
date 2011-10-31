@@ -172,6 +172,10 @@ class E2gSnippet extends E2gPub {
         return $this->filler($this->getTpl('tpl'), $phs);
     }
 
+    /**
+     * Thumbnail contents
+     * @return string   formated thumbnails
+     */
     private function _thumbsContent() {
         $this->_countAllDirs = $this->_countAllDirs();
         $dirThumbs = $this->_dirThumbs();
@@ -344,6 +348,10 @@ class E2gSnippet extends E2gPub {
             return '';
     }
 
+    /**
+     * File thumbnails
+     * @return string   formated thumbnails
+     */
     private function _imageThumbs() {
         if ($this->_dirNumRows === intval($this->e2gSnipCfg['limit'])
                 || strtolower($this->e2gSnipCfg['showonly']) === 'folders'
@@ -370,7 +378,7 @@ class E2gSnippet extends E2gPub {
                     . ( $this->_dirNumRows > 0 ?
                             ( ' 0, ' . ( $fileThumbOffset ) ) :
                             ( ( ( $this->e2gSnipCfg['gpn'] - $filePageOffset) * $this->e2gSnipCfg['limit']) + $fileThumbOffset ) . ', ' . $this->e2gSnipCfg['limit'] );
-        } elseif ($fileThumbOffset != 0 || $fileThumbOffset === intval($this->e2gSnipCfg['limit'])) {
+        } elseif ($fileThumbOffset !== 0 || $fileThumbOffset === intval($this->e2gSnipCfg['limit'])) {
             $selectFiles .= 'LIMIT '
                     . ( $modulusDirCount > 0 ?
                             ( ' 0, ' . ( $fileThumbOffset ) ) :
@@ -407,6 +415,9 @@ class E2gSnippet extends E2gPub {
      * @return  int number of directories
      */
     private function _countAllDirs() {
+        if (strtolower($this->e2gSnipCfg['showonly']) === 'images') {
+            return 0;
+        }
         if (isset($this->e2gSnipCfg['static_tag'])) {
             $selectDirCount = $this->_dirSqlStatement('COUNT(DISTINCT cat_id)', 'd');
         } else {
@@ -429,9 +440,8 @@ class E2gSnippet extends E2gPub {
      * @return  string  formated breadcrumbs
      */
     private function _breadcrumbs() {
-
         if ($this->e2gSnipCfg['crumbs'] !== '1'
-                || strstr(',', $this->e2gSnipCfg['gid']) // it must be a single gid
+                || (strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
                 || isset($this->e2gSnipCfg['static_tag'])
         ) {
             return '';
@@ -499,6 +509,9 @@ class E2gSnippet extends E2gPub {
      * @return string   formated thumbnails
      */
     private function _dirThumbs() {
+        if (strtolower($this->e2gSnipCfg['showonly']) === 'images') {
+            return array();
+        }
 
         if (isset($this->e2gSnipCfg['static_tag'])) {
             $selectDirs = $this->_dirSqlStatement('*', 'd');
@@ -2090,7 +2103,7 @@ class E2gSnippet extends E2gPub {
         if ($this->e2gSnipCfg['nav_prevUpNext'] !== '1'
                 || $this->e2gSnipCfg['orderby'] === 'rand()'
                 || $this->e2gSnipCfg['cat_orderby'] === 'rand()'
-                || strstr(',', $this->e2gSnipCfg['gid']) // it must be a single gid
+                || (strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
                 || isset($this->e2gSnipCfg['static_tag'])
         ) {
             return '';
