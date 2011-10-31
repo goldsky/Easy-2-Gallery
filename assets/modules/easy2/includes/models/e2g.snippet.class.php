@@ -441,7 +441,7 @@ class E2gSnippet extends E2gPub {
      */
     private function _breadcrumbs() {
         if ($this->e2gSnipCfg['crumbs'] !== '1'
-                || (strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
+                || (!empty($this->e2gSnipCfg['gid']) && strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
                 || isset($this->e2gSnipCfg['static_tag'])
         ) {
             return '';
@@ -1885,6 +1885,8 @@ class E2gSnippet extends E2gPub {
         // for global variable: '*' (star), always returns TRUE
         if ($staticId === '*')
             return TRUE;
+        if (empty($staticId))
+            return FALSE;
 
         $selectDirs = 'SELECT A.cat_id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs A, '
                 . $this->modx->db->config['table_prefix'] . 'easy2_dirs B '
@@ -2103,7 +2105,7 @@ class E2gSnippet extends E2gPub {
         if ($this->e2gSnipCfg['nav_prevUpNext'] !== '1'
                 || $this->e2gSnipCfg['orderby'] === 'rand()'
                 || $this->e2gSnipCfg['cat_orderby'] === 'rand()'
-                || (strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
+                || (!empty($this->e2gSnipCfg['gid']) && strpos(',', $this->e2gSnipCfg['gid']) !== false) // it must be a single gid
                 || isset($this->e2gSnipCfg['static_tag'])
         ) {
             return '';
@@ -2275,6 +2277,8 @@ class E2gSnippet extends E2gPub {
      * @return array    parent's info in an array, or FALSE
      */
     private function _getParentInfo($dynamicId, $field = 'cat_id', $trigger=NULL) {
+        if (empty($dynamicId))
+            return FALSE;
         $selectParent = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs ';
 
         if ($dynamicId !== '*') {
@@ -2315,7 +2319,9 @@ class E2gSnippet extends E2gPub {
      * @return array    Sibling's info in an array, or FALSE
      */
     private function _getSiblingInfo($trigger, $dynamicId, $field, $siblingCounter) {
-
+        if (empty($dynamicId)) {
+            return FALSE;
+        }
         $selectChildren = 'SELECT a.* FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs a '
                 . 'WHERE a.parent_id IN ('
                 . 'SELECT b.parent_id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs b '

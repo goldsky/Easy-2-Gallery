@@ -10,11 +10,13 @@ die('This is not intended as a direct included file.
 if (!isset($give))
     return NULL;
 
-$combinedIds = $modx->getTemplateVarOutput(array('e2g-galleries'));
+$tvName = !empty($tvName) ? $tvName : 'e2g-galleries';
+$docId = !empty($docId) ? $docId : '';
+$combinedIds = $modx->getTemplateVarOutput(array($tvName), $docId);
 if (empty($combinedIds))
     return NULL;
 
-$xpldIds = @explode(',', $combinedIds['e2g-galleries']);
+$xpldIds = @explode(',', $combinedIds[$tvName]);
 $gids = array();
 $gid = '';
 $fids = array();
