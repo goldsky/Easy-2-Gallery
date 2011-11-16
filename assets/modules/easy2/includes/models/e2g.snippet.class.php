@@ -139,8 +139,8 @@ class E2gSnippet extends E2gPub {
         $phs['permalink'] = $this->_permalink();
         $phs['content'] = $this->_thumbsContent();
         $parentInfo = $this->_getParentInfo($this->e2gSnipCfg['gid']);
-        $phs['cat_name'] = $parentInfo['cat_id'];
-        $phs['parent_id'] = $parentInfo['cat_name'];
+        $phs['cat_name'] = $parentInfo['cat_name'];
+        $phs['parent_id'] = $parentInfo['cat_id'];
         $phs['back_tpl'] = $this->_back();
         $phs['description_tpl'] = $this->_description();
         $phs['crumbs_tpl'] = $this->_breadcrumbs();
@@ -248,9 +248,9 @@ class E2gSnippet extends E2gPub {
                 $galleryId = $this->e2gSnipCfg['gid'];
             }
 
-            $phs['cat_description'] = $this->getDirInfo($galleryId, 'cat_description');
-            $phs['cat_title'] = $this->getDirInfo($galleryId, 'cat_alias');
-            $phs['title'] = ($phs['cat_title'] != '' ? $phs['cat_title'] : $phs['cat_name'] );
+            $phs['cat_description'] = htmlspecialchars_decode($this->getDirInfo($galleryId, 'cat_description'), ENT_QUOTES);
+            $phs['cat_title'] = htmlspecialchars_decode($this->getDirInfo($galleryId, 'cat_alias'), ENT_QUOTES);
+            $phs['title'] = $phs['cat_title'] != '' ? $phs['cat_title'] : htmlspecialchars_decode($phs['cat_name'], ENT_QUOTES);
         }
         if (empty($phs['title']) && empty($phs['cat_description'])) {
             return '';
