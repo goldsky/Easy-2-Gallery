@@ -1716,14 +1716,14 @@ class E2gMod extends E2gPub {
                 $filePath = '../' . $this->e2gDecode($newParentPath . $filteredName);
                 $insertFile = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                         . 'SET dir_id=\'' . $newParent . '\''
-                        . ', filename=\'' . mysql_real_escape_string($filteredName) . '\''
+                        . ', filename=\'' . $this->_escapeString($filteredName) . '\''
                         . ', size=\'' . $newInf['size'] . '\''
                         . ', width=\'' . $newInf[0] . '\''
                         . ', height=\'' . $newInf[1] . '\''
-                        . ', alias=\'' . mysql_real_escape_string(htmlspecialchars($post['alias'][$i])) . '\''
-                        . ', summary=\'' . mysql_real_escape_string(htmlspecialchars($post['summary'][$i])) . '\''
-                        . ', tag=\'' . mysql_real_escape_string(htmlspecialchars($post['tag'][$i])) . '\''
-                        . ', description=\'' . mysql_real_escape_string(htmlspecialchars($post['description'][$i])) . '\''
+                        . ', alias=\'' . $this->_escapeString($post['alias'][$i]) . '\''
+                        . ', summary=\'' . $this->_escapeString($post['summary'][$i]) . '\''
+                        . ', tag=\'' . $this->_escapeString($post['tag'][$i]) . '\''
+                        . ', description=\'' . $this->_escapeString($post['description'][$i]) . '\''
                         . ', date_added=NOW()';
                 $queryInsertFile = mysql_query($insertFile);
                 if (!$queryInsertFile) {
@@ -2955,7 +2955,7 @@ class E2gMod extends E2gPub {
         // store the multiple tag input as an array
         $xpldTagInputs = explode(',', $post['tag_input']);
         for ($c = 0; $c < count($xpldTagInputs); $c++) {
-            $xpldTagInputs[$c] = htmlspecialchars(trim($xpldTagInputs[$c]), ENT_QUOTES);
+            $xpldTagInputs[$c] = $this->_escapeString($xpldTagInputs[$c]);
         }
 
         // Folders
@@ -3038,7 +3038,7 @@ class E2gMod extends E2gPub {
                     $xpldFileTags = explode(',', $fileTags);
 
                     for ($c = 0; $c < count($xpldFileTags); $c++) {
-                        $xpldFileTags[$c] = htmlspecialchars(trim($xpldFileTags[$c]), ENT_QUOTES);
+                        $xpldFileTags[$c] = $this->_escapeString($xpldFileTags[$c]);
                     }
 
                     $intTags = array_intersect($xpldFileTags, $xpldTagInputs);
@@ -3098,7 +3098,7 @@ class E2gMod extends E2gPub {
         // store the multiple tag input as an array
         $xpldTagInputs = explode(',', $post['tag_input']);
         for ($c = 0; $c < count($xpldTagInputs); $c++) {
-            $xpldTagInputs[$c] = htmlspecialchars(trim($xpldTagInputs[$c]), ENT_QUOTES);
+            $xpldTagInputs[$c] = $this->_escapeString($xpldTagInputs[$c]);
         }
 
         // Folders
@@ -3369,7 +3369,7 @@ class E2gMod extends E2gPub {
     private function _commentSave($post) {
         $comment = (isset($post['comment']) ? $post['comment'] : $post['hiddencomment']);
         $updateComment = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_comments '
-                . 'SET comment=\'' . $this->modx->db->escape(htmlspecialchars($comment, ENT_QUOTES)) . '\' '
+                . 'SET comment=\'' . $this->_escapeString($comment) . '\' '
                 . ', date_edited=NOW() '
                 . ', edited_by=\'' . $this->modx->getLoginUserID() . '\' '
                 . 'WHERE id=' . $post['comid'];
@@ -3402,8 +3402,8 @@ class E2gMod extends E2gPub {
         }
 
         $insertPlugin = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins '
-                . 'SET name=\'' . htmlspecialchars(trim($post['name']), ENT_QUOTES) . '\' '
-                . ', description=\'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\' '
+                . 'SET name=\'' . $this->_escapeString($post['name']) . '\' '
+                . ', description=\'' . $this->_escapeString($post['description']) . '\' '
                 . ', events=\'' . $eventsString . '\' '
                 . ', indexfile=\'' . urldecode(trim($post['index_file'])) . '\' '
                 . ', disabled=\'' . (int) $post['disabled'] . '\' ';
@@ -3461,8 +3461,8 @@ class E2gMod extends E2gPub {
         }
         $pluginId = $post['plugin_id'];
         $updatePlugin = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins '
-                . 'SET name=\'' . htmlspecialchars(trim($post['name']), ENT_QUOTES) . '\' '
-                . ', description=\'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\' '
+                . 'SET name=\'' . $this->_escapeString($post['name']) . '\' '
+                . ', description=\'' . $this->_escapeString($post['description']) . '\' '
                 . ', events=\'' . $eventsString . '\' '
                 . ', indexfile=\'' . urldecode(trim($post['index_file'])) . '\' '
                 . ', disabled=\'' . (int) $post['disabled'] . '\' '
@@ -3510,18 +3510,18 @@ class E2gMod extends E2gPub {
         }
 
         $insertViewer = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers '
-                . 'SET name=\'' . mysql_real_escape_string($post['name']) . '\''
-                . ', alias=\'' . mysql_real_escape_string($post['alias']) . '\''
-                . ', description=\'' . mysql_real_escape_string(htmlspecialchars($post['description'])) . '\''
-                . ', disabled=\'' . mysql_real_escape_string(htmlspecialchars($post['disabled'])) . '\''
-                . ', headers_css=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_css'])) . '\''
-                . ', autoload_css=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_css'])) . '\''
-                . ', headers_js=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_js'])) . '\''
-                . ', autoload_js=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_js'])) . '\''
-                . ', headers_html=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_html'])) . '\''
-                . ', autoload_html=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_html'])) . '\''
-                . ', glibact=\'' . mysql_real_escape_string(htmlspecialchars($post['glibact'])) . '\''
-                . ', clibact=\'' . mysql_real_escape_string(htmlspecialchars($post['clibact'])) . '\''
+                . 'SET name=\'' . $this->_escapeString($post['name']) . '\''
+                . ', alias=\'' . $this->_escapeString($post['alias']) . '\''
+                . ', description=\'' . $this->_escapeString($post['description']) . '\''
+                . ', disabled=\'' . $this->_escapeString($post['disabled']) . '\''
+                . ', headers_css=\'' . $this->_escapeString($post['headers_css']) . '\''
+                . ', autoload_css=\'' . $this->_escapeString($post['autoload_css']) . '\''
+                . ', headers_js=\'' . $this->_escapeString($post['headers_js']) . '\''
+                . ', autoload_js=\'' . $this->_escapeString($post['autoload_js']) . '\''
+                . ', headers_html=\'' . $this->_escapeString($post['headers_html']) . '\''
+                . ', autoload_html=\'' . $this->_escapeString($post['autoload_html']) . '\''
+                . ', glibact=\'' . $this->_escapeString($post['glibact']) . '\''
+                . ', clibact=\'' . $this->_escapeString($post['clibact']) . '\''
         ;
         $queryInservtViewer = mysql_query($insertViewer);
         if (!$queryInservtViewer) {
@@ -3551,18 +3551,18 @@ class E2gMod extends E2gPub {
         }
 
         $updateViewer = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers '
-                . 'SET name=\'' . mysql_real_escape_string($post['name']) . '\''
-                . ', alias=\'' . mysql_real_escape_string($post['alias']) . '\''
-                . ', description=\'' . mysql_real_escape_string(htmlspecialchars($post['description'])) . '\''
-                . ', disabled=\'' . mysql_real_escape_string(htmlspecialchars($post['disabled'])) . '\''
-                . ', headers_css=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_css'])) . '\''
-                . ', autoload_css=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_css'])) . '\''
-                . ', headers_js=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_js'])) . '\''
-                . ', autoload_js=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_js'])) . '\''
-                . ', headers_html=\'' . mysql_real_escape_string(htmlspecialchars($post['headers_html'])) . '\''
-                . ', autoload_html=\'' . mysql_real_escape_string(htmlspecialchars($post['autoload_html'])) . '\''
-                . ', glibact=\'' . mysql_real_escape_string(htmlspecialchars($post['glibact'])) . '\''
-                . ', clibact=\'' . mysql_real_escape_string(htmlspecialchars($post['clibact'])) . '\''
+                . 'SET name=\'' . $this->_escapeString($post['name']) . '\''
+                . ', alias=\'' . $this->_escapeString($post['alias']) . '\''
+                . ', description=\'' . $this->_escapeString($post['description']) . '\''
+                . ', disabled=\'' . $this->_escapeString($post['disabled']) . '\''
+                . ', headers_css=\'' . $this->_escapeString($post['headers_css']) . '\''
+                . ', autoload_css=\'' . $this->_escapeString($post['autoload_css']) . '\''
+                . ', headers_js=\'' . $this->_escapeString($post['headers_js']) . '\''
+                . ', autoload_js=\'' . $this->_escapeString($post['autoload_js']) . '\''
+                . ', headers_html=\'' . $this->_escapeString($post['headers_html']) . '\''
+                . ', autoload_html=\'' . $this->_escapeString($post['autoload_html']) . '\''
+                . ', glibact=\'' . $this->_escapeString($post['glibact']) . '\''
+                . ', clibact=\'' . $this->_escapeString($post['clibact']) . '\''
                 . ' WHERE id=' . $post['viewer_id']
         ;
         $updateQuery = mysql_query($updateViewer);
@@ -3571,7 +3571,7 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['viewer_update_suc'] . ' : ' . mysql_real_escape_string($post['name']);
+        $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['viewer_update_suc'] . ' : ' . htmlspecialchars($post['name']);
         return TRUE;
     }
 
@@ -3598,8 +3598,8 @@ class E2gMod extends E2gPub {
             if (empty($post['name'][$i]))
                 continue;
             $insertSlideshow = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows '
-                    . 'SET name=\'' . htmlspecialchars(trim($post['name'][$i]), ENT_QUOTES) . '\' '
-                    . ', description=\'' . htmlspecialchars(trim($post['description'][$i]), ENT_QUOTES) . '\' '
+                    . 'SET name=\'' . $this->_escapeString($post['name'][$i]) . '\' '
+                    . ', description=\'' . $this->_escapeString($post['description'][$i]) . '\' '
                     . ', indexfile=\'' . urldecode(trim($post['index_file'][$i])) . '\' '
             ;
             $queryInsertSlideshow = mysql_query($insertSlideshow);
@@ -3634,8 +3634,8 @@ class E2gMod extends E2gPub {
         }
 
         $updateSlideshow = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows '
-                . 'SET name=\'' . htmlspecialchars(trim($post['name']), ENT_QUOTES) . '\' '
-                . ', description=\'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\' '
+                . 'SET name=\'' . $this->_escapeString($post['name']) . '\' '
+                . ', description=\'' . $this->_escapeString($post['description']) . '\' '
                 . ', indexfile=\'' . urldecode(trim($post['index_file'])) . '\' '
                 . 'WHERE id=' . $post['slideshow_id']
         ;
@@ -3697,10 +3697,10 @@ class E2gMod extends E2gPub {
 
         $updateDir = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'SET '
-                . 'cat_alias = \'' . htmlspecialchars(trim($post['alias']), ENT_QUOTES) . '\''
-                . ', cat_summary = \'' . htmlspecialchars(trim($post['summary']), ENT_QUOTES) . '\''
-                . ', cat_tag = \'' . htmlspecialchars(trim($post['tag']), ENT_QUOTES) . '\''
-                . ', cat_description = \'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\''
+                . 'cat_alias = \'' . $this->_escapeString($post['alias']) . '\''
+                . ', cat_summary = \'' . $this->_escapeString($post['summary']) . '\''
+                . ', cat_tag = \'' . $this->_escapeString($post['tag']) . '\''
+                . ', cat_description = \'' . $this->_escapeString($post['description']) . '\''
                 . ', date_added=NOW() '
                 . ', added_by=\'' . $this->modx->getLoginUserID() . '\' '
                 . 'WHERE cat_id=' . $id;
@@ -3713,10 +3713,10 @@ class E2gMod extends E2gPub {
         // invoke the plugin
         $this->plugin('OnE2GFolderCreateFormSave', array(
             'cat_id' => $id
-            , 'cat_alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
-            , 'cat_summary' => htmlspecialchars(trim($post['summary']), ENT_QUOTES)
-            , 'cat_tag' => htmlspecialchars(trim($post['tag']), ENT_QUOTES)
-            , 'cat_description' => htmlspecialchars(trim($post['description']), ENT_QUOTES)
+            , 'cat_alias' => $this->_escapeString($post['alias'])
+            , 'cat_summary' => $this->_escapeString($post['summary'])
+            , 'cat_tag' => $this->_escapeString($post['tag'])
+            , 'cat_description' => $this->_escapeString($post['description'])
             , 'date_added' => time()
             , 'added_by' => $this->modx->getLoginUserID()
         ));
@@ -3760,16 +3760,16 @@ class E2gMod extends E2gPub {
         $updateDir = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs SET ';
 
         if ($post['cat_id'] != '1' && $renameDirConfirm === TRUE) {
-            $updateDir .= 'cat_name = \'' . htmlspecialchars(trim($newDirName), ENT_QUOTES) . '\', '; // trailing comma!
+            $updateDir .= 'cat_name = \'' . $this->_escapeString($newDirName) . '\', '; // trailing comma!
         }
 
-        $updateDir .= 'cat_alias = \'' . htmlspecialchars(trim($post['alias']), ENT_QUOTES) . '\''
-                . ', cat_summary = \'' . htmlspecialchars(trim($post['summary']), ENT_QUOTES) . '\''
-                . ', cat_tag = \'' . htmlspecialchars(trim($post['tag']), ENT_QUOTES) . '\''
-                . ', cat_description = \'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\''
+        $updateDir .= 'cat_alias = \'' . $this->_escapeString($post['alias']) . '\''
+                . ', cat_summary = \'' . $this->_escapeString($post['summary']) . '\''
+                . ', cat_tag = \'' . $this->_escapeString($post['tag']) . '\''
+                . ', cat_description = \'' . $this->_escapeString($post['description']) . '\''
                 . ', modified_by=\'' . $this->modx->getLoginUserID() . '\' '
                 . ', last_modified=NOW() '
-                . ', cat_redirect_link = \'' . htmlspecialchars(trim($post['cat_redirect_link']), ENT_QUOTES) . '\''
+                . ', cat_redirect_link = \'' . $this->_escapeString($post['cat_redirect_link']) . '\''
                 . ', cat_thumb_id = \'' . $post['thumb_id'] . '\''
                 . ' WHERE cat_id=' . $post['cat_id'];
         $queryUpdateDir = mysql_query($updateDir);
@@ -3785,11 +3785,11 @@ class E2gMod extends E2gPub {
         // invoke the plugin
         $this->plugin('OnE2GFolderEditFormSave', array(
             'cat_id' => $post['cat_id']
-            , 'cat_name' => ($renameDirConfirm === TRUE ? htmlspecialchars(trim($newDirName), ENT_QUOTES) : $oldDirName )
-            , 'cat_alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
-            , 'cat_summary' => htmlspecialchars(trim($post['summary']), ENT_QUOTES)
-            , 'cat_tag' => htmlspecialchars(trim($post['tag']), ENT_QUOTES)
-            , 'cat_description' => htmlspecialchars(trim($post['description']), ENT_QUOTES)
+            , 'cat_name' => ($renameDirConfirm === TRUE ? $this->_escapeString($newDirName) : $oldDirName )
+            , 'cat_alias' => $this->_escapeString($post['alias'])
+            , 'cat_summary' => $this->_escapeString($post['summary'])
+            , 'cat_tag' => $this->_escapeString($post['tag'])
+            , 'cat_description' => $this->_escapeString($post['description'])
             , 'modified_by=' => $this->modx->getLoginUserID()
             , 'last_modified' => time()
         ));
@@ -3831,15 +3831,15 @@ class E2gMod extends E2gPub {
 
         $updateFile = 'UPDATE ' . $this->modx->db->config['table_prefix'] . 'easy2_files SET ';
         if ($newFilename != $filename) {
-            $updateFile .= 'filename = \'' . htmlspecialchars(trim($newFilename) . $ext, ENT_QUOTES) . '\', '; // trailing comma!
+            $updateFile .= 'filename = \'' . $this->_escapeString($newFilename) . $ext . '\', '; // trailing comma!
         }
-        $updateFile .= 'alias = \'' . htmlspecialchars(trim($post['alias']), ENT_QUOTES) . '\''
-                . ', summary = \'' . htmlspecialchars(trim($post['summary']), ENT_QUOTES) . '\''
-                . ', tag = \'' . htmlspecialchars(trim($post['tag']), ENT_QUOTES) . '\''
-                . ', description = \'' . htmlspecialchars(trim($post['description']), ENT_QUOTES) . '\''
+        $updateFile .= 'alias = \'' . $this->_escapeString($post['alias']) . '\''
+                . ', summary = \'' . $this->_escapeString($post['summary']) . '\''
+                . ', tag = \'' . $this->_escapeString($post['tag']) . '\''
+                . ', description = \'' . $this->_escapeString($post['description']) . '\''
                 . ', modified_by=\'' . $this->modx->getLoginUserID() . '\' '
                 . ', last_modified=NOW() '
-                . ', redirect_link = \'' . htmlspecialchars(trim($post['redirect_link']), ENT_QUOTES) . '\''
+                . ', redirect_link = \'' . $this->_escapeString($post['redirect_link']) . '\''
                 . 'WHERE id=' . $post['file_id'];
         $queryUpdateFile = mysql_query($updateFile);
         if (!$queryUpdateFile) {
@@ -3858,10 +3858,10 @@ class E2gMod extends E2gPub {
         $this->plugin('OnE2GFileEditFormSave', array(
             'fid' => $_GET['file_id']
             , 'filename' => ($newFilename != $filename ? $newFilename : $filename)
-            , 'alias' => htmlspecialchars(trim($post['alias']), ENT_QUOTES)
-            , 'summary' => htmlspecialchars(trim($post['summary']), ENT_QUOTES)
-            , 'tag' => htmlspecialchars(trim($post['tag']), ENT_QUOTES)
-            , 'description' => htmlspecialchars(trim($post['description']), ENT_QUOTES)
+            , 'alias' => $this->_escapeString($post['alias'])
+            , 'summary' => $this->_escapeString($post['summary'])
+            , 'tag' => $this->_escapeString($post['tag'])
+            , 'description' => $this->_escapeString($post['description'])
             , 'modified_by' => $this->modx->getLoginUserID()
             , 'last_modified' => time()
         ));
@@ -4597,9 +4597,19 @@ class E2gMod extends E2gPub {
             if (is_array($value)) {
                 $value = $this->_htmlspecialcharsArray($value);
             }
-            $o[$key] = htmlspecialchars($value, ENT_QUOTES);
+            $o[$key] = $this->_escapeString($value);
         }
         return $o;
     }
 
+    /**
+     * Escapes special characters in a string for use in an SQL statement
+     * @param   string  $s  string
+     * @return  string  escaped string
+     */
+    private function _escapeString($s) {
+        $s = trim($s);
+        $s = $this->modx->db->escape(htmlspecialchars($s, ENT_QUOTES));
+        return $s;
+    }
 }

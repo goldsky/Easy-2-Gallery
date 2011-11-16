@@ -1055,7 +1055,7 @@ class E2gSnippet extends E2gPub {
         } // if ( isset($this->e2gSnipCfg['landingpage']) )
 
         if ($row['description'] !== '') {
-            $row['description'] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
+            $row['description'] = $this->_decodeText($row['description']);
         }
 
         /**
@@ -1468,7 +1468,7 @@ class E2gSnippet extends E2gPub {
         $ssFile['src'] = $this->e2gEncode($this->e2gSnipCfg['gdir'] . $path . $row['filename']);
         $ssFile['title'] = ($row['alias'] !== '' ? $row['alias'] : $row['filename']);
         $ssFile['name'] = $row['alias'];
-        $ssFile['description'] = $this->_stripHTMLTags(htmlspecialchars_decode($row['description'], ENT_QUOTES));
+        $ssFile['description'] = $this->_decodeText($row['description']);
 
         return $ssFile;
     }
@@ -1547,7 +1547,7 @@ class E2gSnippet extends E2gPub {
             $l['title'] = $fetch['alias'] != '' ? $fetch['alias'] : $fetch['filename'];
             $l['alias'] = $fetch['alias'];
             $l['name'] = $fetch['alias'];
-            $l['description'] = $this->_stripHTMLTags(htmlspecialchars_decode($fetch['description'], ENT_QUOTES));
+            $l['description'] = $this->_decodeText($fetch['description']);
 
             /**
              * Comments on the landing page
@@ -2782,6 +2782,18 @@ class E2gSnippet extends E2gPub {
             }
         }
         return $pagination;
+    }
+
+    /**
+     * Decoding returning text
+     * @param   string  $text   string
+     * @return  string  decoded string
+     */
+    private function _decodeText($text) {
+        $encodedText = htmlspecialchars_decode($text, ENT_QUOTES);
+        $encodedText = html_entity_decode($encodedText);
+        $encodedText = $this->_stripHTMLTags($encodedText);
+        return $encodedText;
     }
 
 }
