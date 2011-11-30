@@ -191,12 +191,38 @@ foreach ($fetchDirs as $fetchDir) {
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
                     width="16" height="16" border="0" alt="" />
                 ';
+    // checks any redirect link
     if (!empty($fetchDir['cat_redirect_link'])) {
         $dirIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
                     height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchDir['cat_redirect_link'] . '" border="0" />
                         ';
     }
+    // checks the restricted web access
+    $checkWebAccess = array();
+    $$checkWebAccessQuery = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_webgroup_access '
+        . 'WHERE type=\'dir\' AND id=\'' . $fetchDir['cat_id'] . '\'';
+    $checkWebAccess = $modx->db->makeArray($modx->db->query($$checkWebAccessQuery));
+    if (!empty($checkWebAccess)) {
+        foreach ($checkWebAccess as $k => $v) {
+            $webgroup_id['dir'][$fetchDir['cat_id']][] = '\'' . $v['webgroup_id'] . '\'';
+        }
+        $implodeGroupId = implode(',', $webgroup_id['dir'][$fetchDir['cat_id']]);
+        $webAccessQuery = 'SELECT name FROM ' . $modx->db->config['table_prefix'] . 'webgroup_names '
+                . 'WHERE id IN (' . $implodeGroupId . ')';
+        $webGroup = $modx->db->makeArray($modx->db->query($webAccessQuery));
+        foreach ($webGroup as $k => $v) {
+            $webGroupNames[] = $v['name'];
+        }
+        if (!empty($webGroup)) {
+            $webGroupNames = implode(', ', $webGroupNames);
+            $dirIcon .= '
+                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/lock.png" width="16"
+                        height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
+                            ';
+        }
+    }
+
     $dirButtons = '';
 
     if (!$e2gMod->validFolder($gdirRealPath . DIRECTORY_SEPARATOR . $e2gMod->e2gDecode($fetchDir['cat_name']))) {

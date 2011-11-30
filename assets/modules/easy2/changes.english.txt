@@ -4,10 +4,12 @@
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
 ***************** 1.4.9 ******************
-Fix:
+Fixes:
++ Bugfixed the restricted access to the prev-up-next navigation
++ Added the restricted access icon on the module's list
 + Debug returned the valid folders as false
 
-Improvement:
+Improvements:
 + deleted old template files
 + refactored the snippet's class
 + added &wmposxy for specified x,y watermark's position

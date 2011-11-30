@@ -25,7 +25,7 @@ class E2gPub { // public/public class
      */
     private $_e2g = array();
     /**
-     * Directorie information
+     * Directory information
      * @var array
      */
     private $_dirInfo = array();
@@ -555,8 +555,8 @@ class E2gPub { // public/public class
      */
     public function folderImg($gid, $gdir) {
 
-        $excludeDirWebAccess = $this->excludeWebAccess('dir');
-        $excludeFileWebAccess = $this->excludeWebAccess('file');
+        $excludeDirWebAccess = $this->checkWebAccess('dir');
+        $excludeFileWebAccess = $this->checkWebAccess('file');
 
         /**
          * Select the file from the manual selected thumbnail
@@ -693,12 +693,7 @@ class E2gPub { // public/public class
      * @param string $type  dir/file selection
      * @return string the excluded ids from the SQL parameter
      */
-    public function excludeWebAccess($type) {
-        // if in the manager mode, don't use this
-        if (IN_MANAGER_MODE !== "false") {
-            return FALSE;
-        }
-
+    public function checkWebAccess($type) {
         /**
          * Get all the restricted list ids
          */
@@ -747,11 +742,11 @@ class E2gPub { // public/public class
         /**
          * Get the difference
          */
-        $excludeWebAccess = array_diff($allWebAccess, $userWebAccess);
-        if (empty($excludeWebAccess)) {
+        $checkWebAccess = array_diff($allWebAccess, $userWebAccess);
+        if (empty($checkWebAccess)) {
             return FALSE;
         }
-        $excludeWebAccessString = @implode(',', $excludeWebAccess);
+        $excludeWebAccessString = @implode(',', $checkWebAccess);
         return $excludeWebAccessString;
     }
 

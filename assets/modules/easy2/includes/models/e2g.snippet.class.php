@@ -1976,7 +1976,7 @@ class E2gSnippet extends E2gPub {
                 $selectTaggedDirs .= 'OR LOWER(cat_tag) LIKE \'%' . $xpldDirTags[$i] . '%\' ';
         }
 
-        $excludeDirWebAccess = $this->excludeWebAccess('dir');
+        $excludeDirWebAccess = $this->checkWebAccess('dir');
 
         if ($excludeDirWebAccess !== FALSE) {
             $selectTaggedDirs .= 'AND cat_id NOT IN (' . $excludeDirWebAccess . ') ';
@@ -2029,7 +2029,7 @@ class E2gSnippet extends E2gPub {
                 $selectTaggedFiles .= 'OR LOWER(tag) LIKE \'%' . $xpldFileTags[$i] . '%\' ';
         }
 
-        $excludeFileWebAccess = $this->excludeWebAccess('file');
+        $excludeFileWebAccess = $this->checkWebAccess('file');
 
         if ($excludeFileWebAccess !== FALSE) {
             $selectFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
@@ -2327,6 +2327,11 @@ class E2gSnippet extends E2gPub {
                 . 'SELECT b.parent_id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs b '
                 . 'WHERE ';
 
+        $excludeDirWebAccess = $this->checkWebAccess('dir');
+        if ($excludeDirWebAccess !== FALSE) {
+            $selectChildren .= 'b.cat_id NOT IN (' . $excludeDirWebAccess . ') AND ';
+        }
+
         if ($dynamicId !== '*') {
             if ($trigger === 'tag') {
                 $selectChildren .= 'b.cat_tag LIKE \'%' . $dynamicId . '%\' AND ';
@@ -2335,8 +2340,11 @@ class E2gSnippet extends E2gPub {
             }
         }
 
-        $selectChildren .= 'b.cat_visible = 1 ) '
-                . 'AND a.cat_visible = 1 ';
+        $selectChildren .= 'b.cat_visible = 1 ) AND a.cat_visible = 1 ';
+
+        if ($excludeDirWebAccess !== FALSE) {
+            $selectChildren .= 'AND a.cat_id NOT IN (' . $excludeDirWebAccess . ') ';
+        }
 
         if ($trigger === 'tag' && $dynamicId !== '*') {
             $selectChildren .= 'AND a.cat_tag LIKE \'%' . $dynamicId . '%\' ';
@@ -2503,7 +2511,7 @@ class E2gSnippet extends E2gPub {
      * @return string   The complete SQL's statement with additional parameters
      */
     private function _dirSqlStatement($select, $prefix = NULL) {
-        $excludeDirWebAccess = $this->excludeWebAccess('dir');
+        $excludeDirWebAccess = $this->checkWebAccess('dir');
 
         $prefixDot = '';
         if (isset($prefix))
@@ -2605,9 +2613,6 @@ class E2gSnippet extends E2gPub {
         $this->e2gSnipCfg['fid'] = $this->e2gSnipCfg['fid'];
         $this->e2gSnipCfg['static_fid'] = $this->e2gSnipCfg['static_fid'];
 
-        $excludeDirWebAccess = $this->excludeWebAccess('dir');
-        $excludeFileWebAccess = $this->excludeWebAccess('file');
-
         if (!empty($allowedRatio) && $allowedRatio !== 'all') {
             /**
              * Filtering the slideshow size ratio
@@ -2682,10 +2687,12 @@ class E2gSnippet extends E2gPub {
             }
         }
 
-        if ($excludeDirWebAccess !== FALSE) {
-            $dirSqlStatement .= 'dir_id NOT IN (' . $excludeDirWebAccess . ') AND ';
-        }
+//        $excludeDirWebAccess = $this->checkWebAccess('dir');
+//        if ($excludeDirWebAccess !== FALSE) {
+//            $dirSqlStatement .= 'dir_id NOT IN (' . $excludeDirWebAccess . ') AND ';
+//        }
 
+        $excludeFileWebAccess = $this->checkWebAccess('file');
         if ($excludeFileWebAccess !== FALSE) {
             $fileSqlStatement .= 'id NOT IN (' . $excludeFileWebAccess . ') AND ';
         }
