@@ -17,10 +17,10 @@ $updateViewers = array(
 		"autoload_css" => "1",
 		"headers_js" => "assets/libs/viewers/highslide/highslide-full.js\r\n| assets/libs/viewers/highslide/e2g.highslide.js",
 		"autoload_js" => "1",
-		"headers_html" => "&lt;script type=&quot;text/javascript&quot;&gt;\r\n    hs.addSlideshow({\r\n        slideshowGroup: \"[+easy2:show_group+]\",\r\n        interval: 5000,\r\n        repeat: false,\r\n        useControls: true,\r\n        fixedControls: \"fit\",\r\n        overlayOptions: {\r\n            opacity: .6,\r\n            position: \"bottom center\"\r\n        }\r\n    });\r\n&lt;/script&gt;",
+		"headers_html" => "&lt;script type=&quot;text/javascript&quot;&gt;\r\n    hs.addSlideshow({\r\n        slideshowGroup: '[+easy2:show_group+]',\r\n        interval: 5000,\r\n        repeat: false,\r\n        useControls: true,\r\n        fixedControls: 'fit',\r\n        overlayOptions: {\r\n            opacity: .6,\r\n            position: 'bottom center'\r\n        }\r\n    });\r\n&lt;/script&gt;",
 		"autoload_html" => "1",
-		"glibact" => "class=&quot;highslide&quot; onclick=&quot;return hs.expand(this, {slideshowGroup: \"[+easy2:show_group+]\"})&quot;",
-		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: \"iframe\" } )&quot;",
+		"glibact" => "class=&quot;highslide&quot; onclick=&quot;return hs.expand(this, {slideshowGroup: '[+easy2:show_group+]'})&quot;",
+		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: 'iframe' } )&quot;",
 	),
 	"lightbox2" => array(
 		"alias" => "lightbox2",
@@ -33,7 +33,7 @@ $updateViewers = array(
 		"headers_html" => "",
 		"autoload_html" => "0",
 		"glibact" => "class=&quot;[+easy2:show_group+]&quot; rel=&quot;lightbox[[+easy2:show_group+]]&quot;",
-		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: \"iframe\"} )&quot;",
+		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: 'iframe'} )&quot;",
 	),
 	"colorbox" => array(
 		"alias" => "colorbox 1.3.8 (jq)",
@@ -56,7 +56,7 @@ $updateViewers = array(
 		"autoload_css" => "1",
 		"headers_js" => "http://ajax.googleapis.com/ajax/libs/jquery/1.4/jquery.min.js\r\n| assets/libs/viewers/fancybox/jquery.fancybox-1.3.4.pack.js\r\n| assets/libs/viewers/fancybox/jquery.easing-1.3.pack.js\r\n| assets/libs/viewers/fancybox/jquery.mousewheel-3.0.4.pack.js\r\n| assets/libs/viewers/fancybox/e2g.fancybox.js",
 		"autoload_js" => "1",
-		"headers_html" => "&lt;script type=&quot;text/javascript&quot;&gt;\r\n  $(document).ready(function() {\r\n    $(&quot;a.[+easy2:show_group+]&quot;).fancybox({\r\n        \"padding\"         : 10,\r\n        \"margin\"          : 0,\r\n        \"transitionIn\"    : \"elastic\",\r\n        \"transitionOut\"   : \"elastic\",\r\n        \"titlePosition\"   : \"over\",\r\n        \"type\"            : \"image\",\r\n        \"titleFormat\"     : function(title, currentArray, currentIndex, currentOpts) {\r\n            return \"&lt;span id=&quot;fancybox-title-over&quot;&gt;Image \" + (currentIndex + 1) + \" / \" + currentArray.length + (title.length ? \" &amp;nbsp; \" + title : \"\") + \"&lt;/span&gt;\";\r\n        }\r\n    });\r\n  });\r\n&lt;/script&gt;",
+		"headers_html" => "&lt;script type=&quot;text/javascript&quot;&gt;\r\n  $(document).ready(function() {\r\n    $(&quot;a.[+easy2:show_group+]&quot;).fancybox({\r\n        'padding'         : 10,\r\n        'margin'          : 0,\r\n        'transitionIn'    : 'elastic',\r\n        'transitionOut'   : 'elastic',\r\n        'titlePosition'   : 'over',\r\n        'type'            : 'image',\r\n        'titleFormat'     : function(title, currentArray, currentIndex, currentOpts) {\r\n            return '&lt;span id=&quot;fancybox-title-over&quot;&gt;Image ' + (currentIndex + 1) + ' / ' + currentArray.length + (title.length ? ' &amp;nbsp; ' + title : '') + '&lt;/span&gt;';\r\n        }\r\n    });\r\n  });\r\n&lt;/script&gt;",
 		"autoload_html" => "1",
 		"glibact" => "class=&quot;[+easy2:show_group+]&quot; rel=&quot;[+easy2:show_group+]&quot;",
 		"clibact" => "class=&quot;comment&quot;",
@@ -98,7 +98,7 @@ $updateViewers = array(
 		"headers_html" => "",
 		"autoload_html" => "0",
 		"glibact" => "rel=&quot;lightbox[[+easy2:show_group+]]&quot;",
-		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: \"iframe\"} )&quot;",
+		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: 'iframe'} )&quot;",
 	),
 	"slimbox2" => array(
 		"alias" => "slimbox2 2.04 (jq)",
@@ -111,7 +111,7 @@ $updateViewers = array(
 		"headers_html" => "",
 		"autoload_html" => "0",
 		"glibact" => "rel=&quot;lightbox[[+easy2:show_group+]]&quot;",
-		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: \"iframe\"} )&quot;",
+		"clibact" => "onclick=&quot;return hs.htmlExpand(this, { objectType: 'iframe'} )&quot;",
 	),
 );
 
