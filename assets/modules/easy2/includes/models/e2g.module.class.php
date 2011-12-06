@@ -100,7 +100,7 @@ class E2gMod extends E2gPub {
         // 'path' request claims a new path
         if (!empty($this->sanitizedGets['path'])
                 && $path['string'] !== $this->sanitizedGets['path']
-                ) {
+        ) {
             $getPath = str_replace('../', '', $this->sanitizedGets['path']);
             $getPath = str_replace($this->e2gModCfg['gdir'], '', $this->e2g['dir'] . $this->sanitizedGets['path']);
             $pathArray = explode('/', $getPath);
@@ -288,8 +288,11 @@ class E2gMod extends E2gPub {
 
             // Add slideshow
             case 'save_slideshow':
-                $this->_saveSlideshow($_POST);
-                header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
+                if (!$this->_saveSlideshow($_POST)) {
+                    header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
+                } else {
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
+                }
                 exit();
                 break;
 
@@ -3621,15 +3624,28 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
 
-        $countPost = count($post['name']);
-        for ($i = 0; $i < $countPost; $i++) {
-            // skipping the dummy form, the zero key
-            if (empty($post['name'][$i]))
-                continue;
+        if (is_array($post['name'])) {
+            $countPost = count($post['name']);
+            for ($i = 0; $i < $countPost; $i++) {
+                // skipping the dummy form, the zero key
+                if (empty($post['name'][$i]))
+                    continue;
+                $insertSlideshow = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows '
+                        . 'SET name=\'' . $this->_escapeString($post['name'][$i]) . '\' '
+                        . ', description=\'' . $this->_escapeString($post['description'][$i]) . '\' '
+                        . ', indexfile=\'' . urldecode(trim($post['index_file'][$i])) . '\' '
+                ;
+                $queryInsertSlideshow = mysql_query($insertSlideshow);
+                if (!$queryInsertSlideshow) {
+                    $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertSlideshow;
+                    return FALSE;
+                }
+            }
+        } else {
             $insertSlideshow = 'INSERT INTO ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows '
-                    . 'SET name=\'' . $this->_escapeString($post['name'][$i]) . '\' '
-                    . ', description=\'' . $this->_escapeString($post['description'][$i]) . '\' '
-                    . ', indexfile=\'' . urldecode(trim($post['index_file'][$i])) . '\' '
+                    . 'SET name=\'' . $this->_escapeString($post['name']) . '\' '
+                    . ', description=\'' . $this->_escapeString($post['description']) . '\' '
+                    . ', indexfile=\'' . urldecode(trim($post['index_file'])) . '\' '
             ;
             $queryInsertSlideshow = mysql_query($insertSlideshow);
             if (!$queryInsertSlideshow) {

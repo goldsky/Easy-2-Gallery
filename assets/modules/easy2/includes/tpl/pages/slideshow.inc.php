@@ -10,49 +10,16 @@ if (IN_MANAGER_MODE != 'true')
     /**
      * for edit list
      */
-    if (isset($_GET['page']) && $_GET['page'] == 'edit_slideshow') {
+    if (isset($_GET['page'])) {
     ?>
         <div class="tab-page" id="tabSlideshowEdit">
             <h2 class="tab"><?php echo $this->lng['edit']; ?></h2>
             <script type="text/javascript">
                 tpSlideshow.addTabPage( document.getElementById( 'tabSlideshowEdit') );
             </script>
-            <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=update_slideshow" method="post">
             <?php
-            $select_slideshows = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows WHERE id=' . $_GET['ssid'];
-            $query_slideshows = mysql_query($select_slideshows);
-            if (!$query_slideshows)
-                die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_slideshows);
-            else {
-                $numrow_slideshows = mysql_num_rows($query_slideshows);
-                $row = mysql_fetch_array($query_slideshows);
+            include_once (dirname(__FILE__) . DIRECTORY_SEPARATOR . "slideshow.edit.inc.php");
             ?>
-                <p>ID: <?php echo $row['id']; ?></p>
-                <input type="hidden" name="slideshow_id" value="<?php echo $row['id']; ?>" />
-                <table cellspacing="0" cellpadding="2">
-                    <tr>
-                        <td><b><?php echo $this->lng['name']; ?>:</b></td>
-                        <td><input name="name" type="text" size="75" value="<?php echo $row['name']; ?>" /></td>
-                    </tr>
-                    <tr>
-                        <td valign="top"><b><?php echo $this->lng['description']; ?>:</b></td>
-                        <td><input name="description" type="text" size="75" value="<?php echo $row['description']; ?>" /></td>
-                    </tr>
-                    <tr>
-                        <td><b><?php echo $this->lng['index_file']; ?>:</b></td>
-                        <td><input name="index_file" type="text" size="75" value="<?php echo $row['indexfile']; ?>" /></td>
-                </tr>
-<?php } ?>
-                <tr>
-                    <td></td>
-                    <td>
-                        <br />
-                        <input type="submit" value="<?php echo $this->lng['save']; ?>" /> &nbsp; &nbsp; &nbsp;
-                        <input type="button" value="<?php echo $this->lng['cancel']; ?>" onclick="history.go(-1)" /> &nbsp; &nbsp; &nbsp;
-                    </td>
-                </tr>
-            </table>
-        </form>
     </div>
 
     <?php
@@ -79,6 +46,12 @@ if (IN_MANAGER_MODE != 'true')
                     while ($row = mysql_fetch_array($query_slideshows)) {
                 ?>
                     <li>
+                            <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=duplicate_slideshow&amp;ssid=' . $row['id']; ?>"
+                               onclick="return confirm('<?php echo $this->lng['js_duplicate_slideshow_confirm']; ?>')"
+                               title="<?php echo $this->lng['copy']; ?>">
+                                <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/copy.gif"
+                                     width="16" height="16" border="0" alt="" />
+                            </a>
                         <a href="<?php echo $this->e2gModCfg['index'] . '&amp;act=delete_slideshow&amp;ssid=' . $row['id'];?>"
                            onclick="confirm('<?php echo $this->lng['js_delete_slideshow_confirm']; ?>')"
                            title="<?php echo $this->lng['delete']; ?>">
