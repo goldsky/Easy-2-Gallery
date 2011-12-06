@@ -46,27 +46,41 @@ class E2gMod extends E2gPub {
      */
     private $_dirDropDownOptions = array();
 
+    /**
+     * Sanitized $_GET array
+     * @var array   sanitized $_GET values
+     */
+    public $sanitizedGets = array();
+
+    /**
+     * Gallery's path
+     * @var array   string / link;
+     */
+    public $galleryPath = array();
+
     public function __construct($modx) {
         $this->modx = & $modx;
         $this->lng = $this->languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
         if (!is_array($this->lng)) {
             die($this->lng); // FALSE returned.
         }
+
+        $this->sanitizedGets = $this->sanitizedGets($_GET);
         $this->e2g = $this->loadSettings();
         $this->e2gModCfg = $this->_loadE2gModCfg();
 
+        $this->galleryPath = $this->galleryPath();
+
         $cfg = array_merge($this->e2g, $this->e2gModCfg);
-        parent::__construct($modx, $this->e2gModCfg);
+        parent::__construct($modx, $cfg);
     }
 
     /**
-     * The main file explorer function
-     * @return string The module's pages.
+     * Create the gallery path for address bar and the breadcrumbs
+     * @return  array   array{'link'] or array['string']
      */
-    public function explore() {
-        $parentId = isset($parentId) ? $parentId : $this->e2gModCfg['parent_id'];
-
-        $getPathArray = $this->getPath($parentId, NULL, 'array');
+    private function galleryPath() {
+        $getPathArray = $this->getPath($this->e2gModCfg['parent_id'], NULL, 'array');
         $path = array();
 
         // Create the ROOT gallery's link
@@ -81,23 +95,39 @@ class E2gMod extends E2gPub {
         if (!empty($getPathArray)) {
             $path['string'] = implode('/', $getPathArray) . '/';
             $this->e2gModCfg['gdir'] .= $path['string'];
-        } elseif (isset($_GET['path'])) {
-            $getPath = str_replace('../', '', $_GET['path']);
+        }
+
+        // 'path' request claims a new path
+        if (!empty($this->sanitizedGets['path'])
+                && $path['string'] !== $this->sanitizedGets['path']
+                ) {
+            $getPath = str_replace('../', '', $this->sanitizedGets['path']);
+            $getPath = str_replace($this->e2gModCfg['gdir'], '', $this->e2g['dir'] . $this->sanitizedGets['path']);
             $pathArray = explode('/', $getPath);
             foreach ($pathArray as $v) {
                 if (empty($v)) {
                     continue;
                 }
                 $path['string'] .= $v . '/';
-                $path['link'] .= '<a href="' . $this->e2gModCfg['index'] . '&amp;pid=' . $parentId . '&amp;path=' . $path['string'] . '">' . $v . '</a> / ';
+                $path['link'] .= '<a href="' . $this->e2gModCfg['index']
+                        . (!empty($_GET['pid']) ? '&amp;pid=' . $this->e2gModCfg['parent_id'] : '')
+                        . '&amp;path=' . $path['string']
+                        . '">' . $v . '</a>/';
             }
             $this->e2gModCfg['gdir'] .= $path['string'];
         }
+        return $path;
+    }
 
+    /**
+     * The main file explorer function
+     * @return string The module's pages.
+     */
+    public function explore() {
         /**
          * GALLERY ACTIONS
          */
-        $act = empty($_GET['act']) ? '' : $_GET['act'];
+        $act = empty($this->sanitizedGets['act']) ? '' : $this->sanitizedGets['act'];
         switch ($act) {
             case 'synchro':
                 // AJAX report
@@ -139,25 +169,25 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'show_dir' :
-                $this->_showDir($_GET['dir_id']);
+                $this->_showDir($this->sanitizedGets['dir_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'hide_dir' :
-                $this->_hideDir($_GET['dir_id']);
+                $this->_hideDir($this->sanitizedGets['dir_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'show_file' :
-                $this->_showFile($_GET['file_id']);
+                $this->_showFile($this->sanitizedGets['file_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'hide_file' :
-                $this->_hideFile($_GET['file_id']);
+                $this->_hideFile($this->sanitizedGets['file_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -171,7 +201,7 @@ class E2gMod extends E2gPub {
 
             // Download files/folders
             case 'download_checked':
-                $this->_downloadChecked($this->e2gModCfg['gdir'], $_GET['pid'], $_POST);
+                $this->_downloadChecked($this->e2gModCfg['gdir'], $this->sanitizedGets['pid'], $_POST);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -185,7 +215,7 @@ class E2gMod extends E2gPub {
                 /**
                  * REDIRECT PAGE TO THE SELECTED OPTION
                  */
-                $parentId = $_POST['newparent'];
+                $this->e2gModCfg['parent_id'] = $_POST['newparent'];
                 if ($_POST['gotofolder'] == 'gothere') {
                     header('Location: ' . html_entity_decode(
                                     MODX_MANAGER_URL
@@ -193,7 +223,7 @@ class E2gMod extends E2gPub {
                                     . 'a=' . $this->e2gModCfg['_a']
                                     . '&amp;id=' . $this->e2gModCfg['_i']
                                     . '&amp;e2gpg=2'
-                                    . '&amp;pid=' . $parentId
+                                    . '&amp;pid=' . $this->e2gModCfg['parent_id']
                             ));
                 } else {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -204,13 +234,13 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'delete_dir':
-                $this->_deleteDir($_GET);
+                $this->_deleteDir($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'delete_file':
-                $this->_deleteFile($_GET);
+                $this->_deleteFile($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -244,14 +274,15 @@ class E2gMod extends E2gPub {
 
             // Add directory into database
             case 'add_dir':
-                $this->_addAll('../' . str_replace('../', '', $this->e2gDecode($_GET['dir_path']) . '/'), $parentId);
+                $this->_addAll('../' . str_replace('../', '', $this->e2gDecode($this->sanitizedGets['dir_path']) . '/')
+                        , $this->e2gModCfg['parent_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             // Add image into database
             case 'add_file':
-                $this->_addFile(MODX_BASE_PATH . $_GET['file_path'], $_GET['pid']);
+                $this->_addFile(MODX_BASE_PATH . $this->sanitizedGets['file_path'], $this->sanitizedGets['pid']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
 
@@ -264,7 +295,7 @@ class E2gMod extends E2gPub {
 
             // Delete slideshow
             case 'delete_slideshow':
-                $this->_deleteSlideshow($_GET);
+                $this->_deleteSlideshow($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($this->e2gModCfg['index']));
                 exit();
                 break;
@@ -289,7 +320,7 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'delete_plugin':
-                $this->_deletePlugin($_GET);
+                $this->_deletePlugin($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -315,21 +346,21 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'delete_viewer':
-                $this->_deleteViewer($_GET);
+                $this->_deleteViewer($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             // Ignore ip address in image comments
             case 'ignore_ip':
-                $this->_ignoreIp($_GET);
+                $this->_ignoreIp($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             // Unignore ip address in image comments
             case 'unignore_ip':
-                $this->_unignoreIp($_GET);
+                $this->_unignoreIp($this->sanitizedGets);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -363,19 +394,19 @@ class E2gMod extends E2gPub {
                 break;
 
             case 'com_approve':
-                $this->_commentApprove($_GET['comid']);
+                $this->_commentApprove($this->sanitizedGets['comid']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'com_hide':
-                $this->_commentHide($_GET['comid']);
+                $this->_commentHide($this->sanitizedGets['comid']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'com_unhide':
-                $this->_commentUnhide($_GET['comid']);
+                $this->_commentUnhide($this->sanitizedGets['comid']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -383,17 +414,17 @@ class E2gMod extends E2gPub {
             case 'com_save':
                 $this->_commentSave($_POST);
                 $url = $this->e2gModCfg['index']
-                        . (!empty($_GET['page']) ? '&page=' . $_GET['page'] : NULL)
-                        . (!empty($_GET['filter']) ? '&filter=' . $_GET['filter'] : NULL)
-                        . (!empty($_GET['file_id']) ? '&file_id=' . $_GET['file_id'] : NULL)
-                        . (!empty($_GET['pid']) ? '&pid=' . $_GET['pid'] : NULL)
-                        . (!empty($_GET['tag']) ? '&tag=' . $_GET['tag'] : NULL);
+                        . (!empty($this->sanitizedGets['page']) ? '&page=' . $this->sanitizedGets['page'] : NULL)
+                        . (!empty($this->sanitizedGets['filter']) ? '&filter=' . $this->sanitizedGets['filter'] : NULL)
+                        . (!empty($this->sanitizedGets['file_id']) ? '&file_id=' . $this->sanitizedGets['file_id'] : NULL)
+                        . (!empty($this->sanitizedGets['pid']) ? '&pid=' . $this->sanitizedGets['pid'] : NULL)
+                        . (!empty($this->sanitizedGets['tag']) ? '&tag=' . $this->sanitizedGets['tag'] : NULL);
                 header('Location: ' . html_entity_decode($url, ENT_NOQUOTES));
                 exit();
                 break;
 
             case 'com_delete':
-                $this->_commentDelete($_GET['comid']);
+                $this->_commentDelete($this->sanitizedGets['comid']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -415,11 +446,11 @@ class E2gMod extends E2gPub {
             case 'create_dir':
                 // check names against bad characters
                 if ($this->_hasBadChar($_POST['name'], __LINE__)
-                        || !$this->_createDir($_POST, $this->e2gModCfg['gdir'], $parentId)
+                        || !$this->_createDir($_POST, $this->e2gModCfg['gdir'], $this->e2gModCfg['parent_id'])
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 } else {
-                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $parentId));
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $this->e2gModCfg['parent_id']));
                 }
                 exit();
                 break;
@@ -430,10 +461,10 @@ class E2gMod extends E2gPub {
                         || !$this->_editDir($_POST)
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                } elseif (isset($_GET['tag'])) {
-                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;tag=' . $_GET['tag']));
+                } elseif (isset($this->sanitizedGets['tag'])) {
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;tag=' . $this->sanitizedGets['tag']));
                 } else {
-                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $parentId));
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $this->e2gModCfg['parent_id']));
                 }
                 exit();
                 break;
@@ -444,10 +475,10 @@ class E2gMod extends E2gPub {
                         || !$this->_editFile($this->e2gModCfg['gdir'], $_POST)
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
-                } elseif (isset($_GET['tag'])) {
-                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;tag=' . $_GET['tag']));
+                } elseif (isset($this->sanitizedGets['tag'])) {
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;tag=' . $this->sanitizedGets['tag']));
                 } else {
-                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $parentId));
+                    header('Location: ' . html_entity_decode($this->e2gModCfg['index'] . '&amp;pid=' . $this->e2gModCfg['parent_id']));
                 }
                 exit();
                 break;
@@ -482,8 +513,6 @@ class E2gMod extends E2gPub {
         ob_end_clean();
 
         return $output;
-//        include_once E2G_MODULE_PATH . 'includes/tpl/pages/main.inc.php';
-//        return '';
     }
 
     /**
@@ -1402,7 +1431,7 @@ class E2gMod extends E2gPub {
                             <option value="' . $childDir['cat_id'] . '"'
                     . ( ( $childDir['cat_id'] == '1' ) ? ' style="background-color:#ddd;"' : '' )
                     . ( isset($jsActions) ? ' ' . $jsActions : '' )
-                    . ( ( $childDir['cat_id'] == $_GET['pid'] && $selected != 0 ) ? ' selected="selected"' : '' )
+                    . ( ( $childDir['cat_id'] == $this->sanitizedGets['pid'] && $selected != 0 ) ? ' selected="selected"' : '' )
                     . '>';
 
             // **************** ONLY START MARGIN **************** //
@@ -3856,7 +3885,7 @@ class E2gMod extends E2gPub {
 
         // invoke the plugin
         $this->plugin('OnE2GFileEditFormSave', array(
-            'fid' => $_GET['file_id']
+            'fid' => $this->sanitizedGets['file_id']
             , 'filename' => ($newFilename != $filename ? $newFilename : $filename)
             , 'alias' => $this->_escapeString($post['alias'])
             , 'summary' => $this->_escapeString($post['summary'])
@@ -4183,6 +4212,27 @@ class E2gMod extends E2gPub {
             return FALSE;
     }
 
+    public function webGroupNames($id, $type='dir') {
+        $checkWebAccess = array();
+        $webGroupNames = array();
+        $checkWebAccessQuery = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
+                . 'WHERE type=\'' . $type . '\' AND id=\'' . $id . '\'';
+        $checkWebAccess = $this->modx->db->makeArray($this->modx->db->query($checkWebAccessQuery));
+        if (!empty($checkWebAccess)) {
+            foreach ($checkWebAccess as $k => $v) {
+                $webgroup_id[$type][$id][] = '\'' . $v['webgroup_id'] . '\'';
+            }
+            $implodeGroupId = implode(',', $webgroup_id[$type][$id]);
+            $webAccessQuery = 'SELECT name FROM ' . $this->modx->db->config['table_prefix'] . 'webgroup_names '
+                    . 'WHERE id IN (' . $implodeGroupId . ')';
+            $webGroup = $this->modx->db->makeArray($this->modx->db->query($webAccessQuery));
+            foreach ($webGroup as $k => $v) {
+                $webGroupNames[] = $v['name'];
+            }
+        }
+        return $webGroupNames;
+    }
+
     /**
      * Check whether the OLD config.pages.easy2gallery.php file still exist, which means this is an upgrade
      * @return mixed    redirect to the config page to do the saving action, or nothing for TRUE
@@ -4198,7 +4248,7 @@ class E2gMod extends E2gPub {
 
         // delete the config file, because this will always be checked as an upgrade option
         if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))
-                && $_GET['e2gpg'] != $this->e2gModCfg['e2gPages']['config']['e2gpg']
+                && $this->sanitizedGets['e2gpg'] != $this->e2gModCfg['e2gPages']['config']['e2gpg']
         ) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_save_warning'];
             header('Location: ' . html_entity_decode($this->e2gModCfg['blank_index'] . '&amp;e2gpg=' . $this->e2gModCfg['e2gPages']['config']['e2gpg']));
@@ -4443,20 +4493,19 @@ class E2gMod extends E2gPub {
         return $button;
     }
 
+    /**
+     * Sanitizes the GET request for more security
+     * @param   array   $_GET   the request values
+     * @return  array   sanitized values
+     */
     public function sanitizedGets($_GET) {
         $sanitizedGets = array();
         if (empty($_GET)) {
             return FALSE;
         }
         foreach ($_GET as $k => $v) {
-            $allowedKeys = array('root', 'getpath', 'path', 'pid', 'uid', 'tag', 'top', 'left', 'height', 'width');
-            if (!in_array($k, $allowedKeys)) {
-                unset($_GET[$k]);
-                continue;
-            }
             switch ($k) {
                 case 'root':
-                case 'getpath':
                 case 'path':
                     $xplds = @explode('/', $v);
                     foreach ($xplds as $y => $x) {
@@ -4612,4 +4661,5 @@ class E2gMod extends E2gPub {
         $s = $this->modx->db->escape(htmlspecialchars($s, ENT_QUOTES));
         return $s;
     }
+
 }

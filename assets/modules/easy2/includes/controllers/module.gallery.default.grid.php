@@ -79,10 +79,7 @@ $pidPath = $e2gMod->getPath($getRequests['pid']);
 $decodedPath = $e2gMod->e2gDecode($getRequests['path']);
 $gdir = $e2g['dir'] . $getRequests['path'];
 $gdirRealPath = realpath($rootDir . $e2gMod->e2gDecode($getRequests['path']));
-/**
- * $getRequests['path'] = synchronized folder's path!
- * $getRequests['getpath'] = unsynchronized folder's path!
- */
+
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -128,11 +125,7 @@ $rowNum = 0;
 
 $galPh = array();
 
-if (!isset($getRequests['getpath']))
-    $galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
-else
-    $galPh['th.selectAll'] = '';
-
+$galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
 $galPh['th.actions'] = $lng['actions'];
 $galPh['th.type'] = $lng['type'];
 $galPh['th.name'] = $lng['dir'] . ' / ' . $lng['filename'];
@@ -191,6 +184,7 @@ foreach ($fetchDirs as $fetchDir) {
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
                     width="16" height="16" border="0" alt="" />
                 ';
+
     // checks any redirect link
     if (!empty($fetchDir['cat_redirect_link'])) {
         $dirIcon .= '
@@ -198,29 +192,15 @@ foreach ($fetchDirs as $fetchDir) {
                     height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchDir['cat_redirect_link'] . '" border="0" />
                         ';
     }
+
     // checks the restricted web access
-    $checkWebAccess = array();
-    $$checkWebAccessQuery = 'SELECT * FROM ' . $modx->db->config['table_prefix'] . 'easy2_webgroup_access '
-        . 'WHERE type=\'dir\' AND id=\'' . $fetchDir['cat_id'] . '\'';
-    $checkWebAccess = $modx->db->makeArray($modx->db->query($$checkWebAccessQuery));
-    if (!empty($checkWebAccess)) {
-        foreach ($checkWebAccess as $k => $v) {
-            $webgroup_id['dir'][$fetchDir['cat_id']][] = '\'' . $v['webgroup_id'] . '\'';
-        }
-        $implodeGroupId = implode(',', $webgroup_id['dir'][$fetchDir['cat_id']]);
-        $webAccessQuery = 'SELECT name FROM ' . $modx->db->config['table_prefix'] . 'webgroup_names '
-                . 'WHERE id IN (' . $implodeGroupId . ')';
-        $webGroup = $modx->db->makeArray($modx->db->query($webAccessQuery));
-        foreach ($webGroup as $k => $v) {
-            $webGroupNames[] = $v['name'];
-        }
-        if (!empty($webGroup)) {
-            $webGroupNames = implode(', ', $webGroupNames);
-            $dirIcon .= '
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/lock.png" width="16"
-                        height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
-                            ';
-        }
+    $webGroupNames = $e2gMod->webGroupNames($fetchDir['cat_id'], 'dir');
+    if (!empty($webGroupNames)) {
+        $webGroupNames = implode(', ', $webGroupNames);
+        $dirIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/icon_padlock.gif" width="16"
+                    height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
+                        ';
     }
 
     $dirButtons = '';
@@ -318,12 +298,25 @@ foreach ($fetchFiles as $fetchFile) {
     $fileIcon = '
             <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
             ';
+
+    // checks any redirect link
     if (!empty($fetchFile['redirect_link'])) {
         $fileIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
                     height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchFile['redirect_link'] . '" border="0" />
                         ';
     }
+
+    // checks the restricted web access
+    $webGroupNames = $e2gMod->webGroupNames($fetchFile['id'], 'file');
+    if (!empty($webGroupNames)) {
+        $webGroupNames = implode(', ', $webGroupNames);
+        $fileIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/icon_padlock.gif" width="16"
+                    height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
+                        ';
+    }
+
     $fileButtons = '';
 
     $filePhRow['td.rowNum'] = $rowNum;

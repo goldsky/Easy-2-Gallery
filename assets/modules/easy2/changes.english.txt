@@ -5,11 +5,14 @@
 
 ***************** 1.4.9 ******************
 Fixes:
-+ Bugfixed the restricted access to the prev-up-next navigation
-+ Added the restricted access icon on the module's list
-+ Debug returned the valid folders as false
++ fixed breadcrumbs
++ fixed unsyncronized folder links
++ bugfixed the restricted access to the prev-up-next navigation
++ added the restricted access icon on the module's list
++ debug returned the valid folders as false
 
 Improvements:
++ secured the module class on the GET requests
 + deleted old template files
 + refactored the snippet's class
 + added &wmposxy for specified x,y watermark's position

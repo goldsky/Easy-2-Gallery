@@ -115,11 +115,7 @@ $rowNum = 0;
 
 $galPh = array();
 
-if (!isset($getRequests['getpath']))
-    $galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
-else
-    $galPh['th.selectAll'] = '';
-
+$galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
 $galPh['th.actions'] = $lng['actions'];
 $galPh['th.path'] = $lng['path'];
 $galPh['th.type'] = $lng['type'];

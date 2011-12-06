@@ -43,7 +43,7 @@ define('E2G_MODULE_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
 define('E2G_MODULE_URL', MODX_SITE_URL . '../../');
 
 $modClassFile = realpath('../models/e2g.module.class.php');
-if (empty ($modClassFile) || !file_exists($modClassFile)) {
+if (empty($modClassFile) || !file_exists($modClassFile)) {
     die(__FILE__ . ': Missing module class file.');
 }
 include ($modClassFile);
@@ -51,7 +51,7 @@ include ($modClassFile);
 $e2gMod = new E2gMod($modx);
 
 // LANGUAGE
-$lng = E2gPub::languageSwitch($modx->config['manager_language'],E2G_MODULE_PATH);
+$lng = E2gPub::languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
 if (!is_array($lng)) {
     die($lng); // FALSE returned.
 }
@@ -78,10 +78,7 @@ if (empty($rootRealPath)) {
 $pidPath = $e2gMod->getPath($getRequests['pid']);
 $decodedPath = $e2gMod->e2gDecode($getRequests['path']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-/**
- * $getRequests['path'] = synchronized folder's path!
- * $getRequests['getpath'] = unsynchronized folder's path!
- */
+
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -106,11 +103,7 @@ if ($getRequests['path'] == $pidPath) {
 
 $galPh = array();
 
-if (!isset($getRequests['getpath']))
-    $galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
-else
-    $galPh['th.selectAll'] = '';
-
+$galPh['th.selectAll'] = '<input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" />';
 $galPh['th.actions'] = $lng['actions'];
 $galPh['th.type'] = $lng['type'];
 $galPh['th.name'] = $lng['dir'] . ' / ' . $lng['filename'];
@@ -155,7 +148,7 @@ if (FALSE !== $scanDirs):
         $dirPathRawUrlEncoded = str_replace('%2F', '/', rawurlencode($gdir . $dirName));
         switch ($e2g['mod_foldersize']) {
             case 'auto':
-                $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles( $realPathDir) . ' )';
+                $dirPhRow['td.count'] = '( ' . $e2gMod->countFiles($realPathDir) . ' )';
                 break;
             case 'ajax':
                 $dirPhRow['td.count'] = '( <span id="countfiles_' . $dirPathRawUrlEncoded . '"><span id="countfileslink_' . $dirPathRawUrlEncoded . '"><a href="javascript:;" onclick="countFiles(\'' . base64_encode($realPathDir) . '\', \'' . $dirPathRawUrlEncoded . '\')">' . $lng['folder_size'] . '</a></span></span> )';
@@ -193,20 +186,18 @@ if (FALSE !== $scanDirs):
             $dirTagLinks = $e2gMod->createTagLinks($dirTag, $index);
             $dirTime = $e2gMod->getTime($mdirs[$dirName]['date_added'], $mdirs[$dirName]['last_modified'], $scanDir);
 
-            if (!isset($getRequests['getpath'])) {
-                // Checkbox
-                $dirCheckBox = '
+            // Checkbox
+            $dirCheckBox = '
                 <input name="dir[' . $dirId . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                 ';
-            }
             if ($mdirs[$dirName]['cat_visible'] == '1') {
                 $dirStyledName = '<b>' . $dirName . '</b>';
                 $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
                 $dirButtons = $e2gMod->actionIcon('hide_dir', array(
-                            'act' => 'hide_dir'
-                            , 'dir_id' => $dirId
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
+                    'act' => 'hide_dir'
+                    , 'dir_id' => $dirId
+                    , 'pid' => $getRequests['pid']
+                        ), null, $index);
             } else {
                 $dirStyledName = '<i>' . $dirName . '</i>';
                 $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
@@ -218,17 +209,17 @@ if (FALSE !== $scanDirs):
                 ';
                 $dirHref = $index . '&amp;pid=' . $mdirs[$dirName]['cat_id'];
                 $dirButtons = $e2gMod->actionIcon('show_dir', array(
-                            'act' => 'show_dir'
-                            , 'dir_id' => $dirId
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
+                    'act' => 'show_dir'
+                    , 'dir_id' => $dirId
+                    , 'pid' => $getRequests['pid']
+                        ), null, $index);
             }
             // edit dir
             $dirButtons .= $e2gMod->actionIcon('edit_dir', array(
-                        'page' => 'edit_dir'
-                        , 'dir_id' => $dirId
-                        , 'pid' => $getRequests['pid']
-                            ), null, $index);
+                'page' => 'edit_dir'
+                , 'dir_id' => $dirId
+                , 'pid' => $getRequests['pid']
+                    ), null, $index);
             // unset this to leave the deleted dirs from file system.
             unset($mdirs[$dirName]);
         } // if (isset($mdirs[$dirName]))
@@ -236,29 +227,23 @@ if (FALSE !== $scanDirs):
             /**
              * Existing dir in file system, but has not yet inserted into database
              */
-            if (isset($getRequests['getpath'])) {
-                // Checkbox
-                $dirCheckBox = '
-                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                    ';
-            }
-            if (isset($getRequests['getpath']) && isset($getRequests['pid']) || $getRequests['pid'] === 1) {
-                // Checkbox
-                $dirCheckBox = '
-                    <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
-                    ';
-            }
+            // Checkbox
+            $dirCheckBox = '
+                <input name="dir[d' . $rowNum . ']" value="' . $dirPathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
+                ';
             // add dir
             $dirButtons .= $e2gMod->actionIcon('add_dir', array(
-                        'act' => 'add_dir'
-                        , 'dir_path' => $dirPathRawUrlEncoded
-                        , 'pid' => $getRequests['pid']
-                            ), null, $index);
+                'act' => 'add_dir'
+                , 'dir_path' => $dirPathRawUrlEncoded
+                , 'pid' => $getRequests['pid']
+                    ), null, $index);
             $dirTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanDir));
             clearstatcache();
             $dirStyledName = '<b style="color:gray">' . $dirName . '</b>';
             $dirAttributes = '<i>(' . $lng['new'] . ')</i>';
-            $dirHref = $index . '&amp;path=' . (!empty($getRequests['getpath']) ? $getRequests['getpath'] . '/' : '') . $dirName;
+            $dirHref = $index
+                    . (!empty($getRequests['pid']) ? '&amp;pid=' . $getRequests['pid'] : '')
+                    . '&amp;path=' . (!empty($getRequests['path']) ? $getRequests['path'] . '/' : '') . $dirName;
             $dirId = NULL;
             $dirIcon = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_add.png" width="16"
@@ -268,15 +253,15 @@ if (FALSE !== $scanDirs):
 
         if (!empty($dirId)) {
             $dirButtons .= $e2gMod->actionIcon('delete_dir', array(
-                        'act' => 'delete_dir'
-                        , 'dir_path' => $dirPathRawUrlEncoded
-                        , 'dir_id' => $dirId
-                            ), 'onclick="return confirmDeleteFolder();"', $index);
+                'act' => 'delete_dir'
+                , 'dir_path' => $dirPathRawUrlEncoded
+                , 'dir_id' => $dirId
+                    ), 'onclick="return confirmDeleteFolder();"', $index);
         } else {
             $dirButtons .= $e2gMod->actionIcon('delete_dir', array(
-                        'act' => 'delete_dir'
-                        , 'dir_path' => $dirPathRawUrlEncoded
-                            ), 'onclick="return confirmDeleteFolder();"', $index);
+                'act' => 'delete_dir'
+                , 'dir_path' => $dirPathRawUrlEncoded
+                    ), 'onclick="return confirmDeleteFolder();"', $index);
         }
 
         $dirPhRow['td.rowNum'] = $rowNum;
@@ -351,10 +336,10 @@ if (FALSE !== $scanDirs):
             $dirPhRow['td.href'] = '';
 
             $dirPhRow['td.buttons'] = $e2gMod->actionIcon('delete_dir', array(
-                        'act' => 'delete_dir'
-                        , 'dir_id' => $v['cat_id']
-                        , 'pid' => $getRequests['pid']
-                            ), 'onclick="return confirmDeleteFolder();"', $index);
+                'act' => 'delete_dir'
+                , 'dir_id' => $v['cat_id']
+                , 'pid' => $getRequests['pid']
+                    ), 'onclick="return confirmDeleteFolder();"', $index);
             $deletedDirIcon = '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder_delete.png"
                         width="16" height="16" border="0" alt="folder_delete.png" title="' . $lng['deleted'] . '" />
@@ -454,12 +439,10 @@ if (FALSE !== $scanFiles):
             $fileId = $mfiles[$filename]['id'];
             $fileAlias = $mfiles[$filename]['alias'];
             $fileTagLinks = $e2gMod->createTagLinks($mfiles[$filename]['tag'], $index);
-            if (!isset($getRequests['getpath'])) {
-                // Checkbox
-                $fileCheckBox = '
+            // Checkbox
+            $fileCheckBox = '
                 <input name="im[' . $fileId . ']" value="' . $filePathRawUrlEncoded . '" type="checkbox" style="border:0;padding:0" />
                 ';
-            }
             $tag = $mfiles[$filename]['tag'];
             $fileSize = round($mfiles[$filename]['size'] / 1024);
             $width = $mfiles[$filename]['width'];
@@ -468,47 +451,45 @@ if (FALSE !== $scanFiles):
 
             if ($mfiles[$filename]['status'] == '1') {
                 $fileButtons = $e2gMod->actionIcon('hide_file', array(
-                            'act' => 'hide_file'
-                            , 'file_id' => $fileId
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
+                    'act' => 'hide_file'
+                    , 'file_id' => $fileId
+                    , 'pid' => $getRequests['pid']
+                        ), null, $index);
             } else {
                 $fileStyledName = '<i>' . $filename . '</i>';
                 $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
                 $fileAttributeIcons = $e2gMod->actionIcon('show_file', array(
-                            'act' => 'show_file'
-                            , 'file_id' => $fileId
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
+                    'act' => 'show_file'
+                    , 'file_id' => $fileId
+                    , 'pid' => $getRequests['pid']
+                        ), null, $index);
                 $fileButtons = $e2gMod->actionIcon('show_file', array(
-                            'act' => 'show_file'
-                            , 'file_id' => $fileId
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
+                    'act' => 'show_file'
+                    , 'file_id' => $fileId
+                    , 'pid' => $getRequests['pid']
+                        ), null, $index);
             }
             $fileButtons .= $e2gMod->actionIcon('comments', array(
-                        'page' => 'comments'
-                        , 'file_id' => $fileId
-                        , 'pid' => $getRequests['pid']
-                            ), null, $index);
+                'page' => 'comments'
+                , 'file_id' => $fileId
+                , 'pid' => $getRequests['pid']
+                    ), null, $index);
 
             $fileButtons .= $e2gMod->actionIcon('edit_file', array(
-                        'page' => 'edit_file'
-                        , 'file_id' => $fileId
-                        , 'pid' => $getRequests['pid']
-                            ), null, $index);
+                'page' => 'edit_file'
+                , 'file_id' => $fileId
+                , 'pid' => $getRequests['pid']
+                    ), null, $index);
 
             unset($mfiles[$filename]);
         } else {
             /**
              * Existed files in file system, but not yet inserted into database
              */
-            if (!isset($getRequests['getpath'])) {
-                // Checkbox
-                $fileCheckBox = '
+            // Checkbox
+            $fileCheckBox = '
                 <input name="im[f' . $rowNum . ']" value="im[f' . $rowNum . ']" type="checkbox" style="border:0;padding:0" />
                 ';
-            }
             $fileTime = date($e2gMod->e2g['mod_date_format'], filemtime($scanFile));
             $fileStyledName = '<span style="color:gray"><b>' . $filename . '</b></span>';
             $fileAttributes = '<i>(' . $lng['new'] . ')</i>';
@@ -517,26 +498,22 @@ if (FALSE !== $scanFiles):
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_add.png" width="16" height="16" border="0" alt="" />
                 ';
             $fileAttributeIcons = '';
-            if (empty($getRequests['getpath'])) {
-                // add file
-                $fileButtons .= $e2gMod->actionIcon('add_file', array(
-                            'act' => 'add_file'
-                            , 'file_path' => $filePathRawUrlEncoded
-                            , 'pid' => $getRequests['pid']
-                                ), null, $index);
-            } else {
-                $fileButtons = '';
-            }
+            // add file
+            $fileButtons .= $e2gMod->actionIcon('add_file', array(
+                'act' => 'add_file'
+                , 'file_path' => $filePathRawUrlEncoded
+                , 'pid' => $getRequests['pid']
+                    ), null, $index);
             $fileSize = round(filesize($scanFile) / 1024);
             list($width, $height) = @getimagesize($scanFile);
         }
 
         $fileButtons .= $e2gMod->actionIcon('delete_file', array(
-                    'act' => 'delete_file'
-                    , 'pid' => $getRequests['pid']
-                    , 'file_id' => $fileId
-                    , 'file_path' => $filePathRawUrlEncoded
-                        ), 'onclick="return confirmDelete();"', $index);
+            'act' => 'delete_file'
+            , 'pid' => $getRequests['pid']
+            , 'file_id' => $fileId
+            , 'file_path' => $filePathRawUrlEncoded
+                ), 'onclick="return confirmDelete();"', $index);
 
         $filePhRow['td.rowNum'] = $rowNum;
         $filePhRow['td.rowClass'] = $rowClass[$rowNum % 2];
@@ -612,10 +589,10 @@ if (FALSE !== $scanFiles):
             $filePhRow['td.attributeIcons'] = '';
 
             $filePhRow['td.buttons'] = $e2gMod->actionIcon('delete_file', array(
-                        'act' => 'delete_file'
-                        , 'file_id' => $v['id']
-                        , 'pid' => $getRequests['pid']
-                            ), 'onclick="return confirmDelete();"', $index);
+                'act' => 'delete_file'
+                , 'file_id' => $v['id']
+                , 'pid' => $getRequests['pid']
+                    ), 'onclick="return confirmDelete();"', $index);
             $filePhRow['td.icon'] = '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_delete.png" width="16" height="16" border="0" alt="" />
                 ';

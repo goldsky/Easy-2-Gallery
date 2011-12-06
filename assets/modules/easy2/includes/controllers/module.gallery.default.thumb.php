@@ -71,10 +71,7 @@ $index = str_replace('assets/modules/easy2/includes/controllers/', '', $index);
 $rootDir = '../../../../../' . $e2g['dir'];
 $pidPath = $e2gMod->getPath($getRequests['pid']);
 $gdir = $e2g['dir'] . $getRequests['path'];
-/**
- * $getRequests['path'] = synchronized folder's path!
- * $getRequests['getpath'] = unsynchronized folder's path!
- */
+
 if ($getRequests['path'] == $pidPath) {
     ####################################################################
     ####                      MySQL Dir list                        ####
@@ -150,12 +147,25 @@ foreach ($fetchDirs as $fetchDir) {
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/folder.png"
                     width="16" height="16" border="0" alt="" />
                 ';
+
+    // checks any redirect link
     if (!empty($fetchDir['cat_redirect_link'])) {
         $dirIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
                     height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchDir['cat_redirect_link'] . '" border="0" />
                         ';
     }
+
+    // checks the restricted web access
+    $webGroupNames = $e2gMod->webGroupNames($fetchDir['cat_id'], 'dir');
+    if (!empty($webGroupNames)) {
+        $webGroupNames = implode(', ', $webGroupNames);
+        $dirIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/icon_padlock.gif" width="16"
+                    height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
+                        ';
+    }
+
     $dirButtons = '';
 
     if ($fetchDir['cat_visible'] == '1') {
@@ -329,12 +339,25 @@ foreach ($fetchFiles as $fetchFile) {
     $fileIcon = '
             <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture.png" width="16" height="16" border="0" alt="" />
             ';
+
+    // checks any redirect link
     if (!empty($fetchFile['redirect_link'])) {
         $fileIcon .= '
                 <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/link.png" width="16"
                     height="16" alt="link" title="' . $lng['redirect_link'] . ': ' . $fetchFile['redirect_link'] . '" border="0" />
                         ';
     }
+
+    // checks the restricted web access
+    $webGroupNames = $e2gMod->webGroupNames($fetchFile['id'], 'file');
+    if (!empty($webGroupNames)) {
+        $webGroupNames = implode(', ', $webGroupNames);
+        $fileIcon .= '
+                <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/icon_padlock.gif" width="16"
+                    height="16" alt="lock" title="' . $lng['access'] . ': ' . $webGroupNames . '" border="0" />
+                        ';
+    }
+
     $fileButtons = '';
 
     $filePhRow['thumb.rowNum'] = $rowNum;

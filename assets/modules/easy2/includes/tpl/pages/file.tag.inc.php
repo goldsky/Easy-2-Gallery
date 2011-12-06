@@ -31,7 +31,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
         case 'list':
     ?>
             <div id="list"></div>
-            <script type="text/javascript">viewTagGrid('<?php echo $path['string'] ?>','<?php echo $tag ?>');</script>
+            <script type="text/javascript">viewTagGrid('<?php echo $this->galleryPath['string'] ?>','<?php echo $tag ?>');</script>
     <?php
             break;
         case 'thumbnails':
@@ -41,7 +41,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
             endif;
     ?>
             <div id="thumbnail" class="e2g_wrapper"></div>
-            <script type="text/javascript">viewTagThumbnails('<?php echo $path['string'] ?>','<?php echo $tag ?>');</script>
+            <script type="text/javascript">viewTagThumbnails('<?php echo $this->galleryPath['string'] ?>','<?php echo $tag ?>');</script>
     <?php
             break;
         default:
