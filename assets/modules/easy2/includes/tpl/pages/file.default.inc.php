@@ -35,14 +35,16 @@ mysql_free_result($resultdesc);
     </li>
     <li>
         <?php
-        $dir_path = $gdir . (!empty($this->sanitizedGets['path']) ? $this->sanitizedGets['path'] : $parent['cat_name']);
         $gdir = $this->e2g['dir'] . $this->galleryPath['string'];
+        $dir_path = $gdir . (!empty($this->sanitizedGets['path']) ? $this->sanitizedGets['path'] : $parent['cat_name']);
+
         echo $this->actionIcon('delete_dir', array(
             'act' => 'delete_dir'
             , 'dir_path' => $dir_path
             , 'dir_id' => $parent['cat_id']
             , 'pid' => $this->e2gModCfg['parent_id']
                 ), 'onclick="return confirmDeleteFolder();"', $this->e2gModCfg['index']);
+        
         ?>
     </li>
 </ul>

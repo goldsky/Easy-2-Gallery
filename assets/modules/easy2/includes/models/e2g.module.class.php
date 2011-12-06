@@ -2703,7 +2703,7 @@ class E2gMod extends E2gPub {
             $dirPath = $this->getPath($dirId);
             if ($this->e2g['dir'] . $dirPath . $fileName != $get['file_path']) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['fpath_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $dirPath . '/' . $fileName . ' != ' . $get['file_path'];
+                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->e2g['dir'] . $dirPath . '/' . $fileName . ' != ' . $get['file_path'];
                 return FALSE;
             }
         }
@@ -4520,19 +4520,11 @@ class E2gMod extends E2gPub {
             return FALSE;
         }
         foreach ($_GET as $k => $v) {
-            switch ($k) {
-                case 'root':
-                case 'path':
-                    $xplds = @explode('/', $v);
-                    foreach ($xplds as $y => $x) {
-                        $xplds[$y] = $this->sanitizedString($x);
-                    }
-                    $v = @implode('/', $xplds);
-                    break;
-                default:
-                    $v = $this->sanitizedString($v);
-                    break;
+            $xplds = @explode('/', $v);
+            foreach ($xplds as $y => $x) {
+                $xplds[$y] = $this->sanitizedString($x);
             }
+            $v = @implode('/', $xplds);
             $sanitizedGets[$k] = $v;
         }
         return $sanitizedGets;
