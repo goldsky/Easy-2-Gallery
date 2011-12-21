@@ -119,37 +119,37 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 }
                 if (i==3) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=show_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=show_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==4) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=hide_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=hide_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==5) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=delete_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=delete_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==6) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=download_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=download_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==7) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=move_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=move_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==8) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_add_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_add_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
                 if (i==9) {
                     document.forms["list"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_remove_checked&pid=' . $parentId . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&act=tag_remove_checked&pid=' . $this->e2gModCfg['parent_id'] . (!empty($cpath) ? '&path=' . $cpath : ''); ?>";
                     document.forms["list"].submit();
                 }
             }

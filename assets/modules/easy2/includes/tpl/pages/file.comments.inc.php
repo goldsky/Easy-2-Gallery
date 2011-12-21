@@ -15,7 +15,7 @@ if (isset($_GET['tag'])) {
            echo $_GET['tag'];
        } else {
 ?>&amp;pid=<?php
-           echo $parentId;
+           echo $this->e2gModCfg['parent_id'];
        }
 ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
@@ -29,7 +29,7 @@ if (isset($_GET['tag'])) {
                echo $_GET['tag'];
            } else {
 ?>&amp;pid=<?php
-               echo $parentId;
+               echo $this->e2gModCfg['parent_id'];
            }
 ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_refresh.png" width="16" height="16" border="0" alt="" /> <?php echo $this->lng['update']; ?>

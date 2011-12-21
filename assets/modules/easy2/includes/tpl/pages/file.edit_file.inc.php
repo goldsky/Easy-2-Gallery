@@ -12,7 +12,7 @@ $filename = substr($row['filename'], 0, -(strlen($ext)));
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $this->e2gModCfg['index'] . (!empty($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : '&amp;pid=' . $parentId); ?>">
+        <a href="<?php echo $this->e2gModCfg['index'] . (!empty($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : '&amp;pid=' . $this->e2gModCfg['parent_id']); ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
         </a>
     </li>
@@ -54,7 +54,7 @@ $filename = substr($row['filename'], 0, -(strlen($ext)));
                             </table>
                         </td>
                         <td>
-                            <form name="list" action="<?php echo $this->e2gModCfg['index'] . '&amp;act=save_file&amp;pid=' . $parentId . (isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL); ?>" method="post">
+                            <form name="list" action="<?php echo $this->e2gModCfg['index'] . '&amp;act=save_file&amp;pid=' . $this->e2gModCfg['parent_id'] . (isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL); ?>" method="post">
                                 <input type="hidden" name="file_id" value="<?php echo $row['id']; ?>" />
                                 <table id="file_edit" width="100%">
                                     <tr>
@@ -121,7 +121,7 @@ $filename = substr($row['filename'], 0, -(strlen($ext)));
                                 <td colspan="3">
                                     <input type="submit" value="<?php echo $this->lng['save']; ?>" />
                                     <input type="button" value="<?php echo $this->lng['cancel']; ?>"
-                                           onclick="document.location.href='<?php echo $this->e2gModCfg['index'] . (!empty($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : '&amp;pid=' . $parentId); ?>'" />
+                                           onclick="document.location.href='<?php echo $this->e2gModCfg['index'] . (!empty($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : '&amp;pid=' . $this->e2gModCfg['parent_id']); ?>'" />
                                 </td>
                             </tr>
                         </table>

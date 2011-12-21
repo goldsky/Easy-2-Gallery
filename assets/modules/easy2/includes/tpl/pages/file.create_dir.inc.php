@@ -4,7 +4,7 @@ if (IN_MANAGER_MODE != 'true')
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $parentId; ?>">
+        <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
         </a>
     </li>
@@ -12,7 +12,7 @@ if (IN_MANAGER_MODE != 'true')
         <span class="h2title"><?php echo $this->lng['dir_create']; ?></span>
     </li>
 </ul>
-<form name="list" action="<?php echo $this->e2gModCfg['index'] . '&amp;act=create_dir&amp;pid=' . $parentId; ?>" method="post">
+<form name="list" action="<?php echo $this->e2gModCfg['index'] . '&amp;act=create_dir&amp;pid=' . $this->e2gModCfg['parent_id']; ?>" method="post">
     <?php echo $this->plugin('OnE2GFolderCreateFormPrerender'); ?>
     <table id="dir_create" cellspacing="0" cellpadding="2" class="aForm" >
         <tr>
@@ -51,6 +51,6 @@ if (IN_MANAGER_MODE != 'true')
     </div><?php echo $this->plugin('OnE2GFolderCreateFormRender'); ?>
     <div style="margin-left: 90px;">
         <input type="submit" value="<?php echo $this->lng['save']; ?>" />
-        <input type="button" value="<?php echo $this->lng['cancel']; ?>" onclick="document.location.href='<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $parentId; ?>'" />
+        <input type="button" value="<?php echo $this->lng['cancel']; ?>" onclick="document.location.href='<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>'" />
     </div>
 </form>

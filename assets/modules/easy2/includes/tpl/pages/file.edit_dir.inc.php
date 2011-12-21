@@ -9,7 +9,7 @@ mysql_free_result($queryDir);
 ?>
 <ul class="actionButtons">
     <li>
-        <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $parentId; ?>">
+        <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>">
             <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
         </a>
     </li>
@@ -18,7 +18,7 @@ mysql_free_result($queryDir);
     </li>
 </ul>
 <form name="list" action="<?php
-echo $this->e2gModCfg['index'] . '&amp;act=save_dir&amp;pid=' . $parentId;
+echo $this->e2gModCfg['index'] . '&amp;act=save_dir&amp;pid=' . $this->e2gModCfg['parent_id'];
 echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
 ?>" method="post">
           <?php // This 'pid' hidden input is for page returning ?>
@@ -119,6 +119,6 @@ echo isset($_GET['tag']) ? '&amp;tag=' . $_GET['tag'] : NULL;
                                                      if ($_GET['tag'])
                                                          echo '&amp;tag=' . $_GET['tag'];
                                                      else
-                                                         echo '&amp;pid=' . $parentId; ?>'" />
+                                                         echo '&amp;pid=' . $this->e2gModCfg['parent_id']; ?>'" />
     </div>
 </form>

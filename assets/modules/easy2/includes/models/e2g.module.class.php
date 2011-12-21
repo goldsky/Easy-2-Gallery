@@ -69,7 +69,7 @@ class E2gMod extends E2gPub {
         $this->e2g = $this->loadSettings();
         $this->e2gModCfg = $this->_loadE2gModCfg();
 
-        $this->galleryPath = $this->galleryPath();
+        $this->galleryPath = $this->_galleryPath();
 
         $cfg = array_merge($this->e2g, $this->e2gModCfg);
         parent::__construct($modx, $cfg);
@@ -79,7 +79,7 @@ class E2gMod extends E2gPub {
      * Create the gallery path for address bar and the breadcrumbs
      * @return  array   array{'link'] or array['string']
      */
-    private function galleryPath() {
+    private function _galleryPath() {
         $getPathArray = $this->getPath($this->e2gModCfg['parent_id'], NULL, 'array');
         $path = array();
 
