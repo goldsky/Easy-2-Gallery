@@ -100,6 +100,16 @@ class E2gThumb {
                 return FALSE;
             }
 
+            if (strtolower($w) === 'auto' && strtolower($h) === 'auto') {
+                return FALSE;
+            }
+            if (strtolower($w) === 'auto') {
+                $w = $h * $imgSize[0]/$imgSize[1];
+            }
+            if (strtolower($h) === 'auto') {
+                $h = $w * $imgSize[1]/$imgSize[0];
+            }
+
             if ($imgSize[0] / $w > 2.00 || $imgSize[1] / $h > 2.00) {
                 $tmp_w = $w * 2.00;
                 $tmp_h = round($imgSize[1] * ($tmp_w / $imgSize[0]), 2);
@@ -116,16 +126,6 @@ class E2gThumb {
 
             // Shifts
             $x = $y = 0;
-
-            if (strtolower($w) === 'auto' && strtolower($h) === 'auto') {
-                return FALSE;
-            }
-            if (strtolower($w) === 'auto') {
-                $w = $h * $imgSize[0]/$imgSize[1];
-            }
-            if (strtolower($h) === 'auto') {
-                $h = $w * $imgSize[1]/$imgSize[0];
-            }
 
             /**
              * $resizeType == 'inner'
