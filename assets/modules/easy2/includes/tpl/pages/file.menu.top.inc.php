@@ -39,7 +39,7 @@ if (!isset($this->sanitizedGets['tag']) && !isset($this->sanitizedGets['path']))
             ?>
 
             <li>
-                <a href="javascript:;" onclick="synchro('<?php echo $this->e2g['dir']; ?>', '1','<?php echo $this->modx->getLoginUserID(); ?>');" title="<?php echo $this->lng['synchro']; ?>">
+                <a href="javascript:;" onclick="synchro('<?php echo $this->e2gModCfg['gdir']; ?>', '<?php echo $this->e2gModCfg['parent_id']; ?>','<?php echo $this->modx->getLoginUserID(); ?>');" title="<?php echo $this->lng['synchro']; ?>">
                     <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/refresh.png" alt="" />
                 </a>
             </li>

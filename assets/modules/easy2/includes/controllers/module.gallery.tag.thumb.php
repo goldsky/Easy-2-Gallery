@@ -167,12 +167,12 @@ foreach ($fetchDirs as $fetchDir) {
     } else {
         $dirAttributes = '<i>(' . $lng['hidden'] . ')</i>';
         $dirAttributeIcons = '
-                <a href="' . $index . '&amp;act=show_dir&amp;dir_id=' . $fetchDir['cat_id'] . '&amp;pid=' . $fetchDir['parent_id'] . '">
+                <a href="' . $index . '&amp;act=unhide_dir&amp;dir_id=' . $fetchDir['cat_id'] . '&amp;pid=' . $fetchDir['parent_id'] . '">
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16" alt="' . $lng['hidden'] . '" title="' . $lng['hidden'] . '" border="0" />
                 </a>
                 ';
-        $dirButtons = $e2gMod->actionIcon('show_dir', array(
-                    'act' => 'show_dir'
+        $dirButtons = $e2gMod->actionIcon('unhide_dir', array(
+                    'act' => 'unhide_dir'
                     , 'dir_id' => $fetchDir['cat_id']
                     , 'pid' => $fetchDir['parent_id']
                         ), null, $index);
@@ -374,13 +374,13 @@ foreach ($fetchFiles as $fetchFile) {
         } else {
             $fileStyledName = '<i>' . $fetchFile['filename'] . '</i>';
             $fileAttributes = '<i>(' . $lng['hidden'] . ')</i>';
-            $fileAttributeIcons = $e2gMod->actionIcon('show_file', array(
-                        'act' => 'show_file'
+            $fileAttributeIcons = $e2gMod->actionIcon('unhide_file', array(
+                        'act' => 'unhide_file'
                         , 'file_id' => $fetchFile['id']
                         , 'tag' => $tag
                             ), null, $index);
-            $fileButtons = $e2gMod->actionIcon('show_file', array(
-                        'act' => 'show_file'
+            $fileButtons = $e2gMod->actionIcon('unhide_file', array(
+                        'act' => 'unhide_file'
                         , 'file_id' => $fetchFile['id']
                         , 'tag' => $tag
                             ), null, $index);

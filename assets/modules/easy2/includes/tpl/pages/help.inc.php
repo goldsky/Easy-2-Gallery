@@ -89,7 +89,7 @@ if (IN_MANAGER_MODE != 'true')
 
         <p>&nbsp;</p>
         <?php
-                        if ($_GET['page'] == 'edit_lang') {
+                        if ($this->sanitizedGets['page'] == 'edit_lang') {
                             include_once E2G_MODULE_PATH . 'includes/tpl/pages/help.edit_lang.inc.php';
                         }
         ?>

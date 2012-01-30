@@ -10,7 +10,7 @@ if (IN_MANAGER_MODE != 'true')
     /**
      * for edit list
      */
-    if (isset($_GET['page'])) {
+    if (isset($this->sanitizedGets['page'])) {
     ?>
         <div class="tab-page" id="tabSlideshowEdit">
             <h2 class="tab"><?php echo $this->lng['edit']; ?></h2>

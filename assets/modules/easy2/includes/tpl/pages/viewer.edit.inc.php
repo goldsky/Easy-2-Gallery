@@ -2,14 +2,14 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-if (!isset($_GET['page']) || $_GET['page'] !== 'edit_viewer' && $_GET['page'] !== 'duplicate_viewer') {
+if (!isset($this->sanitizedGets['page']) || $this->sanitizedGets['page'] !== 'edit_viewer' && $this->sanitizedGets['page'] !== 'duplicate_viewer') {
     die("Die off!");
 }
 
 /**
  * for edit list
  */
-$select_viewers = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers WHERE id=' . $_GET['viewer_id'];
+$select_viewers = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_viewers WHERE id=' . $this->sanitizedGets['viewer_id'];
 $query_viewers = mysql_query($select_viewers);
 if (!$query_viewers) {
     die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_viewers);
@@ -21,13 +21,13 @@ if (!$query_viewers) {
 
 <form action="<?php
 echo $this->e2gModCfg['index'];
-if ($_GET['page'] === 'duplicate_viewer') {
+if ($this->sanitizedGets['page'] === 'duplicate_viewer') {
     echo '&amp;act=save_viewer';
-} elseif ($_GET['page'] === 'edit_viewer') {
+} elseif ($this->sanitizedGets['page'] === 'edit_viewer') {
     echo '&amp;act=update_viewer';
 }
 ?>" method="post"><?php
-          $viewer_id = $_GET['page'] === 'duplicate_viewer' ? '' : $row['id'];
+          $viewer_id = $this->sanitizedGets['page'] === 'duplicate_viewer' ? '' : $row['id'];
           if (!empty($viewer_id)) {
               echo '<p>ID: ' . $row['id'] . '</p>';
           }
@@ -38,7 +38,7 @@ if ($_GET['page'] === 'duplicate_viewer') {
             <td><b><?php echo $this->lng['name']; ?></b></td>
             <td valign="top">:</td>
             <td> <input name="name" type="text" size="75" value="<?php
-          $name = $_GET['page'] === 'duplicate_viewer' ? 'Duplicate of ' . $row['name'] : $row['name'];
+          $name = $this->sanitizedGets['page'] === 'duplicate_viewer' ? 'Duplicate of ' . $row['name'] : $row['name'];
           echo $name;
 ?>" /> *) <?php echo $this->lng['required']; ?></td>
         </tr>

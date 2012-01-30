@@ -3,10 +3,10 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <form action="<?php echo $this->e2gModCfg['index'] . '&amp;act=save_web_files_perm'; ?>" method="post">
-    <input type="hidden" name="group_id" value="<?php echo $_GET['group_id']; ?>" />
+    <input type="hidden" name="group_id" value="<?php echo $this->sanitizedGets['group_id']; ?>" />
     <ul style="border-bottom: 1px dotted #CCC;">
         <?php
-        $e2gFileWebGroupsIds = $this->_fileWebGroupIds($_GET['group_id']);
+        $e2gFileWebGroupsIds = $this->_fileWebGroupIds($this->sanitizedGets['group_id']);
 
         $fileWebGroups = $this->modx->db->makeArray($this->modx->db->query(
                                 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '

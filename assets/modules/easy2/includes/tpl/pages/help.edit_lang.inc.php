@@ -1,8 +1,8 @@
 <?php
-if ($_GET['langfile']) {
-    $xpldFileName = @explode('.', $_GET['langfile']);
+if ($this->sanitizedGets['langfile']) {
+    $xpldFileName = @explode('.', $this->sanitizedGets['langfile']);
     $fileFirstName = $xpldFileName[0];
-    $fileLastName = ltrim($_GET['langfile'], $fileFirstName);
+    $fileLastName = ltrim($this->sanitizedGets['langfile'], $fileFirstName);
 }
 
 // prepare the english file
@@ -21,7 +21,7 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
     }
 
     // prepare another language file
-    include (E2G_MODULE_PATH . 'includes/langs/' . $_GET['langfile']);
+    include (E2G_MODULE_PATH . 'includes/langs/' . $this->sanitizedGets['langfile']);
     if (isset($lngi)) {
         $langs = $lngi;
     } else {
@@ -34,11 +34,11 @@ if (!file_exists(realpath(E2G_MODULE_PATH . 'includes/langs/english' . $fileLast
 
 ?>
 
-    <h2 style="text-align: right;"><?php echo $_GET['langfile']; ?></h2>
+    <h2 style="text-align: right;"><?php echo $this->sanitizedGets['langfile']; ?></h2>
     <hr />
     <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=save_lang" name="edit_lang" method="post">
         <input type="hidden" name="lang" value="<?php echo $fileFirstName; ?>" />
-        <input type="hidden" name="langfile" value="<?php echo $_GET['langfile']; ?>" />
+        <input type="hidden" name="langfile" value="<?php echo $this->sanitizedGets['langfile']; ?>" />
         
         <div>
             <input type="submit" name="submit" value="Save"  />

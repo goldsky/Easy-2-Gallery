@@ -2,7 +2,7 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-$res = mysql_query('SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $_GET['file_id']);
+$res = mysql_query('SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $this->sanitizedGets['file_id']);
 $row = mysql_fetch_array($res, MYSQL_ASSOC);
 mysql_free_result($res);
 ?>
@@ -10,9 +10,9 @@ mysql_free_result($res);
     <li>
         <a href="<?php
 echo $this->e2gModCfg['index'];
-if (isset($_GET['tag'])) {
+if (isset($this->sanitizedGets['tag'])) {
 ?>&amp;tag=<?php
-           echo $_GET['tag'];
+           echo $this->sanitizedGets['tag'];
        } else {
 ?>&amp;pid=<?php
            echo $this->e2gModCfg['parent_id'];
@@ -23,10 +23,10 @@ if (isset($_GET['tag'])) {
     </li>
     <li>
         <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;page=comments&amp;file_id=<?php
-           echo $_GET['file_id'];
-           if (isset($_GET['tag'])) {
+           echo $this->sanitizedGets['file_id'];
+           if (isset($this->sanitizedGets['tag'])) {
 ?>&amp;tag=<?php
-               echo $_GET['tag'];
+               echo $this->sanitizedGets['tag'];
            } else {
 ?>&amp;pid=<?php
                echo $this->e2gModCfg['parent_id'];
@@ -70,7 +70,7 @@ if (isset($_GET['tag'])) {
                                 . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments c'
                                 . ' LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip AS i'
                                 . ' ON i.ign_ip_address=c.ip_address'
-                                . ' WHERE file_id=' . (int) $_GET['file_id']
+                                . ' WHERE file_id=' . (int) $this->sanitizedGets['file_id']
                                 . ' ORDER BY id DESC'
                 );
                 $rowNum = 0; // only for row coloring
@@ -134,7 +134,7 @@ if (isset($_GET['tag'])) {
                     </em>
                     <p>
                         <?php
-                        if (isset($_GET['act']) && $_GET['act'] == 'com_edit' && $_GET['comid'] == $l['id']) {
+                        if (isset($this->sanitizedGets['act']) && $this->sanitizedGets['act'] == 'com_edit' && $this->sanitizedGets['comid'] == $l['id']) {
                         ?>
                             <textarea name="comment" cols="" rows="3" style="width:90%;"><?php echo htmlspecialchars_decode($l['comment'], ENT_QUOTES); ?></textarea>
                             <input type="hidden" name="comid" value="<?php echo $l['id']; ?>" />
@@ -146,13 +146,13 @@ if (isset($_GET['tag'])) {
                     </p>
                     <div class="com_action">
                         <?php
-                        if (isset($_GET['act']) && $_GET['act'] == 'com_edit' && $_GET['comid'] == $l['id']) {
+                        if (isset($this->sanitizedGets['act']) && $this->sanitizedGets['act'] == 'com_edit' && $this->sanitizedGets['comid'] == $l['id']) {
                         ?>
                             <a href="javascript:void(0)" onclick="savecomment(3)">Save</a> |
                             <a href="javascript:history.go(-1);">Cancel</a>
                         <?php
                         }
-                        if (!isset($_GET['act'])) {
+                        if (!isset($this->sanitizedGets['act'])) {
                             if ($l['approved'] != '1') {
                         ?>
                                 <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;act=com_approve&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['approve']; ?></a> |

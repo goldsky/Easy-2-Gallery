@@ -2,7 +2,7 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-$tag = isset($tag) ? $tag : $_GET['tag'];
+$tag = isset($tag) ? $tag : $this->sanitizedGets['tag'];
 
 include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
 ?>
@@ -35,7 +35,7 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
     <?php
             break;
         case 'thumbnails':
-            if (!isset($_GET['path'])): ?>
+            if (!isset($this->sanitizedGets['path'])): ?>
                 <input type="checkbox" onclick="selectAll(this.checked); void(0);" style="border:0;" /><?php
                 echo $this->lng['select_all'];
             endif;
@@ -52,5 +52,5 @@ include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.menu.top.inc.php';
     ?>
 </form>
 <?php
-    if (isset($_GET['view']))
+    if (isset($this->sanitizedGets['view']))
         header("Location: " . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));

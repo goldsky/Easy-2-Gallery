@@ -3,12 +3,12 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <form action="<?php echo $this->e2gModCfg['index'] . '&amp;act=save_mgr_permissions'; ?>" method="post">
-    <input type="hidden" name="group_id" value="<?php echo $_GET['group_id']; ?>" />
+    <input type="hidden" name="group_id" value="<?php echo $this->sanitizedGets['group_id']; ?>" />
     <ul>
         <?php
         $e2gMgrGroupIds = $this->modx->db->getValue($this->modx->db->query(
                                 'SELECT permissions FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_users_mgr '
-                                . 'WHERE id=\'' . $_GET['group_id'] . '\''
+                                . 'WHERE id=\'' . $this->sanitizedGets['group_id'] . '\''
                 ));
         $e2gMgrGroupIdsArrays = array();
         $e2gMgrGroupIdsArrays = @explode(',', $e2gMgrGroupIds);

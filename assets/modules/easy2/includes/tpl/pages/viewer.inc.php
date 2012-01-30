@@ -10,7 +10,7 @@ if (IN_MANAGER_MODE != 'true')
     /**
      * for edit list
      */
-    if (isset($_GET['page'])) {
+    if (isset($this->sanitizedGets['page'])) {
         ?>
         <div class="tab-page" id="tabThumbViewerEdit">
             <h2 class="tab"><?php echo $this->lng['edit']; ?></h2>
@@ -22,7 +22,7 @@ if (IN_MANAGER_MODE != 'true')
             ?>
         </div>
         <?php
-    } // if (isset($_GET['page']) && $_GET['page'] == 'edit_viewer')
+    } // if (isset($this->sanitizedGets['page']) && $this->sanitizedGets['page'] == 'edit_viewer')
     /**
      * for current
      */ else {

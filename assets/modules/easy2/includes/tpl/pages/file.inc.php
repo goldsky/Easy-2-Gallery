@@ -6,14 +6,14 @@ if (IN_MANAGER_MODE != 'true')
 /**
  * PAGE ACTION
  */
-$page = empty($_GET['page']) ? '' : $_GET['page'];
+$page = empty($this->sanitizedGets['page']) ? '' : $this->sanitizedGets['page'];
 switch ($page) {
     case 'create_dir':
         include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.create_dir.inc.php';
         break;
 
     case 'edit_dir' :
-        if (empty($_GET['dir_id']) || !is_numeric($_GET['dir_id'])) {
+        if (empty($this->sanitizedGets['dir_id']) || !is_numeric($this->sanitizedGets['dir_id'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['id_err'];
             header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
             exit();
@@ -22,7 +22,7 @@ switch ($page) {
         break;
 
     case 'edit_file':
-        if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
+        if (empty($this->sanitizedGets['file_id']) || !is_numeric($this->sanitizedGets['file_id'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $id['id_err'];
 
             header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -32,7 +32,7 @@ switch ($page) {
         break;
 
     case 'comments':
-        if (empty($_GET['file_id']) || !is_numeric($_GET['file_id'])) {
+        if (empty($this->sanitizedGets['file_id']) || !is_numeric($this->sanitizedGets['file_id'])) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $id['id_err'];
 
             header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
@@ -48,7 +48,7 @@ switch ($page) {
         break;
 
     default:
-        if (isset($_GET['tag']))
+        if (isset($this->sanitizedGets['tag']))
             include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.tag.inc.php';
         else
             include_once E2G_MODULE_PATH . 'includes/tpl/pages/file.default.inc.php';

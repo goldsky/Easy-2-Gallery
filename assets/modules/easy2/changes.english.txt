@@ -4,6 +4,11 @@
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
 ***************** 1.4.10-rc2 ******************
++ replaced all $_GET params with sanitizedGets
++ added &w=`auto` or &h=`auto` to keep the original proportion of the thumbnail
++ set the synchronizer to only synching the current opened folder
+
+***************** 1.4.10-rc2 ******************
 + fixed parent id changes on the module pages
 
 ***************** 1.4.10-rc1 ******************

@@ -1,6 +1,6 @@
 <?php
 
-if (!isset($_GET['path'])) {
+if (!isset($this->sanitizedGets['path'])) {
 ?>
 <div id="e2g_bottommenu">
     <ul class="actionButtons">

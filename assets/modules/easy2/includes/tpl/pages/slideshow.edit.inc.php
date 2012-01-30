@@ -2,11 +2,11 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-if (!isset($_GET['page']) || $_GET['page'] !== 'edit_slideshow' && $_GET['page'] !== 'duplicate_slideshow') {
+if (!isset($this->sanitizedGets['page']) || $this->sanitizedGets['page'] !== 'edit_slideshow' && $this->sanitizedGets['page'] !== 'duplicate_slideshow') {
     die("Die off!");
 }
 
-$select_slideshows = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows WHERE id=' . $_GET['ssid'];
+$select_slideshows = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_slideshows WHERE id=' . $this->sanitizedGets['ssid'];
 $query_slideshows = mysql_query($select_slideshows);
 if (!$query_slideshows)
     die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_slideshows);
@@ -15,7 +15,7 @@ else {
     $row = mysql_fetch_assoc($query_slideshows);
 }
 
-$slideshow_id = $_GET['page'] === 'duplicate_slideshow' ? '' : $row['id'];
+$slideshow_id = $this->sanitizedGets['page'] === 'duplicate_slideshow' ? '' : $row['id'];
 if (!empty($slideshow_id)) {
     echo '<p>ID: ' . $row['id'] . '</p>';
 }
@@ -23,9 +23,9 @@ if (!empty($slideshow_id)) {
 
 <form action="<?php
 echo $this->e2gModCfg['index'];
-if ($_GET['page'] === 'duplicate_slideshow') {
+if ($this->sanitizedGets['page'] === 'duplicate_slideshow') {
     echo '&amp;act=save_slideshow';
-} elseif ($_GET['page'] === 'edit_slideshow') {
+} elseif ($this->sanitizedGets['page'] === 'edit_slideshow') {
     echo '&amp;act=update_slideshow';
 }
 ?>" method="post">
@@ -34,7 +34,7 @@ if ($_GET['page'] === 'duplicate_slideshow') {
         <tr>
             <td><b><?php echo $this->lng['name']; ?>:</b></td>
             <td><input name="name" type="text" size="75" value="<?php
-$name = $_GET['page'] === 'duplicate_slideshow' ? 'Duplicate of ' . $row['name'] : $row['name'];
+$name = $this->sanitizedGets['page'] === 'duplicate_slideshow' ? 'Duplicate of ' . $row['name'] : $row['name'];
 echo $name;
 ?>" /></td>
         </tr>

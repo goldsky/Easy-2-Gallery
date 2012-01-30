@@ -100,7 +100,7 @@ if (IN_MANAGER_MODE != 'true')
                                         </script>
 
                                         <?php
-                                        if ($_GET['page'] == 'edit_mgrPerm' && $_GET['group_id'] == $mgrGroup['id']) {
+                                        if ($this->sanitizedGets['page'] == 'edit_mgrPerm' && $this->sanitizedGets['group_id'] == $mgrGroup['id']) {
                                             $usrMgrPermEditFile = realpath(E2G_MODULE_PATH . 'includes/tpl/pages/user.mgr.perm_edit.inc.php');
                                             if (empty($usrMgrPermEditFile) || !file_exists($usrMgrPermEditFile)) {
                                                 die(__FILE__ . ', ' . __LINE__ . ': missing user.mgr.perm_edit.inc.php file');
@@ -206,7 +206,7 @@ if (IN_MANAGER_MODE != 'true')
                                             tpWeb.addTabPage( document.getElementById( 'tabWebPermissions_<?php echo $webGroup['id']; ?>') );
                                         </script>
                                         <?php
-                                        if ($_GET['page'] == 'edit_webPerm' && $_GET['group_id'] == $webGroup['id']) {
+                                        if ($this->sanitizedGets['page'] == 'edit_webPerm' && $this->sanitizedGets['group_id'] == $webGroup['id']) {
                                             $usrWebPermEditFile = realpath(E2G_MODULE_PATH . 'includes/tpl/pages/user.web.perm_edit.inc.php');
                                             if (empty($usrWebPermEditFile) || !file_exists($usrWebPermEditFile)) {
                                                 die(__FILE__ . ', ' . __LINE__ . ': missing user.web.perm_edit.inc.php file');
@@ -218,7 +218,7 @@ if (IN_MANAGER_MODE != 'true')
                                                 <b><?php echo $this->lng['files']; ?></b>
                                             </p>
                                         <?php
-                                        } elseif ($_GET['page'] == 'edit_webFilesPerm' && $_GET['group_id'] == $webGroup['id']) {
+                                        } elseif ($this->sanitizedGets['page'] == 'edit_webFilesPerm' && $this->sanitizedGets['group_id'] == $webGroup['id']) {
                                         ?>
                                             <p>
                                                 <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;page=edit_webPerm&amp;group_id=<?php echo $webGroup['id']; ?>"><?php echo $this->lng['edit']; ?></a>

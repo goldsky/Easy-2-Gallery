@@ -13,10 +13,10 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
             tpCommentsMgr.addTabPage( document.getElementById( 'tabAllComments') );
         </script>
         <?php
-        if (isset($_GET['page'])) {
-            if ($_GET['page'] == 'edit_file')
+        if (isset($this->sanitizedGets['page'])) {
+            if ($this->sanitizedGets['page'] == 'edit_file')
                 include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.file.edit_file.inc.php';
-            elseif ($_GET['page'] == 'comments')
+            elseif ($this->sanitizedGets['page'] == 'comments')
                 include_once E2G_MODULE_PATH . 'includes/tpl/pages/page.file.comments.inc.php';
         }
         // default page
@@ -33,33 +33,33 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                         <input type="checkbox" onclick="selectAllComments(this.checked); void(0);" style="border:0;" />
                                     <?php echo $this->lng['select_all']; ?>&nbsp;&nbsp; | &nbsp;
                                     <?php
-                                    echo (!$_GET['filter'] ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '" style="text-decoration: underline;">');
+                                    echo (!$this->sanitizedGets['filter'] ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '" style="text-decoration: underline;">');
                                     echo $this->lng['all'];
-                                    echo (!$_GET['filter'] ? '</b>' : '</a>');
+                                    echo (!$this->sanitizedGets['filter'] ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_approved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_approved" style="text-decoration: underline;">');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_approved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_approved" style="text-decoration: underline;">');
                                     echo $this->lng['approved'];
-                                    echo ($_GET['filter'] == 'comments_approved' ? '</b>' : '</a>');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_approved' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_unapproved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_unapproved" style="text-decoration: underline;">');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_unapproved' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_unapproved" style="text-decoration: underline;">');
                                     echo $this->lng['approved_not'];
-                                    echo ($_GET['filter'] == 'comments_unapproved' ? '</b>' : '</a>');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_unapproved' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_visible' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_visible" style="text-decoration: underline;">');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_visible' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_visible" style="text-decoration: underline;">');
                                     echo $this->lng['visible'];
-                                    echo ($_GET['filter'] == 'comments_visible' ? '</b>' : '</a>');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_visible' ? '</b>' : '</a>');
                                     ?>
                                     &nbsp;&nbsp;
                                     <?php
-                                    echo ($_GET['filter'] == 'comments_hidden' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_hidden" style="text-decoration: underline;">');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_hidden' ? '<b>' : '<a href="' . $this->e2gModCfg['index'] . '&amp;filter=comments_hidden" style="text-decoration: underline;">');
                                     echo $this->lng['hidden'];
-                                    echo ($_GET['filter'] == 'comments_hidden' ? '</b>' : '</a>');
+                                    echo ($this->sanitizedGets['filter'] == 'comments_hidden' ? '</b>' : '</a>');
                                     ?>
                                 </td>
                             </tr>
@@ -73,15 +73,15 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                             . 'ON c.file_id=f.id '
                                             . 'LEFT JOIN ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip AS i '
                                             . 'ON i.ign_ip_address=c.ip_address ';
-                                    if (isset($_GET['filter'])) {
+                                    if (isset($this->sanitizedGets['filter'])) {
                                         $selectComments .= 'WHERE ';
-                                        if ($_GET['filter'] == 'comments_approved')
+                                        if ($this->sanitizedGets['filter'] == 'comments_approved')
                                             $selectComments .= 'c.approved=1 ';
-                                        if ($_GET['filter'] == 'comments_unapproved')
+                                        if ($this->sanitizedGets['filter'] == 'comments_unapproved')
                                             $selectComments .= 'c.approved=0 ';
-                                        if ($_GET['filter'] == 'comments_visible')
+                                        if ($this->sanitizedGets['filter'] == 'comments_visible')
                                             $selectComments .= 'c.status=1 ';
-                                        if ($_GET['filter'] == 'comments_hidden')
+                                        if ($this->sanitizedGets['filter'] == 'comments_hidden')
                                             $selectComments .= 'c.status=0 ';
                                     }
                                     $selectComments .= 'ORDER BY id DESC';
@@ -177,7 +177,7 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
 
                                         </em>
                                         <p>
-                                            <?php if (isset($_GET['act']) && $_GET['act'] == 'com_edit' && $_GET['comid'] == $l['id']) {
+                                            <?php if (isset($this->sanitizedGets['act']) && $this->sanitizedGets['act'] == 'com_edit' && $this->sanitizedGets['comid'] == $l['id']) {
                                             ?>
                                                 <textarea name="comment" cols="" rows="3" style="width:90%;"><?php echo htmlspecialchars_decode($l['comment'], ENT_QUOTES); ?></textarea>
                                                 <input type="hidden" name="comid" value="<?php echo $l['id']; ?>" />
@@ -192,13 +192,13 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                             /**
                                              * The comment's save/cancel actions on editing
                                              */
-                                            if (isset($_GET['act']) && $_GET['act'] == 'com_edit' && $_GET['comid'] == $l['id']) {
+                                            if (isset($this->sanitizedGets['act']) && $this->sanitizedGets['act'] == 'com_edit' && $this->sanitizedGets['comid'] == $l['id']) {
                                             ?>
                                                 <a href="javascript:void(0)" onclick="savecomment(1)"><?php echo $this->lng['save']; ?></a> |
                                                 <a href="javascript:history.go(-1)"><?php echo $this->lng['cancel']; ?></a>
                                             <?php
                                             }
-                                            if (!isset($_GET['act'])) {
+                                            if (!isset($this->sanitizedGets['act'])) {
                                                 if ($l['approved'] != '1') {
                                             ?>
                                                     <a href="<?php echo $this->e2gModCfg['index'] . $filtered; ?>&amp;act=com_approve&amp;comid=<?php echo $l['id']; ?>"><?php echo $this->lng['approve']; ?></a> |

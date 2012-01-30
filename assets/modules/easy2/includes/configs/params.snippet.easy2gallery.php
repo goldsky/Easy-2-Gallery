@@ -52,9 +52,11 @@ $e2gSnipCfg['customgetparams'] = isset($customgetparams) ? $customgetparams : NU
  * Image resizing
  */
 // WIDTH
-$e2gSnipCfg['w'] = (isset($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
+$e2gSnipCfg['w'] = isset($w) && strtolower($w) == 'auto' ? strtolower($w) : (is_numeric($w) ? (int) $w : $e2g['w']);
+//$e2gSnipCfg['w'] = (isset($w) && is_numeric($w)) ? (int) $w : $e2g['w'];
 // HEIGHT
-$e2gSnipCfg['h'] = (isset($h) && is_numeric($h)) ? (int) $h : $e2g['h'];
+$e2gSnipCfg['h'] = isset($h) && strtolower($h) == 'auto' ? strtolower($h) : (is_numeric($h) ? (int) $h : $e2g['h']);
+//$e2gSnipCfg['h'] = (isset($h) && is_numeric($h)) ? (int) $h : $e2g['h'];
 // JPEG QUALITY
 $e2gSnipCfg['thq'] = (isset($thq) && $thq <= 100 && $thq >= 0) ? (int) $thq : $e2g['thq'];
 
@@ -220,7 +222,7 @@ if (isset($e2gSnipCfg['static_gid']))
 elseif (isset($e2gSnipCfg['static_tag']))
     $groupSuffix = $modx->stripAlias($e2gSnipCfg['static_tag']);
 else
-    $groupSuffix='1'; // root &gid
+    $groupSuffix = '1'; // root &gid
 $e2gSnipCfg['show_group'] = isset($show_group) ? $show_group : 'Gallery_' . $groupSuffix . '_' . $e2gSnipCfg['e2g_static_instances'];
 
 /**

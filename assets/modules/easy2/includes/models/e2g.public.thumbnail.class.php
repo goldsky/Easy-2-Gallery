@@ -117,6 +117,16 @@ class E2gThumb {
             // Shifts
             $x = $y = 0;
 
+            if (strtolower($w) === 'auto' && strtolower($h) === 'auto') {
+                return FALSE;
+            }
+            if (strtolower($w) === 'auto') {
+                $w = $h * $imgSize[0]/$imgSize[1];
+            }
+            if (strtolower($h) === 'auto') {
+                $h = $w * $imgSize[1]/$imgSize[0];
+            }
+
             /**
              * $resizeType == 'inner'
              * trim to default dimensions

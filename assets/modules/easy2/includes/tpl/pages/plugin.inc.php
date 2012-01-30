@@ -11,7 +11,7 @@ if (IN_MANAGER_MODE != 'true')
     /**
      * for edit list
      */
-    if (isset($_GET['page']) && $_GET['page'] == 'edit_plugin') {
+    if (isset($this->sanitizedGets['page']) && $this->sanitizedGets['page'] == 'edit_plugin') {
         ?>
         <div class="tab-page" id="tabPluginEdit">
             <h2 class="tab"><?php echo $this->lng['edit']; ?></h2>
@@ -20,7 +20,7 @@ if (IN_MANAGER_MODE != 'true')
             </script>
             <form action="<?php echo $this->e2gModCfg['index']; ?>&amp;act=update_plugin" method="post">
                 <?php
-                $select_plugins = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins WHERE id=' . $_GET['ssid'];
+                $select_plugins = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_plugins WHERE id=' . $this->sanitizedGets['ssid'];
                 $query_plugins = mysql_query($select_plugins);
                 if (!$query_plugins)
                     die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_plugins);
@@ -166,7 +166,7 @@ if (IN_MANAGER_MODE != 'true')
             </form>
         </div>
         <?php
-    } // if (isset($_GET['page']) && $_GET['page'] == 'edit_plugin')
+    } // if (isset($this->sanitizedGets['page']) && $this->sanitizedGets['page'] == 'edit_plugin')
     /**
      * for current
      */ else {

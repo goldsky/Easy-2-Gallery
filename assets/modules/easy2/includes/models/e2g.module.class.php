@@ -81,11 +81,12 @@ class E2gMod extends E2gPub {
      */
     private function _galleryPath() {
         $getPathArray = $this->getPath($this->e2gModCfg['parent_id'], NULL, 'array');
-        $path = array();
-
         // Create the ROOT gallery's link
         $path['link'] = '';
         $path['string'] = '';
+        if (empty($getPathArray)) {
+            return $path;
+        }
         foreach ($getPathArray as $k => $v) {
             $path['link'] .= '<a href="' . $this->e2gModCfg['index'] . '&amp;pid=' . $k . '">' . $v . '</a>/';
         }
@@ -168,8 +169,8 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
-            case 'show_dir' :
-                $this->_showDir($this->sanitizedGets['dir_id']);
+            case 'unhide_dir' :
+                $this->_unhide($this->sanitizedGets['dir_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -180,8 +181,8 @@ class E2gMod extends E2gPub {
                 exit();
                 break;
 
-            case 'show_file' :
-                $this->_showFile($this->sanitizedGets['file_id']);
+            case 'unhide_file' :
+                $this->_unhideFile($this->sanitizedGets['file_id']);
                 header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 exit();
                 break;
@@ -586,6 +587,7 @@ class E2gMod extends E2gPub {
                     $res['f']++;
                 } elseif ($this->validFolder($f)) {
                     $fBaseName = $this->basenameSafe($f);
+                    $sres = array('d' => 0, 'f' => 0, 'e' => array());
                     $sres = $this->_moveAll($f, $newRealPath . DIRECTORY_SEPARATOR . $fBaseName);
 
                     $res['dir'][] = $f;
@@ -615,7 +617,7 @@ class E2gMod extends E2gPub {
      * @param string $cfg   module's configuration
      * @param string $lng   language translation
      */
-    private function _addAll($path, $pid, $userId=null) {
+    private function _addAll($path, $pid, $userId = null) {
         $realPath = realpath($path);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
 
@@ -753,7 +755,7 @@ class E2gMod extends E2gPub {
      * @param  string   $userId logged in user's ID, for database signature
      * @return bool     TRUE | FALSE
      */
-    private function _addFile($filePath, $pid, $userId=null) {
+    private function _addFile($filePath, $pid, $userId = null) {
         $fileRealPath = realpath($filePath);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
 
@@ -983,7 +985,7 @@ class E2gMod extends E2gPub {
      * @param int       $pid    current parent ID
      * @param string    $userId logged in user's ID, for database signature
      */
-    public function synchro($path, $pid, $userId=null) {
+    public function synchro($path, $pid, $userId = null) {
         $path = realpath($path);
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
 
@@ -1390,7 +1392,7 @@ class E2gMod extends E2gPub {
      * @param   string  $jsActions  Javascript's action
      * @return  string  The multiple options
      */
-    private function _getDirDropDownOptions($parentId=0, $selected=0, $jsActions=NULL) {
+    private function _getDirDropDownOptions($parentId = 0, $selected = 0, $jsActions = NULL) {
         if (!empty($this->_dirDropDownOptions[$parentId][$selected][$jsActions])) {
             return $this->_dirDropDownOptions[$parentId][$selected][$jsActions];
         }
@@ -1405,7 +1407,7 @@ class E2gMod extends E2gPub {
      * @param   string  $jsActions  Javascript's action
      * @return  string  The multiple options
      */
-    private function _dirDropDownOptions($parentId=0, $selected=0, $jsActions=NULL) {
+    private function _dirDropDownOptions($parentId = 0, $selected = 0, $jsActions = NULL) {
         $selectDirs = 'SELECT parent_id, cat_id, cat_name, cat_level '
                 . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'WHERE parent_id=' . $parentId;
@@ -1474,6 +1476,73 @@ class E2gMod extends E2gPub {
             mysql_free_result($querySelectSubFolders);
             //*********************************************************/
         } // foreach ($childrenDirs as $childDir)
+        return $output;
+    }
+
+    /**
+     * create files structure for select options.
+     * @param   int     $parentId   Parent's ID
+     * @param   bool    $selected   turn on the selected="selected" if the current folder is the selected folder
+     * @param   string  $jsActions  Javascript's action
+     * @return  string  The multiple options
+     */
+    private function _fileDropDownOptions($parentId = 0, $selected = 0, $jsActions = NULL) {
+        $selectFiles = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
+                . 'WHERE dir_id=' . $parentId;
+
+        $querySelectFiles = mysql_query($selectFiles);
+        if (!$querySelectFiles) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+            return FALSE;
+        }
+
+        $numFile = @mysql_num_rows($querySelectFiles);
+        if ($numFile > 0) {
+            $childrenFiles = array();
+            $output = '';
+            $catThumbId = $this->getDirInfo($this->sanitizedGets['dir_id'], 'cat_thumb_id');
+            while ($l = mysql_fetch_assoc($querySelectFiles)) {
+                // DISPLAY
+                $selected = $l['id'] == $catThumbId ? 1 : 0;
+                $output .= '
+                            <option value="' . $l['id'] . '"'
+                        . ( isset($jsActions) ? ' ' . $jsActions : '' )
+                        . ( $selected ? ' selected="selected"' : '' )
+                        . '>';
+                $output .= '&nbsp;' . $l['filename'] . ' [id:' . $l['id'] . ']';
+                $path = $this->getPath($l['dir_id']);
+                $img= $this->imgShaper($l['dir_id'], $this->e2gModCfg['dir'] . $path . $l['filename'], 30, 30, 90 );
+                if ($img)
+                    $output = '<img src="'.$img.'" />';
+                $output .= '</option>';
+            }
+            mysql_free_result($querySelectFiles);
+
+        }
+
+        //*********************************************************/
+        // GET SUB-FOLDERS
+        $selectSubFolders = 'SELECT parent_id, cat_id, cat_name '
+                . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
+                . 'WHERE parent_id=' . $parentId . ' '
+                . 'ORDER BY cat_name ASC'
+        ;
+        $querySelectSubFolders = mysql_query($selectSubFolders);
+        if (!$querySelectSubFolders) {
+            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectSubFolders;
+            return FALSE;
+        }
+
+        $numSub = @mysql_num_rows($querySelectSubFolders);
+        if ($numSub > 0) {
+            while ($res = mysql_fetch_assoc($querySelectSubFolders)) {
+                $output .= '<optgroup label="' . $res['cat_name'] . '">';
+                $output .= $this->_fileDropDownOptions($res['cat_id'], $selected, $jsActions);
+                $output .= '</optgroup>';
+            }
+        }
+        mysql_free_result($querySelectSubFolders);
+        //*********************************************************/
         return $output;
     }
 
@@ -1996,7 +2065,7 @@ class E2gMod extends E2gPub {
      * @param   int     $dirId  list's variables
      * @return  mixed   TRUE | report
      */
-    private function _showDir($dirId) {
+    private function _unhide($dirId) {
         if (empty($dirId)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['dpath_err'];
             return FALSE;
@@ -2052,7 +2121,7 @@ class E2gMod extends E2gPub {
      * @param   int     $fileId list's variables
      * @return  mixed   TRUE | report
      */
-    private function _showFile($fileId) {
+    private function _unhideFile($fileId) {
         if (empty($fileId)) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['fpath_err'];
             return FALSE;
@@ -2779,7 +2848,7 @@ class E2gMod extends E2gPub {
      * @param   bool    $buildDefault   Build default config file
      * @return  NULL
      */
-    public function saveE2gSettings($entries, $buildDefault=FALSE) {
+    public function saveE2gSettings($entries, $buildDefault = FALSE) {
         // overriding empty values
         $entries['maxh'] = !empty($entries['maxh']) ? $entries['maxh'] : '0';
         $entries['maxw'] = !empty($entries['maxw']) ? $entries['maxw'] : '0';
@@ -4228,7 +4297,7 @@ class E2gMod extends E2gPub {
             return FALSE;
     }
 
-    public function webGroupNames($id, $type='dir') {
+    public function webGroupNames($id, $type = 'dir') {
         $checkWebAccess = array();
         $webGroupNames = array();
         $checkWebAccessQuery = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
@@ -4294,10 +4363,10 @@ class E2gMod extends E2gPub {
     , $w
     , $h
     , $thq
-    , $resizeType=NULL
-    , $red=NULL
-    , $green=NULL
-    , $blue=NULL
+    , $resizeType = NULL
+    , $red = NULL
+    , $green = NULL
+    , $blue = NULL
     , $createWaterMark = 0
     ) {
         // decoding UTF-8
@@ -4409,7 +4478,7 @@ class E2gMod extends E2gPub {
      * @param string    $tags   The tags
      * @return string   The tag's links
      */
-    public function createTagLinks($tags, $index=null) {
+    public function createTagLinks($tags, $index = null) {
         if (empty($tags)) {
             return NULL;
         }
@@ -4435,7 +4504,7 @@ class E2gMod extends E2gPub {
      * @param string    $index          change the URL if needed
      * @return string   The button's hyperlink and image.
      */
-    public function actionIcon($buttonName, $getParams=array(), $attributes=NULL, $index=NULL) {
+    public function actionIcon($buttonName, $getParams = array(), $attributes = NULL, $index = NULL) {
         $index = !empty($index) ? $index : $this->e2gModCfg['index'];
 
         if (!is_array($getParams) || empty($getParams)) {
@@ -4458,7 +4527,7 @@ class E2gMod extends E2gPub {
             $button .= '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_opened.png" width="16" height="16"'
                     . ' alt="' . $this->lng['visible'] . '" title="' . $this->lng['visible'] . '" border="0" />';
-        } elseif ($buttonName == 'show_dir') {
+        } elseif ($buttonName == 'unhide_dir') {
             $button .= '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16"'
                     . ' alt="' . $this->lng['hidden'] . '" title="' . $this->lng['hidden'] . '" border="0" />';
@@ -4481,7 +4550,7 @@ class E2gMod extends E2gPub {
             $button .= '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_opened.png" width="16" height="16"'
                     . ' alt="' . $this->lng['visible'] . '" title="' . $this->lng['visible'] . '" border="0" />';
-        } elseif ($buttonName == 'show_file') {
+        } elseif ($buttonName == 'unhide_file') {
             $button .= '
                     <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/eye_closed.png" width="16" height="16"'
                     . ' alt="' . $this->lng['hidden'] . '" title="' . $this->lng['hidden'] . '" border="0" />';

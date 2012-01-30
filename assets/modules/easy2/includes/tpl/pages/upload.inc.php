@@ -3,7 +3,7 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 ?>
 <form name="images" action="<?php echo $this->e2gModCfg['index'] . '&amp;act=upload_all'; ?>" method="post" enctype="multipart/form-data">
-    <?php if (!isset($_GET['pid'])) {
+    <?php if (!isset($this->sanitizedGets['pid'])) {
     ?>
         <p><b><?php echo $this->lng['upload_dir']; ?> :</b>
             <select name="newparent">
@@ -16,13 +16,13 @@ if (IN_MANAGER_MODE != 'true')
     </p><?php } else { ?>
     <ul class="actionButtons">
         <li>
-            <a href="<?php echo $this->e2gModCfg['blank_index']; ?>&amp;e2gpg=<?php echo $this->e2gModCfg['e2gPages']['files']['e2gpg']; ?>&amp;pid=<?php echo $_GET['pid']; ?>">
+            <a href="<?php echo $this->e2gModCfg['blank_index']; ?>&amp;e2gpg=<?php echo $this->e2gModCfg['e2gPages']['files']['e2gpg']; ?>&amp;pid=<?php echo $this->sanitizedGets['pid']; ?>">
                 <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_left.png" alt="" /> <?php echo $this->lng['back']; ?>
             </a>
         </li>
     </ul>
     <p><?php echo $this->lng['upload_dir'] . ': <b>' . $this->e2gModCfg['gdir'] . '</b>'; ?></p>
-    <input type="hidden" name="newparent" value="<?php echo $_GET['pid']; ?>" />
+    <input type="hidden" name="newparent" value="<?php echo $this->sanitizedGets['pid']; ?>" />
     <input type="hidden" name="gotofolder" value="gothere" />
     <?php } ?>
         <p><b><?php echo $this->lng['extension_valid']; ?> :</b> .jpeg, .jpg, .gif, .png</p>

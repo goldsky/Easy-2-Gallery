@@ -9,7 +9,7 @@
 if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
-$filtered = isset($_GET['filter']) ? '&amp;filter=' . $_GET['filter'] : '';
+$filtered = isset($this->sanitizedGets['filter']) ? '&amp;filter=' . $this->sanitizedGets['filter'] : '';
 
 foreach ($this->e2gModCfg['e2gPages'] as $v) {
     $e2gPage[$v['e2gpg']] = $v;
@@ -185,7 +185,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 }
                 if (i==3) {
                     document.forms["fileComments"].action=
-                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&page=comments&file_id=' . $_GET['file_id'] . '&pid=' . $_GET['pid'] . '&act=com_save'; ?>";
+                        "<?php echo html_entity_decode($this->e2gModCfg['index']) . '&page=comments&file_id=' . $this->sanitizedGets['file_id'] . '&pid=' . $this->sanitizedGets['pid'] . '&act=com_save'; ?>";
                     document.forms["fileComments"].submit();
                 }
             }
@@ -245,8 +245,8 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var container = document.getElementById("grid");
                 }
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
-                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
-                url += "<?php echo isset($_GET['tag']) ? '&tag=' . $_GET['tag'] : ''; ?>";
+                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
+                url += "<?php echo isset($this->sanitizedGets['tag']) ? '&tag=' . $this->sanitizedGets['tag'] : ''; ?>";
                 url += "&pid="+pid;
                 url += "&uid="+uid;
                 if (xhr && container) {
@@ -272,7 +272,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.thumb.php?";
                 else
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
-                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
+                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -296,7 +296,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.grid.php?";
                 else
                     var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
-                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>&path="+path;
+                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -317,7 +317,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.thumb.php?";
-                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>";
+                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -338,7 +338,7 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("list");
                 var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.grid.php?";
-                url += "a=<?php echo $_GET['a']; ?>&id=<?php echo $_GET['id']; ?>&e2gpg=<?php echo $_GET['e2gpg']; ?>";
+                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
