@@ -312,10 +312,13 @@ class E2gPub { // public/public class
     /**
      * To check the specified resource is a valid file.<br />
      * It will be checked against the folder validation first.
-     * @param type $filename
+     * @param   strin   $filename   filename
      * @return  mixed   boolean | fileinfo's array
      */
     public function validFile($filename) {
+        if (basename($filename) === 'index.html') {
+            return FALSE;
+        }
         $fileRealPath = realpath($filename);
         if (empty($fileRealPath)) {
             if ($this->e2gPubCfg['e2g_debug'] == 1) {
@@ -939,8 +942,9 @@ class E2gPub { // public/public class
             clearstatcache();
         }
 
-        if ($type == 'dir' && $oldPermission != sprintf("%04o", $this->e2gPubCfg['chmod_folder'])) {
-            $newPermission = @chmod($fullRealPath, $this->e2gPubCfg['chmod_folder']);
+        $newFolderPerm = sprintf("%04o", octdec($this->e2gPubCfg['chmod_folder']));
+        if ($type == 'dir' && $oldPermission != $newFolderPerm) {
+            $newPermission = @chmod($fullRealPath, $newFolderPerm);
             clearstatcache();
             if (!$newPermission && $this->e2gPubCfg['e2g_debug'] == '1') {
                 $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['chmod_err'] . ' fullPath = ' . $fullPath;
@@ -949,11 +953,11 @@ class E2gPub { // public/public class
             }
         }
 
-        if ($type == 'file') {
-            $newPermission = @chmod($fullRealPath, $this->e2gPubCfg['chmod_file']);
+        $newFilePrem = sprintf("%04o", octdec($this->e2gPubCfg['chmod_file']));
+        if ($type == 'file' && $oldPermission != $newFilePrem) {
+            $newPermission = @chmod($fullRealPath, $newFilePrem);
             clearstatcache();
             if ($checkPreviousMode === TRUE
-                    && $oldPermission != sprintf("%04o", $this->e2gPubCfg['chmod_file'])
                     && !$newPermission
                     && $this->e2gPubCfg['e2g_debug'] == '1'
             ) {

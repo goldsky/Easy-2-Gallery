@@ -560,3 +560,25 @@ ul.modButtons li a:active {
     background: -moz-linear-gradient(top,  #ededed,  #fff);
     filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#ededed', endColorstr='#ffffff');
 }
+
+.system-buttons {
+    border: 1px dotted #ccc;
+}
+
+.system-buttons span {
+    display: block;
+    background-color: #ddd;
+    border: 1px dotted #ccc;
+}
+
+.system-buttons ul {
+    margin: 0;
+}
+
+.system-buttons ul li {
+    margin: 10px auto;
+}
+
+ul.modButtons li {
+    margin-right: 10px;
+}

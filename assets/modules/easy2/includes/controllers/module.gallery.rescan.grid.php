@@ -117,6 +117,8 @@ $galPh['td.fileDefaultTableContent'] = '';
 
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
 $rowNum = 0;
+
+header('Content-Type: text/html; charset=\'' . $lng['charset'] . '\'');
 //******************************************************************/
 //***************** FOLDERS/DIRECTORIES/GALLERIES ******************/
 //******************************************************************/

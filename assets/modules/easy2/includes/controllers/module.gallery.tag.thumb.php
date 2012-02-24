@@ -113,6 +113,7 @@ uksort($fetchFiles, "strnatcmp");
 $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
 $rowNum = 0;
 
+header('Content-Type: text/html; charset=\'' . $lng['charset'] . '\'');
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 

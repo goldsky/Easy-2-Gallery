@@ -137,6 +137,7 @@ $galPh['th.w'] = 'W (px)';
 $galPh['th.h'] = 'H (px)';
 $galPh['td.fileDefaultTableContent'] = '';
 
+header('Content-Type: text/html; charset=\'' . $lng['charset'] . '\'');
 #########################     DIRECTORIES      #########################
 $dirPhRow = array();
 foreach ($fetchDirs as $fetchDir) {
