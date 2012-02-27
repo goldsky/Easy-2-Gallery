@@ -412,7 +412,7 @@ span.navigation span.navigationBranch span.navItem span.navIcon img {
     -moz-box-shadow: 0 0 7px #B0B0B0;
     -webkit-box-shadow: 0 0 7px #B0B0B0;
     box-shadow: 0 0 7px #B0B0B0;
-    behavior: url(../assets/libs/PIE-1.0beta2/PIE.htc);
+    behavior: url(../assets/libs/PIE-1.0beta5/PIE.htc);
 }
 
 .dir .boxcontent {
