@@ -50,7 +50,7 @@
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
-    behavior: url(assets/libs/PIE-1.0beta2/PIE.htc);
+    behavior: url(assets/libs/PIE-1.0beta5/PIE.htc);
     overflow: hidden;
 }
 
@@ -182,7 +182,7 @@
     -moz-box-shadow: 0 0 7px #B0B0B0;
     -webkit-box-shadow: 0 0 7px #B0B0B0;
     box-shadow: 0 0 7px #B0B0B0;
-    behavior: url(assets/libs/PIE-1.0beta2/PIE.htc);
+    behavior: url(assets/libs/PIE-1.0beta5/PIE.htc);
 }
 
 .imgsrc {
@@ -199,7 +199,7 @@
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
     border-radius: 3px;
-    behavior: url(assets/libs/PIE-1.0beta2/PIE.htc);
+    behavior: url(assets/libs/PIE-1.0beta5/PIE.htc);
 }
 
 .dir .dirname {
