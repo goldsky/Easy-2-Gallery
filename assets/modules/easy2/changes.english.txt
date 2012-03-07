@@ -6,6 +6,9 @@
 ***************** 1.4.10-rc4 ******************
 + fixed the charset output for the ajax's controller files
 + fixed the file permission's converter
++ added German translation (thx to bbear)
++ fixed the translation's trim
++ added PIE-1.0beta5 to the libs/ , and fixed its CSS's directives
 
 ***************** 1.4.10-rc3 ******************
 + replaced all $_GET params with sanitizedGets

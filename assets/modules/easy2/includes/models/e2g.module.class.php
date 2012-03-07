@@ -2948,7 +2948,7 @@ class E2gMod extends E2gPub {
                 unset($k);
                 continue;
             }
-            $c .= "    '$k' => '" . htmlspecialchars($v, ENT_QUOTES);
+            $c .= "    '$k' => '" . trim(htmlspecialchars($v, ENT_QUOTES));
             if ($i == $countPost)
                 $c .= "'\r\n";
             else
