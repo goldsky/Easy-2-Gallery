@@ -33,6 +33,7 @@ mysql_free_result($resultdesc);
         }
         ?>
     </li>
+    <?php if ($parent['cat_id'] !== '1') {?>
     <li>
         <?php
         $gdir = $this->e2g['dir'] . $this->galleryPath['string'];
@@ -44,9 +45,10 @@ mysql_free_result($resultdesc);
             , 'dir_id' => $parent['cat_id']
             , 'pid' => $this->e2gModCfg['parent_id']
                 ), 'onclick="return confirmDeleteFolder();"', $this->e2gModCfg['index']);
-        
+
         ?>
     </li>
+    <?php } ?>
 </ul>
 <table cellspacing="2" cellpadding="0">
     <?php
