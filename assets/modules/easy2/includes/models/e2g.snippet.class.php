@@ -226,6 +226,7 @@ class E2gSnippet extends E2gPub {
             return '';
         }
 
+        $phs = array();
         $phs['cat_description'] = '';
         $phs['title'] = '';
         if ($this->e2gSnipCfg['gal_desc'] === '1'
@@ -317,7 +318,7 @@ class E2gSnippet extends E2gPub {
 
         // count the files again, this time WITHOUT limit!
         if ($this->e2gSnipCfg['showonly'] === 'folders') {
-            $fileCount = 0;
+            $resultCountFiles = 0;
         } elseif (!empty($this->e2gSnipCfg['gid'])) {
             $selectCountFiles = $this->_fileSqlStatement('COUNT(id)');
             $querySelectCountFiles = mysql_query($selectCountFiles);
@@ -335,6 +336,7 @@ class E2gSnippet extends E2gPub {
         if ($this->_totalCount === 0)
             return FALSE;
 
+        $phs = array();
         if ($this->_totalCount <= $this->e2gSnipCfg['limit']) {
             $phs['pages'] = '';
         }
@@ -394,7 +396,9 @@ class E2gSnippet extends E2gPub {
         }
 
         $fileNumRows = mysql_num_rows($querySelectFiles);
-
+        if ($fileNumRows === 0) {
+            return;
+        }
         $fileThumbs = array();
         while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
             $thumbPlaceholders = $this->_loadThumbPlaceholders($l);
@@ -1227,6 +1231,7 @@ class E2gSnippet extends E2gPub {
     }
 
     private function _getSlideShowParams() {
+        $ssParams = array();
         // database selection
         $ssParams['gdir'] = $this->e2gSnipCfg['gdir'];
         $ssParams['sid'] = $this->e2gSnipCfg['e2g_static_instances'];
@@ -1434,6 +1439,7 @@ class E2gSnippet extends E2gPub {
                 , $this->e2gSnipCfg['resize_type'], $this->e2gSnipCfg['thbg_red']
                 , $this->e2gSnipCfg['thbg_green'], $this->e2gSnipCfg['thbg_blue']);
         // thumbnail first...
+        $ssFile = array();
         if ($thumbImg !== FALSE) {
             // ... then the slideshow's images
             if ($this->e2gSnipCfg['ss_img_src'] === 'generated') {
@@ -1494,6 +1500,7 @@ class E2gSnippet extends E2gPub {
             return FALSE;
         }
 
+        $l = array();
         while ($fetch = mysql_fetch_array($query)) {
             $path = $this->getPath($fetch['dir_id']);
 
@@ -1612,6 +1619,7 @@ class E2gSnippet extends E2gPub {
             $lngCmt = $e2g_lang['english'];
         }
 
+        $_P = arrary();
         $_P['charset'] = $this->modx->config['modx_charset'];
 
         // output from language file
@@ -1921,7 +1929,7 @@ class E2gSnippet extends E2gPub {
      * @param int       $staticId   the original file's ID
      * @return bool     TRUE | FALSE
      */
-    private function _checkFidDecendant($parentIds, $id) {
+    private function _checkFidDecendant($parentIds, $staticId) {
         // for global variable: '*' (star), always returns TRUE
         if ($staticId === '*')
             return TRUE;
@@ -1940,7 +1948,7 @@ class E2gSnippet extends E2gPub {
         }
         mysql_free_result($querySelectFiles);
 
-        $xpldFids = explode(',', $id);
+        $xpldFids = explode(',', $staticId);
         foreach ($xpldFids as $fid) {
             if (!$check[$fid]) {
                 return FALSE;
@@ -2032,7 +2040,7 @@ class E2gSnippet extends E2gPub {
         $excludeFileWebAccess = $this->checkWebAccess('file');
 
         if ($excludeFileWebAccess !== FALSE) {
-            $selectFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
+            $selectTaggedFiles .= ' AND id NOT IN (' . $excludeFileWebAccess . ') ';
         }
 
         $querySelectTaggedFiles = mysql_query($selectTaggedFiles);
@@ -2040,6 +2048,8 @@ class E2gSnippet extends E2gPub {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectTaggedFiles . '<br />';
             return FALSE;
         }
+
+        $taggedFiles = array();
         while ($l = mysql_fetch_array($querySelectTaggedFiles, MYSQL_ASSOC)) {
             $taggedFiles[$l['id']] = $l['id'];
         }
@@ -2300,6 +2310,8 @@ class E2gSnippet extends E2gPub {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectParent . '<br />';
             return FALSE;
         }
+
+        $parent = array();
         while ($row = mysql_fetch_array($queryParent)) {
             $parent['cat_id'] = $row['parent_id'];
         }
@@ -2377,6 +2389,7 @@ class E2gSnippet extends E2gPub {
             return FALSE;
         }
 
+        $siblings = array();
         while ($row = mysql_fetch_array($queryChildren)) {
             $siblings['cat_id'][] = $row['cat_id'];
             $siblings['cat_tag'][] = $row['cat_tag'];
