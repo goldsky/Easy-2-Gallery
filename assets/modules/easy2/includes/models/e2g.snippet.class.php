@@ -39,6 +39,11 @@ class E2gSnippet extends E2gPub {
      */
     private $_totalCount = 0;
 
+    /**
+     * @var array   $_GET variables
+     */
+    private $_sanitizedGets = array();
+
     public function __construct($modx, $e2gSnipCfg) {
         parent::__construct($modx, $e2gSnipCfg);
         $this->modx = & $modx;
@@ -54,16 +59,26 @@ class E2gSnippet extends E2gPub {
             $this->e2gSnipCfg['cat_orderby'] = 'rand()';
             $this->e2gSnipCfg['cat_order'] = '';
         }
+
+        // clean up the $_GET variables
+        // @todo: sanitize $_GET['tag'] with non-ASCII characters
+        foreach ($_GET as $k => $v) {
+            $this->_sanitizedGets[$k] = $this->sanitizedString($v);
+        }
     }
 
+    /**
+     * Helper function to fix variables because of the multiple snippet calls
+     * @return void
+     */
     private function _fixMultiCallPagination() {
         //**********************************************************************/
         //*   PAGINATION FIXING for multiple snippet calls on the same page    */
         //**********************************************************************/
         // for the UNselected &gid snippet call when the other &gid snippet call is selected
         if (isset($this->e2gSnipCfg['static_gid'])
-                && isset($_GET['gid'])
-                && !$this->_checkGidDescendant($_GET['gid'], $this->e2gSnipCfg['static_gid'])
+                && isset($this->_sanitizedGets['gid'])
+                && !$this->_checkGidDescendant($this->_sanitizedGets['gid'], $this->e2gSnipCfg['static_gid'])
                 || $this->e2gSnipCfg['e2g_instances'] != $this->e2gSnipCfg['e2g_static_instances']
         ) {
             $this->e2gSnipCfg['gpn'] = 0;
@@ -80,7 +95,7 @@ class E2gSnippet extends E2gPub {
         // for the UNselected &tag snippet call when &gid snippet call is selected
         if (isset($this->e2gSnipCfg['static_tag'])
                 && !isset($_GET['tag'])
-                && isset($_GET['gid'])
+                && isset($this->_sanitizedGets['gid'])
                 || $this->e2gSnipCfg['e2g_instances'] != $this->e2gSnipCfg['e2g_static_instances']
         ) {
             $this->e2gSnipCfg['gpn'] = 0;
@@ -241,7 +256,7 @@ class E2gSnippet extends E2gPub {
         ) {
             $galleryId = '';
             if (!$this->_checkGidDescendant(
-                            (isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid'])
+                            (isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid'])
                             , $this->e2gSnipCfg['static_gid'])
             ) {
                 $galleryId = $this->e2gSnipCfg['static_gid'];
@@ -262,10 +277,10 @@ class E2gSnippet extends E2gPub {
 
     private function _permalink() {
         if (isset($this->e2gSnipCfg['tag'])
-                && ($this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE)
+                && ($this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE)
         ) {
             $permalinkName = $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
-        } elseif (!$this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid'])) {
+        } elseif (!$this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid'])) {
             $permalinkName = $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_gid'];
         } else {
             $permalinkName = $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['gid'];
@@ -282,7 +297,7 @@ class E2gSnippet extends E2gPub {
         $parentInfo = $this->_getParentInfo($this->e2gSnipCfg['gid']);
         $phs = '';
         if ($parentInfo['cat_id'] > 0
-                && $this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE
+                && $this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE
                 && (!empty($this->e2gSnipCfg['static_tag']) ? $this->_checkTaggedFileIds($this->e2gSnipCfg['static_tag'], $parentInfo['cat_id']) === TRUE : NULL)
         ) {
             $phs = '&laquo; <a href="'
@@ -634,22 +649,22 @@ class E2gSnippet extends E2gPub {
                 $permalinkName = str_replace(',', '', $permalinkName);
                 // making flexible FURL or not
                 $pagesLink = $indexPage . '&amp;tag=' . $this->e2gSnipCfg['static_tag']
-                        . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                        . ( isset($this->_sanitizedGets['gid']) ? '&amp;gid=' . $this->_sanitizedGets['gid'] : '' )
                         . '&amp;gpn=' . $i . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
             }
             // original &gid parameter
             else {
                 $permalinkName = $this->e2gSnipCfg['e2g_static_instances'] . '_' . ( isset($this->e2gSnipCfg['static_gid'])
-                        && ( $this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
+                        && ( $this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
                                 $this->e2gSnipCfg['gid'] : $this->e2gSnipCfg['static_gid'] );
                 $permalinkName = $this->sanitizedString($permalinkName);
                 $permalinkName = str_replace(',', '', $permalinkName);
                 // making flexible FURL or not
                 $pagesLink = $indexPage . ( isset($this->e2gSnipCfg['static_gid'])
-                        && ( $this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
+                        && ( $this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
                                 '&amp;gid=' . $this->e2gSnipCfg['gid'] :
                                 '&amp;gid=' . $this->e2gSnipCfg['static_gid'] )
-                        . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
+                        . ( isset($this->_sanitizedGets['fid']) ? '&amp;fid=' . $this->_sanitizedGets['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
                         . '&amp;gpn=' . $i . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
             }
 
@@ -663,25 +678,25 @@ class E2gSnippet extends E2gPub {
 
             if (isset($this->e2gSnipCfg['static_tag'])) {
                 $previousLink = $indexPage . '&amp;tag=' . $this->e2gSnipCfg['static_tag']
-                        . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                        . ( isset($this->_sanitizedGets['gid']) ? '&amp;gid=' . $this->_sanitizedGets['gid'] : '' )
                         . '&amp;gpn=' . ($i - 1) . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
                 $nextLink = $indexPage . '&amp;tag=' . $this->e2gSnipCfg['static_tag']
-                        . ( isset($_GET['gid']) ? '&amp;gid=' . $_GET['gid'] : '' )
+                        . ( isset($this->_sanitizedGets['gid']) ? '&amp;gid=' . $this->_sanitizedGets['gid'] : '' )
                         . '&amp;gpn=' . ($i + 1) . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
             } else {
                 $previousLink = $indexPage
                         . ( isset($this->e2gSnipCfg['static_gid'])
-                        && ( $this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
+                        && ( $this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
                                 '&amp;gid=' . $this->e2gSnipCfg['gid'] :
                                 '&amp;gid=' . $this->e2gSnipCfg['static_gid'] )
-                        . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
+                        . ( isset($this->_sanitizedGets['fid']) ? '&amp;fid=' . $this->_sanitizedGets['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
                         . '&amp;gpn=' . ($i - 1) . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
                 $nextLink = $indexPage
                         . ( isset($this->e2gSnipCfg['static_gid'])
-                        && ( $this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
+                        && ( $this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE ) ?
                                 '&amp;gid=' . $this->e2gSnipCfg['gid'] :
                                 '&amp;gid=' . $this->e2gSnipCfg['static_gid'] )
-                        . ( isset($_GET['fid']) ? '&amp;fid=' . $_GET['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
+                        . ( isset($this->_sanitizedGets['fid']) ? '&amp;fid=' . $this->_sanitizedGets['fid'] : (isset($this->e2gSnipCfg['static_fid']) ? '&amp;fid=' . $this->e2gSnipCfg['static_fid'] : '') )
                         . '&amp;gpn=' . ($i + 1) . $this->e2gSnipCfg['customgetparams'] . '#' . $permalinkName;
             }
 
@@ -1166,7 +1181,7 @@ class E2gSnippet extends E2gPub {
          * added the &fid parameter inside the &slideshow, to open a full page of the clicked image
          * into the specified landingpage ID
          */
-        if (isset($_GET['fid'])
+        if (isset($this->_sanitizedGets['fid'])
                 && isset($this->e2gSnipCfg['landingpage'])
                 && $this->modx->documentIdentifier !== intval($this->e2gSnipCfg['landingpage'])
         ) {
@@ -1174,9 +1189,9 @@ class E2gSnippet extends E2gPub {
             $redirectUrl = $this->modx->makeUrl($this->e2gSnipCfg['landingpage']
                             , $this->modx->aliases
                             , 'sid=' . $this->e2gSnipCfg['e2g_static_instances'])
-                    . '&amp;lp=' . $this->e2gSnipCfg['landingpage'] . '&amp;fid=' . $_GET['fid'];
+                    . '&amp;lp=' . $this->e2gSnipCfg['landingpage'] . '&amp;fid=' . $this->_sanitizedGets['fid'];
             $this->modx->sendRedirect(htmlspecialchars_decode($redirectUrl));
-        } elseif (isset($_GET['fid']) && !isset($this->e2gSnipCfg['landingpage'])) {
+        } elseif (isset($this->_sanitizedGets['fid']) && !isset($this->e2gSnipCfg['landingpage'])) {
             /**
              * self landingpage
              */
@@ -1186,7 +1201,7 @@ class E2gSnippet extends E2gPub {
             if (!empty($this->e2gSnipCfg['js'])) {
                 $this->modx->regClientStartupScript($this->e2gSnipCfg['js']);
             }
-            return $this->landingPage($_GET['fid']);
+            return $this->landingPage($this->_sanitizedGets['fid']);
         } else {
             /**
              * The DEFAULT display
@@ -1602,7 +1617,7 @@ class E2gSnippet extends E2gPub {
      * @return mixed  return the comment's page content
      */
     private function _comments($fileId) {
-        $cpn = (empty($_GET['cpn']) || !is_numeric($_GET['cpn'])) ? 0 : (int) $_GET['cpn'];
+        $cpn = (empty($this->_sanitizedGets['cpn']) || !is_numeric($this->_sanitizedGets['cpn'])) ? 0 : (int) $this->_sanitizedGets['cpn'];
 
         // Get a key from https://www.google.com/recaptcha/admin/create
         $recaptchalib = realpath(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
@@ -2540,10 +2555,10 @@ class E2gSnippet extends E2gPub {
             $dirSqlStatement = 'SELECT ' . $select . ' FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs WHERE ';
 
             // OPEN the selected tagged folder
-            if (isset($_GET['gid'])
+            if (isset($this->_sanitizedGets['gid'])
                     && $this->e2gSnipCfg['static_tag'] === $this->e2gSnipCfg['tag']
-                    && $this->_checkTaggedDirIds($this->e2gSnipCfg['tag'], $_GET['gid'])) {
-                $dirSqlStatement .= 'parent_id IN (' . $_GET['gid'] . ') AND ';
+                    && $this->_checkTaggedDirIds($this->e2gSnipCfg['tag'], $this->_sanitizedGets['gid'])) {
+                $dirSqlStatement .= 'parent_id IN (' . $this->_sanitizedGets['gid'] . ') AND ';
             } else {
                 // the selected tag of multiple tags on the same page
                 if ($this->e2gSnipCfg['static_tag'] === $this->e2gSnipCfg['tag']) {
@@ -2576,8 +2591,8 @@ class E2gSnippet extends E2gPub {
                     . 'easy2_dirs AS ' . $prefix . ' WHERE ';
 
             if ($this->e2gSnipCfg['gid'] !== '*') {
-                if ($this->_checkGidDescendant((isset($_GET['gid']) ?
-                                        $_GET['gid'] :
+                if ($this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ?
+                                        $this->_sanitizedGets['gid'] :
                                         $this->e2gSnipCfg['gid']), $this->e2gSnipCfg['static_gid']) === TRUE) {
                     $dirSqlStatement .= $prefixDot . 'parent_id IN (' . $this->e2gSnipCfg['gid'] . ') ';
                 } else {
@@ -2654,11 +2669,11 @@ class E2gSnippet extends E2gPub {
 
         if (isset($this->e2gSnipCfg['static_tag'])) {
             // OPEN the selected tagged folder
-            if (isset($_GET['gid'])
+            if (isset($this->_sanitizedGets['gid'])
                     && $this->e2gSnipCfg['static_tag'] === $this->e2gSnipCfg['tag']
-                    && $this->_checkTaggedDirIds($this->e2gSnipCfg['tag'], $_GET['gid'])
+                    && $this->_checkTaggedDirIds($this->e2gSnipCfg['tag'], $this->_sanitizedGets['gid'])
             ) {
-                $fileSqlStatement .= 'dir_id IN (' . $_GET['gid'] . ') AND ';
+                $fileSqlStatement .= 'dir_id IN (' . $this->_sanitizedGets['gid'] . ') AND ';
             } else {
                 // the selected tag of multiple tags on the same page
                 if ($this->e2gSnipCfg['static_tag'] === $this->e2gSnipCfg['tag']) {
@@ -2685,11 +2700,11 @@ class E2gSnippet extends E2gPub {
                     $fileSqlStatement .= 'id IN (' . $this->e2gSnipCfg['fid'] . ') ';
                 }
                 if (!empty($this->e2gSnipCfg['fid']) && !empty($gid)) {
-//                if (!empty($this->e2gSnipCfg['fid']) && !empty($gid) && empty($_GET['gid'])) {
+//                if (!empty($this->e2gSnipCfg['fid']) && !empty($gid) && empty($this->_sanitizedGets['gid'])) {
                     $fileSqlStatement .= 'OR ';
                 }
                 if (!empty($gid)) {
-                    if ($this->_checkGidDescendant((isset($_GET['gid']) ? $_GET['gid'] : $gid), $staticGid) === TRUE) {
+                    if ($this->_checkGidDescendant((isset($this->_sanitizedGets['gid']) ? $this->_sanitizedGets['gid'] : $gid), $staticGid) === TRUE) {
                         $fileSqlStatement .= 'dir_id IN (' . $gid . ') ';
                     } else {
                         $fileSqlStatement .= 'dir_id IN (' . $staticGid . ') ';
@@ -2817,7 +2832,7 @@ class E2gSnippet extends E2gPub {
      */
     private function _decodeText($text) {
         $encodedText = htmlspecialchars_decode($text, ENT_QUOTES);
-        $encodedText = html_entity_decode($encodedText);
+        $encodedText = html_entity_decode($encodedText, ENT_QUOTES, 'UTF-8');
         $encodedText = $this->_stripHTMLTags($encodedText);
         return $encodedText;
     }
