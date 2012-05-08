@@ -96,10 +96,16 @@ switch ($show) {
 
 $result = $modx->db->query($sql);
 
+$tagArray = array();
 while ($l = mysql_fetch_row($result)) {
-    $tagArray[] = $l[0];
+    $rowTag = $l[0];
+    $rowTags = @explode(',', $rowTag);
+    foreach ($rowTags as $v) {
+        $tagArray[] = trim($v);
+    }
 }
-$tagArray = array_filter($tagArray);
+
+$tagArray = array_filter(array_unique($tagArray));
 sort($tagArray);
 
 if (isset($tag) && in_array($tag, $tagArray)) {
@@ -169,7 +175,7 @@ if ($position == 'above') {
 $output .= '<div class="' . $class . '"><ul>';
 foreach ($tagArray as $tagItem) {
     $output .= '<li><a href="'
-            . $modx->makeUrl($modx->documentIdentifier, null, 'tag=' . $tagItem . '#' . $e2gSnipCfg['e2g_instances'] . '_' . $tagItem)
+            . $modx->makeUrl($modx->documentIdentifier, null, 'sid='. $e2gSnipCfg['e2g_instances'] . '&amp;tag=' . $tagItem . '#' . $e2gSnipCfg['e2g_instances'] . '_' . $tagItem)
             . '">' . $tagItem . '</a></li>';
 }
 
