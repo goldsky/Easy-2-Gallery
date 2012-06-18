@@ -4,11 +4,16 @@ error_reporting(0);
 $timeStart = getmicrotime();
 
 $path = '../../../' . str_replace('../', '', $_GET['path']);
+
 $path = utf8_decode($path);
 $w = isset($_GET['mod_w']) ? $_GET['mod_w'] : 190;
 $h = isset($_GET['mod_h']) ? $_GET['mod_h'] : 250;
 
+
 $imgSize = getimagesize($path);
+
+
+
 if ($imgSize[2] == 1)
     $im = imagecreatefromgif($path);
 elseif ($imgSize[2] == 2)
@@ -16,13 +21,13 @@ elseif ($imgSize[2] == 2)
 elseif ($imgSize[2] == 3)
     $im = imagecreatefrompng($path);
 else {
-    header('Content-type: image/png');
-    $im = @imagecreate($w, $h)
+    //header('Content-type: image/png');
+    $im = imagecreate($w, $h)
             or die('Cannot Initialize new GD image stream');
     $bgColor = imagecolorallocate($im, 255, 255, 255);
     $textColor = imagecolorallocate($im, 233, 14, 91);
     $textHeight = isset($_GET['th']) ? $_GET['th'] : 2;
-    $text = isset($_GET['text']) ? $_GET['text'] : 'Image error';
+    $text = isset($_GET['text']) ? $_GET['text'] : 'Image 1 error';
     $y = $h / 2 - $textHeight * 4;
     $textWidth = imagefontwidth($textHeight) * strlen($text);
     $center = ceil($w / 2);
