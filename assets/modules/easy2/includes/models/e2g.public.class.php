@@ -221,7 +221,7 @@ class E2gPub { // public/public class
         }
 
         $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-        $string = mysql_escape_string($string);
+        $string = mysql_real_escape_string($string);
 
         return $string;
     }
@@ -865,7 +865,7 @@ class E2gPub { // public/public class
      * @param   string  $managerLanguage    the manager's language
      * @return  array   the lexicon strings
      */
-    public function languageSwitch($managerLanguage, $modPath = null) {
+    public static function languageSwitch($managerLanguage, $modPath = null) {
         $modPath = !empty($modPath) ? $modPath : '../';
 
         $langFile = realpath($modPath . 'includes/langs/' . $managerLanguage . '.inc.php');

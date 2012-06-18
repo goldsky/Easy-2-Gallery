@@ -59,6 +59,7 @@ class E2gMod extends E2gPub {
     public $galleryPath = array();
 
     public function __construct($modx) {
+       
         $this->modx = & $modx;
         $this->lng = $this->languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
         if (!is_array($this->lng)) {
@@ -4578,17 +4579,20 @@ class E2gMod extends E2gPub {
         return $button;
     }
 
+    
+    
     /**
      * Sanitizes the GET request for more security
      * @param   array   $_GET   the request values
      * @return  array   sanitized values
      */
-    public function sanitizedGets($_GET) {
+    public function sanitizedGets($dataInGet) {
+        
         $sanitizedGets = array();
-        if (empty($_GET)) {
+        if (empty($dataInGet)) {
             return FALSE;
         }
-        foreach ($_GET as $k => $v) {
+        foreach ($dataInGet as $k => $v) {
             $xplds = @explode('/', $v);
             foreach ($xplds as $y => $x) {
                 $xplds[$y] = $this->sanitizedString($x);
