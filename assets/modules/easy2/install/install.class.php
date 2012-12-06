@@ -539,9 +539,8 @@ class install {
         // mysql_list_fields()
         // GET All Tables
         $dbase = str_replace('`', '', $this->modx->db->config['dbase']);
-        $res = mysql_query('SHOW TABLES FROM ' . $dbase);
+        $res = mysql_query('SHOW TABLES FROM `' . $dbase . '`');
         if (!$res) {
-
             echo __LINE__ . ' : $dbase = ' . $dbase . '<br />';
             echo __LINE__ . ' : $dbase = ' . 'SHOW TABLES FROM ' . $dbase . '<br />';
             echo __LINE__ . ' : $params = ' . mysql_error() . '<br />';
