@@ -284,7 +284,7 @@ class install {
                 return TRUE;
         }
         else
-            continue;
+            return FALSE;
     }
 
     /**
