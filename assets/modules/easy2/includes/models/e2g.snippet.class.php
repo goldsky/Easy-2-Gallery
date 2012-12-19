@@ -1517,6 +1517,7 @@ class E2gSnippet extends E2gPub {
 
         $l = array();
         while ($fetch = mysql_fetch_array($query)) {
+            $l = $fetch;
             $path = $this->getPath($fetch['dir_id']);
 
             // goldsky -- only to switch between localhost and live site.
@@ -1567,8 +1568,6 @@ class E2gSnippet extends E2gPub {
             }
 
             $l['title'] = $fetch['alias'] != '' ? $fetch['alias'] : $fetch['filename'];
-            $l['alias'] = $fetch['alias'];
-            $l['name'] = $fetch['alias'];
             $l['description'] = $this->_decodeText($fetch['description']);
 
             /**
@@ -1634,7 +1633,7 @@ class E2gSnippet extends E2gPub {
             $lngCmt = $e2g_lang['english'];
         }
 
-        $_P = arrary();
+        $_P = array();
         $_P['charset'] = $this->modx->config['modx_charset'];
 
         // output from language file
