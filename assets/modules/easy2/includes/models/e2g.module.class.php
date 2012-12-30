@@ -3877,15 +3877,30 @@ class E2gMod extends E2gPub {
             $updateDir .= 'cat_name = \'' . $this->_escapeString($newDirName) . '\', '; // trailing comma!
         }
 
-        $updateDir .= 'cat_alias = \'' . $this->_escapeString($post['alias']) . '\''
-                . ', cat_summary = \'' . $this->_escapeString($post['summary']) . '\''
-                . ', cat_tag = \'' . $this->_escapeString($post['tag']) . '\''
-                . ', cat_description = \'' . $this->_escapeString($post['description']) . '\''
-                . ', modified_by=\'' . $this->modx->getLoginUserID() . '\' '
-                . ', last_modified=NOW() '
-                . ', cat_redirect_link = \'' . $this->_escapeString($post['cat_redirect_link']) . '\''
-                . ', cat_thumb_id = \'' . $post['thumb_id'] . '\''
-                . ' WHERE cat_id=' . $post['cat_id'];
+        $updates = array();
+        if (!empty($post['alias'])) {
+            $updates[] = 'cat_alias = \'' . $this->_escapeString($post['alias']) . '\'';
+        }
+        if (!empty($post['summary'])) {
+            $updates[] = 'cat_summary = \'' . $this->_escapeString($post['summary']) . '\'';
+        }
+        if (!empty($post['tag'])) {
+            $updates[] = 'cat_tag = \'' . $this->_escapeString($post['tag']) . '\'';
+        }
+        if (!empty($post['description'])) {
+            $updates[] = 'cat_description = \'' . $this->_escapeString($post['description']) . '\'';
+        }
+        $updates[] = 'modified_by=\'' . $this->modx->getLoginUserID() . '\'';
+        $updates[] = 'last_modified=NOW()';
+        if (!empty($post['cat_redirect_link'])) {
+            $updates[] = 'cat_redirect_link = \'' . $this->_escapeString($post['cat_redirect_link']) . '\'';
+        }
+        if (!empty($post['thumb_id'])) {
+            $updates[] = 'cat_thumb_id = \'' . $post['thumb_id'] . '\'';
+        }
+        $updateDir .= @implode(',', $updates);
+        $updateDir .= ' WHERE cat_id=' . $post['cat_id'];
+
         $queryUpdateDir = mysql_query($updateDir);
         if (!$queryUpdateDir) {
             $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateDir;
@@ -3947,14 +3962,27 @@ class E2gMod extends E2gPub {
         if ($newFilename != $filename) {
             $updateFile .= 'filename = \'' . $this->_escapeString($newFilename) . $ext . '\', '; // trailing comma!
         }
-        $updateFile .= 'alias = \'' . $this->_escapeString($post['alias']) . '\''
-                . ', summary = \'' . $this->_escapeString($post['summary']) . '\''
-                . ', tag = \'' . $this->_escapeString($post['tag']) . '\''
-                . ', description = \'' . $this->_escapeString($post['description']) . '\''
-                . ', modified_by=\'' . $this->modx->getLoginUserID() . '\' '
-                . ', last_modified=NOW() '
-                . ', redirect_link = \'' . $this->_escapeString($post['redirect_link']) . '\''
-                . 'WHERE id=' . $post['file_id'];
+        $updates = array();
+        if (!empty($post['alias'])) {
+            $updates[] = 'alias = \'' . $this->_escapeString($post['alias']) . '\'';
+        }
+        if (!empty($post['summary'])) {
+            $updates[] = 'summary = \'' . $this->_escapeString($post['summary']) . '\'';
+        }
+        if (!empty($post['tag'])) {
+            $updates[] = 'tag = \'' . $this->_escapeString($post['tag']) . '\'';
+        }
+        if (!empty($post['description'])) {
+            $updates[] = 'description = \'' . $this->_escapeString($post['description']) . '\'';
+        }
+        $updates[] = 'modified_by=\'' . $this->modx->getLoginUserID() . '\'';
+        $updates[] = 'last_modified=NOW()';
+        if (!empty($post['redirect_link'])) {
+            $updates[] = 'redirect_link = \'' . $this->_escapeString($post['redirect_link']) . '\'';
+        }
+        $updateFile .= @implode(',', $updates);
+        $updateFile .= 'WHERE id=' . $post['file_id'];
+
         $queryUpdateFile = mysql_query($updateFile);
         if (!$queryUpdateFile) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['update_err'];

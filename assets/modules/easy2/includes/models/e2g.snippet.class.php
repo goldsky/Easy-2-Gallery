@@ -573,7 +573,7 @@ class E2gSnippet extends E2gPub {
             if (!$folderImgInfos)
                 continue;
 
-            $l['count'] = $folderImgInfos['count'];
+            $l['count'] = intval($folderImgInfos['count']);
 
             // path to subdir's thumbnail
             $getPath = $this->getPath($folderImgInfos['dir_id']);

@@ -109,7 +109,6 @@ mysql_free_result($resultdesc);
             <td valign="top"><b><?php echo $this->lng['user_web_groups']; ?></b></td>
             <td valign="top">:</td>
             <td><?php
-            echo $parent['cat_redirect_link'];
             // checks the restricted web access
             $webGroupNames = $this->webGroupNames($parent['cat_id'], 'dir');
             if (!empty($webGroupNames)) {

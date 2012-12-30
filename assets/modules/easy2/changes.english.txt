@@ -3,6 +3,18 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  /
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.10-pl ******************
++ fixed output for empty directory
++ sanitized $_GET inside the snippet's class
++ added utf-8 encoding to the decode function
++ fixed tag separator on the easy2tagcloud
++ added backtick to the database name on mysql function
++ fixed wrong condition's output
++ fixed landingpage's placeholders and typo on comment's method
++ fixed zero counter for directory
++ fixed directory sql error on updating
++ fixed slight error of the web groups output on module
+
 ***************** 1.4.10-rc4 ******************
 + fixed the charset output for the ajax's controller files
 + fixed the file permission's converter
