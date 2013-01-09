@@ -924,7 +924,14 @@ class E2gSnippet extends E2gPub {
         $thumbDirs = explode('/', dirname($thumbPath));
         $count = count($thumbDirs);
         $xpath = $gdir;
-        $lng = parent::languageSwitch(E2G_SNIPPET_PATH . 'includes/');
+
+        try {
+            $lng = parent::languageSwitch($this->modx->config['manager_language'], E2G_SNIPPET_PATH);
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            return FALSE;
+        }
+
         for ($c = 0; $c < $count; $c++) {
             $xpath .= $thumbDirs[$c] . '/';
             $this->createIndexHtml($xpath, $lng['indexfile']);
@@ -1422,7 +1429,7 @@ class E2gSnippet extends E2gPub {
                 if ($ssRows === FALSE)
                     continue;
                 foreach ($ssRows as $k => $v) {
-                    if (isset($ssCheckDuplicate[$v['src']])) {
+                    if (isset($ssCheckDuplicate[$v])) {
                         continue;
                     }
                     $ssFiles[$k][] = $v;

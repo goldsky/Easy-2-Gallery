@@ -221,7 +221,7 @@ class E2gPub { // public/public class
         }
 
         $string = htmlspecialchars($string, ENT_QUOTES, 'UTF-8');
-        $string = mysql_escape_string($string);
+        $string = mysql_real_escape_string($string);
 
         return $string;
     }
@@ -865,15 +865,16 @@ class E2gPub { // public/public class
      * @param   string  $managerLanguage    the manager's language
      * @return  array   the lexicon strings
      */
-    public function languageSwitch($managerLanguage, $modPath = null) {
-        $modPath = !empty($modPath) ? $modPath : '../';
+    public static function languageSwitch($managerLanguage, $modPath = null) {
+        $modPath = isset($modPath) ? $modPath : '../';
 
         $langFile = realpath($modPath . 'includes/langs/' . $managerLanguage . '.inc.php');
         $engLangFile = realpath($modPath . 'includes/langs/english.inc.php');
 
         if (empty($engLangFile) || !file_exists($engLangFile)) {
-            return __FILE__ . ', ' . __LINE__ . ': missing english language file: ' . $modPath . 'includes/langs/english.inc.php';
+            throw new Exception (__FILE__ . ', ' . __LINE__ . ': missing english language file: ' . $modPath . 'includes/langs/english.inc.php');
         }
+
         if (!empty($langFile) && file_exists($langFile)) {
             include $langFile; // loading $e2g_lang
             // if there is a blank language parameter, english will fill it as the default.

@@ -60,7 +60,7 @@ class E2gMod extends E2gPub {
 
     public function __construct($modx) {
         $this->modx = & $modx;
-        $this->lng = $this->languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
+        $this->lng = parent::languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
         if (!is_array($this->lng)) {
             die($this->lng); // FALSE returned.
         }
@@ -4611,12 +4611,12 @@ class E2gMod extends E2gPub {
      * @param   array   $_GET   the request values
      * @return  array   sanitized values
      */
-    public function sanitizedGets($_GET) {
+    public function sanitizedGets($get) {
         $sanitizedGets = array();
-        if (empty($_GET)) {
+        if (empty($get)) {
             return FALSE;
         }
-        foreach ($_GET as $k => $v) {
+        foreach ($get as $k => $v) {
             $xplds = @explode('/', $v);
             foreach ($xplds as $y => $x) {
                 $xplds[$y] = $this->sanitizedString($x);
