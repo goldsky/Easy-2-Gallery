@@ -252,7 +252,7 @@ function filler($tpl, $data, $prefix = '[+easy2:', $suffix = '+]') {
 function getChunk($name) {
     global $table_prefix;
 
-    $res = mysql_query('SELECT * FROM ' . $table_prefix . "site_htmlsnippets WHERE name='" . mysql_escape_string($name) . "'");
+    $res = mysql_query('SELECT * FROM ' . $table_prefix . "site_htmlsnippets WHERE name='" . mysql_real_escape_string($name) . "'");
     if (mysql_num_rows($res) > 0) {
         $row = mysql_fetch_array($res, MYSQL_ASSOC);
         return $row['snippet'];
