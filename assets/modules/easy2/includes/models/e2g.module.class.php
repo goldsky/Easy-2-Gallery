@@ -1020,7 +1020,7 @@ class E2gMod extends E2gPub {
         }
 
         $mdirs = array();
-        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectDirs)) {
             $mdirs[$l['cat_name']]['id'] = $l['cat_id']; // goldsky -- to be connected between db <--> fs
             $mdirs[$l['cat_name']]['name'] = $l['cat_name'];
         }
@@ -1037,7 +1037,7 @@ class E2gMod extends E2gPub {
         }
 
         $mfiles = array();
-        while ($l = mysql_fetch_array($querySelectFile, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectFile)) {
             $mfiles[$l['filename']]['id'] = $l['id'];
             $mfiles[$l['filename']]['name'] = $l['filename'];
         }
@@ -1250,7 +1250,7 @@ class E2gMod extends E2gPub {
         $selectCheck = 'SELECT filename FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE filename = \'' . $name . '\' AND dir_id = \'' . $pid . '\'';
         $queryCheck = @mysql_query($selectCheck);
-        while ($l = @mysql_fetch_array($queryCheck)) {
+        while ($l = @mysql_fetch_assoc($queryCheck)) {
             $fetchRow[$l['filename']] = $l['filename'];
         }
         mysql_free_result($queryCheck);
@@ -1277,7 +1277,7 @@ class E2gMod extends E2gPub {
         $recursiveCheckSelect = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                 . 'WHERE filename=\'' . $newFilename . '\' AND dir_id = \'' . $pid . '\'';
         $recursiveCheckQuery = @mysql_query($recursiveCheckSelect);
-        while ($l = @mysql_fetch_array($recursiveCheckQuery)) {
+        while ($l = @mysql_fetch_assoc($recursiveCheckQuery)) {
             $recursiveFetchRow[$l['filename']] = $l['filename'];
         }
         mysql_free_result($recursiveCheckQuery);
@@ -1303,7 +1303,7 @@ class E2gMod extends E2gPub {
         $selectCheck = 'SELECT cat_name FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'WHERE cat_name = \'' . $name . '\' AND parent_id = \'' . $pid . '\'';
         $queryCheck = @mysql_query($selectCheck);
-        while ($l = @mysql_fetch_array($queryCheck)) {
+        while ($l = @mysql_fetch_assoc($queryCheck)) {
             $fetchRow[$l['cat_name']] = $l['cat_name'];
         }
         mysql_free_result($queryCheck);
@@ -1329,7 +1329,7 @@ class E2gMod extends E2gPub {
         $recursiveCheckSelect = 'SELECT cat_name FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs '
                 . 'WHERE cat_name=\'' . $newDirName . '\' AND parent_id = \'' . $pid . '\'';
         $recursiveCheckQuery = @mysql_query($recursiveCheckSelect);
-        while ($l = @mysql_fetch_array($recursiveCheckQuery)) {
+        while ($l = @mysql_fetch_assoc($recursiveCheckQuery)) {
             $recursiveFetchRow[$l['cat_name']] = $l['cat_name'];
         }
         mysql_free_result($recursiveCheckQuery);
@@ -1421,7 +1421,7 @@ class E2gMod extends E2gPub {
         $numDir = @mysql_num_rows($querySelectDirs);
 
         $childrenDirs = array();
-        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectDirs)) {
             $childrenDirs[$l['cat_id']]['parent_id'] = $l['parent_id'];
             $childrenDirs[$l['cat_id']]['cat_id'] = $l['cat_id'];
             $childrenDirs[$l['cat_id']]['cat_name'] = $l['cat_name'];
@@ -1563,7 +1563,7 @@ class E2gMod extends E2gPub {
 
         $numDirTags = mysql_num_rows($queryDirTags);
 
-        while ($l = mysql_fetch_array($queryDirTags)) {
+        while ($l = mysql_fetch_assoc($queryDirTags)) {
             if ($l['cat_tag'] == '' || $l['cat_tag'] == NULL)
                 continue;
             $tagOptions[] = $l['cat_tag'];
@@ -1580,7 +1580,7 @@ class E2gMod extends E2gPub {
 
         $numFileTags = mysql_num_rows($queryFileTags);
 
-        while ($l = mysql_fetch_array($queryFileTags)) {
+        while ($l = mysql_fetch_assoc($queryFileTags)) {
             if ($l['tag'] == '' || $l['tag'] == NULL)
                 continue;
             $tagOptions[] = $l['tag'];
@@ -1904,7 +1904,7 @@ class E2gMod extends E2gPub {
                     return FALSE;
                 }
 
-                $l = mysql_fetch_array($querySelectDirStatus, MYSQL_ASSOC);
+                $l = mysql_fetch_assoc($querySelectDirStatus);
                 mysql_free_result($querySelectDirStatus);
 
                 if ($l['cat_visible'] == '1') {
@@ -1939,7 +1939,7 @@ class E2gMod extends E2gPub {
                     return FALSE;
                 }
 
-                $l = mysql_fetch_array($querySelectFileStatus, MYSQL_ASSOC);
+                $l = mysql_fetch_assoc($querySelectFileStatus);
                 mysql_free_result($querySelectFileStatus);
 
                 if ($l['status'] == '1') {
@@ -1995,7 +1995,7 @@ class E2gMod extends E2gPub {
                     return FALSE;
                 }
 
-                $l = mysql_fetch_array($querySelectDirStatus, MYSQL_ASSOC);
+                $l = mysql_fetch_assoc($querySelectDirStatus);
                 mysql_free_result($querySelectDirStatus);
 
                 if ($l['cat_visible'] == '0') {
@@ -2030,7 +2030,7 @@ class E2gMod extends E2gPub {
                     return FALSE;
                 }
 
-                $l = mysql_fetch_array($querySelectFileStatus, MYSQL_ASSOC);
+                $l = mysql_fetch_assoc($querySelectFileStatus);
                 mysql_free_result($querySelectFileStatus);
 
                 if ($l['status'] == '0') {
@@ -2610,7 +2610,7 @@ class E2gMod extends E2gPub {
                                         . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files '
                                         . 'WHERE id=' . (int) $k
                                 );
-                                while ($l = mysql_fetch_array($filesRes)) {
+                                while ($l = mysql_fetch_assoc($filesRes)) {
                                     $files[$l['id']]['dir_id'] = $l['dir_id'];
                                 }
                                 mysql_free_result($filesRes);
@@ -2630,7 +2630,7 @@ class E2gMod extends E2gPub {
                                         . 'AND B.dir_id=' . (int) $post['newparent']
                                 ;
                                 $filesCheckQuery = mysql_query($filesCheckSelect);
-                                while ($f = mysql_fetch_array($filesCheckQuery)) {
+                                while ($f = mysql_fetch_assoc($filesCheckQuery)) {
                                     $filesCheck[$f['ai']]['filename'] = $f['bf'];
                                 }
                                 mysql_free_result($filesCheckQuery);
@@ -3072,7 +3072,7 @@ class E2gMod extends E2gPub {
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirTags;
                         return FALSE;
                     }
-                    while ($l = mysql_fetch_array($querySelectDirTags)) {
+                    while ($l = mysql_fetch_assoc($querySelectDirTags)) {
                         $dirTags = $l['cat_tag'];
                     }
                     mysql_free_result($querySelectDirTags);
@@ -3130,7 +3130,7 @@ class E2gMod extends E2gPub {
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFileTags;
                         return FALSE;
                     }
-                    while ($l = mysql_fetch_array($querySelectFileTags)) {
+                    while ($l = mysql_fetch_assoc($querySelectFileTags)) {
                         $fileTags = $l['tag'];
                     }
                     mysql_free_result($querySelectFileTags);
@@ -3214,7 +3214,7 @@ class E2gMod extends E2gPub {
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirTags;
                         return FALSE;
                     }
-                    while ($l = mysql_fetch_array($querySelectDirTags)) {
+                    while ($l = mysql_fetch_assoc($querySelectDirTags)) {
                         $dirTags = $l['cat_tag'];
                     }
                     mysql_free_result($querySelectDirTags);
@@ -3271,7 +3271,7 @@ class E2gMod extends E2gPub {
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFileTags;
                         return FALSE;
                     }
-                    while ($l = mysql_fetch_array($querySelectFileTags)) {
+                    while ($l = mysql_fetch_assoc($querySelectFileTags)) {
                         $fileTags = $l['tag'];
                     }
                     mysql_free_result($querySelectFileTags);
@@ -4654,7 +4654,7 @@ class E2gMod extends E2gPub {
         if (!empty($configTablesValues)) {
             $configsQuery = $this->modx->db->select('*', $this->modx->db->config['table_prefix'] . 'easy2_configs');
             if ($configsQuery) {
-                while ($row = mysql_fetch_array($configsQuery)) {
+                while ($row = mysql_fetch_assoc($configsQuery)) {
                     $configsKey[$row['cfg_key']] = $row['cfg_key'];
                     $e2g[$row['cfg_key']] = $row['cfg_val'];
                 }

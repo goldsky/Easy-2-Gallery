@@ -42,7 +42,7 @@ if (IN_MANAGER_MODE != 'true')
                 $numrow_viewers = mysql_num_rows($query_viewers);
                 ?>
                 <ul>
-                    <?php while ($row = mysql_fetch_array($query_viewers)) {
+                    <?php while ($row = mysql_fetch_assoc($query_viewers)) {
                         ?>
                         <li>
                             <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=duplicate_viewer&amp;viewer_id=' . $row['id']; ?>"

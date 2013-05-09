@@ -4,7 +4,7 @@ if (IN_MANAGER_MODE != 'true')
 
 // call up the database content first as the comparison subjects
 $res = mysql_query('SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $this->sanitizedGets['file_id']);
-$row = mysql_fetch_array($res, MYSQL_ASSOC);
+$row = mysql_fetch_assoc($res);
 mysql_free_result($res);
 
 $ext = substr($row['filename'], strrpos($row['filename'], '.'));

@@ -27,7 +27,7 @@ $q = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_configs');
 if (!$q)
     die(__FILE__ . ': MySQL query error for configs');
 else {
-    while ($row = mysql_fetch_array($q)) {
+    while ($row = mysql_fetch_assoc($q)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
 }
@@ -85,7 +85,7 @@ if (!$querySelectDirs) {
 }
 
 $fetchDirs = array();
-while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+while ($l = mysql_fetch_assoc($querySelectDirs)) {
     $fetchDirs[$l['cat_name']] = $l;
 }
 mysql_free_result($querySelectDirs);
@@ -104,7 +104,7 @@ if (!$querySelectFiles) {
 }
 
 $fetchFiles = array();
-while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+while ($l = mysql_fetch_assoc($querySelectFiles)) {
     $fetchFiles[$l['filename']] = $l;
 }
 mysql_free_result($querySelectFiles);

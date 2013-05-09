@@ -22,7 +22,7 @@ if (!isset($e2g)) {
     $query_configs = $modx->db->select('*', $modx->db->config['table_prefix'] . 'easy2_configs');
     if (!$query_configs)
         return FALSE;
-    while ($row = mysql_fetch_array($query_configs)) {
+    while ($row = mysql_fetch_assoc($query_configs)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
 }

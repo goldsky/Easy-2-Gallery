@@ -10,7 +10,7 @@ $qdesc = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dir
         . 'WHERE cat_id = ' . $this->e2gModCfg['parent_id'];
 
 $resultdesc = mysql_query($qdesc);
-while ($l = mysql_fetch_array($resultdesc)) {
+while ($l = mysql_fetch_assoc($resultdesc)) {
     $parent['cat_id'] = $l['cat_id'];
     $parent['cat_alias'] = $l['cat_alias'];
     $parent['cat_summary'] = $l['cat_summary'];

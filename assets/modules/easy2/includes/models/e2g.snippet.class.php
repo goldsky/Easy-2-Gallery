@@ -415,7 +415,7 @@ class E2gSnippet extends E2gPub {
             return;
         }
         $fileThumbs = array();
-        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectFiles)) {
             $thumbPlaceholders = $this->_loadThumbPlaceholders($l);
             if ($thumbPlaceholders === FALSE) {
                 continue;
@@ -552,7 +552,7 @@ class E2gSnippet extends E2gPub {
         //*       Fill up the current directory's thumbnails content       */
         //******************************************************************/
         $dirThumbs = array();
-        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectDirs)) {
             if (isset($this->e2gSnipCfg['static_tag'])) {
                 $l['permalink'] = $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
                 $permalink = $this->e2gSnipCfg['e2g_static_instances'] . '_' . $this->e2gSnipCfg['static_tag'];
@@ -624,7 +624,7 @@ class E2gSnippet extends E2gPub {
 
             // fill up the dir list with content
             $dirThumbs[] = $this->filler($this->getTpl('dir_tpl'), $l);
-        } // while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC))
+        } // while ($l = mysql_fetch_assoc($querySelectDirs))
         mysql_free_result($querySelectDirs);
 
         return $dirThumbs;
@@ -752,7 +752,7 @@ class E2gSnippet extends E2gPub {
         $phs['wrapper'] = $this->e2gSnipCfg['e2g_wrapper'];
 
         $imgThumbs = array();
-        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectFiles)) {
             $thumbPlaceholder = $this->_loadThumbPlaceholders($l);
             if ($thumbPlaceholder === FALSE)
                 return FALSE;
@@ -833,7 +833,7 @@ class E2gSnippet extends E2gPub {
         $phs['wrapper'] = $this->e2gSnipCfg['e2g_wrapper'];
 
         $imgThumbs = array();
-        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectFiles)) {
             $thumbPlaceholder = $this->_loadThumbPlaceholders($l);
             if ($thumbPlaceholder === FALSE)
                 return FALSE;
@@ -1514,7 +1514,7 @@ class E2gSnippet extends E2gPub {
             $this->modx->regClientStartupScript($this->e2gSnipCfg['js']);
         }
 
-        $select = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id = ' . $fileId;
+        $select = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id = ' . intval($fileId);
 
         $query = mysql_query($select);
         if (!$query) {
@@ -1523,7 +1523,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $l = array();
-        while ($fetch = mysql_fetch_array($query)) {
+        while ($fetch = mysql_fetch_assoc($query)) {
             $l = $fetch;
             $path = $this->getPath($fetch['dir_id']);
 
@@ -1624,6 +1624,10 @@ class E2gSnippet extends E2gPub {
      */
     private function _comments($fileId) {
         $cpn = (empty($this->_sanitizedGets['cpn']) || !is_numeric($this->_sanitizedGets['cpn'])) ? 0 : (int) $this->_sanitizedGets['cpn'];
+	$fileId = intval($fileId);
+	if ($fileId === 0) {
+            return FALSE;
+	}
 
         // Get a key from https://www.google.com/recaptcha/admin/create
         $recaptchalib = realpath(E2G_SNIPPET_PATH . 'includes/recaptchalib.php');
@@ -1732,7 +1736,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $rowClassNum = 0;
-        while ($l = mysql_fetch_array($querySelectComments, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectComments)) {
             $l['i'] = $rowClassNum % 2;
             $l['name_permalink'] = '<a href="#" name="lpcmtnm' . $l['id'] . '"></a> ';
             $l['name_w_permalink'] = '<a href="'
@@ -1926,7 +1930,7 @@ class E2gSnippet extends E2gPub {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs . '<br />';
             return FALSE;
         }
-        while ($l = mysql_fetch_array($querySelectDirs, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectDirs)) {
             $check[$l['cat_id']] = $l['cat_id'];
         }
         mysql_free_result($querySelectDirs);
@@ -1964,7 +1968,7 @@ class E2gSnippet extends E2gPub {
             echo __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles . '<br />';
             return FALSE;
         }
-        while ($l = mysql_fetch_array($querySelectFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectFiles)) {
             $check[$l['id']] = $l['id'];
         }
         mysql_free_result($querySelectFiles);
@@ -2018,7 +2022,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $taggedDirs = array();
-        while ($l = mysql_fetch_array($querySelectTaggedDirs, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectTaggedDirs)) {
             $taggedDirs[] = $l['cat_id'];
         }
 
@@ -2071,7 +2075,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $taggedFiles = array();
-        while ($l = mysql_fetch_array($querySelectTaggedFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($querySelectTaggedFiles)) {
             $taggedFiles[$l['id']] = $l['id'];
         }
         mysql_free_result($querySelectTaggedFiles);
@@ -2333,7 +2337,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $parent = array();
-        while ($row = mysql_fetch_array($queryParent)) {
+        while ($row = mysql_fetch_assoc($queryParent)) {
             $parent['cat_id'] = $row['parent_id'];
         }
 
@@ -2411,7 +2415,7 @@ class E2gSnippet extends E2gPub {
         }
 
         $siblings = array();
-        while ($row = mysql_fetch_array($queryChildren)) {
+        while ($row = mysql_fetch_assoc($queryChildren)) {
             $siblings['cat_id'][] = $row['cat_id'];
             $siblings['cat_tag'][] = $row['cat_tag'];
             $siblings['cat_name'][] = $row['cat_name'];

@@ -249,7 +249,7 @@ class E2gPub { // public/public class
                 return;
             }
         }
-        while ($l = mysql_fetch_array($res)) {
+        while ($l = mysql_fetch_assoc($res)) {
             $dirInfo[$field] = $l[$field];
         }
         mysql_free_result($res);
@@ -280,7 +280,7 @@ class E2gPub { // public/public class
 
         if (!($res = mysql_query($q)))
             return (__LINE__ . ' Wrong field: ' . $field);
-        while ($l = mysql_fetch_array($res)) {
+        while ($l = mysql_fetch_assoc($res)) {
             $fileInfo[$field] = $l[$field];
         }
         mysql_free_result($res);
@@ -527,7 +527,7 @@ class E2gPub { // public/public class
             echo __METHOD__ . ', ' . __LINE__ . ' : ' . mysql_error() . '<br />' . $selectIndexFile;
             return FALSE;
         } else {
-            while ($row = mysql_fetch_array($queryIndexFile)) {
+            while ($row = mysql_fetch_assoc($queryIndexFile)) {
                 $indexFiles[] = $row['indexfile'];
             }
 
@@ -584,10 +584,11 @@ class E2gPub { // public/public class
             return FALSE;
         }
 
-        while ($l = mysql_fetch_array($queryDbFile, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($queryDbFile)) {
             $catThumbId = $l['cat_thumb_id'];
         }
 
+		$specifiedFolderImg = '';
         if (!empty($catThumbId)) {
             $catThumbPath = $this->getPath($this->getFileInfo($catThumbId, 'dir_id'));
             $catThumbName = $this->getFileInfo($catThumbId, 'filename');
@@ -604,12 +605,8 @@ class E2gPub { // public/public class
                     return FALSE;
                 }
 
-                while ($l = mysql_fetch_array($queryThumbFile, MYSQL_ASSOC)) {
-                    $file = $l;
-                }
+                $specifiedFolderImg = mysql_fetch_assoc($queryThumbFile);
                 mysql_free_result($queryThumbFile);
-
-                return $file;
             }
         }
 
@@ -658,7 +655,7 @@ class E2gPub { // public/public class
             return FALSE;
         }
 
-        while ($l = mysql_fetch_array($queryFiles, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($queryFiles)) {
             $files[] = $l;
         }
         mysql_free_result($queryFiles);
@@ -672,17 +669,21 @@ class E2gPub { // public/public class
          * system or not, and stops at which ever returns TRUE.
          */
         $folderImgInfos = array();
-        foreach ($files as $file) {
-            // search image for subdir
-            $getPath = $this->getPath($file['dir_id']);
-            $imagePath = $this->e2gDecode($gdir . $getPath . $file['filename']);
-            if (!$this->validFile($imagePath)) {
-                continue;
-            } else {
-                $folderImgInfos = $file;
-                break;
-            }
-        }
+		if (empty($specifiedFolderImg)) {
+			foreach ($files as $file) {
+				// search image for subdir
+				$getPath = $this->getPath($file['dir_id']);
+				$imagePath = $this->e2gDecode($gdir . $getPath . $file['filename']);
+				if (!$this->validFile($imagePath)) {
+					continue;
+				} else {
+					$folderImgInfos = $file;
+					break;
+				}
+			}
+		} else {
+			$folderImgInfos = $specifiedFolderImg;
+		}
         $folderImgInfos['count'] = $countFiles;
 
         /**
@@ -777,7 +778,7 @@ class E2gPub { // public/public class
         $resultArray = array();
         $resultString = array();
         $result = '';
-        while ($l = mysql_fetch_array($queryDir)) {
+        while ($l = mysql_fetch_assoc($queryDir)) {
             if ($option != 'cat_name' && empty($l[$option]))
                 $l[$option] = $l['cat_name'];
             $resultArray[$l['cat_id']] = $l[$option];

@@ -19,7 +19,7 @@ $numDir = @mysql_num_rows($queryDir);
 
 $childrenDirs = array();
 if ($queryDir) {
-    while ($l = mysql_fetch_array($queryDir, MYSQL_ASSOC)) {
+    while ($l = mysql_fetch_assoc($queryDir)) {
         $childrenDirs[$l['cat_id']]['parent_id'] = $l['parent_id'];
         $childrenDirs[$l['cat_id']]['cat_id'] = $l['cat_id'];
         $childrenDirs[$l['cat_id']]['cat_name'] = $l['cat_name'];

@@ -26,7 +26,7 @@ if (IN_MANAGER_MODE != 'true')
                     die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_plugins);
                 else {
                     $numrow_plugins = mysql_num_rows($query_plugins);
-                    $row = mysql_fetch_array($query_plugins);
+                    $row = mysql_fetch_assoc($query_plugins);
                     $events = @explode(',', $row['events']);
                     ?>
                     <p>ID: <?php echo $row['id']; ?></p>
@@ -192,7 +192,7 @@ if (IN_MANAGER_MODE != 'true')
                         die(__FILE__ . ', ' . __LINE__ . ': missing config.events.easy2gallery.php file');
                     }
                     include $eventConfigFile;
-                    while ($row = mysql_fetch_array($query_plugins, MYSQL_ASSOC)) {
+                    while ($row = mysql_fetch_assoc($query_plugins)) {
                         ?>
                         <li>
                             <a href="<?php echo $this->e2gModCfg['index'] . '&amp;act=delete_plugin&amp;plugin_id=' . $row['id'];?>"

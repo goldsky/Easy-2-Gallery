@@ -27,7 +27,7 @@ $q = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_configs');
 if (!$q)
     die(__FILE__ . ': MySQL query error for configs');
 else {
-    while ($row = mysql_fetch_array($q)) {
+    while ($row = mysql_fetch_assoc($q)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
 }

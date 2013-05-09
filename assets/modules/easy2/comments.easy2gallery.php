@@ -34,7 +34,7 @@ if (!$e2g_res) {
     sh_err('MySQL query error for configs');
     die;
 } else {
-    while ($row = mysql_fetch_array($e2g_res)) {
+    while ($row = mysql_fetch_assoc($e2g_res)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
 }
@@ -149,7 +149,7 @@ $res = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_comments '
                 . 'AND STATUS=1 ORDER BY id DESC '
                 . 'LIMIT ' . ($cpn * $e2g['ecl']) . ', ' . $e2g['ecl']);
 $i = 0;
-while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+while ($l = mysql_fetch_assoc($res)) {
 
     $l['i'] = $i % 2;
 
@@ -254,7 +254,7 @@ function getChunk($name) {
 
     $res = mysql_query('SELECT * FROM ' . $table_prefix . "site_htmlsnippets WHERE name='" . mysql_real_escape_string($name) . "'");
     if (mysql_num_rows($res) > 0) {
-        $row = mysql_fetch_array($res, MYSQL_ASSOC);
+        $row = mysql_fetch_assoc($res);
         return $row['snippet'];
     } else {
         return false;

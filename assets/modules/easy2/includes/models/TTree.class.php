@@ -57,7 +57,7 @@ class TTree {
             $this->error = 'Parent ID not found (INSERT)';
             return false;
         }
-        $parent = mysql_fetch_array($result, MYSQL_ASSOC);
+        $parent = mysql_fetch_assoc($result);
 
         // Update the all root parents' data first.
         $query = 'UPDATE ' . $this->table . ' SET '
@@ -117,7 +117,7 @@ class TTree {
                     . $this->id . ' = ' . $id;
 
             $result = mysql_query($query);
-            $c = mysql_fetch_array($result, MYSQL_ASSOC);
+            $c = mysql_fetch_assoc($result);
 
             if ($c[$this->parent] != $parentId) {
                 if (!$this->replace($id, $parentId, $c))
@@ -159,7 +159,7 @@ class TTree {
             $result_select_c = mysql_query($select_c);
 
             // set the old parent's handler variable
-            $c = mysql_fetch_array($result_select_c, MYSQL_ASSOC);
+            $c = mysql_fetch_assoc($result_select_c);
         }
 
         // Данные о новой родительской ветви
@@ -174,7 +174,7 @@ class TTree {
             return false;
         }
         // set the new parent's handler variable
-        $to = mysql_fetch_array($result_select_to, MYSQL_ASSOC);
+        $to = mysql_fetch_assoc($result_select_to);
 
         // ***************************************** ERROR HANDLERS **************************************** //
 
@@ -359,7 +359,7 @@ class TTree {
         }
 
         // get the parent's data
-        $cat = mysql_fetch_array($result, MYSQL_ASSOC);
+        $cat = mysql_fetch_assoc($result);
 
         // Список вложенний
         // List of nested ???
@@ -402,7 +402,7 @@ class TTree {
         }
 
         // get the parent's data
-        $cat = mysql_fetch_array($result, MYSQL_ASSOC);
+        $cat = mysql_fetch_assoc($result);
 
         // ************** SET MARGIN VALUE OF THE deleted branches AS THE RENUMBERING CONTROL ************** //
         $razn = $cat[$this->right] - $cat[$this->left] + 1;
@@ -470,7 +470,7 @@ class TTree {
 
     function result2array($q, $keyField='') {
         $Result = array();
-        while ($Data = mysql_fetch_array($q, MYSQL_ASSOC))
+        while ($Data = mysql_fetch_assoc($q))
             if (empty($keyField))
                 $Result[] = $Data;
             //else $Result[$Data[$keyField]] = $Data;

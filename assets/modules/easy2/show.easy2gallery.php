@@ -30,7 +30,7 @@ $e2g_res = mysql_query('SELECT * FROM ' . $table_prefix . 'easy2_configs');
 if (!$e2g_res)
     sh_err('MySQL query error for configs');
 else {
-    while ($row = mysql_fetch_array($e2g_res)) {
+    while ($row = mysql_fetch_assoc($e2g_res)) {
         $e2g[$row['cfg_key']] = $row['cfg_val'];
     }
 }
@@ -42,7 +42,7 @@ if (!$res)
     sh_err('MySQL query error for files');
 
 // get the filename
-$row = mysql_fetch_array($res, MYSQL_ASSOC);
+$row = mysql_fetch_assoc($res);
 $filename = $row['filename'];
 
 $res = mysql_query('SELECT A.cat_id, A.cat_name '

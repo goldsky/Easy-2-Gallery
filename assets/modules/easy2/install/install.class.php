@@ -72,7 +72,7 @@ class install {
         $oldDirs = array();
         $newDirs = array();
         if ($res) {
-            while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            while ($l = mysql_fetch_assoc($res)) {
                 $oldDirs[$l['cat_id']]['id'] = $l['cat_id'];
                 $oldDirs[$l['cat_id']]['name'] = $l['cat_name'];
                 // goldsky -- switch the array parameter after renaming
@@ -91,7 +91,7 @@ class install {
         $oldFiles = array();
         $newFiles = array();
         if ($res) {
-            while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            while ($l = mysql_fetch_assoc($res)) {
                 $oldFiles[$l['id']]['id'] = $l['id'];
                 $oldFiles[$l['id']]['name'] = $l['filename'];
                 $oldFiles[$l['id']]['size'] = $l['size'];
@@ -338,7 +338,7 @@ class install {
         $oldDirs = array();
         $newDirs = array();
         if ($res) {
-            while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            while ($l = mysql_fetch_assoc($res)) {
                 $oldDirs[$l['cat_id']]['id'] = $l['cat_id'];
                 $oldDirs[$l['cat_id']]['name'] = $l['cat_name'];
                 // goldsky -- switch the array parameter after renaming
@@ -356,7 +356,7 @@ class install {
         $oldFiles = array();
         $newFiles = array();
         if ($res) {
-            while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+            while ($l = mysql_fetch_assoc($res)) {
                 $oldFiles[$l['id']]['id'] = $l['id'];
                 $oldFiles[$l['id']]['name'] = $l['filename'];
                 $oldFiles[$l['id']]['size'] = $l['size'];
@@ -1248,7 +1248,7 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
         $sqlConfigDir = 'SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_configs '
                 . 'WHERE cfg_key=\'' . $cfgKey . '\'';
         $query = mysql_query($sqlConfigDir);
-        while ($row = mysql_fetch_array($query, MYSQL_ASSOC)) {
+        while ($row = mysql_fetch_assoc($query)) {
             $resultConfigDir[$row['cfg_key']] = $row['cfg_val'];
         }
 
@@ -1274,7 +1274,7 @@ if (!empty($pluginFile) && file_exists($pluginFile)) {
         $select = 'SELECT * FROM `' . $this->modx->db->config['table_prefix'] . "easy2_viewers` ";
         $result = mysql_query($select);
 
-        while ($l = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($result)) {
             $viewerRow[$l['name']] = $l;
         }
 
@@ -1354,7 +1354,7 @@ if (IN_MANAGER_MODE != 'true')
         $select = 'SELECT * FROM `' . $this->modx->db->config['table_prefix'] . "easy2_slideshows` ";
         $result = mysql_query($select);
 
-        while ($l = mysql_fetch_array($result, MYSQL_ASSOC)) {
+        while ($l = mysql_fetch_assoc($result)) {
             $slideshowRow[$l['name']] = $l;
         }
 

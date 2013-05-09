@@ -43,7 +43,7 @@ if (IN_MANAGER_MODE != 'true')
                     die(__LINE__ . ': ' . mysql_errno() . ' ' . mysql_error() . '<br />' . $select_slideshows);
                 else {
                     $numrow_slideshows = mysql_num_rows($query_slideshows);
-                    while ($row = mysql_fetch_array($query_slideshows)) {
+                    while ($row = mysql_fetch_assoc($query_slideshows)) {
                 ?>
                     <li>
                             <a href="<?php echo $this->e2gModCfg['index'] . '&amp;page=duplicate_slideshow&amp;ssid=' . $row['id']; ?>"

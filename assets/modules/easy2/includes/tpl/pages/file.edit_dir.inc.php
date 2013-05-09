@@ -4,7 +4,7 @@ if (IN_MANAGER_MODE != 'true')
 
 // call up the database content first as the comparison subjects
 $queryDir = mysql_query('SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_dirs WHERE cat_id=' . (int) $this->sanitizedGets['dir_id']);
-$row = mysql_fetch_array($queryDir, MYSQL_ASSOC);
+$row = mysql_fetch_assoc($queryDir);
 mysql_free_result($queryDir);
 ?>
 <ul class="actionButtons">

@@ -3,7 +3,7 @@ if (IN_MANAGER_MODE != 'true')
     die("<b>INCLUDE_ORDERING_ERROR</b><br /><br />Please use the MODx Content Manager instead of accessing this file directly.");
 
 $res = mysql_query('SELECT * FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $this->sanitizedGets['file_id']);
-$row = mysql_fetch_array($res, MYSQL_ASSOC);
+$row = mysql_fetch_assoc($res);
 mysql_free_result($res);
 ?>
 <ul class="actionButtons">
@@ -74,7 +74,7 @@ if (isset($this->sanitizedGets['tag'])) {
                                 . ' ORDER BY id DESC'
                 );
                 $rowNum = 0; // only for row coloring
-                while ($l = mysql_fetch_array($res, MYSQL_ASSOC)) {
+                while ($l = mysql_fetch_assoc($res)) {
         ?>
                     <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                         <td valign="top" width="20">

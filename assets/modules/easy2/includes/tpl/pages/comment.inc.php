@@ -92,7 +92,7 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                     // for table row class looping
                                     $rowClass = array(' class="gridAltItem"', ' class="gridItem"');
                                     $rowNum = 0; // only for row coloring
-                                    while ($l = mysql_fetch_array($queryComments, MYSQL_ASSOC)) {
+                                    while ($l = mysql_fetch_assoc($queryComments)) {
                                         $path['string'] = $this->getPath($l['dir_id']);
                                         $filePath = str_replace('%2F', '/', rawurlencode($this->e2gModCfg['gdir'] . $path['string'] . $l['filename']));
                             ?>
@@ -280,7 +280,7 @@ $filesLink = $this->e2gModCfg['e2gPages']['files']['link'];
                                                     . 'FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_ignoredip '
                                                     . 'ORDER BY id DESC');
                                     $rowNum = 0; // only for row coloring
-                                    while ($ign = mysql_fetch_array($ign_ip_res, MYSQL_ASSOC)) {
+                                    while ($ign = mysql_fetch_assoc($ign_ip_res)) {
                 ?>
                                         <tr <?php echo $rowClass[$rowNum % 2]; ?> >
                                             <td valign="top" width="20">

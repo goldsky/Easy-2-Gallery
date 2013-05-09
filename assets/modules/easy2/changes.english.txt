@@ -3,6 +3,10 @@
  ) _) /    \\___ \ )  /    / __/  ( (_ \/    \/ (_/\/ (_/\ ) _)  )   / )  /
 (____)\_/\_/(____/(__/    (____)   \___/\_/\_/\____/\____/(____)(__\_)(__/
 
+***************** 1.4.13-rc1 ******************
++ fixed bug on counting files of directory that has thumbnail specified
++ modified queries
+
 ***************** 1.4.12-pl ******************
 + replaced mysql_escape_string to mysql_real_escape_string on comments.easy2gallery.php
 
