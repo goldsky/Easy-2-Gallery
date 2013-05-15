@@ -4411,11 +4411,12 @@ class E2gMod extends E2gPub {
         $red = !empty($red) ? $red : $this->e2g['thbg_red'];
         $green = !empty($green) ? $green : $this->e2g['thbg_green'];
         $blue = !empty($blue) ? $blue : $this->e2g['thbg_blue'];
-
         $thumbPath = '_thumbnails/'
                 . substr($path, 0, strrpos($path, '.'))
-                . '_mod'
+                . '_' . $resizeType
                 . '_' . $w . 'x' . $h
+                . '_' . $thq
+                . '_' . $red . 'x' . $green . 'x' . $blue
                 . '.jpg';
 
         // create cover file

@@ -906,18 +906,12 @@ class E2gSnippet extends E2gPub {
         $red = isset($red) ? $red : $this->e2gSnipCfg['thbg_red'];
         $green = isset($green) ? $green : $this->e2gSnipCfg['thbg_green'];
         $blue = isset($blue) ? $blue : $this->e2gSnipCfg['thbg_blue'];
-
-        /**
-         * Use document ID and session ID to separate between different snippet calls
-         * on the same/different page(s) with different settings
-         * but unfortunately with the same dimension.
-         */
-        $docid = $this->modx->documentIdentifier;
         $thumbPath = '_thumbnails/'
                 . substr($path, 0, strrpos($path, '.'))
-                . '_id' . $docid
-                . '_sid' . $this->e2gSnipCfg['e2g_static_instances']
+                . '_' . $resizeType
                 . '_' . $w . 'x' . $h
+                . '_' . $thq
+                . '_' . $red . 'x' . $green . 'x' . $blue
                 . '.jpg';
 
         // create cover file
