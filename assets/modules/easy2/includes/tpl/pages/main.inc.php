@@ -479,36 +479,36 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
         <div id="report"><?php echo $err . $suc; ?></div>
         <div class="sectionHeader">
             <span>Easy 2 Gallery <?php echo E2G_VERSION; ?></span>
-            <span class="navigation">
-                <span class="navigationTitle">Menu</span>
-                <span class="navigationTree">
-                    <?php
-                    foreach ($this->e2gModCfg['e2gPages'] as $k => $v) {
-                        // $userRole == '1' is a Supreme Administrator role
-                        if ($userRole == '1'
-                                || in_array($v['access'], $userPermissionsArray)
-                                || $v['title'] == 'dashboard'
-                        ) {
+        </div>
+        <div class="e2g-navigation">
+            <span class="e2g-navigationTitle">Menu</span>
+            <span class="e2g-navigationTree">
+                <?php
+                foreach ($this->e2gModCfg['e2gPages'] as $k => $v) {
+                    // $userRole == '1' is a Supreme Administrator role
+                    if ($userRole == '1'
+                            || in_array($v['access'], $userPermissionsArray)
+                            || $v['title'] == 'dashboard'
+                    ) {
+                ?>
+                        <span class="e2g-navigationBranch">
+                    <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
                     ?>
-                            <span class="navigationBranch">
+                            <a href="<?php echo $v['link']; ?>">
+                        <?php } ?>
+                        <span class="navItem<?php echo (($this->e2gModCfg['e2gpg'] == $v['e2gpg']) ? ' active' : ''); ?>">
+                            <span class="navTitle"><?php echo $v['lng']; ?></span>
+                            <span class="navIcon"><?php echo $v['icon']; ?></span>
+                        </span>
                         <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
                         ?>
-                                <a href="<?php echo $v['link']; ?>">
-                            <?php } ?>
-                            <span class="navItem<?php echo (($this->e2gModCfg['e2gpg'] == $v['e2gpg']) ? ' active' : ''); ?>">
-                                <span class="navTitle"><?php echo $v['lng']; ?></span>
-                                <span class="navIcon"><?php echo $v['icon']; ?></span>
-                            </span>
-                            <?php if ($this->e2gModCfg['e2gpg'] != $v['e2gpg']) {
-                            ?>
-                            </a>
-                        <?php } ?>
-                        </span>
-                    <?php
-                        }
+                        </a>
+                    <?php } ?>
+                    </span>
+                <?php
                     }
-                    ?>
-                </span>
+                }
+                ?>
             </span>
         </div>
         <div class="sectionBody">

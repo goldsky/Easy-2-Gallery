@@ -150,7 +150,7 @@ echo $this->plugin('OnE2GDashboardPrerender');
                             <td style="font-weight: bold;">
                                 <?php
                                 // PHP magic_quotes_gpc()
-                                if (get_magic_quotes_gpc ()) {
+                                if (get_magic_quotes_gpc()) {
                                     echo $this->lng['on'] . $icon_bad . ' ' . $this->lng['magic_quote_disabling'];
                                 } else {
                                     echo $this->lng['off'] . $icon_ok;
