@@ -1376,8 +1376,8 @@ class E2gSnippet extends E2gPub {
                     continue;
                 foreach ($ssRows as $k => $v) {
                     $ssFiles[$k][] = $v;
-                    $ssCheckDuplicate[$v['src']] = $v['src'];
                 }
+                $ssCheckDuplicate[$ssRows['src']] = $ssRows['src'];
             }
             mysql_free_result($querySelectFiles);
         }
@@ -1396,13 +1396,13 @@ class E2gSnippet extends E2gPub {
                 $ssRows = $this->_processSlideshowFiles($row);
                 if ($ssRows === FALSE)
                     continue;
-                foreach ($ssRows as $k => $v) {
-                    if (isset($ssCheckDuplicate[$v['src']])) {
-                        continue;
-                    }
-                    $ssFiles[$k][] = $v;
-                    $ssCheckDuplicate[$v['src']] = $v['src'];
+                if (isset($ssCheckDuplicate[$ssRows['src']])) {
+                    continue;
                 }
+                foreach ($ssRows as $k => $v) {
+                    $ssFiles[$k][] = $v;
+                }
+                $ssCheckDuplicate[$ssRows['src']] = $ssRows['src'];
             }
             mysql_free_result($querySelectFiles);
         }
@@ -1422,10 +1422,10 @@ class E2gSnippet extends E2gPub {
                 $ssRows = $this->_processSlideshowFiles($row);
                 if ($ssRows === FALSE)
                     continue;
+                if (isset($ssCheckDuplicate[$ssRows['src']])) {
+                    continue;
+                }
                 foreach ($ssRows as $k => $v) {
-                    if (isset($ssCheckDuplicate[$v])) {
-                        continue;
-                    }
                     $ssFiles[$k][] = $v;
                 }
             }
