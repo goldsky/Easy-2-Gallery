@@ -50,6 +50,7 @@ class E2gPub { // public/public class
 
         $this->modx = & $modx;
         $this->e2gPubCfg = $e2gPubCfg;
+        date_default_timezone_set('UTC');
     }
 
     /**

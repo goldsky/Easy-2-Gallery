@@ -43,13 +43,13 @@ if (IN_MANAGER_MODE != 'true')
 
                         <li>
                             <a href="javascript:;" onclick="synchro('<?php echo $this->e2gModCfg['gdir']; ?>', '<?php echo $this->e2gModCfg['parent_id']; ?>','<?php echo $this->modx->getLoginUserID(); ?>');" title="<?php echo $this->lng['synchro']; ?>">
-                                <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/refresh.png" alt="" />
+                                <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/arrow_refresh.png" alt="" />
                             </a>
                         </li>
                     <?php } ?>
                     <li>
                         <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;act=clean_cache" title="<?php echo $this->lng['clean_cache']; ?>">
-                            <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/trash.png" alt="" />
+                            <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/trash.png" alt="" />
                         </a>
                     </li>
                 </ul>
@@ -59,13 +59,13 @@ if (IN_MANAGER_MODE != 'true')
                     <?php if (!isset($this->sanitizedGets['tag']) && !isset($this->sanitizedGets['path'])) { ?>
                         <li>
                             <a href="<?php echo $this->e2gModCfg['index']; ?>&amp;page=create_dir&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>" title="<?php echo $this->lng['dir_create']; ?>">
-                                <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/folder_add.png" alt="" />
+                                <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/folder_add.png" alt="" />
                             </a>
                         </li>
                         <?php if ($userRole == '1' || in_array($this->e2gModCfg['e2gPages']['upload']['access'], $userPermissionsArray)) { ?>
                             <li>
                                 <a href="<?php echo $this->e2gModCfg['blank_index']; ?>&amp;e2gpg=<?php echo $this->e2gModCfg['e2gPages']['upload']['e2gpg']; ?>&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>" title="<?php echo $this->lng['upload']; ?>">
-                                    <img src="<?php echo MODX_MANAGER_URL; ?>media/style/MODxCarbon/images/icons/add.png" alt="" />
+                                    <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/image_add.png" alt="" />
                                 </a>
                             </li>
                             <?php

@@ -40,7 +40,7 @@ $modx->getSettings();
 // Easy 2 Gallery module path
 define('E2G_MODULE_PATH', MODX_BASE_PATH . 'assets/modules/easy2/');
 // Easy 2 Gallery module URL
-define('E2G_MODULE_URL', MODX_SITE_URL . '../../');
+define('E2G_MODULE_URL', MODX_SITE_URL . 'assets/modules/easy2/');
 
 $modClassFile = realpath('../models/e2g.module.class.php');
 if (empty ($modClassFile) || !file_exists($modClassFile)) {

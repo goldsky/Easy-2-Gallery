@@ -58,6 +58,12 @@ class E2gMod extends E2gPub {
      */
     public $galleryPath = array();
 
+    /**
+     * Error output
+     * @var string   error text;
+     */
+    public $error = '';
+
     public function __construct($modx) {
         $this->modx = & $modx;
         $this->lng = parent::languageSwitch($modx->config['manager_language'], E2G_MODULE_PATH);
@@ -99,8 +105,7 @@ class E2gMod extends E2gPub {
         }
 
         // 'path' request claims a new path
-        if (!empty($this->sanitizedGets['path'])
-                && $path['string'] !== $this->sanitizedGets['path']
+        if (!empty($this->sanitizedGets['path']) && $path['string'] !== $this->sanitizedGets['path']
         ) {
             $getPath = str_replace('../', '', $this->sanitizedGets['path']);
             $getPath = str_replace($this->e2gModCfg['gdir'], '', $this->e2g['dir'] . $this->sanitizedGets['path']);
@@ -149,7 +154,7 @@ class E2gMod extends E2gPub {
                                         . '&amp;id=' . $this->e2gModCfg['_i']
                                         . '&amp;e2gpg=2'
                                         . '&amp;pid=' . $_POST['newparent']
-                                ));
+                        ));
                     } else {
                         header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                     }
@@ -225,7 +230,7 @@ class E2gMod extends E2gPub {
                                     . '&amp;id=' . $this->e2gModCfg['_i']
                                     . '&amp;e2gpg=2'
                                     . '&amp;pid=' . $this->e2gModCfg['parent_id']
-                            ));
+                    ));
                 } else {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 }
@@ -449,8 +454,7 @@ class E2gMod extends E2gPub {
 
             case 'create_dir':
                 // check names against bad characters
-                if ($this->_hasBadChar($_POST['name'], __LINE__)
-                        || !$this->_createDir($_POST, $this->e2gModCfg['gdir'], $this->e2gModCfg['parent_id'])
+                if ($this->_hasBadChar($_POST['name'], __LINE__) || !$this->_createDir($_POST, $this->e2gModCfg['gdir'], $this->e2gModCfg['parent_id'])
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 } else {
@@ -461,8 +465,7 @@ class E2gMod extends E2gPub {
 
             case 'save_dir':
                 // check names against bad characters
-                if ($this->_hasBadChar($_POST['newdirname'], __LINE__)
-                        || !$this->_editDir($_POST)
+                if ($this->_hasBadChar($_POST['newdirname'], __LINE__) || !$this->_editDir($_POST)
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 } elseif (isset($this->sanitizedGets['tag'])) {
@@ -475,8 +478,7 @@ class E2gMod extends E2gPub {
 
             case 'save_file':
                 // check names against bad characters
-                if ($this->_hasBadChar($_POST['newfilename'], __LINE__)
-                        || !$this->_editFile($this->e2gModCfg['gdir'], $_POST)
+                if ($this->_hasBadChar($_POST['newfilename'], __LINE__) || !$this->_editFile($this->e2gModCfg['gdir'], $_POST)
                 ) {
                     header('Location: ' . html_entity_decode($_SERVER['HTTP_REFERER'], ENT_NOQUOTES));
                 } elseif (isset($this->sanitizedGets['tag'])) {
@@ -538,7 +540,7 @@ class E2gMod extends E2gPub {
                 // using original file check, not _validFile($f), because it will delete not only images.
                 if (is_file($f)) {
                     if (@unlink($f))
-                        $res['f']++;
+                        $res['f'] ++;
                     else
                         $res['e'][] = __LINE__ . ' : ' . $this->lng['file_delete_err'] . ' : ' . $f;
                 } elseif (is_dir($f)) {
@@ -551,7 +553,7 @@ class E2gMod extends E2gPub {
             }
         }
         if (count($res['e']) == 0 && @rmdir($realPath))
-            $res['d']++;
+            $res['d'] ++;
         else
             $res['e'][] = __LINE__ . ' : ' . $this->lng['dir_delete_err'] . ' : ' . $path;
         return $res;
@@ -584,14 +586,14 @@ class E2gMod extends E2gPub {
             foreach ($fs as $f) {
                 if (is_file($f)) {
                     $res['file'][] = $f;
-                    $res['f']++;
+                    $res['f'] ++;
                 } elseif ($this->validFolder($f)) {
                     $fBaseName = $this->basenameSafe($f);
                     $sres = array('d' => 0, 'f' => 0, 'e' => array());
                     $sres = $this->_moveAll($f, $newRealPath . DIRECTORY_SEPARATOR . $fBaseName);
 
                     $res['dir'][] = $f;
-                    $res['d']++;
+                    $res['d'] ++;
                     // $res = result (file/dir/error)
                     // $sres = result summary (file/dir/error)
                     $res['f'] += $sres['f'];
@@ -602,7 +604,7 @@ class E2gMod extends E2gPub {
         }
 
         if (@rename($oldRealPath, $newRealPath))
-            $res['d']++;
+            $res['d'] ++;
         else
             $res['e'][] = __LINE__ . ' : ' . $this->lng['dir_move_err'] . ' : ' . $oldPath;
 
@@ -704,8 +706,7 @@ class E2gMod extends E2gPub {
                         $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'] . ' : ' . $filePath;
                         return FALSE;
                     }
-                }
-                else
+                } else
                     continue;
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_end_clean();
@@ -760,22 +761,26 @@ class E2gMod extends E2gPub {
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
 
         if (empty($fileRealPath)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
+            $err = __LINE__ . ' : ' . $this->lng['file_add_err'] . ': ' . $fileRealPath;
+            $this->setError($err);
             return FALSE;
         }
         if (empty($userId)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'];
+            $err = ___LINE__ . ' : ' . $this->lng['invalid_uid'];
+            $this->setError($err);
             return FALSE;
         }
 
         $inf = @getimagesize($fileRealPath);
         if ($inf[2] > 3 || !is_numeric($pid)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_add_err'];
+            $err = __LINE__ . ' : ' . $this->lng['file_add_err'];
+            $this->setError($err);
             return FALSE;
         }
 
-        if (!$this->_checkFolders($fileRealPath, $pid))
+        if (!$this->_checkFolders($fileRealPath, $pid)) {
             return FALSE;
+        }
 
         $basename = $this->basenameSafe($fileRealPath);
         $basename = $this->e2gEncode($basename);
@@ -786,8 +791,8 @@ class E2gMod extends E2gPub {
             $dirPath = dirname($fileRealPath);
             $rename = rename($fileRealPath, $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
             if (!$rename) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_rename_err'];
-                $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath . ' => ' . $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
+                $err = __LINE__ . ' : ' . __LINE__ . ' : ' . $this->lng['file_rename_err'] . $filePath . ' => ' . $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias);
+                $this->setError($err);
                 return FALSE;
             }
             $this->changeModOwnGrp('file', $dirPath . DIRECTORY_SEPARATOR . $this->e2gDecode($fileAlias));
@@ -817,7 +822,8 @@ class E2gMod extends E2gPub {
         ;
         $queryInsertFile = mysql_query($insertFile);
         if (!$queryInsertFile) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertFile;
+            $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $insertFile;
+            $this->setError($err);
             return FALSE;
         }
 
@@ -828,8 +834,9 @@ class E2gMod extends E2gPub {
             , 'pid' => $pid
         ));
 
-        if ($this->e2gModCfg['e2g_debug'] == '1')
+        if ($this->e2gModCfg['e2g_debug'] == '1') {
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $this->lng['file_added'] . ' ' . $basename;
+        }
 
         return TRUE;
     }
@@ -848,7 +855,11 @@ class E2gMod extends E2gPub {
 
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
-        $newInf['time'] = filemtime($filename);
+        $lastModified = @filemtime($filename);
+        if ($lastModified == NULL) {
+            $lastModified = filemtime(utf8_decode($filename));
+        }
+        $newInf['time'] = date("Y-m-d H:i:s", $lastModified);
 
         // if both configs are not zeros
         if ($w + $h !== 0) {
@@ -971,7 +982,11 @@ class E2gMod extends E2gPub {
 
         $newInf = @getimagesize($filename);
         $newInf['size'] = filesize($filename);
-        $newInf['time'] = filemtime($filename);
+        $lastModified = @filemtime($filename);
+        if ($lastModified == NULL) {
+            $lastModified = filemtime(utf8_decode($filename));
+        }
+        $newInf['time'] = date("Y-m-d H:i:s", $lastModified);
         return $newInf;
     }
 
@@ -990,19 +1005,19 @@ class E2gMod extends E2gPub {
         $userId = !empty($userId) ? $userId : $this->modx->getLoginUserID();
 
         if (!$this->validFolder($path) || empty($path)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $path;
-            return __LINE__ . ' : ' . $path;
-//            return FALSE;
+            $err = __LINE__ . ' : ' . $this->lng['err_empty_path'] . ' $path=' . $path;
+            $this->setError($err);
+            return FALSE;
         }
         if (empty($pid)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
-            return __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
-//            return FALSE;
+            $err = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' $pid=' . $pid;
+            $this->setError($err);
+            return FALSE;
         }
         if (empty($userId)) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
-            return __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
-//            return FALSE;
+            $err = __LINE__ . ' : ' . $this->lng['invalid_uid'] . ' : ' . $userId;
+            $this->setError($err);
+            return FALSE;
         }
 
         $timeStart = microtime(TRUE);
@@ -1014,9 +1029,9 @@ class E2gMod extends E2gPub {
                 . 'WHERE parent_id=' . $pid;
         $querySelectDirs = mysql_query($selectDirs);
         if (!$querySelectDirs) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
-//            return FALSE;
+            $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectDirs;
+            $this->setError($err);
+            return FALSE;
         }
 
         $mdirs = array();
@@ -1031,9 +1046,9 @@ class E2gMod extends E2gPub {
                 . 'WHERE dir_id=' . $pid;
         $querySelectFile = mysql_query($selectFiles);
         if (!$querySelectFile) {
-            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-//            return FALSE;
+            $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+            $this->setError($err);
+            return FALSE;
         }
 
         $mfiles = array();
@@ -1076,9 +1091,9 @@ class E2gMod extends E2gPub {
                     if (isset($mdirs[$name])) {
                         $sync = $this->synchro($filePath, $mdirs[$name]['id'], $userId);
                         if ($sync !== TRUE) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
-                            return __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $sync;
-//                            return FALSE;
+                            $err = __LINE__ . ' : ' . $this->lng['synchro_err'] . ' : ' . $filePath;
+                            $this->setError($err);
+                            return FALSE;
                         }
                         unset($mdirs[$name]);
                     } else { // as ALL folder and file children of the current directory
@@ -1086,9 +1101,9 @@ class E2gMod extends E2gPub {
                          * INSERT folder's and file's names into database
                          */
                         if (!$this->_addAll($filePath, $pid, $userId)) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
-                            return __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
-//                            return FALSE;
+                            $err = __LINE__ . ' : ' . $this->lng['all_add_error'] . ' : ' . $filePath;
+                            $this->setError($err);
+                            return FALSE;
                         }
                     }
                 }
@@ -1109,6 +1124,7 @@ class E2gMod extends E2gPub {
                             $width = $inf[0];
                             $height = $inf[1];
                             $time = filemtime($filePath);
+                            $time = date("Y-m-d H:i:s", $time);
                             clearstatcache();
                         }
 
@@ -1123,9 +1139,9 @@ class E2gMod extends E2gPub {
 
                         $queryUpdateFile = mysql_query($updateFile);
                         if (!$queryUpdateFile) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFile;
-                            return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFile;
-//                            return FALSE;
+                            $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFile;
+                            $this->setError($err);
+                            return FALSE;
                         }
 
                         // goldsky -- if this already belongs to a file in the record, skip it!
@@ -1135,9 +1151,9 @@ class E2gMod extends E2gPub {
                          * INSERT filename into database
                          */
                         if (!$this->_addFile($filePath, $pid, $userId)) {
-                            $_SESSION['easy2err'][] = __LINE__ . ' : ' . $filePath;
-                            return __LINE__ . ' : ' . $filePath;
-//                            return FALSE;
+                            $err = __LINE__ . ' : Unable to INSERT filename into database:' . $filePath;
+                            $this->setError($err);
+                            return FALSE;
                         }
                     }
                 }
@@ -1145,8 +1161,9 @@ class E2gMod extends E2gPub {
                  * goldsky -- File/folder may exists, but NOT a valid folder or a valid file,
                  * probably has an unallowed extension or strange characters.
                  */
-                else
+                else {
                     continue;
+                }
 
                 // goldsky -- adds output buffer to avoid PHP's memory limit
                 ob_end_clean();
@@ -1165,16 +1182,17 @@ class E2gMod extends E2gPub {
             foreach ($mdirs as $key => $value) {
                 $ids = $tree->delete((int) $value['id']);
                 if (empty($ids)) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $key . '<br />';
+                    $err = ___LINE__ . ' : ' . $this->lng['err_empty_id'] . ' : ' . $key . '<br />';
+                    $this->setError($err);
                     return FALSE;
                 }
                 $implodedDirIds = implode(',', $ids);
                 $selectFiles = 'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE dir_id IN(' . $implodedDirIds . ')';
                 $querySelectFiles = mysql_query($selectFiles);
                 if (!$querySelectFiles) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-                    return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
-//                    return FALSE;
+                    $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $selectFiles;
+                    $this->setError($err);
+                    return FALSE;
                 }
                 $fileIds = array();
                 while ($l = mysql_fetch_row($querySelectFiles)) {
@@ -1188,9 +1206,9 @@ class E2gMod extends E2gPub {
                             . 'WHERE file_id IN(' . $implodedFileIds . ')';
                     $queryDeleteFileComments = mysql_query($deleteFileComments);
                     if (!$queryDeleteFileComments) {
-                        $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-                        return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-//                        return FALSE;
+                        $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
+                        $this->setError($err);
+                        return FALSE;
                     }
                 }
 
@@ -1198,9 +1216,9 @@ class E2gMod extends E2gPub {
                         . 'WHERE dir_id IN(' . $implodedDirIds . ')';
                 $queryDeleteFiles = mysql_query($deleteFiles);
                 if (!$queryDeleteFiles) {
-                    $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-                    return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-//                    return FALSE;
+                    $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
+                    $this->setError($err);
+                    return FALSE;
                 }
             }
         }
@@ -1217,18 +1235,18 @@ class E2gMod extends E2gPub {
                     . 'WHERE id IN(' . $implodedFileIds . ')';
             $queryDeleteFiles = mysql_query($deleteFiles);
             if (!$queryDeleteFiles) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-                return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
-//                return FALSE;
+                $err = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFiles;
+                $this->setError($err);
+                return FALSE;
             }
 
             $deleteFileComments = 'DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments '
                     . 'WHERE file_id IN(' . $implodedFileIds . ')';
             $queryDeleteFileComments = mysql_query($deleteFileComments);
             if (!$queryDeleteFileComments) {
-                $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-                return __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
-//                return FALSE;
+                $err =  __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFileComments;
+                $this->setError($err);
+                return FALSE;
             }
         }
 
@@ -1269,8 +1287,7 @@ class E2gMod extends E2gPub {
             }
             $newFilename = ( $prefixFilename != '' ? $prefixFilename . $notNumberSuffix : $filename ) . '_' . $newNumberSuffix . $ext;
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $name . ' exists, file was renamed to be ' . $newFilename;
-        }
-        else
+        } else
             return $name;
 
         // recursive check
@@ -1321,8 +1338,7 @@ class E2gMod extends E2gPub {
             }
             $newDirName = ( $prefixDirName != '' ? $prefixDirName . $notNumberSuffix : $copyName ) . '_' . $newNumberSuffix . $ext;
             $_SESSION['easy2suc'][] = __LINE__ . ' : ' . $name . ' exists, folder was renamed to be ' . $newDirName;
-        }
-        else
+        } else
             return $name;
 
         // recursive check
@@ -1511,13 +1527,12 @@ class E2gMod extends E2gPub {
                         . '>';
                 $output .= '&nbsp;' . $l['filename'] . ' [id:' . $l['id'] . ']';
                 $path = $this->getPath($l['dir_id']);
-                $img= $this->imgShaper($l['dir_id'], $this->e2gModCfg['dir'] . $path . $l['filename'], 30, 30, 90 );
+                $img = $this->imgShaper($l['dir_id'], $this->e2gModCfg['dir'] . $path . $l['filename'], 30, 30, 90);
                 if ($img)
-                    $output = '<img src="'.$img.'" />';
+                    $output = '<img src="' . $img . '" />';
                 $output .= '</option>';
             }
             mysql_free_result($querySelectFiles);
-
         }
 
         //*********************************************************/
@@ -1642,8 +1657,7 @@ class E2gMod extends E2gPub {
         $r = substr($path, strlen($path) - 1, 1);
         if ($this->e2gModCfg['e2g_encode'] == 'UTF-8 (Rin)') {
             $r = UTF8::substr($path, UTF8::strlen($path) - 1, 1);
-        }
-        else
+        } else
             $r = substr($path, strlen($path) - 1, 1);
         if ($r != '\\' && $r != '/')
             $path .='/';
@@ -1921,7 +1935,7 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $queryUpdateDirStatus;
                     return FALSE;
                 } else {
-                    $countRes['ddb']++;
+                    $countRes['ddb'] ++;
                 }
             } // foreach ($post['dir'] as $k => $v)
         } // if (!empty($post['dir']))
@@ -1956,7 +1970,7 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFileStatus;
                     return FALSE;
                 } else {
-                    $countRes['fdb']++;
+                    $countRes['fdb'] ++;
                 }
             } // foreach ($post['im'] as $k => $v)
         } // if (!empty($post['im']))
@@ -2012,7 +2026,7 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $queryUpdateDirStatus;
                     return FALSE;
                 } else {
-                    $countRes['ddb']++;
+                    $countRes['ddb'] ++;
                 }
             } // foreach ($post['dir'] as $k => $v)
         } // if (!empty($post['dir']))
@@ -2047,7 +2061,7 @@ class E2gMod extends E2gPub {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $updateFileStatus;
                     return FALSE;
                 } else {
-                    $countRes['fdb']++;
+                    $countRes['fdb'] ++;
                 }
             } // foreach ($post['im'] as $k => $v)
         } // if (!empty($post['im']))
@@ -2240,7 +2254,7 @@ class E2gMod extends E2gPub {
                     if (count($ids) > 0) {
                         $res['ddb'][0] += count($ids);
                     } else {
-                        $res['ddb'][1]++;
+                        $res['ddb'][1] ++;
                     }
                 } // if (is_numeric($k))
                 if (!empty($v)) {
@@ -2251,7 +2265,7 @@ class E2gMod extends E2gPub {
                         $res['dfp'][0] += $d['d'];
                         $res['ffp'][0] += $d['f'];
                     } else {
-                        $res['dfp'][1]++;
+                        $res['dfp'][1] ++;
                     }
                 }
             } // foreach ($post['dir'] as $k => $v)
@@ -2296,20 +2310,20 @@ class E2gMod extends E2gPub {
                     $deleteFile = 'DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_files WHERE id=' . (int) $k;
                     $queryDeleteFile = mysql_query($deleteFile);
                     if (!$queryDeleteFile) {
-                        $res['fdb'][1]++;
+                        $res['fdb'][1] ++;
                         $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFile;
                         return FALSE;
                     } else {
-                        $res['fdb'][0]++;
+                        $res['fdb'][0] ++;
                     }
                 }
                 if (!empty($v)) {
                     $v = str_replace('../', '', $this->e2gDecode($v));
                     $vRealPath = realpath('../' . $v);
                     if (@unlink($vRealPath)) {
-                        $res['ffp'][0]++;
+                        $res['ffp'][0] ++;
                     } else {
-                        $res['ffp'][1]++;
+                        $res['ffp'][1] ++;
                     }
                 }
             } // foreach ($post['im'] as $k => $v)
@@ -2518,7 +2532,7 @@ class E2gMod extends E2gPub {
                         if (count($ids) > 0) {
                             $res['ddb'][0] += count($ids);
                         } else {
-                            $res['ddb'][1]++;
+                            $res['ddb'][1] ++;
                         }
                     } // if (is_numeric($k))
                     //************* CONTINUE FILE SYSTEM UPDATE *************//
@@ -2534,7 +2548,7 @@ class E2gMod extends E2gPub {
                             $res['dfp'][0] += $moveDir['d'];
                             $res['ffp'][0] += $moveDir['f'];
                         } else {
-                            $res['dfp'][1]++;
+                            $res['dfp'][1] ++;
                         }
 
                         if ($e2gDebug == '1') {
@@ -2646,19 +2660,19 @@ class E2gMod extends E2gPub {
                                         . ' WHERE id=' . (int) $k;
 
                                 if (mysql_query($updateFile)) {
-                                    $res['fdb'][0]++;
+                                    $res['fdb'][0] ++;
                                 } else {
-                                    $res['fdb'][1]++;
+                                    $res['fdb'][1] ++;
                                 }
                             }
-                            $res['ffp'][0]++;
+                            $res['ffp'][0] ++;
 
                             $this->changeModOwnGrp('file', $newFile['decoded']);
                         } else {
                             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['file_move_err'];
                             $_SESSION['easy2err'][] = __LINE__ . ' : fr : ' . $oldFile['origin'];
                             $_SESSION['easy2err'][] = __LINE__ . ' : to : ' . $newFile['decoded'];
-                            $res['ffp'][1]++;
+                            $res['ffp'][1] ++;
                         }
                     }
 
@@ -2785,10 +2799,10 @@ class E2gMod extends E2gPub {
             $queryDeleteFile = mysql_query($deleteFile);
             if (!$queryDeleteFile) {
                 $_SESSION['easy2err'][] = __LINE__ . ' : #' . mysql_errno() . ' ' . mysql_error() . '<br />' . $deleteFile;
-                $res['dber']++;
+                $res['dber'] ++;
             } else {
                 mysql_query('DELETE FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_comments WHERE file_id=' . $get['file_id']);
-                $res['db']++;
+                $res['db'] ++;
             }
         }
         // for non-database member
@@ -2802,9 +2816,9 @@ class E2gMod extends E2gPub {
                 $deletePhysical = @unlink($fileRealPath);
                 if (!$deletePhysical) {
                     $_SESSION['easy2err'][] = __LINE__ . ' : #' . $this->lng['file_delete_err'] . ' : ' . $filePath;
-                    $res['fser']++;
+                    $res['fser'] ++;
                 } else {
-                    $res['fs']++;
+                    $res['fs'] ++;
                 }
             }
         }
@@ -2856,9 +2870,7 @@ class E2gMod extends E2gPub {
         $entries['h'] = !empty($entries['h']) ? $entries['h'] : '140';
 
         if ($buildDefault) {
-            if (!function_exists('fopen')
-                    || !function_exists('fwrite')
-                    || !function_exists('fclose')
+            if (!function_exists('fopen') || !function_exists('fwrite') || !function_exists('fclose')
             ) {
                 return FALSE;
             }
@@ -4258,7 +4270,7 @@ class E2gMod extends E2gPub {
         $dirWebGroups = $this->modx->db->makeArray($this->modx->db->query(
                         'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
                         . 'WHERE type=\'dir\' AND webgroup_id=\'' . $webGroupId . '\''
-                ));
+        ));
         foreach ($dirWebGroups as $k => $v) {
             $dirWebGroups[$k] = $v['id'];
         }
@@ -4304,7 +4316,7 @@ class E2gMod extends E2gPub {
                         'SELECT id FROM ' . $this->modx->db->config['table_prefix'] . 'easy2_webgroup_access '
                         . 'WHERE type=\'file\' '
                         . 'AND webgroup_id=\'' . $webGroupId . '\''
-                ));
+        ));
         foreach ($fileWebGroups as $k => $v) {
             $fileWebGroups[$k] = $v['id'];
         }
@@ -4360,8 +4372,7 @@ class E2gMod extends E2gPub {
         require $pageConfigFile;
 
         // delete the config file, because this will always be checked as an upgrade option
-        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php'))
-                && $this->sanitizedGets['e2gpg'] != $this->e2gModCfg['e2gPages']['config']['e2gpg']
+        if (file_exists(realpath(E2G_MODULE_PATH . 'includes/configs/config.easy2gallery.php')) && $this->sanitizedGets['e2gpg'] != $this->e2gModCfg['e2gPages']['config']['e2gpg']
         ) {
             $_SESSION['easy2err'][] = __LINE__ . ' : ' . $this->lng['config_save_warning'];
             header('Location: ' . html_entity_decode($this->e2gModCfg['blank_index'] . '&amp;e2gpg=' . $this->e2gModCfg['e2gPages']['config']['e2gpg']));
@@ -4593,7 +4604,7 @@ class E2gMod extends E2gPub {
                     . ' alt="' . $this->lng['edit'] . '" title="' . $this->lng['edit'] . '" border="0" />';
         } elseif ($buttonName == 'add_file') {
             $button .= '
-                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_add.png" width="16" height="16"'
+                    <img src="' . E2G_MODULE_URL . 'includes/tpl/icons/picture_adsfadsfadd.png" width="16" height="16"'
                     . ' alt="' . $this->lng['add_to_db'] . '" title="' . $this->lng['add_to_db'] . '" border="0" />';
         } elseif ($buttonName == 'delete_file') {
             $button .= '
@@ -4696,8 +4707,7 @@ class E2gMod extends E2gPub {
         if (!isset($countConfigs['oldConfigFile']) && !isset($countConfigs['oldConfigDb']) && !$_SESSION['installE2g']) {
             $saveE2gSettings = TRUE;
         }
-        if ($saveE2gSettings
-                && $_SESSION['installE2g'] === FALSE // exclude new installation
+        if ($saveE2gSettings && $_SESSION['installE2g'] === FALSE // exclude new installation
         ) {
             $this->saveE2gSettings($e2g);
         }
@@ -4766,6 +4776,16 @@ class E2gMod extends E2gPub {
         $s = trim($s);
         $s = $this->modx->db->escape(htmlspecialchars($s, ENT_QUOTES));
         return $s;
+    }
+
+    public function setError($msg) {
+        $this->error = $msg;
+        $_SESSION['easy2err'][] = $msg;
+        $this->modx->logEvent(0, 3, $msg, 'Easy 2 Gallery');
+    }
+
+    public function getError() {
+        return $this->error;
     }
 
 }

@@ -1,4 +1,4 @@
-div.pane {
+.pane {
     /*    padding: 9px;*/
     /*    border-top: 1px solid #e3e3e3;*/
     /*    margin-top: -1px;*/
@@ -52,38 +52,38 @@ ul.actionButtons li {
         border-right: 1px solid #cccccc;*/
 }
 
-div.imPreview {
+.imPreview {
     display: block;
     width: 100%;
     margin: 5px;
 }
 
-div.imPreview img {
+.imPreview img {
     display: block;
 }
 
-div.imPreview2 {
+.imPreview2 {
     display: block;
 }
 
-div.imPreview2 img {
+.imPreview2 img {
     display: block;
     width: 200px;
 }
 
-span.thumbPreview {
+.thumbPreview {
     display: block;
 }
 
-span.thumbPreview img {
+.thumbPreview img {
     display: block;
 }
 
-.topmenu a {
+#e2g-topmenu a {
     text-decoration: none;
 }
 
-.topmenu span {
+#e2g-topmenu span {
     position: relative;
     display: block;
     color: #c3c3c3;
@@ -103,7 +103,7 @@ span.thumbPreview img {
     border: 1px solid #e4e4e4;
 }
 
-.topmenu .active {
+#e2g-topmenu .active {
     color: #000;
     font-size: 1.5em;
     background-color: #fff;
@@ -113,7 +113,7 @@ span.thumbPreview img {
     top: 0;
 }
 
-.topmenu span:hover {
+#e2g-topmenu span:hover {
     top: 0;
     line-height: 25px;
     background-color: #fff;
@@ -143,7 +143,7 @@ td.tdRight {
 .dashboardContent {
 }
 
-div.curveBox {
+.curveBox {
     -moz-border-radius: 5px;
     -webkit-border-radius: 5px;
     border: 1px solid #ccc;
@@ -183,7 +183,7 @@ li.no-bullet {
     margin-left: -38px;
 }
 
-div.clear {
+.clear {
     clear: both;
     width: 100%;
     line-height: 0;
@@ -203,7 +203,7 @@ div.clear {
     color: maroon;
 }
 
-div.dashboardButton span {
+.dashboardButton span {
     display: block;
     background-color: #F0F0F0;
     padding: 2px;
@@ -221,12 +221,12 @@ div.dashboardButton span {
     -webkit-border-radius: 3px;
 }
 
-div.dashboardButton:hover span {
+.dashboardButton:hover span {
     background-color: #E2E2E2;
     cursor: pointer;
 }
 
-div.dashboardButton:active span {
+.dashboardButton:active span {
     background-color: #BFBFBF;
     -o-box-shadow: 1px 1px 2px #888;
     -icab-box-shadow: 1px 1px 2px #888;
@@ -236,7 +236,7 @@ div.dashboardButton:active span {
     box-shadow: 1px 1px 2px #888;
 }
 
-div.dashboardButton a {
+.dashboardButton a {
     color:black;
 }
 
@@ -282,7 +282,7 @@ div.dashboardButton a {
     padding: 2px 5px;
 }
 
-.com_row:hover div.com_action {
+.com_row:hover .com_action {
     display: block;
     background-color: white;
     border: 1px solid #ddd;
@@ -299,11 +299,11 @@ div.dashboardButton a {
     -webkit-border-radius: 3px;
 }
 
-div.com_action a {
+.com_action a {
     margin: 0 5px;
 }
 
-div.com_action a:hover {
+.com_action a:hover {
     text-decoration: underline;
 }
 
@@ -311,15 +311,16 @@ div.com_action a:hover {
     TOP MENU NAVIGATION
 **/
 
-span.navigation {
+.e2g-navigation {
     position: relative;
     float: right;
-    top: -15px;
+    /*top: -15px;*/
+    margin-right: 15px;
     z-index: 1000;
     letter-spacing: 2px;
 }
 
-span.navigation span.navigationTitle {
+.e2g-navigation .e2g-navigationTitle {
     border: 1px solid #DDDDDD;
     background-color: #EEEEEE;
     margin-left: 3px;
@@ -330,31 +331,31 @@ span.navigation span.navigationTitle {
     font-weight: bold;
 }
 
-span.navigation {
+.e2g-navigation {
     /*    position: relative;*/
     display: block;
     text-align: right;
 }
 
-span.navigation span.navigationTree {
+.e2g-navigation .e2g-navigationTree {
     position: absolute;
     display: none;
 }
 
-span.navigation:hover {
+.e2g-navigation:hover {
     cursor: pointer;
 }
 
-span.navigation:hover span.navigationBranch .active {
+.e2g-navigation:hover .e2g-navigationBranch .active {
     cursor: auto;
 }
 
-span.navigation:hover span.navigationTree {
+.e2g-navigation:hover .e2g-navigationTree {
     display: block;
     right: 1px;
 }
 
-span.navigation span.navigationBranch {
+.e2g-navigation .e2g-navigationBranch {
     display: block;
     border: 1px solid #DDDDDD;
     background-color: #FFFFFF;
@@ -363,36 +364,39 @@ span.navigation span.navigationBranch {
     line-height: 2em;
 }
 
-span.navigation span.navigationBranch a,
-span.navigation span.navigationBranch a:link {
+.e2g-navigation .e2g-navigationBranch a,
+.e2g-navigation .e2g-navigationBranch a:link {
     color: black;
     text-decoration: none;
 }
 
-span.navigation span.navigationBranch:hover {
-    background-color: #EEEEEE;
+.e2g-navigation .e2g-navigationBranch:hover a,
+.e2g-navigation .e2g-navigationBranch:hover {
+    background-color: black;
+    color: white;
 }
 
-span.navigation span.navigationBranch .active {
-    background-color: #EEEEEE;
+.e2g-navigation .e2g-navigationBranch .active {
+    background-color: #870000;
+    color: white;
 }
 
-span.navigation span.navigationBranch span.navItem {
+.e2g-navigation .e2g-navigationBranch .navItem {
     display: block;
     clear: both;
     white-space: nowrap;
 }
 
-span.navigation span.navigationBranch span.navItem span.navTitle {
+.e2g-navigation .e2g-navigationBranch .navItem .navTitle {
     margin: 2px 0 2px 6px;
 }
 
-span.navigation span.navigationBranch span.navItem span.navIcon {
+.e2g-navigation .e2g-navigationBranch .navItem .navIcon {
     border-left: 1px dotted gray;
     padding-left: 5px;
 }
 
-span.navigation span.navigationBranch span.navItem span.navIcon img {
+.e2g-navigation .e2g-navigationBranch .navItem .navIcon img {
     vertical-align: middle;
 }
 
