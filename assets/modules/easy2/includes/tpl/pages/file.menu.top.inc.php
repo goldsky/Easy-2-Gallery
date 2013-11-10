@@ -65,7 +65,7 @@ if (IN_MANAGER_MODE != 'true')
                         <?php if ($userRole == '1' || in_array($this->e2gModCfg['e2gPages']['upload']['access'], $userPermissionsArray)) { ?>
                             <li>
                                 <a href="<?php echo $this->e2gModCfg['blank_index']; ?>&amp;e2gpg=<?php echo $this->e2gModCfg['e2gPages']['upload']['e2gpg']; ?>&amp;pid=<?php echo $this->e2gModCfg['parent_id']; ?>" title="<?php echo $this->lng['upload']; ?>">
-                                    <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/image_add.png" alt="" />
+                                    <img src="<?php echo E2G_MODULE_URL; ?>includes/tpl/icons/picture_add.png" alt="" />
                                 </a>
                             </li>
                             <?php

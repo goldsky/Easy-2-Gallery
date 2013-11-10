@@ -4788,4 +4788,20 @@ class E2gMod extends E2gPub {
         return $this->error;
     }
 
+    public function handleRequest($options) {
+        if (!isset($options['action'])) {
+            return;
+        }
+
+        include_once 'e2g.processor.class.php';
+        if (empty($this->e2gModCfg)) {
+            $this->e2gModCfg = $this->_loadE2gModCfg();
+        }
+        $className = include_once $this->e2gModCfg['processorPath'] . $options['action'] . '.class.php';
+        unset($options['action']);
+        $controller = new $className($this->modx, $options);
+        $controller->lng = $this->lng;
+
+        return $controller->process();
+    }
 }

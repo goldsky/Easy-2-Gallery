@@ -3,6 +3,7 @@
 if (!defined('E2G_MODULE_PATH')) {
     die();
 }
+$e2gModCfg = array();
 
 // ENCODING
 $e2gModCfg['e2g_encode'] = $e2g['e2g_encode'];
@@ -135,3 +136,5 @@ $e2gModCfg['index'] = isset($index) ? $index : MODX_MANAGER_URL . 'index.php?a='
 $e2gModCfg['blank_index'] = MODX_MANAGER_URL . 'index.php?a=' . $e2gModCfg['_a']
         . '&amp;id=' . $e2gModCfg['_i']
         . ( $alienparams != '' ? $alienparams : '' );
+
+$e2gModCfg['processorPath'] = dirname(dirname(__FILE__)) . '/processors/';

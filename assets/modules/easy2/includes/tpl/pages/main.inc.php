@@ -218,7 +218,8 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("countfiles_"+pid);
                 var oldcontainer = document.getElementById("countfileslink_"+pid);
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.countfiles.php?";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                url += "action=module/countfiles";
                 url += "&path="+path;
                 url += "&pid="+pid;
                 if (xhr && container) {
@@ -244,8 +245,9 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
                 if (!container) {
                     var container = document.getElementById("grid");
                 }
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.synchro.php?";
-                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                url += "action=module/synchro";
+                url += "&a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
                 url += "<?php echo isset($this->sanitizedGets['tag']) ? '&tag=' . $this->sanitizedGets['tag'] : ''; ?>";
                 url += "&pid="+pid;
                 url += "&uid="+uid;
@@ -268,11 +270,14 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
             function viewDefaultThumbnails (path, pid, procFile) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
-                if (procFile=='rescanhd')
-                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.thumb.php?";
-                else
-                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.thumb.php?";
-                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
+                if (procFile=='rescanhd') {
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                    url += "action=module/gallery.rescan.thumb";
+                } else {
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                    url += "action=module/gallery.default.thumb";
+                }
+                url += "&a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -292,11 +297,14 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
             function viewDefaultGrid (path, pid, procFile) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("grid");
-                if (procFile=='rescanhd')
-                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.rescan.grid.php?";
-                else
-                    var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.default.grid.php?";
-                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
+                if (procFile=='rescanhd') {
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                    url += "action=module/gallery.rescan.grid";
+                } else {
+                    var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                    url += "action=module/gallery.default.grid";
+                }
+                url += "&a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>&path="+path;
                 url += "&pid="+pid;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -316,8 +324,9 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
             function viewTagThumbnails (path, tag) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("thumbnail");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.thumb.php?";
-                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                url += "action=module/gallery.tag.thumb";
+                url += "&a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
@@ -337,8 +346,9 @@ foreach ($this->e2gModCfg['e2gPages'] as $v) {
             function viewTagGrid (path, tag) {
                 var xhr = xhrRequest();
                 var container = document.getElementById("list");
-                var url = "<?php echo E2G_MODULE_URL; ?>includes/controllers/module.gallery.tag.grid.php?";
-                url += "a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
+                var url = "<?php echo E2G_MODULE_URL; ?>includes/connector/connector.php?";
+                url += "action=module/gallery.tag.grid";
+                url += "&a=<?php echo $this->sanitizedGets['a']; ?>&id=<?php echo $this->sanitizedGets['id']; ?>&e2gpg=<?php echo $this->sanitizedGets['e2gpg']; ?>";
                 url += "&path="+path+"&tag="+tag;
                 if (xhr && container) {
                     xhr.onreadystatechange = function() {
